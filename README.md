@@ -2,20 +2,48 @@
 ============================================================
 
 
-### ステージング環境構築クイックスタート
+## ステージング環境構築クイックスタート
+
+### インストール
+
+  ```sh
+  $ git clone git@gitlab.aucfan.com:devs/rakuichi-rakuza.git
+  $ cd rakuichi-rakuza/vagrant
+  $ vagrant up
+  ```
+  - http://192.168.33.101 にアクセスすることで楽市楽座の仮想ローカルステージング環境にアクセス可能です。
+  - cloneしたworkspaceとファイルが連携しており、ローカルの編集がそのまま仮想サーバに反映されます
+  - vagrant/virtualboxを事前にインストールする必要あります
 
 
   ```sh
-  $ git clone root@192.168.101.11:/var/git/rakuichi-rakuza.git
-  $ cd rakuichi-rakuza/vagrant
-  $ vagrant up
+  $ vagrant ssh
   $ php composer.phar update
   ```
-  - http://192.168.33.101 にアクセスすることで楽市楽座のステージング環境にアクセス可能です。
-  - Vagrant/Virtualboxを事前のインストールすること
+
+  - ``vagrant ssh``コマンドを叩くことで、仮想サーバへログイン出来ます。(192.168.33.101のIPでもSSHコマンドでログイン出来ます)
+  - ``password: vagrant``にてrootユーザになることが可能です
 
 
-### 基本設計
+### 仮想マシンの終了
+
+  停止させます。マシンの負荷が高い時や、OSを再起動したいときに実施します。
+  ```sh
+  $ vagrant halt
+  ```
+
+  仮想マシンを破壊します。
+  ```sh
+  $ vagrant destroy
+  ```
+
+  システム開発では定期的に``vagrant destroy``を行って下さい。
+  理由として、常に``vagrant up``での0から環境構築した際にステージング環境が完璧な状態での動作保証を確認するためです。
+
+
+
+
+## 基本設計
 
   - FuelPHPを基本フレームワークとする
   - 必ずテストコードの作成
@@ -24,7 +52,7 @@
       - フォルダ丸ごとコピーすればどこでも動く状態
       - 極力ネームベースの処理をせず、IPアドレスのまま動くように相対的なPATHで構築する
 
-### システム運用方針
+## システム運用方針
 
   - Git branching modelの採用
       - 解説: http://keijinsonyaban.blogspot.jp/2010/10/successful-git-branching-model.html
