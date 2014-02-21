@@ -1,6 +1,8 @@
 <?php
 
-class Controller_Auth extends Controller_Template {
+class Controller_Auth extends Controller_Template
+{
+
 
     public function before()
     {
@@ -43,28 +45,25 @@ class Controller_Auth extends Controller_Template {
 
     public function action_404()
     {
-        // ページが見つからない
         $this->template->title = 'ページが見つかりません。';
         $this->template->content = View::forge('auth/404');
     }
 
     public function action_timeout()
     {
-        // 不正アクセス
         $this->template->title = '有効期限が切れました。';
         $this->template->content = View::forge('auth/timeout');
     }
 
+    //不要になる
     public function action_logined()
     {
-        // ログイン後ページ
         $this->template->title = 'ログイン中';
         $this->template->content = View::forge('auth/logined');
     }
 
     private function validate_login()
     {
-        // 入力チェック
         $validation = Validation::forge();
         $validation->add('username', 'ユーザー名')
         ->add_rule('required')
@@ -80,7 +79,6 @@ class Controller_Auth extends Controller_Template {
 
     public function action_login()
     {
-        // ログイン処理
         $username = Input::post('username', null);
         $password = Input::post('password', null);
         $result_validate = '';

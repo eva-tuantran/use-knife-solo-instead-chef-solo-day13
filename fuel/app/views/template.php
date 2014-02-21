@@ -1,40 +1,82 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-	<meta charset="utf-8">
-	<title><?php echo $title; ?></title>
-	<style type="text/css">
-		* { margin: 0; padding: 0; }
-		body { background-color: #EEE; font-family: sans-serif; font-size: 16px; line-height: 20px; margin: 40px; }
-		#wrapper { padding: 30px; background: #fff; color: #333; margin: 0 auto; width: 600px; }
-		a { color: #36428D; }
-		h1 { color: #000; font-size: 55px; padding: 0 0 25px; line-height: 1em; }
-		.intro { font-size: 22px; line-height: 30px; font-family: georgia, serif; color: #555; padding: 29px 0 20px; border-top: 1px solid #CCC; }
-		.notice { border: 1px solid #CCC; padding: 10px; background-color: #EEE; }
-		h2 { margin: 50px 0 15px; padding: 0 0 10px; font-size: 18px; border-bottom: 1px dashed #ccc; }
-		h2.first { margin: 10px 0 15px; }
-		p { margin: 0 0 15px; line-height: 22px;}
-		a { color: #666; }
-		pre { border-left: 1px solid #ddd; line-height:20px; margin:20px; padding-left:1em; font-size: 16px; }
-		pre, code { color:#137F80; font-family: Courier, monospace; }
-		ul { margin: 15px 30px; }
-		li { line-height: 24px;}
-		label { display: block; }
-		.footer { color: #777; font-size: 12px; margin: 40px 0 0 0; }
-	</style>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="">
+<meta name="author" content="">
+<title><?php echo $title; ?></title>
+
+<?php echo Asset::css('bootstrap.min.css'); ?>
+<?php echo Asset::css('navbar-static-top.css'); ?>
+<?php echo Asset::css('dev.css'); ?>
+<!-- Just for debugging purposes. Don't actually copy this line! -->
+<!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+
+<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+<!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
 </head>
+
 <body>
-	<div id="wrapper">
-		<h1><?php echo $title; ?></h1>
-		<?php if (Session::get_flash('notice')): ?>
-			<div class="notice"><p><?php echo implode('</p><p>', (array) Session::get_flash('notice')); ?></div></p>
-		<?php endif; ?>
 
-		<?php echo $content; ?>
+<!-- Static navbar -->
+<div class="navbar navbar-default navbar-static-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#">楽市楽座V2</a>
+    </div>
+    <div class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li class="active"><a href="#">開催日程</a></li>
+        <li><a href="#about">会場一覧</a></li>
+        <li><a href="#contact">出店予約</a></li>
+        <li><a href="#contact">出店予約</a></li>
+        <li><a href="#contact">新着情報</a></li>
+        <li><a href="#contact">初めての方へ</a></li>
+        <li><a href="#contact">ブログ</a></li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li class="active"><a href="./">ログイン</a></li>
+        <li><a href="../navbar-fixed-top/">ログアウト</a></li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div>
+</div>
 
-		<p class="footer">
-			<a href="http://fuelphp.com">Fuel</a> is released under the MIT license.<br />Page rendered in {exec_time}s using {mem_usage}mb of memory.
-		</p>
-	</div>
+
+<!-- Container -->
+<div class="container">
+  <!-- Contents -->
+  <div class="contents">
+
+    <?php if (Session::get_flash('notice')): ?>
+    <div class="notice"><p><?php echo implode('</p><p>', (array) Session::get_flash('notice')); ?></div></p>
+    <?php endif; ?>
+
+    <?php echo $content; ?>
+
+  </div>
+</div> <!-- /container -->
+
+
+<!-- <p class="footer"> -->
+<!-- <a href="http://rakuichi-rakuza.jp">Rakuichi</a> is released under the MIT license.<br />Page rendered in {exec_time}s using {mem_usage}mb of memory. -->
+<!-- </p> -->
+
+<!-- Bootstrap core JavaScript
+    ================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<script src="../../dist/js/bootstrap.min.js"></script>
 </body>
 </html>

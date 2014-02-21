@@ -14,4 +14,4 @@ git@gitlab.aucfan.com:devs/rakuichi-rakuza-api.wiki.git
 
 
 ### Memo
-hipchat対応しました
+hipchat対応しました (再度)
