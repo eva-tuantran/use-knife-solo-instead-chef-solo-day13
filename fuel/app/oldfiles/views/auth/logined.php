@@ -1,0 +1,1 @@
+<p><a href="/auth/update">ユーザー情報更新</a></p><p><a href="/auth/remove">ユーザー情報削除</a></p><p><a href="/auth/logout">ログアウト</a></p><p><a href="/auth/login">トップへ戻る</a></p>

@@ -1,0 +1,131 @@
+
+<div class="container">
+  <div class="row">
+    <ul class="col-xs-12 nav navbar-nav">
+      <li class="col-xs-3 text-center alert-info"><dl><dt>STEP1</dt><dd>登録内容の入力</dd></dl></li>
+      <li class="col-xs-3 text-center"><dl><dt>STEP2</dt><dd>内容確認</dd></dl></li>
+      <li class="col-xs-3 text-center"><dl><dt>STEP3</dt><dd>仮登録メール送信</dd></dl></li>
+      <li class="col-xs-3 text-center"><dl><dt>STEP4</dt><dd>登録完了</dd></dl></li>
+    </ul>
+  </div>
+</div>
+
+<div class="container">
+
+  <div class="row">
+    <div class="col-md-12">
+      <h2 class="text-center">楽市楽座ID(無料)を登録する</h2>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-xs-12 alert-warning"><?php echo $errmsg ?></div>
+    <div class="col-xs-12"><?php echo $html_form ?></div>
+  </div>
+</div>
+
+  <!-- <form action="/register/confirm" method="POST"> -->
+
+    <!-- <div class="row"> -->
+      <!-- [> CSRF対策 <] -->
+      <!-- <input type="hidden" name="<?php echo \Config::get('security.csrf_token_key');?>" value="<?php echo \Security::fetch_token();?>" /> -->
+      <!-- <ul class="register_form"> -->
+        <!-- <li> -->
+        <!-- <dl class="row"> -->
+          <!-- <dt class="col-xs-5 text-right">お名前</dt> -->
+          <!-- <dd class="col-xs-5"><input name="name-first" value="" type="text" id="name-first" size="5" /> <input name="name-last" value="" type="text" id="name-last" size="5"  /></dd> -->
+        <!-- </dl> -->
+        <!-- </li> -->
+
+        <!-- <li> -->
+        <!-- <dl class="row"> -->
+          <!-- <dt class="col-xs-5 text-right">フリガナ</dt> -->
+          <!-- <dd class="col-xs-5"><input name="kana-first" value="" type="text" id="kana-first" size="5" /> <input name="kana-last" value="" type="text" id="kana-last" size="5"  /></dd> -->
+        <!-- </dl> -->
+        <!-- </li> -->
+
+        <!-- <li> -->
+        <!-- <dl class="row"> -->
+          <!-- <dt class="col-xs-5 text-right">ご住所</dt> -->
+          <!-- <dd class="col-xs-7"> -->
+           <!-- 〒<input name="postal-code" value="" type="text" id="postal-code" size="4" /> -->
+           <!-- <input type="button" value="住所を検索する" /> -->
+          <!-- <br /><input name="address" value="" type="text" id="adress" /></dd> -->
+        <!-- </dl> -->
+        <!-- </li> -->
+
+        <!-- <li> -->
+        <!-- <dl class="row"> -->
+          <!-- <dt class="col-xs-5 text-right">電話番号</dt> -->
+          <!-- <dd class="col-xs-7"> <input name="telephone-a" value="" type="tel" id="telephone-a" size="5" /> - <input name="telephone-b" value="" type="tel" id="telephone-b" size="5" /> - <input name="telephone-c" value="" type="tel" id="telephone-c" size="5" />  </dd> -->
+        <!-- </dl> -->
+        <!-- </li> -->
+
+        <!-- <li> -->
+        <!-- <dl class="row"> -->
+          <!-- <dt class="col-xs-5 text-right">メールアドレス<span class="badge badge-success">必須</span></dt> -->
+          <!-- <dd class="col-xs-5"><input name="email" value="" type="text" id="email" /><span class="txt_ex">メールアドレスがIDとして登録されます。<br>例：sample@example.co.jp </span></dd> -->
+        <!-- </dl> -->
+        <!-- </li> -->
+
+        <!-- <li> -->
+        <!-- <dl class="row"> -->
+          <!-- <dt class="col-xs-5 text-right">メールアドレス再入力<span class="badge badge-success">必須</span></dt> -->
+          <!-- <dd class="col-xs-5"><input name="email-retype" value="" type="text" id="email-retype" /><span class="txt_ex">確認のためにもう一度入力して下さい。</span> -->
+          <!-- </dd> -->
+        <!-- </dl> -->
+        <!-- </li> -->
+
+        <!-- <li> -->
+        <!-- <dl class="row"> -->
+          <!-- <dt class="col-xs-5 text-right">パスワード<span class="badge badge-success">必須</span></dt> -->
+          <!-- <dd class="col-xs-5"><input name="password" value="" type="password" id="form-password" /><span class="txt_ex">半角英数字-_.の組み合わせ8～16文字で入力して下さい。</span> -->
+          <!-- </dd> -->
+        <!-- </dl> -->
+        <!-- </li> -->
+
+        <!-- <li> -->
+        <!-- <dl class="row"> -->
+          <!-- <dt class="col-xs-5 text-right">パスワード再入力<span class="badge badge-success">必須</span></dt> -->
+          <!-- <dd class="col-xs-5"><input name="password-retype" value="" type="password" id="form_password_cnf" /><span class="txt_ex">確認のためにもう一度入力して下さい。</span></dd> -->
+        <!-- </dl> -->
+        <!-- </li> -->
+
+        <!-- <li> -->
+        <!-- <dl class="row"> -->
+          <!-- <dt class="col-xs-5 text-right">ニックネーム</dt> -->
+          <!-- <dd class="col-xs-5"><input name="nickname" value="" type="text" id="nickname" /></dd> -->
+        <!-- </dl> -->
+        <!-- </li> -->
+
+        <!-- <li> -->
+        <!-- <dl class="row"> -->
+          <!-- <dt class="col-xs-5 text-right">利用規約</dt> -->
+          <!-- <dd class="col-md-5"><input name="termofuse" value="" type="checkbox" id="termofuse"/><span class="txt_ex">利用規約に同意する。規約の内容の確認は<a href="http://aucfan.com/siteinfo/service.html" target="_blank">こちら</a>(別ウインドウで開きます)</span></dd> -->
+        <!-- </dl> -->
+        <!-- </li> -->
+
+      <!-- </ul> -->
+    <!-- </div> -->
+
+    <!-- <div class="row"> -->
+      <!-- <div class="text-center"> -->
+        <!-- <input type="submit" value="内容の確認" class="btn btn-default"/> -->
+        <!-- <input type="submit" value="リセット"   class="btn btn-default"/> -->
+      <!-- </div> -->
+    <!-- </div> -->
+  <!-- </form> -->
+
+
+
+<!--    <div>
+          ユーザー名：<input type-"text" name="username" value="" />
+          </div>
+          <div>
+          パスワード：<input type-"password" name="password" value="" />
+          </div>
+          <div>
+          Ｅメール&nbsp;&nbsp;&nbsp;：<input type-"text" name="email" value="" />
+          </div> -->
