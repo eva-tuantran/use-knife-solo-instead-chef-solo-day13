@@ -10,7 +10,7 @@
 
 <?php echo Asset::css('bootstrap.min.css'); ?>
 <?php echo Asset::css('navbar-static-top.css'); ?>
-<?php echo Asset::css('dev.css'); ?>
+<?php echo Asset::css('custom-stg.css'); ?>
 <!-- Just for debugging purposes. Don't actually copy this line! -->
 <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
 
@@ -74,7 +74,6 @@
 <!-- </p> -->
 
 <!-- Bootstrap core JavaScript
-    ================================================== -->
 <!-- Placed at the end of the document so the pages load faster -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 <script src="../../dist/js/bootstrap.min.js"></script>
