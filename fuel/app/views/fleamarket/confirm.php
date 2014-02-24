@@ -1,7 +1,3 @@
-<?php echo Asset::css('jquery-ui.min.css')?>
-<?php echo Asset::js('jquery-1.10.2.js')?>
-<?php echo Asset::js('jquery-ui.min.js')?>
-<?php echo Asset::js('jquery.ui.datepicker-ja.js')?>
 <style type="text/css">
     .small {
         width: 50px;
@@ -23,28 +19,16 @@
         padding: 5px;
     }
 </style>
-<script type="text/javascript">
-$(function() {
-    $("#form_event_date").datepicker();
-});
-</script>
+<?php $form->open('fleamarket');?>
 <?php
-    echo $form->open('fleamarket/confirm');
-    echo Form::hidden(
-        Config::get('security.csrf_token_key'), Security::fetch_token()
-    );
+echo Form::hidden( Config::get('security.csrf_token_key'), Security::fetch_token() );
 ?>
-<div><?php
-foreach ($errors as $field => $error) {
-    echo $error->get_message();
-}
-?></div>
 <table>
     <tbody>
         <tr>
             <td><?php
                 echo $form->field('sponsor_name')
-                    ->set_template('{label}{required}');
+                    ->set_template('{label}');
             ?></td>
             <td><?php
                 echo $form->field('sponsor_name')
@@ -107,7 +91,7 @@ foreach ($errors as $field => $error) {
             <td><?php
                 echo $form->field('event_date')
                     ->set_template('{field}')
-                    ->set_attribute(array('class' => 'medium'));
+                    ->set_attribute(array('class' => 'small'));
                 echo $form->field('event_time_hour')
                     ->set_template('{label}');
                 echo $form->field('event_time_hour')
@@ -251,5 +235,4 @@ foreach ($errors as $field => $error) {
         </tr>
     </tbody>
 </table>
-<?php echo $form->field('confirm');?>
-<?php echo $form->close();?>
+<?php $form->close();?>
