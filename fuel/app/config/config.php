@@ -85,7 +85,7 @@ return array(
     /**
      * Internal string encoding charset
      */
-    'encoding'  => 'UTF-8',
+    'encoding'  => 'utf-8',
 
     /**
      * DateTime settings
@@ -95,6 +95,7 @@ return array(
      */
     'server_gmt_offset'  => 3600 * 9,
     'default_timezone'   => 'Asia/Tokyo',
+
 
     /**
      * Logging Threshold.  Can be set to any of the following:
@@ -115,7 +116,7 @@ return array(
      */
     'security' => array(
         // 'csrf_autoload'    => false,
-        // 'csrf_token_key'   => 'fuel_csrf_token',
+        'csrf_token_key'   => 'fuel_csrf_token',
         // 'csrf_expiration'  => 0,
 
         /**

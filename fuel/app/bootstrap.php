@@ -11,7 +11,7 @@ require COREPATH.'bootstrap.php';
 Autoloader::add_classes(array(
 	// Add classes you want to override here
 	// Example: 'View' => APPPATH.'classes/view.php',
-    'Fieldset_Field' => APPPATH.'classes/fieldset/field.php',
+    'Fieldset' => APPPATH.'classes/fieldset.php',
 ));
 
 // Register the autoloader
