@@ -17,7 +17,7 @@ class Controller_Fleamarket extends Controller_Template
 
     /**
      * beforeメソッド
-     * 
+     *
      * @access public
      * @return void
      * @author ida
@@ -38,8 +38,8 @@ class Controller_Fleamarket extends Controller_Template
     public function action_index()
     {
         $this->template->title = 'フリマ情報入力';
-        $view = View::forge('fleamarket/index');
-        $view->set_safe('form', $this->create_fieldset()->form());
+        $view = ViewModel::forge('fleamarket/index');
+        $view->set('form', $this->create_fieldset()->form(), false);
 
         $this->template->content = $view;
     }
@@ -92,8 +92,10 @@ class Controller_Fleamarket extends Controller_Template
         }
 
         $data = Session::get('fleamarket.data');
+        Session::delete('fleamarket.data');
         $fleamarkets = Fleamarkets::forge();
         $fleamarkets->set($data);
+
         if ($fleamarkets->save()) {
             Response::redirect('fleamarket/thanks');
         } else {
@@ -127,7 +129,7 @@ class Controller_Fleamarket extends Controller_Template
 
     /**
      * 新規登録のFieldsetオブジェクトを生成する
-     * 
+     *
      * @access private
      * @return object Fieldsetオブジェクト
      * @author ida

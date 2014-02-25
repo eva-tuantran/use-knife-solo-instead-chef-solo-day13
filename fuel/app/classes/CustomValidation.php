@@ -9,9 +9,9 @@ class CustomValidation
 {
     /**
      * 電話番号バリデーション
-     * 
+     *
      * @access public
-     * @param mixed $val 
+     * @param mixed $val
      * @return bool バリデーション結果
      * @author ida
      */
@@ -31,9 +31,9 @@ class CustomValidation
 
     /**
      * 電話番号バリデーション
-     * 
+     *
      * @access public
-     * @param mixed $val 
+     * @param mixed $val
      * @return bool バリデーション結果
      * @author ida
      */

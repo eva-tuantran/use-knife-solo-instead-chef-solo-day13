@@ -35,9 +35,11 @@ $(function() {
     );
 ?>
 <div><?php
-foreach ($errors as $field => $error) {
-    echo $error->get_message();
-}
+if (is_array($errors) && count($errors) > 0):
+    foreach ($errors as $field => $error) {
+        echo $error->get_message();
+    }
+endif;
 ?></div>
 <table>
     <tbody>
