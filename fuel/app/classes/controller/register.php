@@ -6,7 +6,6 @@ class Controller_Register extends Controller_Template
     public function before()
     {
         parent::before();
-
         // 初期処理
         // POSTチェック
         $post_methods = array(
@@ -15,7 +14,6 @@ class Controller_Register extends Controller_Template
         );
         $method = Uri::segment(2);
         if (Input::method() !== 'POST' && in_array($method, $post_methods)) {
-            Response::redirect('error/forbidden');
         }
 
         // // ログインチェック
@@ -38,60 +36,63 @@ class Controller_Register extends Controller_Template
         // }
 
         // CSRFチェック
-        // if (Input::method() === 'POST') {
-            // if (!Security::check_token()) {
-                // Response::redirect('register/timeout');
-            // }
-        // }
+    }
+
+    public function after($response)
+    {
+        $response = parent::after($response);
+
+        return $response;
     }
 
     public function action_index()
     {
-        $form = $this->form_register();
-
+        $fieldset = $this->create_fieldset();
         $this->template->title = '楽市楽座ID(無料)を登録する';
-        $this->template->content = View::forge('register/index');
-        $this->template->content->set_safe('html_form', $form->build('register/confirm'));
-        $this->template->content->set_safe('errmsg', "");
+        $this->template->content = ViewModel::forge('register/index');
+
+        //@TODO: buildを利用しているので、デザインが上がり次第修正
+        $this->template->content->set('html_form', $fieldset->build('register/confirm'), false);
+        $this->template->content->set('errmsg', "");
     }
 
     public function action_confirm()
     {
-        $form = $this->form_register();
-        $form->repopulate();
+        $fieldset = $this->create_fieldset();
+        $fieldset->repopulate();
 
         $this->template->title = '楽市楽座会員へ登録確認';
-        $validation = $form->validation();
+        $validation = $fieldset->validation();
         if($validation->run()){
-            $data['input'] = $validation->validated();
-            $this->template->content = View::forge('register/confirm', $data);
+            $this->template->content = ViewModel::forge('register/confirm');
+            $this->template->content->set('user_input', $validation->validated());
         } else {
-            $this->template->content = View::forge('register/index');
-            $this->template->content->set_safe('html_form', $form->build('register/confirm'));
-            $this->template->content->set_safe('errmsg',  $validation->show_errors());
+            $this->template->content = ViewModel::forge('register/index');
+            $this->template->content->set('html_form', $fieldset->build('register/confirm'), false);
+            $this->template->content->set('errmsg',  $validation->show_errors(), false);
         };
     }
 
     public function action_thanks()
     {
-        $form = $this->form_register();
-        $form->repopulate();
-        $form->validation()->run();
+        $fieldset = $this->create_fieldset();
+        $fieldset->repopulate();
+        $fieldset->validation()->run();
 
         $this->template->title = '楽市楽座へようこそ';
-        $this->template->content = View::forge('register/pre');
-        $this->template->content->set_safe('html_form', $form->build('/register/pre'));
-        $this->template->content->set_safe('errmsg', "");
+        $this->template->content = ViewModel::forge('register/pre');
+        $this->template->content->set('html_form', $fieldset->build('/register/pre'));
+        $this->template->content->set('errmsg', "");
     }
 
-    public function form_register()
+    public function create_fieldset()
     {
-        $form = \Fieldset::forge('register',
+        $fieldset = Fieldset::forge('register',
             array('form_attributes' => array('id' => '','class' => ''))
         );
 
 
-        $form->add('name-first', '名',
+        $fieldset->add('name-first', '名',
             array(
             ))
             ->add_rule('required')
@@ -99,7 +100,7 @@ class Controller_Register extends Controller_Template
             ->add_rule('max_length', 10)
             ->add_rule('valid_string', array('alpha', 'numeric', 'utf8'));
 
-        $form->add('name-last', '姓',
+        $fieldset->add('name-last', '姓',
             array(
                 'class' => 'pretty_input',
                 'rows'  => '5',
@@ -109,7 +110,7 @@ class Controller_Register extends Controller_Template
             ->add_rule('max_length', 10)
             ->add_rule('valid_string', array('alpha', 'numeric', 'utf8'));
 
-        $form->add('postal-code', '郵便番号',
+        $fieldset->add('postal-code', '郵便番号',
             array(
                 'class' => 'pretty_input',
                 'style' => 'ime-mode:disabled',
@@ -119,12 +120,12 @@ class Controller_Register extends Controller_Template
             ->add_rule('max_length', 10)
             ->add_rule('valid_string', array('alpha', 'numeric', 'utf8'));
 
-        $form->add('address', '住所',
+        $fieldset->add('address', '住所',
             array(
             ))
             ->add_rule('required');
 
-        $form->add('email', 'Eメール',
+        $fieldset->add('email', 'Eメール',
             array(
                 'type'  => 'email',
                 'style' => 'ime-mode:disabled',
@@ -133,7 +134,7 @@ class Controller_Register extends Controller_Template
             ->add_rule('required')
             ->add_rule('valid_email');
 
-        $form->add('username', 'ニックネーム',
+        $fieldset->add('username', 'ニックネーム',
             array(
             ))
             ->add_rule('required')
@@ -141,7 +142,7 @@ class Controller_Register extends Controller_Template
             ->add_rule('max_length', 15);
 
 
-        $form->add('password', 'パスワード',
+        $fieldset->add('password', 'パスワード',
             array(
                 'type'  => 'password',
                 'style' => 'ime-mode:disabled',
@@ -152,34 +153,14 @@ class Controller_Register extends Controller_Template
             ->add_rule('valid_string', array('alpha', 'numeric', 'utf8'));
 
 
-        $form->add('submit', '',
+        $fieldset->add('submit', '',
             array(
                 'type' => 'submit',
                 'value' => '確認'
             ));
 
-        return $form;
+        return $fieldset;
     }
-
-
-
-
-    // public function action_confirm()
-    // {
-        // if($this->validate_index()){
-            // $user = Model_User::forge(array(
-                // 'num' => $val->validated('num'),
-                // 'name' => $val->validated('name'),
-                // 'login_id' => $val->validated('login_id'),
-                // 'password' => $auth->hash_password($val->vaildated('password')),
-            // ));
-
-            // if($user->save()){
-                // Response::redirect('thanks');
-            // }
-        // }
-    // }
-
 
     public function action_created()
     {
@@ -192,7 +173,7 @@ class Controller_Register extends Controller_Template
                 $input = $validation->input();
                 if ($auth->create_user($input['username'], $input['password'], $input['email'])) {
                     $this->template->title = 'ユーザー登録完了';
-                    $this->template->content = View::forge('auth/created');
+                    $this->template->content = ViewModel::forge('auth/created');
                     return;
                 }
                 $result_validate = 'ユーザー作成に失敗しました。';
@@ -203,21 +184,21 @@ class Controller_Register extends Controller_Template
             $result_validate = $e->getMessage();
         }
         $this->template->title = 'ユーザー作成';
-        $this->template->content = View::forge('auth/create');
-        $this->template->content->set_safe('errmsg', $result_validate);
+        $this->template->content = ViewModel::forge('auth/create');
+        $this->template->content->set('errmsg', $result_validate);
     }
 
 
     public function action_404()
     {
         $this->template->title = 'ページが見つかりません。';
-        $this->template->content = View::forge('auth/404');
+        $this->template->content = ViewModel::forge('auth/404');
     }
 
     public function action_timeout()
     {
         $this->template->title = '有効期限が切れました。';
-        $this->template->content = View::forge('auth/timeout');
+        $this->template->content = ViewModel::forge('auth/timeout');
     }
 
     private function validate_login()
@@ -256,8 +237,8 @@ class Controller_Register extends Controller_Template
             }
         }
         $this->template->title = 'ログイン';
-        $this->template->content = View::forge('auth/login');
-        $this->template->content->set_safe('errmsg', $result_validate);
+        $this->template->content = ViewModel::forge('auth/login');
+        $this->template->content->set('errmsg', $result_validate);
     }
 
     public function action_logout()
@@ -265,7 +246,7 @@ class Controller_Register extends Controller_Template
         // ログアウト処理
         Auth::logout();
         $this->template->title = 'ログアウト';
-        $this->template->content = View::forge('auth/logout');
+        $this->template->content = ViewModel::forge('auth/logout');
     }
 }
 

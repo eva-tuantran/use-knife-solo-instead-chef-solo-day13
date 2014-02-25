@@ -17,7 +17,7 @@ class Controller_Error extends Controller_Template
     public function action_index()
     {
         $this->template->title = 'エラーが発生しました';
-        $this->template->content = View::forge('error/forbidden', 404);
+        $this->template->content = View::forge('error/forbidden', array(404));
     }
 
     public function action_forbidden()
