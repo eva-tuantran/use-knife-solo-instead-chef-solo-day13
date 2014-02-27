@@ -1,7 +1,9 @@
 <?php
 return array(
-	'_root_'  => 'welcome/index',  // The default route
-	'_404_'   => 'welcome/404',    // The main 404 route
-	
-	'hello(/:name)?' => array('welcome/hello', 'name' => 'hello'),
+    'register'   => 'register',
+    'fleamarket' => 'fleamarket',
+    'error'      => 'error',
+    '_404_'      => 'error/notfound',    // The main 404 route
+    '_root_'     => array('welcome/hello', 'name' => 'hello'),
 );
+

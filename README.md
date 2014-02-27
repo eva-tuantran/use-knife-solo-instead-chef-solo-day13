@@ -11,3 +11,7 @@ git@gitlab.aucfan.com:devs/rakuichi-rakuza.wiki.git
 git@gitlab.aucfan.com:devs/rakuichi-rakuza-api.git
 git@gitlab.aucfan.com:devs/rakuichi-rakuza-api.wiki.git
 ```
+
+
+### Memo
+hipchat対応しました (再度)
