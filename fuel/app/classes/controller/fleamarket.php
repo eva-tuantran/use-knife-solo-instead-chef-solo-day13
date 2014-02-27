@@ -1,4 +1,5 @@
 <?php
+use \Model\Fleamarkets;
 
 /**
  * Fleamarket Controller.
@@ -38,7 +39,7 @@ class Controller_Fleamarket extends Controller_Template
     public function action_index()
     {
         $session_fleamark = Session::get_flash('fleamarket');
-/*
+
 print '<hr>';
 var_dump($session_fleamark['back']);
 print '<hr>';
@@ -46,7 +47,6 @@ var_dump($session_fleamark['data']);
 print '<hr>';
 var_dump($session_fleamark['errors']);
 print '<hr>';
-*/
 
         Asset::css('jquery-ui.min.css', array(), 'add_css');
         Asset::js('jquery-1.10.2.js', array(), 'add_js');
@@ -58,7 +58,7 @@ print '<hr>';
         $view_model = ViewModel::forge('fleamarket/index');
         $view_model->set('config', $this->app);
         $view_model->set('form', $fieldset->form(), false);
-        $this->template->title = 'フリーマーケット情報入力';
+        $this->template->title = 'フリーマーケット情報登録';
 
         if ($session_fleamark['back'] === 'back') {
             $view_model->set('errors', $session_fleamark['errors']);
@@ -78,22 +78,23 @@ print '<hr>';
     public function action_confirm()
     {
         if (Input::method() != 'POST') {
-            $this->action_404();
+            throw new HttpNotFoundException;
         }
 
         $fieldset = $this->create_fieldset();
         $fieldset->repopulate();
 
         $validation = $fieldset->validation();
-        $validation->add_callable('CustomValidation');
+        $validation->add_callable('Custom_Validation');
 
         if ($validation->run()) {
             $data = $validation->validated();
 
-            $this->template->title = 'フリーマーケット情報確認';
+            $this->template->title = 'フリーマーケット情報登録';
             $view_model = ViewModel::forge('fleamarket/confirm');
             $view_model->set('form', $fieldset->form(), false);
-            $view_model->set('data', $data, false);
+            $view_model->set('data', $data);
+            Session::set_flash('fleamarket.data', $data);
 
             $this->template->content = $view_model;
         } else {
@@ -118,23 +119,15 @@ print '<hr>';
     public function action_register()
     {
         if (Input::method() != 'POST') {
-            $this->action_404();
-        }
-        if (! Security::check_token()) {
-            // エラー表示
-        } else {
-            // 正常なデータ登録
+            throw new HttpNotFoundException;
         }
 
-        $data = Session::get('fleamarket.data');
-        Session::delete('fleamarket.data');
-        $fleamarkets = Fleamarkets::forge();
-        $fleamarkets->set($data);
+        $data = Session::get_flash('fleamarket.data');
 
-        if ($fleamarkets->save()) {
+        if (Fleamarkets::insert($data)) {
             Response::redirect('fleamarket/thanks');
         } else {
-            $this->action_404();
+            Response::redirect('error/index');
         }
     }
 
@@ -147,28 +140,9 @@ print '<hr>';
      */
     public function action_thanks()
     {
-        $this->template->title = 'フリマ情報登録完了';
-        $this->template->content = View::forge('fleamarket/thanks');
-    }
-
-    /**
-     * The 404 action for the application.
-     *
-     * @access  public
-     * @return  Response
-     */
-    public function action_404()
-    {
-        return Response::forge(ViewModel::forge('welcome/404'), 404);
-    }
-
-    /**
-     *
-     * @param type $fieldset
-     * @param type $data
-     */
-    private function set_data($fieldset, $data) {
-
+        $view_model = ViewModel::forge('fleamarket/thanks');
+        $this->template->title = 'フリーマーケット情報登録';
+        $this->template->content = $view_model;
     }
 
     /**

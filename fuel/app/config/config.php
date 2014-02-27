@@ -79,7 +79,7 @@ return array(
 	 * Localization & internationalization settings
 	 */
 	'language'           => 'ja', // Default language
-	'language_fallback'  => 'ja', // Fallback language when file isn't available for default language
+	'language_fallback'  => 'en', // Fallback language when file isn't available for default language
 	'locale'             => 'ja_JP', // PHP set_locale() setting, null to not set
 
 	/**

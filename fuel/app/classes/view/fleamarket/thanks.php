@@ -1,11 +1,11 @@
 <?php
 
 /**
- * fleamarket confirm ViewModel
+ * fleamarket thanks ViewModel
  *
  * @author ida
  */
-class View_Fleamarket_Confirm extends ViewModel
+class View_Fleamarket_Thanks extends ViewModel
 {
     /**
      * view method
@@ -16,6 +16,6 @@ class View_Fleamarket_Confirm extends ViewModel
      */
     public function view()
     {
-        $this->title = 'フリーマーケット情報の確認';
+        $this->title = 'フリーマーケット情報の登録完了';
     }
 }

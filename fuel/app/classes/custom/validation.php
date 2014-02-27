@@ -1,11 +1,11 @@
 <?php
 
 /**
- * CustomValidation
+ * 独自バリデーション
  *
  * @author ida
  */
-class CustomValidation
+class Custom_Validation
 {
     /**
      * 数字チェック
