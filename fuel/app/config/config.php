@@ -13,7 +13,7 @@
 
 return array(
 
-	/**
+    /**
 	 * base_url - The base URL of the application.
 	 * MUST contain a trailing slash (/)
 	 *
@@ -78,9 +78,9 @@ return array(
 	/**
 	 * Localization & internationalization settings
 	 */
-	// 'language'           => 'en', // Default language
-	// 'language_fallback'  => 'en', // Fallback language when file isn't available for default language
-	// 'locale'             => 'en_US', // PHP set_locale() setting, null to not set
+	'language'           => 'ja', // Default language
+	'language_fallback'  => 'ja', // Fallback language when file isn't available for default language
+	'locale'             => 'ja_JP', // PHP set_locale() setting, null to not set
 
 	/**
 	 * Internal string encoding charset
@@ -309,5 +309,4 @@ return array(
 		 */
 		// 'language'  => array(),
 	// ),
-
 );

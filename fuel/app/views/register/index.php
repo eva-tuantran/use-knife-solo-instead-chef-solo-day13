@@ -1,0 +1,29 @@
+
+<div class="container">
+  <div class="row">
+    <ul class="col-xs-12 nav navbar-nav">
+      <li class="col-xs-3 text-center alert-info"><dl><dt>STEP1</dt><dd>登録内容の入力</dd></dl></li>
+      <li class="col-xs-3 text-center"><dl><dt>STEP2</dt><dd>内容確認</dd></dl></li>
+      <li class="col-xs-3 text-center"><dl><dt>STEP3</dt><dd>仮登録メール送信</dd></dl></li>
+      <li class="col-xs-3 text-center"><dl><dt>STEP4</dt><dd>登録完了</dd></dl></li>
+    </ul>
+  </div>
+</div>
+
+<div class="container">
+
+  <div class="row">
+    <div class="col-md-12">
+    <h2 class="text-center">楽市楽座ID(無料)を登録する<?php echo $aaa ?></h2>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-xs-12 alert-warning"><?php echo $errmsg ?></div>
+    <div class="col-xs-12"><?php echo $html_form ?></div>
+
+    <input type="hidden" name="<?php echo \Config::get('security.csrf_token_key');?>" value="<?php echo \Security::fetch_token();?>" />
+  </div>
+</div>
