@@ -1,11 +1,23 @@
 <?php
 
+
 class Controller_Register extends Controller_Template
 {
+
+    /**
+     * 共通定義を保持
+     * 
+     * @access private
+     * @author ida
+     */
+    private $app = null;
+
 
     public function before()
     {
         parent::before();
+        $this->app = Config::load('app');
+
         // 初期処理
         // POSTチェック
         $post_methods = array(
@@ -14,6 +26,7 @@ class Controller_Register extends Controller_Template
         );
         $method = Uri::segment(2);
         if (Input::method() !== 'POST' && in_array($method, $post_methods)) {
+            Response::redirect('error/forbidden');
         }
 
         // // ログインチェック
@@ -36,6 +49,11 @@ class Controller_Register extends Controller_Template
         // }
 
         // CSRFチェック
+        // if (Input::method() === 'POST') {
+            // if (!Security::check_token()) {
+                // Response::redirect('register/timeout');
+            // }
+        // }
     }
 
     public function after($response)
@@ -56,12 +74,13 @@ class Controller_Register extends Controller_Template
         $this->template->content->set('errmsg', "");
     }
 
+
     public function action_confirm()
     {
         $fieldset = $this->create_fieldset();
         $fieldset->repopulate();
 
-        $this->template->title = '楽市楽座会員へ登録確認';
+        $this->template->title = '楽市楽座ID(無料)を登録する';
         $validation = $fieldset->validation();
         if($validation->run()){
             $this->template->content = ViewModel::forge('register/confirm');
@@ -92,66 +111,60 @@ class Controller_Register extends Controller_Template
         );
 
 
-        $fieldset->add('name-first', '名',
-            array(
-            ))
-            ->add_rule('required')
-            ->add_rule('trim')
-            ->add_rule('max_length', 10)
-            ->add_rule('valid_string', array('alpha', 'numeric', 'utf8'));
+        $fieldset->add(
+            'first_name', '名',
+            array('type' => 'text'),
+            array(array('required'), array('max_length', 10))
+        );
 
-        $fieldset->add('name-last', '姓',
-            array(
-                'class' => 'pretty_input',
-                'rows'  => '5',
-            ))
-            ->add_rule('required')
-            ->add_rule('trim')
-            ->add_rule('max_length', 10)
-            ->add_rule('valid_string', array('alpha', 'numeric', 'utf8'));
+        $fieldset->add(
+            'last_name', '姓',
+            array('type' => 'text'),
+            array(array('required'), array('max_length', 10))
+        );
 
-        $fieldset->add('postal-code', '郵便番号',
-            array(
-                'class' => 'pretty_input',
-                'style' => 'ime-mode:disabled',
-            ))
-            ->add_rule('required')
-            ->add_rule('trim')
-            ->add_rule('max_length', 10)
-            ->add_rule('valid_string', array('alpha', 'numeric', 'utf8'));
+        $fieldset->add(
+            'first_name_kana', 'メイ',
+            array('type' => 'text'),
+            array(array('required'), array('max_length', 10))
+        );
 
-        $fieldset->add('address', '住所',
-            array(
-            ))
-            ->add_rule('required');
-
-        $fieldset->add('email', 'Eメール',
-            array(
-                'type'  => 'email',
-                'style' => 'ime-mode:disabled',
-                'class' => 'pretty_input'
-            ))
-            ->add_rule('required')
-            ->add_rule('valid_email');
-
-        $fieldset->add('username', 'ニックネーム',
-            array(
-            ))
-            ->add_rule('required')
-            ->add_rule('min_length', 4)
-            ->add_rule('max_length', 15);
+        $fieldset->add(
+            'last_name_kana', 'セイ',
+            array('type' => 'text'),
+            array(array('required'), array('max_length', 10))
+        );
 
 
-        $fieldset->add('password', 'パスワード',
-            array(
-                'type'  => 'password',
-                'style' => 'ime-mode:disabled',
-            ))
-            ->add_rule('required')
-            ->add_rule('min_length', 6)
-            ->add_rule('max_length', 20)
-            ->add_rule('valid_string', array('alpha', 'numeric', 'utf8'));
+        $fieldset->add(
+            'prefecture', '都道府県',
+            array('type' => 'select', 'options' => $this->app['prefectures']),
+            array(array('array_key_exists', $this->app['prefectures']))
+        );
+        $fieldset->add(
+            'address', '住所',
+            array('type' => 'text'),
+            array(array('required'), array('max_length', 50))
+        );
 
+        $fieldset->add(
+            'zip', '郵便番号',
+            array('type' => 'text', 'class' => 'pretty_input', 'style' => 'ime-mode:disabled'),
+            array(array('valid_string', array('alpha', 'numeric', 'utf8')))
+        );
+
+        $fieldset->add(
+            'email', 'Eメール',
+            array('type'  => 'email', 'style' => 'ime-mode:disabled', 'class' => 'pretty_input'),
+            array(array('required'), array('valid_email'))
+        );
+
+
+        $fieldset->add(
+            'password', 'パスワード',
+            array('type'  => 'password', 'style' => 'ime-mode:disabled',),
+            array(array('required'), array('min_length', 6), array('max_length', 20), array('valid_string', array('alpha', 'numeric', 'utf8')))
+        );
 
         $fieldset->add('submit', '',
             array(
@@ -161,6 +174,26 @@ class Controller_Register extends Controller_Template
 
         return $fieldset;
     }
+
+
+
+
+    // public function action_confirm()
+    // {
+        // if($this->validate_index()){
+            // $user = Model_User::forge(array(
+                // 'num' => $val->validated('num'),
+                // 'name' => $val->validated('name'),
+                // 'login_id' => $val->validated('login_id'),
+                // 'password' => $auth->hash_password($val->vaildated('password')),
+            // ));
+
+            // if($user->save()){
+                // Response::redirect('thanks');
+            // }
+        // }
+    // }
+
 
     public function action_created()
     {

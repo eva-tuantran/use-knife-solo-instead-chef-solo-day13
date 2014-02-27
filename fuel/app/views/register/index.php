@@ -14,16 +14,16 @@
 
   <div class="row">
     <div class="col-md-12">
-    <h2 class="text-center">楽市楽座ID(無料)を登録する<?php echo $aaa ?></h2>
+    <h2 class="text-center">楽市楽座ID(無料)を登録する</h2>
     </div>
   </div>
 </div>
 
 <div class="container">
   <div class="row">
-    <div class="col-xs-12 alert-warning"><?php echo $errmsg ?></div>
+      <div class="col-xs-12 alert-info"><?php echo $errmsg ?></div>
     <div class="col-xs-12"><?php echo $html_form ?></div>
 
-    <input type="hidden" name="<?php echo \Config::get('security.csrf_token_key');?>" value="<?php echo \Security::fetch_token();?>" />
+    <?php echo Form::hidden( Config::get('security.csrf_token_key'), Security::fetch_token() ); ?>
   </div>
 </div>
