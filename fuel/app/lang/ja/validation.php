@@ -6,4 +6,6 @@ return array(
     'max_length'   => ':label は :param:1 文字以下で入力して下さい。',
     'valid_email'  => ':label は有効なメールアドレスではありません。',
     'valid_string' => ':label に不正な文字が含まれています。',
+    'required_tel' => ':label は必須入力です。',
+    'valid_tel'    => ':label は正しくありません。',
 );

@@ -96,27 +96,12 @@ return array(
     'server_gmt_offset'  => 3600 * 9,
     'default_timezone'   => 'Asia/Tokyo',
 
-
-    /**
-     * Logging Threshold.  Can be set to any of the following:
-     *
-     * Fuel::L_NONE
-     * Fuel::L_ERROR
-     * Fuel::L_WARNING
-     * Fuel::L_DEBUG
-     * Fuel::L_INFO
-     * Fuel::L_ALL
-     */
-    // 'log_threshold'    => Fuel::L_WARNING,
-    // 'log_path'         => APPPATH.'logs/',
-    // 'log_date_format'  => 'Y-m-d H:i:s',
-
     /**
      * Security settings
      */
     'security' => array(
         // 'csrf_autoload'    => false,
-        'csrf_token_key'   => 'fuel_csrf_token',
+        'csrf_token_key'   => 'csrf_token',
         // 'csrf_expiration'  => 0,
 
         /**

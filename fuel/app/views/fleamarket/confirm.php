@@ -19,7 +19,13 @@
         padding: 5px;
     }
 </style>
-<?php $form->open('fleamarket');?>
+<?php
+    echo $form->open('fleamarket');
+    echo $form->open('fleamarket/confirm');
+    echo Form::hidden(
+        Config::get('security.csrf_token_key'), Security::fetch_token()
+    );
+?>
 <?php
 echo Form::hidden( Config::get('security.csrf_token_key'), Security::fetch_token() );
 ?>
@@ -235,4 +241,4 @@ echo Form::hidden( Config::get('security.csrf_token_key'), Security::fetch_token
         </tr>
     </tbody>
 </table>
-<?php $form->close();?>
+<?php echo $form->close();?>
