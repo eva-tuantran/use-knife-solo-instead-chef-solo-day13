@@ -43,6 +43,7 @@ class Custom_Validation
      */
     public static function _validation_required_tel($val)
     {
+        $result = false;
         $tel1 = Input::post('sponsor_tel1');
         $tel2 = Input::post('sponsor_tel2');
         $tel3 = Input::post('sponsor_tel3');
@@ -67,7 +68,7 @@ class Custom_Validation
         $tel = $tel1 . '-' . $tel2 . '-' . $tel3;
 
         mb_regex_encoding('UTF-8');
-        $pattern = '/^[0-9]{2,}\-[0-9]{2,}\-{0,1}[0-9]{2,}$/';
+        $pattern = '/^[0-9]{2,}\-[0-9]{2,}\-{0,1}[0-9]{4}$/';
         $result = preg_match($pattern , $tel);
 
         return $result === 1;

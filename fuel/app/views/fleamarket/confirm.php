@@ -1,60 +1,62 @@
-<?php
-    echo $form->open('fleamarket/register');
-    echo Form::hidden(
-        Config::get('security.csrf_token_key'), Security::fetch_token()
-    );
-?>
+<script type="text/javascript">
+$(function() {
+    $("#do_back").on("click", function(evt) {
+        evt.preventDefault();
+        $("#form_confirm").attr('action', 'fleamarket/back').submit();
+    });
+});
+</script>
 <table>
     <tbody>
         <tr>
             <td><?php
-                echo $form->field('sponsor_name')
+                echo $form->field('promoter_name')
                     ->set_template('{label}');
             ?></td>
             <td><?php
-                if (isset($data['sponsor_name'])):
-                    echo Security::htmlentities($data['sponsor_name']);
+                if (isset($data['promoter_name'])):
+                    echo Security::htmlentities($data['promoter_name']);
                 endif;
             ?></td>
         </tr>
         <tr>
             <td><?php
-                echo $form->field('sponsor_website')
+                echo $form->field('promoter_website')
                     ->set_template('{label}');
             ?></td>
             <td><?php
-                if (isset($data['sponsor_website'])):
-                    echo Security::htmlentities($data['sponsor_website']);
+                if (isset($data['promoter_website'])):
+                    echo Security::htmlentities($data['promoter_website']);
                 endif;
             ?></td>
         </tr>
         <tr>
             <td><?php
-                echo $form->field('sponsor_tel1')
+                echo $form->field('promoter_tel1')
                     ->set_template('{label}');
             ?></td>
             <td><?php
-                if (isset($data['sponsor_tel1'])):
-                    echo Security::htmlentities($data['sponsor_tel1']);
+                if (isset($data['promoter_tel1'])):
+                    echo Security::htmlentities($data['promoter_tel1']);
                 endif;
                 echo ' - ';
-                if (isset($data['sponsor_tel2'])):
-                    echo Security::htmlentities($data['sponsor_tel2']);
+                if (isset($data['promoter_tel2'])):
+                    echo Security::htmlentities($data['promoter_tel2']);
                 endif;
                 echo ' - ';
-                if (isset($data['sponsor_tel3'])):
-                    echo Security::htmlentities($data['sponsor_tel3']);
+                if (isset($data['promoter_tel3'])):
+                    echo Security::htmlentities($data['promoter_tel3']);
                 endif;
             ?></td>
         </tr>
         <tr>
             <td><?php
-                echo $form->field('sponsor_email')
+                echo $form->field('promoter_email')
                     ->set_template('{label}');
             ?></td>
             <td><?php
-                if (isset($data['sponsor_email'])):
-                    echo Security::htmlentities($data['sponsor_email']);
+                if (isset($data['promoter_email'])):
+                    echo Security::htmlentities($data['promoter_email']);
                 endif;
             ?></td>
         </tr>
@@ -191,4 +193,20 @@
         </tr>
     </tbody>
 </table>
-<?php echo $form->close();?>
+<?php
+    echo $form->open(
+        array('action' => 'fleamarket/register', 'method' => 'post', 'id' => 'form_confirm')
+    );
+    echo Form::hidden(
+        Config::get('security.csrf_token_key'), Security::fetch_token()
+    );
+?>
+<div class="action-section">
+<?php
+    echo Form::input('confirm', '入力に戻る', array('type' => 'button', 'id' => 'do_back'));
+    echo Form::input('confirm', '登録する', array('type' => 'submit', 'id' => 'do_register'));
+?>
+</div>
+<?php
+    echo $form->close();
+?>

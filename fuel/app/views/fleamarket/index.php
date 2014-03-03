@@ -1,81 +1,81 @@
 <script type="text/javascript">
 $(function() {
-    $("#form_event_date").datepicker();
+    $("#form_event_date").datepicker({
+        numberOfMonths: 3,
+        showButtonPanel: true
+    });
 });
 </script>
 <?php
     echo $form->open('fleamarket/confirm');
-    echo Form::hidden(
-        Config::get('security.csrf_token_key'), Security::fetch_token()
-    );
 ?>
 <h2><?php echo $title;?></h2>
 <table>
     <tbody>
         <tr>
             <td><?php
-                echo $form->field('sponsor_name')
+                echo $form->field('promoter_name')
                     ->set_template('{label}<span class="text-danger">{required}<span>');
             ?></td>
             <td><?php
-                echo $form->field('sponsor_name')
+                echo $form->field('promoter_name')
                     ->set_template('{field}')
                     ->set_attribute(array('class' => 'large'));
-                if (isset($errors['sponsor_name'])):
-                    echo '<div>' . $errors['sponsor_name'] . '</div>';
+                if (isset($errors['promoter_name'])):
+                    echo '<div>' . $errors['promoter_name'] . '</div>';
                 endif;
             ?></td>
         </tr>
         <tr>
             <td><?php
-                echo $form->field('sponsor_website')
+                echo $form->field('promoter_website')
                     ->set_template('{label}');
             ?></td>
             <td><?php
-                echo $form->field('sponsor_website')
+                echo $form->field('promoter_website')
                     ->set_template('{field}')
                     ->set_attribute(array('class' => 'large'));
-                if (isset($errors['sponsor_website'])):
-                    echo '<div>' . $errors['sponsor_website'] . '</div>';
+                if (isset($errors['promoter_website'])):
+                    echo '<div>' . $errors['promoter_website'] . '</div>';
                 endif;
             ?></td>
         </tr>
         <tr>
             <td><?php
-                echo $form->field('sponsor_tel1')
+                echo $form->field('promoter_tel1')
                     ->set_template('{label}');
             ?></td>
             <td><?php
-                echo $form->field('sponsor_tel1')
+                echo $form->field('promoter_tel1')
                     ->set_template('{field}')
                     ->set_attribute('class', 'xx-small')
                     ->set_attribute('maxlength', 4);
                 echo ' - ';
-                echo $form->field('sponsor_tel2')
+                echo $form->field('promoter_tel2')
                     ->set_template('{field}')
                     ->set_attribute('class', 'xx-small')
                     ->set_attribute('maxlength', 4);
                 echo ' - ';
-                echo $form->field('sponsor_tel3')
+                echo $form->field('promoter_tel3')
                     ->set_template('{field}')
                     ->set_attribute('class', 'xx-small')
                     ->set_attribute('maxlength', 4);
-                if (isset($errors['sponsor_tel1'])):
-                    echo '<div>' . $errors['sponsor_tel1'] . '</div>';
+                if (isset($errors['promoter_tel1'])):
+                    echo '<div>' . $errors['promoter_tel1'] . '</div>';
                 endif;
             ?></td>
         </tr>
         <tr>
             <td><?php
-                echo $form->field('sponsor_email')
+                echo $form->field('promoter_email')
                     ->set_template('{label}');
             ?></td>
             <td><?php
-                echo $form->field('sponsor_email')
+                echo $form->field('promoter_email')
                     ->set_template('{field}')
                     ->set_attribute(array('class' => 'x-large'));
-                if (isset($errors['sponsor_email'])):
-                    echo '<div>' . $errors['sponsor_email'] . '</div>';
+                if (isset($errors['promoter_email'])):
+                    echo '<div>' . $errors['promoter_email'] . '</div>';
                 endif;
             ?></td>
         </tr>
@@ -263,7 +263,11 @@ $(function() {
         </tr>
     </tbody>
 </table>
+<div class="action-section">
 <?php
-    echo Form::input('confirm', '確認', array('type' => 'submit', 'id' => 'do_confoirm'));
+    echo Form::input('confirm', '登録内容の確認', array('type' => 'submit', 'id' => 'do_confoirm'));
+?>
+</div>
+<?php
     echo $form->close();
 ?>

@@ -40,6 +40,7 @@ class Controller_Fleamarket extends Controller_Template
     {
         $session_fleamark = Session::get_flash('fleamarket');
 
+/*
 print '<hr>';
 var_dump($session_fleamark['back']);
 print '<hr>';
@@ -47,9 +48,10 @@ var_dump($session_fleamark['data']);
 print '<hr>';
 var_dump($session_fleamark['errors']);
 print '<hr>';
+*/
 
         Asset::css('jquery-ui.min.css', array(), 'add_css');
-        Asset::js('jquery-1.10.2.js', array(), 'add_js');
+        Asset::js('jquery.js', array(), 'add_js');
         Asset::js('jquery-ui.min.js', array(), 'add_js');
         Asset::js('jquery.ui.datepicker-ja.js', array(), 'add_js');
 
@@ -60,12 +62,30 @@ print '<hr>';
         $view_model->set('form', $fieldset->form(), false);
         $this->template->title = 'フリーマーケット情報登録';
 
-        if ($session_fleamark['back'] === 'back') {
+        if (isset($session_fleamark['back'])
+            && $session_fleamark['back'] === 'back'
+        ) {
             $view_model->set('errors', $session_fleamark['errors']);
             $fieldset->populate($session_fleamark['data']);
         }
 
         $this->template->content = $view_model;
+    }
+
+    /**
+     * 確認からの戻り処理
+     *
+     * @access public
+     * @return void
+     * @author ida
+     */
+    public function action_back()
+    {
+        if (Input::method() != 'POST') {
+            throw new HttpNotFoundException;
+        }
+
+        $session_fleamark = Session::get_flash('fleamarket');
     }
 
     /**
@@ -80,6 +100,8 @@ print '<hr>';
         if (Input::method() != 'POST') {
             throw new HttpNotFoundException;
         }
+
+        Asset::js('jquery.js', array(), 'add_js');
 
         $fieldset = $this->create_fieldset();
         $fieldset->repopulate();
@@ -104,8 +126,6 @@ print '<hr>';
                 'back' => 'back'
             ));
             Response::redirect('fleamarket/index');
-            // $this->action_index();
-            //return  Request::forge('fleamarket/index')->execute()->response();
         }
     }
 
@@ -123,7 +143,8 @@ print '<hr>';
         }
 
         $data = Session::get_flash('fleamarket.data');
-
+var_dump($data);
+exit;
         if (Fleamarkets::insert($data)) {
             Response::redirect('fleamarket/thanks');
         } else {
@@ -161,20 +182,20 @@ print '<hr>';
             $fieldset = Fieldset::forge('fleamarket');
         }
 
-        $fieldset->add('sponsor_name', '主催者')
+        $fieldset->add('promoter_name', '主催者')
             ->add_rule('required')
             ->add_rule('max_length', 50);
 
-        $fieldset->add('sponsor_website', '主催者ホームページ')
+        $fieldset->add('promoter_website', '主催者ホームページ')
             ->add_rule('max_length', 250);
 
-        $fieldset->add('sponsor_tel1', '予約受付電話番号')
+        $fieldset->add('promoter_tel1', '予約受付電話番号')
             ->add_rule('required_tel')
             ->add_rule('valid_tel');
-        $fieldset->add('sponsor_tel2', '予約受付電話番号');
-        $fieldset->add('sponsor_tel3', '予約受付電話番号');
+        $fieldset->add('promoter_tel2', '予約受付電話番号');
+        $fieldset->add('promoter_tel3', '予約受付電話番号');
 
-        $fieldset->add('sponsor_email', '予約受付メールアドレス')
+        $fieldset->add('promoter_email', '予約受付メールアドレス')
             ->add_rule('valid_email')
             ->add_rule('max_length', 250);
 
