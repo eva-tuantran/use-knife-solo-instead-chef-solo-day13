@@ -5,6 +5,7 @@ textarea.description {width: 350px; height: 100px;}
 textarea.about {width: 350px; height: 100px;}
 table td {word-break:break-all; word-wrap: break-word;}
 
+.action-section{margin: 10px 0;}
 .dl-horizontal dt {white-space: normal; width: 300px;}
 .mainbody {background-color: #eeeeee;}
 .register_form {margin-right: 8px; vertical-align: middle;}

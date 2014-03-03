@@ -2,12 +2,23 @@
 $(function() {
     $("#do_back").on("click", function(evt) {
         evt.preventDefault();
-        $("#form_confirm").attr('action', 'fleamarket/back').submit();
+        $("#form_confirm").attr('action', '/fleamarket/back').submit();
     });
 });
 </script>
 <table>
     <tbody>
+        <tr>
+            <td><?php
+                echo $form->field('name')
+                    ->set_template('{label}');
+            ?></td>
+            <td><?php
+                if (isset($data['name'])):
+                    echo Security::htmlentities($data['name']);
+                endif;
+            ?></td>
+        </tr>
         <tr>
             <td><?php
                 echo $form->field('promoter_name')
@@ -21,42 +32,48 @@ $(function() {
         </tr>
         <tr>
             <td><?php
-                echo $form->field('promoter_website')
+                echo $form->field('website')
                     ->set_template('{label}');
             ?></td>
             <td><?php
-                if (isset($data['promoter_website'])):
-                    echo Security::htmlentities($data['promoter_website']);
+                if (isset($data['website'])):
+                    echo Security::htmlentities($data['website']);
                 endif;
             ?></td>
         </tr>
         <tr>
             <td><?php
-                echo $form->field('promoter_tel1')
+                echo $form->field('reservation_tel1')
                     ->set_template('{label}');
             ?></td>
             <td><?php
-                if (isset($data['promoter_tel1'])):
-                    echo Security::htmlentities($data['promoter_tel1']);
+                if (isset($data['reservation_tel1'])
+                    && $data['reservation_tel1'] != ''
+                ):
+                    $tel1 = Security::htmlentities($data['reservation_tel1']);
+                    echo $tel1 . '-';
                 endif;
-                echo ' - ';
-                if (isset($data['promoter_tel2'])):
-                    echo Security::htmlentities($data['promoter_tel2']);
+                if (isset($data['reservation_tel2'])
+                    && $data['reservation_tel2'] != ''
+                ):
+                    $tel2 = Security::htmlentities($data['reservation_tel2']);
+                    echo $tel2 . '-';
                 endif;
-                echo ' - ';
-                if (isset($data['promoter_tel3'])):
-                    echo Security::htmlentities($data['promoter_tel3']);
+                if (isset($data['reservation_tel3'])
+                    && $data['reservation_tel3'] != ''
+                ):
+                    echo Security::htmlentities($data['reservation_tel3']);
                 endif;
             ?></td>
         </tr>
         <tr>
             <td><?php
-                echo $form->field('promoter_email')
+                echo $form->field('reservation_email')
                     ->set_template('{label}');
             ?></td>
             <td><?php
-                if (isset($data['promoter_email'])):
-                    echo Security::htmlentities($data['promoter_email']);
+                if (isset($data['reservation_email'])):
+                    echo Security::htmlentities($data['reservation_email']);
                 endif;
             ?></td>
         </tr>
@@ -66,42 +83,56 @@ $(function() {
                     ->set_template('{label}');
             ?></td>
             <td><?php
-                if (isset($data['event_date'])):
-                    echo Security::htmlentities($data['event_date']);
+                if (isset($data['event_date'])
+                    && $data['event_date'] != ''
+                ):
+                    $event_date =  Security::htmlentities($data['event_date']);
+                    echo $event_date . '&nbsp;';
                 endif;
-                if (isset($data['event_time_hour'])):
-                    echo Security::htmlentities($data['event_time_hour']);
+                if (isset($data['event_hour'])
+                    && $data['event_hour'] != ''
+                ):
+                    $event_hour = Security::htmlentities($data['event_hour']);
+                    echo $event_hour . ':';
                 endif;
-                echo ':';
-                if (isset($data['event_time_minute'])):
-                    echo Security::htmlentities($data['event_time_minute']);
+                if (isset($data['event_minute'])
+                    && $data['event_minute'] != ''
+                ):
+                    echo Security::htmlentities($data['event_minute']);
                 endif;
             ?></td>
         </tr>
         <tr>
             <td><?php
-                echo $form->field('fleamarket_name')
+                echo $form->field('location_name')
                     ->set_template('{label}');
             ?></td>
             <td><?php
-                if (isset($data['fleamarket_name'])):
-                    echo Security::htmlentities($data['fleamarket_name']);
+                if (isset($data['location_name'])):
+                    echo Security::htmlentities($data['location_name']);
                 endif;
             ?></td>
         </tr>
         <tr>
-            <td>開催住所</td>
             <td><?php
-                if (isset($data['zip'])):
-                    echo Security::htmlentities($data['zip']);
-                endif;
-                if (isset($data['prefecture'])):
-                    echo Security::htmlentities($data['prefecture']);
-                endif;
-                if (isset($data['address'])):
-                    echo Security::htmlentities($data['address']);
-                endif;
+                echo $form->label('開催住所');
             ?></td>
+            <td>
+                <div><?php
+                    if (isset($data['zip'])):
+                        echo '〒' . Security::htmlentities($data['zip']);
+                    endif;
+                ?></div>
+                <?php
+                    if (isset($data['prefecture'])):
+                        $prefecture = $app_config['prefectures'][$data['prefecture']];
+                        echo Security::htmlentities($prefecture);
+                    endif;
+                    if (isset($data['address'])):
+                        echo Security::htmlentities($data['address']);
+                    endif;
+                ?>
+            </td>
         </tr>
         <tr>
             <td><?php
@@ -114,83 +145,23 @@ $(function() {
                 endif;
             ?></td>
         </tr>
+        <?php
+            foreach ($event_abouts as $event_about):
+        ?>
         <tr>
             <td><?php
-                echo $form->field('about_access')
+                echo $form->field($event_about['name'])
                     ->set_template('{label}');
             ?></td>
             <td><?php
-                if (isset($data['about_access'])):
-                    echo Security::htmlentities($data['about_access']);
+                if (isset($data[$event_about['name']])):
+                    echo Security::htmlentities($data[$event_about['name']]);
                 endif;
             ?></td>
         </tr>
-        <tr>
-            <td><?php
-                echo $form->field('about_event_time')
-                    ->set_template('{label}');
-            ?></td>
-            <td><?php
-                if (isset($data['about_event_time'])):
-                    echo Security::htmlentities($data['about_event_time']);
-                endif;
-            ?></td>
-        </tr>
-        <tr>
-            <td><?php
-                echo $form->field('about_booth')
-                    ->set_template('{label}');
-            ?></td>
-            <td><?php
-                if (isset($data['about_booth'])):
-                    echo Security::htmlentities($data['about_booth']);
-                endif;
-            ?></td>
-        </tr>
-        <tr>
-            <td><?php
-                echo $form->field('about_shop_cautions')
-                    ->set_template('{label}');
-            ?></td>
-            <td><?php
-                if (isset($data['about_shop_cautions'])):
-                    echo Security::htmlentities($data['about_shop_cautions']);
-                endif;
-            ?></td>
-        </tr>
-        <tr>
-            <td><?php
-                echo $form->field('about_shop_style')
-                    ->set_template('{label}');
-            ?></td>
-            <td><?php
-                if (isset($data['about_shop_style'])):
-                    echo Security::htmlentities($data['about_shop_style']);
-                endif;
-            ?></td>
-        </tr>
-        <tr>
-            <td><?php
-                echo $form->field('about_shop_fee')
-                    ->set_template('{label}');
-            ?></td>
-            <td><?php
-                if (isset($data['about_shop_fee'])):
-                    echo Security::htmlentities($data['about_shop_fee']);
-                endif;
-            ?></td>
-        </tr>
-        <tr>
-            <td><?php
-                echo $form->field('about_parking')
-                    ->set_template('{label}');
-            ?></td>
-            <td><?php
-                if (isset($data['about_parking'])):
-                    echo Security::htmlentities($data['about_parking']);
-                endif;
-            ?></td>
-        </tr>
+        <?php
+            endforeach;
+        ?>
     </tbody>
 </table>
 <?php

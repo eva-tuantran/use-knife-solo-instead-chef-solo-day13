@@ -65,12 +65,17 @@ class Custom_Validation
         $tel1 = Input::post('sponsor_tel1');
         $tel2 = Input::post('sponsor_tel2');
         $tel3 = Input::post('sponsor_tel3');
-        $tel = $tel1 . '-' . $tel2 . '-' . $tel3;
 
-        mb_regex_encoding('UTF-8');
-        $pattern = '/^[0-9]{2,}\-[0-9]{2,}\-{0,1}[0-9]{4}$/';
-        $result = preg_match($pattern , $tel);
+        $result = true;
+        if ($tel1 != '' && $tel2 != '' && $tel3 != '') {
+            mb_regex_encoding('UTF-8');
 
-        return $result === 1;
+            $tel = $tel1 . '-' . $tel2 . '-' . $tel3;
+            $pattern = '/^[0-9]{2,}\-[0-9]{2,}\-{0,1}[0-9]{4}$/';
+            $mach = preg_match($pattern , $tel);
+            $result = $mach === 1;
+        }
+
+        return $result;
     }
 }

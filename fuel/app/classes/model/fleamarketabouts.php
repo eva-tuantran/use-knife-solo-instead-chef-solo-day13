@@ -4,65 +4,20 @@ namespace Model;
 use \DB;
 
 /**
- * Fleamarkets Model
+ * FleamarketAbouts Model
  *
- * フリーマーケット情報
+ * フリーマーケットの「～ついて」情報
  *
  * @author ida
  */
-class Fleamarkets extends \Model
+class FleamarketAbouts extends \Model
 {
-    /**
-     * 開催状況ステータス
-     */
-    const EVENT_SCHEDULE = 1;
-    const EVENT_RESERVATION_RECEIPT = 2;
-    const EVENT_RECEIPT_END = 3;
-    const EVENT_CLOSE = 4;
-    const EVENT_CANCEL = 5;
-
-    /**
-     * 予約可否フラグ
-     */
-    const RESERVATION_FLAG_NG = 0;
-    const RESERVATION_FLAG_OK = 0;
-
-    /**
-     * 車出店可否フラグ
-     */
-    const CAR_SHOP_FLAG_NG = 0;
-    const CAR_SHOP_FLAG_OK = 0;
-
-    /**
-     * 車出店可否フラグ
-     */
-    const PARKING_FLAG_NG = 0;
-    const PARKING_FLAG_OK = 0;
-
-    /**
-     * 出店料フラグ
-     */
-    const SHOP_FEE_FLAG_FREE = 0;
-    const PARKING_FLAG_CHARGE = 1;
-
-    /**
-     * 表示フラグ
-     */
-    const DISPLAY_FLAG_OFF = 0;
-    const DISPLAY_FLAG_ON = 1;
-
-    /**
-     * 登録タイプ
-     */
-    const REGISTER_TYPE_ADMIN = 1;
-    const REGISTER_TYPE_USER = 2;
-
     /**
      * テーブル名
      *
      * @var string $table_name
      */
-    protected static $table_name = 'fleamarkets';
+    protected static $table_name = 'fleamarket_abouts';
 
     /**
      * 指定されたIDでフリーマーケット情報を取得する
@@ -72,13 +27,13 @@ class Fleamarkets extends \Model
      * @return array フリーマーケット情報
      * @author ida
      */
-    public static function find($fleamarket_id = null)
+    public static function find($fleamarket_about_id = null)
     {
-        if (! $fleamarket_id) {
+        if (! $fleamarket_about_id) {
             return null;
         }
 
-        $placeholders = array('flearmarket_id' => $fleamarket_id);
+        $placeholders = array('fleamarket_about_id' => $fleamarket_about_id);
         $table_name = self::$table_name;
         $query = <<<"QUERY"
 SELECT * FROM {$table_name} WHERE fleamarket_id = :flearmarket_id
@@ -95,7 +50,7 @@ QUERY;
     }
 
     /**
-     * フリーマーケット情報を登録する
+     * フリーマーケット詳細情報を登録する
      *
      * @access public
      * @param array $data 登録するデータ配列
@@ -133,6 +88,28 @@ QUERY;
             $rows['affected_rows'] = $result[1];
         }
         return $rows;
+    }
+
+    /**
+     * フリーマーケット情報を登録する
+     *
+     * @access public
+     * @param array $data_list 更新するデータ配列
+     * @return array 登録結果
+     * @author ida
+     */
+    public static function insertMany($data_list)
+    {
+        if (! $data_list) {
+            return false;
+        }
+
+        $results = array();
+        foreach ($data_list as $data) {
+            $results[] = self::insert($data);
+        }
+
+        return $results;
     }
 
     /**

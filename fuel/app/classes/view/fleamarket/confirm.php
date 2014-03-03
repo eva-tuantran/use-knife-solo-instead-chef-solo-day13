@@ -17,5 +17,6 @@ class View_Fleamarket_Confirm extends ViewModel
     public function view()
     {
         $this->title = 'フリーマーケット情報の確認';
+        $this->event_abouts = $this->app_config['event_abouts'];
     }
 }
