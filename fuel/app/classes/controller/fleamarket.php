@@ -43,22 +43,6 @@ class Controller_Fleamarket extends Controller_Template
     {
         $session_fleamark = Session::get_flash('fleamarket');
 
-/*
-print '<hr>';
-if (isset($session_fleamark['back'])) {
-var_dump($session_fleamark['back']);
-}
-print '<hr>';
-if (isset($session_fleamark['data'])) {
-var_dump($session_fleamark['data']);
-}
-print '<hr>';
-*/
-if (isset($session_fleamark['errors'])) {
-var_dump($session_fleamark['errors']);
-}
-print '<hr>';
-
         Asset::css('jquery-ui.min.css', array(), 'add_css');
         Asset::js('jquery.js', array(), 'add_js');
         Asset::js('jquery-ui.min.js', array(), 'add_js');
