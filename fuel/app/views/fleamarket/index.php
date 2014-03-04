@@ -1,8 +1,9 @@
 <script type="text/javascript">
 $(function() {
-    $("#form_event_date").datepicker({
+    $("#form_event_datetime").datetimepicker({
         numberOfMonths: 3,
-        showButtonPanel: true
+        showButtonPanel: true,
+        stepMinute: 5
     });
 });
 </script>
@@ -74,8 +75,8 @@ $(function() {
                     ->set_template('{field}')
                     ->set_attribute('class', 'xx-small')
                     ->set_attribute('maxlength', 4);
-                if (isset($errors['promoter_tel1'])):
-                    echo '<div>' . $errors['reservation_tel1'] . '</div>';
+                if (isset($errors['reservation_tel'])):
+                    echo '<div>' . $errors['reservation_tel'] . '</div>';
                 endif;
             ?></td>
         </tr>
@@ -95,25 +96,15 @@ $(function() {
         </tr>
         <tr>
             <td><?php
-                echo $form->field('event_date')
+                echo $form->field('event_datetime')
                     ->set_template('{label}<span class="text-danger">{required}<span>');
             ?></td>
             <td><?php
-                echo $form->field('event_date')
+                echo $form->field('event_datetime')
                     ->set_template('{field}')
-                    ->set_attribute(array('class' => 'x-small'));
-                echo $form->field('event_hour')
-                    ->set_template('{field}時')
-                    ->set_attribute('tag', 'select')
-                    ->set_attribute('class', 'xx-small')
-                    ->set_options($event_hours);
-                echo $form->field('event_minute')
-                    ->set_template('{field}分')
-                    ->set_attribute('tag', 'select')
-                    ->set_attribute('class', 'xx-small')
-                    ->set_options($event_minutes);
-                if (isset($errors['event_date'])):
-                    echo '<div>' . $errors['event_date'] . '</div>';
+                    ->set_attribute(array('class' => 'small'));
+                if (isset($errors['event_datetime'])):
+                    echo '<div>' . $errors['event_datetime'] . '</div>';
                 endif;
            ?></td>
         </tr>

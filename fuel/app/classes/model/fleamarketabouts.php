@@ -17,7 +17,7 @@ class FleamarketAbouts extends \Model
      *
      * @var string $table_name
      */
-    protected static $table_name = 'fleamarket_abouts';
+    protected static $_table_name = 'fleamarket_abouts';
 
     /**
      * 指定されたIDでフリーマーケット説明情報を取得する
@@ -34,7 +34,7 @@ class FleamarketAbouts extends \Model
         }
 
         $placeholders = array('fleamarket_about_id' => $fleamarket_about_id);
-        $table_name = self::$table_name;
+        $table_name = self::$_table_name;
         $query = <<<"QUERY"
 SELECT * FROM {$table_name} WHERE fleamarket_id = :flearmarket_id
 QUERY;
@@ -75,7 +75,7 @@ QUERY;
 
         $fields = implode(',', $field_list);
         $values = implode(',', $value_list);
-        $table_name = self::$table_name;
+        $table_name = self::$_table_name;
         $query = <<<"QUERY"
 INSERT INTO {$table_name}({$fields}) VALUES ({$values})
 QUERY;
@@ -135,7 +135,7 @@ QUERY;
         }
 
         $fields = implode(',', $field_list);
-        $table_name = self::$table_name;
+        $table_name = self::$_table_name;
         $query = <<<"QUERY"
 UPDATE FROM {$table_name} SET {$fields} WHERE fleamarket_id = :fleamarket_id
 QUERY;

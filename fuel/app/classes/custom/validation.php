@@ -8,27 +8,27 @@
 class Custom_Validation
 {
     /**
-     * 数字チェック
+     * 半角数値チェック
      *
      * @access public
      * @param mixed $val 検証する値
      * @return bool
      * @author ida
      */
-    public function _validation_valid_numeric($val)
+    public static function _validation_valid_numeric($val)
     {
         return (preg_match('/^[0-9]+$/', $val) > 0);
     }
 
     /**
-     *  アルファベットチェック
+     *  半角英字チェック
      *
      * @access public
      * @param mixed $val 検証する値
      * @return bool
      * @author ida
      */
-    public function _valition_valid_alpha($val)
+    public static function _validation_valid_alpha($val)
     {
         return (preg_match('/^[a-zA-Z]+$/', $val) > 0);
     }
@@ -41,41 +41,41 @@ class Custom_Validation
      * @return bool バリデーション結果
      * @author ida
      */
-    public static function _validation_required_tel($val)
+    public static function _validation_valid_tel($val)
     {
         $result = false;
-        $tel1 = Input::post('sponsor_tel1');
-        $tel2 = Input::post('sponsor_tel2');
-        $tel3 = Input::post('sponsor_tel3');
-        $tel = (string) $tel1 . $tel2 . $tel3;
+        if ($val !== '') {
+            mb_regex_encoding('UTF-8');
 
-        return $tel !== '';
+            $pattern = '/^0[0-9]{1,3}\-[0-9]{2,4}\-{0,1}[0-9]{4}$/';
+            $mach = preg_match($pattern , $val);
+            $result = $mach === 1;
+        }
+
+        return $result;
     }
 
     /**
-     * 電話番号バリデーション
+     * 日時バリデーション
+     *
+     * 「yyyy/mm/dd H:i」形式
      *
      * @access public
      * @param mixed $val
      * @return bool バリデーション結果
      * @author ida
      */
-    public static function _validation_valid_tel($val)
+    public static function _validation_valid_datetime($val)
     {
-        $tel1 = Input::post('sponsor_tel1');
-        $tel2 = Input::post('sponsor_tel2');
-        $tel3 = Input::post('sponsor_tel3');
+        mb_regex_encoding('UTF-8');
+        $pattern = '/^(2[0-9]{3})\/'
+                 . '(0[1-9]{1}|1[0-2]{1})\/'
+                 . '(0[1-9]{1}|[1-2]{1}[0-9]{1}|3[0-1]{1})\s'
+                 . '(0[0-9]{1}|1{1}[0-9]{1}|2{1}[0-3]{1}):'
+                 . '(0[0-9]{1}|[1-5]{1}[0-9]{1})$/';
 
-        $result = true;
-        if ($tel1 != '' && $tel2 != '' && $tel3 != '') {
-            mb_regex_encoding('UTF-8');
+        $mach = preg_match($pattern , $val);
 
-            $tel = $tel1 . '-' . $tel2 . '-' . $tel3;
-            $pattern = '/^[0-9]{2,}\-[0-9]{2,}\-{0,1}[0-9]{4}$/';
-            $mach = preg_match($pattern , $tel);
-            $result = $mach === 1;
-        }
-
-        return $result;
+        return $mach === 1;
     }
 }

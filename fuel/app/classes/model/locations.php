@@ -23,7 +23,7 @@ class Locations extends \Model
      *
      * @var string $table_name
      */
-    protected static $table_name = 'locations';
+    protected static $_table_name = 'locations';
 
     /**
      * 指定されたIDで開催地情報を取得する
@@ -40,7 +40,7 @@ class Locations extends \Model
         }
 
         $placeholders = array('location_id' => $location_id);
-        $table_name = self::$table_name;
+        $table_name = self::$_table_name;
         $query = <<<"QUERY"
 SELECT * FROM {$table_name} WHERE location_id = :location_id
 QUERY;
@@ -81,7 +81,7 @@ QUERY;
 
         $fields = implode(',', $field_list);
         $values = implode(',', $value_list);
-        $table_name = self::$table_name;
+        $table_name = self::$_table_name;
         $query = <<<"QUERY"
 INSERT INTO {$table_name}({$fields}) VALUES ({$values})
 QUERY;
@@ -121,7 +121,7 @@ QUERY;
         }
 
         $fields = implode(',', $field_list);
-        $table_name = self::$table_name;
+        $table_name = self::$_table_name;
         $query = <<<"QUERY"
 UPDATE FROM {$table_name} SET {$fields} WHERE location_id = :location_id
 QUERY;

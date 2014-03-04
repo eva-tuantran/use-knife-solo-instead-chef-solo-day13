@@ -79,27 +79,14 @@ $(function() {
         </tr>
         <tr>
             <td><?php
-                echo $form->field('event_date')
+                echo $form->field('event_datetime')
                     ->set_template('{label}');
             ?></td>
             <td><?php
-                if (isset($data['event_date'])
-                    && $data['event_date'] != ''
+                if (isset($data['event_datetime'])
+                    && $data['event_datetime'] != ''
                 ):
-                    $event_date =  e($data['event_date']);
-                    echo $event_date . '&nbsp;';
-                endif;
-                if (isset($data['event_hour'])
-                    && $data['event_hour'] != ''
-                ):
-                    $event_hour = e($data['event_hour']);
-                    echo $event_hour . '時';
-                endif;
-                if (isset($data['event_minute'])
-                    && $data['event_minute'] != ''
-                ):
-                    $event_minute = e($data['event_minute']);
-                    echo $event_minute . '分';
+                    echo e($data['event_datetime']);
                 endif;
             ?></td>
         </tr>
