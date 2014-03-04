@@ -17,7 +17,7 @@ class Controller_Fleamarket extends Controller_Template
      * @access private
      * @author ida
      */
-    private $app = null;
+    private $app_config = null;
 
     /**
      * beforeメソッド
