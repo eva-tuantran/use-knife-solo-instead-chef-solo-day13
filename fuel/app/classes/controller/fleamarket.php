@@ -32,8 +32,14 @@ class Controller_Fleamarket extends Controller_Template
         $this->app_config = Config::load('app_config');
     }
 
+    public function action_test()
+    {
+        Response::redirect('warning/index');
+//        throw new HttpServerErrorException;
+    }
+
     /**
-     * フリマ登録画面
+     * フリーマーケット入力画面
      *
      * @access public
      * @return void
@@ -70,7 +76,7 @@ class Controller_Fleamarket extends Controller_Template
     }
 
     /**
-     * 確認からの戻り処理
+     * 確認画面から入力画面にリダイレクトする
      *
      * @access public
      * @return void
@@ -88,7 +94,7 @@ class Controller_Fleamarket extends Controller_Template
     }
 
     /**
-     * 確認画面
+     * 入力内容の確認画面
      *
      * @access public
      * @return void
@@ -136,7 +142,7 @@ class Controller_Fleamarket extends Controller_Template
      * @return void
      * @author ida
      */
-    public function action_register()
+    public function action_created()
     {
         if (Input::method() != 'POST') {
             throw new HttpNotFoundException;
@@ -168,15 +174,13 @@ class Controller_Fleamarket extends Controller_Template
 
             Response::redirect('fleamarket/thanks');
         } catch (Exception $e) {
-            var_dump($e);
-            exit;
             DB::rollback_transaction();
-            Response::redirect('error/index');
+            Response::redirect('errors/index');
         }
     }
 
     /**
-     * 登録完了処理
+     * 登録完了画面
      *
      * @access public
      * @return void
@@ -190,7 +194,7 @@ class Controller_Fleamarket extends Controller_Template
     }
 
     /**
-     * locationの配列を生成する
+     * 開催地情報の登録用配列を生成する
      *
      * @access private
      * @param array $data 入力データの配列
@@ -213,7 +217,7 @@ class Controller_Fleamarket extends Controller_Template
     }
 
     /**
-     * fleamarketsの配列を生成する
+     * フリーマーケット情報の登録用配列を生成する
      *
      * @access private
      * @param int $location_id 開催地ID
@@ -277,7 +281,7 @@ class Controller_Fleamarket extends Controller_Template
     }
 
     /**
-     * fleamarket_aboutsの配列を生成する
+     * フリーマーケット「～ついて」情報の登録用配列を生成する
      *
      * @access private
      * @param int $fleamarket_id フリーマーケットID
@@ -311,7 +315,7 @@ class Controller_Fleamarket extends Controller_Template
     }
 
     /**
-     * 新規登録のFieldsetオブジェクトを生成する
+     * Fieldsetオブジェクトを生成する
      *
      * @access private
      * @return object Fieldsetオブジェクト

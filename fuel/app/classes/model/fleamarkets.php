@@ -6,7 +6,7 @@ use \DB;
 /**
  * Fleamarkets Model
  *
- * フリーマーケット情報
+ * フリーマーケット情報テーブル
  *
  * @author ida
  */
@@ -88,7 +88,7 @@ QUERY;
 
         $rows = null;
         if (! empty($result)) {
-            $rows = $result->as_array();
+            $rows = $result->as_assoc();
         }
 
         return $rows;
@@ -167,7 +167,7 @@ QUERY;
 
         $rows = false;
         if (! empty($result)) {
-            $rows = $result->as_array();
+            $rows = $result->as_assoc();
         }
 
         return $rows;

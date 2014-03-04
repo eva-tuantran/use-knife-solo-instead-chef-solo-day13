@@ -6,7 +6,7 @@ use \DB;
 /**
  * FleamarketAbouts Model
  *
- * フリーマーケットの「～ついて」情報
+ * フリーマーケット説明情報テーブル
  *
  * @author ida
  */
@@ -20,11 +20,11 @@ class FleamarketAbouts extends \Model
     protected static $table_name = 'fleamarket_abouts';
 
     /**
-     * 指定されたIDでフリーマーケット情報を取得する
+     * 指定されたIDでフリーマーケット説明情報を取得する
      *
      * @access public
      * @param mixed $fleamarket_id フリーマーケットID
-     * @return array フリーマーケット情報
+     * @return array フリーマーケット説明情報
      * @author ida
      */
     public static function find($fleamarket_about_id = null)
@@ -43,14 +43,14 @@ QUERY;
 
         $rows = null;
         if (! empty($result)) {
-            $rows = $result->as_array();
+            $rows = $result->as_assoc();
         }
 
         return $rows;
     }
 
     /**
-     * フリーマーケット詳細情報を登録する
+     * フリーマーケット説明情報を登録する
      *
      * @access public
      * @param array $data 登録するデータ配列
@@ -91,7 +91,7 @@ QUERY;
     }
 
     /**
-     * フリーマーケット情報を登録する
+     * フリーマーケット説明情報を登録する
      *
      * @access public
      * @param array $data_list 更新するデータ配列
@@ -113,7 +113,7 @@ QUERY;
     }
 
     /**
-     * フリーマーケット情報を更新する
+     * フリーマーケット説明情報を更新する
      *
      * @access public
      * @param array $data 更新するデータ配列
@@ -144,7 +144,7 @@ QUERY;
 
         $rows = false;
         if (! empty($result)) {
-            $rows = $result->as_array();
+            $rows = $result->as_assoc();
         }
 
         return $rows;

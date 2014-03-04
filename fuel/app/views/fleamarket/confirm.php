@@ -15,7 +15,7 @@ $(function() {
             ?></td>
             <td><?php
                 if (isset($data['name'])):
-                    echo Security::htmlentities($data['name']);
+                    echo e($data['name']);
                 endif;
             ?></td>
         </tr>
@@ -26,7 +26,7 @@ $(function() {
             ?></td>
             <td><?php
                 if (isset($data['promoter_name'])):
-                    echo Security::htmlentities($data['promoter_name']);
+                    echo e($data['promoter_name']);
                 endif;
             ?></td>
         </tr>
@@ -37,7 +37,7 @@ $(function() {
             ?></td>
             <td><?php
                 if (isset($data['website'])):
-                    echo Security::htmlentities($data['website']);
+                    echo e($data['website']);
                 endif;
             ?></td>
         </tr>
@@ -50,19 +50,19 @@ $(function() {
                 if (isset($data['reservation_tel1'])
                     && $data['reservation_tel1'] != ''
                 ):
-                    $tel1 = Security::htmlentities($data['reservation_tel1']);
+                    $tel1 = e($data['reservation_tel1']);
                     echo $tel1 . '-';
                 endif;
                 if (isset($data['reservation_tel2'])
                     && $data['reservation_tel2'] != ''
                 ):
-                    $tel2 = Security::htmlentities($data['reservation_tel2']);
+                    $tel2 = e($data['reservation_tel2']);
                     echo $tel2 . '-';
                 endif;
                 if (isset($data['reservation_tel3'])
                     && $data['reservation_tel3'] != ''
                 ):
-                    echo Security::htmlentities($data['reservation_tel3']);
+                    echo e($data['reservation_tel3']);
                 endif;
             ?></td>
         </tr>
@@ -73,7 +73,7 @@ $(function() {
             ?></td>
             <td><?php
                 if (isset($data['reservation_email'])):
-                    echo Security::htmlentities($data['reservation_email']);
+                    echo e($data['reservation_email']);
                 endif;
             ?></td>
         </tr>
@@ -86,19 +86,20 @@ $(function() {
                 if (isset($data['event_date'])
                     && $data['event_date'] != ''
                 ):
-                    $event_date =  Security::htmlentities($data['event_date']);
+                    $event_date =  e($data['event_date']);
                     echo $event_date . '&nbsp;';
                 endif;
                 if (isset($data['event_hour'])
                     && $data['event_hour'] != ''
                 ):
-                    $event_hour = Security::htmlentities($data['event_hour']);
-                    echo $event_hour . ':';
+                    $event_hour = e($data['event_hour']);
+                    echo $event_hour . '時';
                 endif;
                 if (isset($data['event_minute'])
                     && $data['event_minute'] != ''
                 ):
-                    echo Security::htmlentities($data['event_minute']);
+                    $event_minute = e($data['event_minute']);
+                    echo $event_minute . '分';
                 endif;
             ?></td>
         </tr>
@@ -109,7 +110,7 @@ $(function() {
             ?></td>
             <td><?php
                 if (isset($data['location_name'])):
-                    echo Security::htmlentities($data['location_name']);
+                    echo e($data['location_name']);
                 endif;
             ?></td>
         </tr>
@@ -120,16 +121,16 @@ $(function() {
             <td>
                 <div><?php
                     if (isset($data['zip'])):
-                        echo '〒' . Security::htmlentities($data['zip']);
+                        echo '〒' . e($data['zip']);
                     endif;
                 ?></div>
                 <?php
                     if (isset($data['prefecture'])):
                         $prefecture = $app_config['prefectures'][$data['prefecture']];
-                        echo Security::htmlentities($prefecture);
+                        echo e($prefecture);
                     endif;
                     if (isset($data['address'])):
-                        echo Security::htmlentities($data['address']);
+                        echo e($data['address']);
                     endif;
                 ?>
             </td>
@@ -141,7 +142,7 @@ $(function() {
             ?></td>
             <td><?php
                 if (isset($data['description'])):
-                    echo Security::htmlentities($data['description']);
+                    echo e($data['description']);
                 endif;
             ?></td>
         </tr>
@@ -155,7 +156,7 @@ $(function() {
             ?></td>
             <td><?php
                 if (isset($data[$event_about['name']])):
-                    echo Security::htmlentities($data[$event_about['name']]);
+                    echo e($data[$event_about['name']]);
                 endif;
             ?></td>
         </tr>
@@ -166,7 +167,7 @@ $(function() {
 </table>
 <?php
     echo $form->open(
-        array('action' => 'fleamarket/register', 'method' => 'post', 'id' => 'form_confirm')
+        array('action' => 'fleamarket/created', 'method' => 'post', 'id' => 'form_confirm')
     );
     echo Form::hidden(
         Config::get('security.csrf_token_key'), Security::fetch_token()
