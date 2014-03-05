@@ -4,36 +4,81 @@ namespace Model;
 use \DB;
 
 /**
- * FleamarketAbouts Model
+ * Fleamarkets Model
  *
- * フリーマーケット説明情報テーブル
+ * フリーマーケット情報テーブル
  *
  * @author ida
  */
-class FleamarketAbouts extends \Model
+class Fleamarket extends \Model
 {
+    /**
+     * 開催状況ステータス
+     */
+    const EVENT_SCHEDULE = 1;
+    const EVENT_RESERVATION_RECEIPT = 2;
+    const EVENT_RECEIPT_END = 3;
+    const EVENT_CLOSE = 4;
+    const EVENT_CANCEL = 5;
+
+    /**
+     * 予約可否フラグ
+     */
+    const RESERVATION_FLAG_NG = 0;
+    const RESERVATION_FLAG_OK = 0;
+
+    /**
+     * 車出店可否フラグ
+     */
+    const CAR_SHOP_FLAG_NG = 0;
+    const CAR_SHOP_FLAG_OK = 0;
+
+    /**
+     * 車出店可否フラグ
+     */
+    const PARKING_FLAG_NG = 0;
+    const PARKING_FLAG_OK = 0;
+
+    /**
+     * 出店料フラグ
+     */
+    const SHOP_FEE_FLAG_FREE = 0;
+    const PARKING_FLAG_CHARGE = 1;
+
+    /**
+     * 表示フラグ
+     */
+    const DISPLAY_FLAG_OFF = 0;
+    const DISPLAY_FLAG_ON = 1;
+
+    /**
+     * 登録タイプ
+     */
+    const REGISTER_TYPE_ADMIN = 1;
+    const REGISTER_TYPE_USER = 2;
+
     /**
      * テーブル名
      *
      * @var string $table_name
      */
-    protected static $_table_name = 'fleamarket_abouts';
+    protected static $_table_name = 'fleamarkets';
 
     /**
-     * 指定されたIDでフリーマーケット説明情報を取得する
+     * 指定されたIDでフリーマーケット情報を取得する
      *
      * @access public
      * @param mixed $fleamarket_id フリーマーケットID
-     * @return array フリーマーケット説明情報
+     * @return array フリーマーケット情報
      * @author ida
      */
-    public static function find($fleamarket_about_id = null)
+    public static function find($fleamarket_id = null)
     {
-        if (! $fleamarket_about_id) {
+        if (! $fleamarket_id) {
             return null;
         }
 
-        $placeholders = array('fleamarket_about_id' => $fleamarket_about_id);
+        $placeholders = array('flearmarket_id' => $fleamarket_id);
         $table_name = self::$_table_name;
         $query = <<<"QUERY"
 SELECT * FROM {$table_name} WHERE fleamarket_id = :flearmarket_id
@@ -50,7 +95,7 @@ QUERY;
     }
 
     /**
-     * フリーマーケット説明情報を登録する
+     * フリーマーケット情報を登録する
      *
      * @access public
      * @param array $data 登録するデータ配列
@@ -77,7 +122,7 @@ QUERY;
         $values = implode(',', $value_list);
         $table_name = self::$_table_name;
         $query = <<<"QUERY"
-INSERT INTO {$table_name}({$fields}) VALUES ({$values})
+INSERT INTO {$table_name}({$fields},created_at) VALUES ({$values}, now())
 QUERY;
         $statement = \DB::query($query)->parameters($placeholders);
         $result = $statement->execute();
@@ -91,29 +136,7 @@ QUERY;
     }
 
     /**
-     * フリーマーケット説明情報を登録する
-     *
-     * @access public
-     * @param array $data_list 更新するデータ配列
-     * @return array 登録結果
-     * @author ida
-     */
-    public static function insertMany($data_list)
-    {
-        if (! $data_list) {
-            return false;
-        }
-
-        $results = array();
-        foreach ($data_list as $data) {
-            $results[] = self::insert($data);
-        }
-
-        return $results;
-    }
-
-    /**
-     * フリーマーケット説明情報を更新する
+     * フリーマーケット情報を更新する
      *
      * @access public
      * @param array $data 更新するデータ配列
@@ -137,7 +160,8 @@ QUERY;
         $fields = implode(',', $field_list);
         $table_name = self::$_table_name;
         $query = <<<"QUERY"
-UPDATE FROM {$table_name} SET {$fields} WHERE fleamarket_id = :fleamarket_id
+UPDATE FROM {$table_name} SET {$fields},updated_at = now()
+WHERE fleamarket_id = :fleamarket_id
 QUERY;
         $statement = \DB::query($query)->parameters($placeholders);
         $result = $statement->execute();

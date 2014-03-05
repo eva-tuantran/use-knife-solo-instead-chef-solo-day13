@@ -57,7 +57,7 @@ $(function() {
         </tr>
         <tr>
             <td><?php
-                echo $form->field('reservation_tel1')
+                echo $form->field('reservation_tel')
                     ->set_template('{label}');
             ?></td>
             <td><?php
@@ -75,6 +75,15 @@ $(function() {
                     ->set_template('{field}')
                     ->set_attribute('class', 'xx-small')
                     ->set_attribute('maxlength', 4);
+                if (isset($errors['reservation_tel1'])):
+                    echo '<div>' . $errors['reservation_tel1'] . '</div>';
+                endif;
+                if (isset($errors['reservation_tel2'])):
+                    echo '<div>' . $errors['reservation_tel2'] . '</div>';
+                endif;
+                if (isset($errors['reservation_tel3'])):
+                    echo '<div>' . $errors['reservation_tel3'] . '</div>';
+                endif;
                 if (isset($errors['reservation_tel'])):
                     echo '<div>' . $errors['reservation_tel'] . '</div>';
                 endif;
@@ -131,7 +140,7 @@ $(function() {
                 echo $form->field('zip')
                     ->set_template('<div>〒 {field}</div>')
                     ->set_attribute(array('class' => 'x-small'));
-                echo $form->field('prefecture')
+                echo $form->field('prefecture_id')
                     ->set_template('{field}')
                     ->set_attribute('tag', 'select')
                     ->set_attribute('class', 'x-small')

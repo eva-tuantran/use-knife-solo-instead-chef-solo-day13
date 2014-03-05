@@ -66,4 +66,7 @@
     <?php endif; ?>
     <?php echo $content; ?>
   </div>
-</div> <!-- /container -->
+</div>
+<!-- /container -->
+</body>
+</html>

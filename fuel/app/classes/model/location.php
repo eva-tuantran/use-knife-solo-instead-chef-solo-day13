@@ -10,7 +10,7 @@ use \DB;
  *
  * @author ida
  */
-class Locations extends \Model
+class Location extends \Model
 {
     /**
      * 登録タイプ定数
@@ -83,7 +83,7 @@ QUERY;
         $values = implode(',', $value_list);
         $table_name = self::$_table_name;
         $query = <<<"QUERY"
-INSERT INTO {$table_name}({$fields}) VALUES ({$values})
+INSERT INTO {$table_name}({$fields},created_at) VALUES ({$values},now())
 QUERY;
         $statement = \DB::query($query)->parameters($placeholders);
         $result = $statement->execute();
@@ -123,7 +123,8 @@ QUERY;
         $fields = implode(',', $field_list);
         $table_name = self::$_table_name;
         $query = <<<"QUERY"
-UPDATE FROM {$table_name} SET {$fields} WHERE location_id = :location_id
+UPDATE FROM {$table_name} SET {$fields},updated_at = now(),
+WHERE location_id = :location_id
 QUERY;
         $statement = \DB::query($query)->parameters($placeholders);
         $result = $statement->execute();

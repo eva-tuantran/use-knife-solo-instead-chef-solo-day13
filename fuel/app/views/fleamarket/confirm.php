@@ -1,11 +1,3 @@
-<script type="text/javascript">
-$(function() {
-    $("#do_back").on("click", function(evt) {
-        evt.preventDefault();
-        $("#form_confirm").attr('action', '/fleamarket/back').submit();
-    });
-});
-</script>
 <table>
     <tbody>
         <tr>
@@ -112,8 +104,8 @@ $(function() {
                     endif;
                 ?></div>
                 <?php
-                    if (isset($data['prefecture'])):
-                        $prefecture = $app_config['prefectures'][$data['prefecture']];
+                    if (isset($data['prefecture_id'])):
+                        $prefecture = $prefectures[$data['prefecture_id']];
                         echo e($prefecture);
                     endif;
                     if (isset($data['address'])):
@@ -134,7 +126,8 @@ $(function() {
             ?></td>
         </tr>
         <?php
-            foreach ($event_abouts as $event_about):
+            if ($event_abouts):
+                foreach ($event_abouts as $event_about):
         ?>
         <tr>
             <td><?php
@@ -148,13 +141,14 @@ $(function() {
             ?></td>
         </tr>
         <?php
-            endforeach;
+                endforeach;
+            endif;
         ?>
     </tbody>
 </table>
 <?php
     echo $form->open(
-        array('action' => 'fleamarket/created', 'method' => 'post', 'id' => 'form_confirm')
+        array('action' => 'fleamarket/thanks', 'method' => 'post', 'id' => 'form_confirm')
     );
     echo Form::hidden(
         Config::get('security.csrf_token_key'), Security::fetch_token()
@@ -162,7 +156,7 @@ $(function() {
 ?>
 <div class="action-section">
 <?php
-    echo Form::input('confirm', '入力に戻る', array('type' => 'button', 'id' => 'do_back'));
+    echo Html::anchor('/fleamarket/index', '入力に戻る', array('id' => 'do_back', 'class' => ''));
     echo Form::input('confirm', '登録する', array('type' => 'submit', 'id' => 'do_register'));
 ?>
 </div>
