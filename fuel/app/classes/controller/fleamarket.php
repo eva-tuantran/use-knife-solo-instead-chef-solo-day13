@@ -1,5 +1,6 @@
 <?php
 use Fuel\Core\DB;
+use \Controller\Base;
 use \Model\Fleamarket;
 use \Model\Fleamarket_About;
 use \Model\Location;
@@ -9,8 +10,23 @@ use \Model\Location;
  *
  * @extends  Controller_Template
  */
-class Controller_Fleamarket extends Controller_Template
+class Controller_Fleamarket extends Controller_Base
 {
+    /**
+     * 事前処理
+     *
+     * アクション実行前の共通処理
+     *
+     * @access public
+     * @return void
+     * @author ida
+     */
+    public function before()
+    {
+        $this->postActions = array('confirm', 'thanks');
+        parent::before();
+    }
+
     /**
      * フリーマーケット入力画面
      *
@@ -55,10 +71,6 @@ class Controller_Fleamarket extends Controller_Template
      */
     public function action_confirm()
     {
-        if (Input::method() != 'POST') {
-            throw new HttpNotFoundException;
-        }
-
         $data = Input::post();
         $this->castReservationTel($data);
         $fieldset = $this->createFieldset();
@@ -94,8 +106,8 @@ class Controller_Fleamarket extends Controller_Template
      */
     public function action_thanks()
     {
-        if (Input::method() != 'POST') {
-            throw new HttpNotFoundException;
+        if (!Security::check_token()) {
+            Response::redirect('errors/doubletransmission');
         }
 
         try {

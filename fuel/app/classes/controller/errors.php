@@ -1,19 +1,20 @@
 <?php
 
 /**
- * The Error Handling Controller.
+ * Error Handling Controller.
  *
  * @package  app
  * @extends  Controller_Template
  */
 class Controller_Errors extends Controller_Template
 {
-
-    public function before()
-    {
-        parent::before();
-    }
-
+    /**
+     * システムエラー
+     *
+     * @access public
+     * @return void
+     * @author ida
+     */
     public function action_index()
     {
         $this->template->title = 'エラーが発生しました';
@@ -23,6 +24,13 @@ class Controller_Errors extends Controller_Template
         );
     }
 
+    /**
+     * アクセス禁止
+     *
+     * @access public
+     * @return void
+     * @author ida
+     */
     public function action_forbidden()
     {
         $this->template->title = 'アクセスが許可されておりません';
@@ -32,6 +40,13 @@ class Controller_Errors extends Controller_Template
         );
     }
 
+    /**
+     * ページ未検出
+     *
+     * @access public
+     * @return void
+     * @author ida
+     */
     public function action_notfound()
     {
         $this->template->title = '該当ページが見つかりませんでした';
@@ -41,4 +56,35 @@ class Controller_Errors extends Controller_Template
         );
     }
 
+    /**
+     * 不正なリクエスト
+     *
+     * @access public
+     * @return void
+     * @author ida
+     */
+    public function action_badrequest()
+    {
+        $this->template->title = '不正なアクセスです';
+        $this->template->content = View::forge(
+            'errors/content',
+            array('message' => '不正なアクセスです')
+        );
+    }
+
+    /**
+     * 二重送信
+     *
+     * @access public
+     * @return void
+     * @author ida
+     */
+    public function action_doublesubmit()
+    {
+        $this->template->title = '2重投稿です';
+        $this->template->content = View::forge(
+            'errors/content',
+            array('message' => '2重投稿です')
+        );
+    }
 }
