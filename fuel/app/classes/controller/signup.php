@@ -125,7 +125,7 @@ class Controller_Signup extends Controller_Template
         $token = Model_Token::findByUserId($user->user_id);
 
         $data = array(
-            'user_name'    => $user->nick_name,
+            'nick_name'    => $user->nick_name,
             'activate_url' => 'https://www.rakuichi-rakuza.jp/signup/activate?token='.$token->hash,
         );
 
