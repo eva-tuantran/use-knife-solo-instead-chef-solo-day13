@@ -1,6 +1,6 @@
 <?php
 return array(
-    'register'   => 'register',
+    'signup'     => 'signup',
     'fleamarket' => 'fleamarket',
     'error'      => 'error',
     '_404_'      => 'error/notfound',    // The main 404 route

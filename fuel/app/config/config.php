@@ -93,7 +93,7 @@ return array(
      * server_gmt_offset	in seconds the server offset from gmt timestamp when time() is used
      * default_timezone		optional, if you want to change the server's default timezone
      */
-    'server_gmt_offset'  => 3600 * 9,
+    // 'server_gmt_offset'  => 3600 * 9,
     'default_timezone'   => 'Asia/Tokyo',
 
     /**
@@ -258,7 +258,8 @@ return array(
                      */
                     'packages'  => array(
                         'orm',
-                        'auth',
+                        'email',
+                        // 'auth',
                     ),
 
                     /**
@@ -284,7 +285,11 @@ return array(
                      * add it like 'session' => 'auth'.
                      * If you don't want the config in a group use null as groupname.
                      */
-                    // 'config'  => array(),
+
+                    'config' => array(
+                        'constants'
+                        // 'app', //@TODO: 常に読み込む必要ないかもしれない
+                    ),
 
                     /**
                      * Language files to autoload
@@ -297,4 +302,4 @@ return array(
                     // 'language'  => array(),
                     // ),
                 )
-                );
+            );

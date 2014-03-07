@@ -22,7 +22,7 @@
  */
 
 return array(
-    'driver'                 => 'Simpleauth',
+    'driver'                 => 'OrmAuth',
     'verify_multiple_logins' => false,
     'salt'                   => 'QFtx!k9kuZWS?QB1vCWmsJ%6r2mHkaEH3XRG12&&',
     'iterations'             => 10000,

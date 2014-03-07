@@ -1,6 +1,6 @@
 <?php 
 
-class View_Register_Confirm extends ViewModel
+class View_Signup_Confirm extends ViewModel
 {
 
     public function view()
@@ -27,7 +27,7 @@ class View_Register_Confirm extends ViewModel
             if(in_array($id, $ignore_id)){
                 continue;
             }
-            $html .= "<input type=\"hidden\" id=\"form_${id}\" value=\"${value}\" >\n";
+            $html .= "<input type=\"hidden\" id=\"form_${id}\" name=\"${id}\" value=\"${value}\" >\n";
         }
 
         return $html;
