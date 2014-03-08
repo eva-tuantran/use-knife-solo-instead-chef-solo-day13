@@ -104,7 +104,10 @@ class Controller_Signup extends Controller_Template
         } else {
             $this->template->content = ViewModel::forge('signup/verify');
             $user_data = $validation->validated();
+            // $user_data['password']        = Auth::instance()->hash_password($user_data['password']);
+            $user_data['password']        = \Auth::hash_password($user_data['password']);
             $user_data['register_status'] = \REGISTER_STATUS_INACTIVATED;
+
             //@TODO: スマートなやり方求む(validate()で取得するとdeleted_atに0がセットされる)
             unset($user_data['deleted_at']);
 
@@ -114,7 +117,9 @@ class Controller_Signup extends Controller_Template
                 $new_token = Model_Token::createToken($new_user->user_id);
                 self::sendActivateEmail($new_user);
             }catch (Orm\ValidationFailed $e) {
-                Response::redirect('error/503');
+
+                echo $e->getMessage();
+                // Response::redirect('error/503');
             }
         };
     }
@@ -122,17 +127,21 @@ class Controller_Signup extends Controller_Template
 
     public static function sendActivateEmail(Model_User $user)
     {
-        $token = Model_Token::findByUserId($user->user_id);
+        $valid_token = Model_Token::findByUserId($user->user_id);
+
+        if(empty($valid_token)){
+            return false;
+        }
 
         $data = array(
             'nick_name'    => $user->nick_name,
-            'activate_url' => 'https://www.rakuichi-rakuza.jp/signup/activate?token='.$token->hash,
+            'activate_url' => 'https://www.rakuichi-rakuza.jp/signup/activate?token='.$valid_token->hash,
         );
 
         $body = \View::forge('email/signup/activate', $data)->render();
 
-        exit($body);
         //@TODO: メールがVagrantから遅れていないので、メール送信テストが出来ていない
+        exit($body);
         $user->sendmail('確認メール', $body);
     }
 
@@ -247,5 +256,8 @@ class Controller_Signup extends Controller_Template
         $this->template->title = 'ログアウト';
         $this->template->content = ViewModel::forge('auth/logout');
     }
+
+
+
 }
 

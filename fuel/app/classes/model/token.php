@@ -74,7 +74,8 @@ class Model_Token extends Orm\Model_Soft
         $token = self::find('last', array(
             'where' => array(
                 array('user_id' => $user_id),
-                array('expired_at', '>', date('Y-m-d H:i:s')),
+                // array('expired_at', '>', date('Y-m-d H:i:s')),
+                array('expired_at', '>', Date::forge()->format('mysql')),
             ),
         ));
 
@@ -87,7 +88,8 @@ class Model_Token extends Orm\Model_Soft
         $token = self::find('last', array(
             'where' => array(
                 array('hash' => $hash),
-                array('expired_at', '>', date('Y-m-d H:i:s')),
+                // array('expired_at', '>', date('Y-m-d H:i:s')),
+                array('expired_at', '>', Date::forge()->format('mysql')),
             ),
         ));
 

@@ -22,8 +22,8 @@
  */
 
 return array(
-    'driver'                 => 'OrmAuth',
-    'verify_multiple_logins' => false,
+    'driver'                 => 'BaseAuth',
+    'verify_multiple_logins' => false, //@TODO: マルチログインの許可の動作確認
     'salt'                   => 'QFtx!k9kuZWS?QB1vCWmsJ%6r2mHkaEH3XRG12&&',
     'iterations'             => 10000,
 );

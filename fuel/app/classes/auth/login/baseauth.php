@@ -1,0 +1,204 @@
+<?php
+
+
+class Auth_Login_BaseAuth extends Auth\Auth_Login_Driver
+{
+
+    protected $config = array(
+        'drivers' => array(
+            'group' => array('BaseAuth')
+        )
+    );
+
+    protected $user;
+
+
+    //@TODO: SQLではなくORMのModel_Userを利用して取得しないか考える
+    //@TODO: セキュリティ強化にsaltを入れるのか否か検討する
+    protected function perform_check()
+    {
+        $current_user = Session::get('current_user');
+
+        //@TODO: エラーが出ていないか確認
+        if(empty($current_user['user_id'])) {
+            return false;
+        }
+
+        $placeholders = array(
+            'user_id' => $current_user['user_id'],
+        );
+
+        $query = <<<QUERY
+SELECT
+    *
+FROM
+    users
+WHERE
+    user_id = :user_id AND
+    deleted_at IS NULL
+QUERY;
+
+        //1段階強化するのであれば、salt =:salt AND を入れて、2つのキーから内容をチェックする
+        $users = \DB::query($query)->parameters($placeholders)->as_object('Model_User')->execute()->as_array();
+
+        if (!is_null($users) && count($users) === 1){
+            $this->user = reset($users);
+            $this->user->last_login = Date::forge()->format('mysql');
+            // $this->user->salt       = $this->create_salt();
+            $this->user->save();
+
+            return true;
+        }
+
+        return false;
+    }
+
+
+    //@TODO: SQLではなくORMのModel_Userを利用して取得しないか考える
+    public function validate_user($username_or_email = '', $password = '') 
+    {
+
+        if(empty($username_or_email) || empty($password)){
+            return false;
+        }
+
+        $username_or_email = trim($username_or_email);
+        $password          = trim($password);
+        $password          = \Auth::hash_password($password);
+
+        $placeholders = array(
+            'username_or_email' => $username_or_email,
+            'password'          => $password,
+        );
+
+        $query = <<<QUERY
+SELECT
+    *
+FROM
+    users
+WHERE
+    email = :username_or_email AND
+    password = :password AND
+    deleted_at IS NULL
+QUERY;
+
+        $users = \DB::query($query)->parameters($placeholders)->as_object('Model_User')->execute()->as_array();
+
+        if (!is_null($users) && count($users) === 1){
+            $this->user = reset($users);
+            $this->user->last_login = Date::forge()->format('mysql');
+            // $this->user->salt       = $this->create_salt();
+            $this->user->save();
+
+            Session::set('current_user', array(
+                'user_id'    => $this->user->user_id,
+                // 'salt' => $this->user->salt,
+            ));
+
+            return true;
+        }
+
+        return false;
+    }
+
+    public function login($username_or_email = '', $password = '')
+    {
+        return $this->validate_user($username_or_email, $password);
+    }
+
+    public function logout()
+    {
+        Session::delete('current_user');
+
+        return true;
+    }
+
+    public function get_user_id()
+    {
+        if (!empty($this->user) && isset($this->user['user_id'])) {
+            // return array($this->user, (int)$this->user['user_id']);
+            return (int)$this->user['user_id'];
+        }
+
+        return null;
+    }
+
+    //@TODO: 未使用 (auth login driverにデフォルトで用意されているため、一応配置してある)
+    public function get_groups()
+    {
+        if (!empty($this->user) && isset($this->user['group'])) {
+            return array(array('BaseAuth', $this->user['group']));
+        }
+
+        return null;
+    }
+
+    //@TODO: 未使用/要確認
+    public function has_access($condition, $driver = null, $entity = null)
+    {
+        if (is_null($entity) && !empty($this->user)) {
+            $groups = $this->get_groups();
+            $entity = reset($groups);
+        }
+
+        return parent::has_access($condition, $driver, $entity);
+    }
+
+    public function get_email()
+    {
+        if (!empty($this->user) && isset($this->user['email'])) {
+            return $this->user['email'];
+        }
+
+        return null;
+    }
+
+    public function get_screen_name()
+    {
+        if (!empty($this->user) && isset($this->user['nick_name'])) {
+            return $this->user['nick_name'];
+        }
+
+        return null;
+    }
+
+    //@TODO: 今のところ未使用。saltでユーザログイン認証を強化するのであれば、利用する。
+    public function create_salt()
+    {
+        if (empty($this->user)) {
+            throw new Exception();
+        }
+
+        return sha1(Config::get('baseauth.login_hash_salt').$this->user->last_login);
+    }
+
+
+    //@TODO: 究極いらないが、oil経由でユーザを作成出来る箇所を作るか検討
+    //       法人IDの一括発行をコマンドラインから出来るなど便利ではある
+    public function create_user($username, $password, $email)
+    {
+        $password = trim($password);
+        $email = filter_var(trim($email), FILTER_VALIDATE_EMAIL);
+
+        if (empty($username) or empty($password) or empty($email)) {
+            throw new Exception('Username, password or email address is not given, or email address is invalid');
+        }
+
+        $data = array(
+            'usename'  => '',
+            'email'    => '',
+            'password' => '',
+        );
+
+        $user = Model_User::forge($data);
+
+        try{
+            $user->save();
+        }catch(Exception $e){
+            throw new Exception('create user registry error');
+        }
+        return 1;
+    }
+
+
+}

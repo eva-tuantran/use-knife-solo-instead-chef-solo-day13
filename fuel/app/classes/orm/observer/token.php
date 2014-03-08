@@ -15,7 +15,8 @@ class Observer_Token extends Observer
      */
     public function before_insert(Model $token)
     {
-        $token->expired_at = date('Y-m-d H:i:s', strtotime('+ 3 hour'));
+        // $token->expired_at = date('Y-m-d H:i:s', strtotime('+ 3 hour'));
+        $token->expired_at = \Date::forge(strtotime('+ 3 hour'))->format('mysql');
     }
 
 }

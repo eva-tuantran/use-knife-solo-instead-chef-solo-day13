@@ -49,7 +49,7 @@
         <li><a href="#contact">ブログ</a></li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        <li class="active"><a href="./">ログイン</a></li>
+        <li class="active"><a href="./login">ログイン</a></li>
         <li><a href="../navbar-fixed-top/">ログアウト</a></li>
       </ul>
     </div><!--/.nav-collapse -->

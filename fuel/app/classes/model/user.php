@@ -242,7 +242,7 @@ class Model_User extends Orm\Model_Soft
             'validation' => array(
                 'required',
                 'min_length' => array(6),
-                'max_length' => array(14),
+                'max_length' => array(50),
             ),
             'form' => array(
                 'type' => 'password',
@@ -276,6 +276,11 @@ class Model_User extends Orm\Model_Soft
                     \REGISTER_STATUS_STOPPED     => '停止',
                     \REGISTER_STATUS_BANNED      => '強制停止',
                  ),
+            ),
+        ),
+        'last_login' => array(
+            'form' => array(
+                'type' => false
             ),
         ),
         'created_user' => array(
@@ -339,13 +344,13 @@ class Model_User extends Orm\Model_Soft
 
     public function setPassword($password)
     {
-        $this->password = self::password_hash($password);
+        $this->password = Auth::instance()->hash_password($password);;
     }
 
-    public static function password_hash($password)
-    {
-        return md5(self::_password_salt.$password);
-    }
+    // public static function password_hash($password)
+    // {
+        // return md5(self::_password_salt.$password);
+    // }
 
 
     //@TODO: カスタムフィールドセットを用意したいために残っている(メールアドレス重複チェックなど)
