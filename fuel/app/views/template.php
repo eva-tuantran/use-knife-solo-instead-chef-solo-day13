@@ -40,17 +40,22 @@
     </div>
     <div class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
-        <li class="active"><a href="#">開催日程</a></li>
-        <li><a href="#about">会場一覧</a></li>
-        <li><a href="#contact">出店予約</a></li>
-        <li><a href="#contact">出店予約</a></li>
-        <li><a href="#contact">新着情報</a></li>
-        <li><a href="#contact">初めての方へ</a></li>
-        <li><a href="#contact">ブログ</a></li>
+        <li><a href="/">ホーム</a></li>
+        <li><a href="/search">会場一覧</a></li>
+        <li><a href="/reservation">出店予約</a></li>
+        <li><a href="#">新着情報</a></li>
+        <li><a href="#">初めての方へ</a></li>
+        <li><a href="/inquiry">お問い合わせ</a></li>
+        <li><a href="/blog">ブログ</a></li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        <li class="active"><a href="/login">ログイン</a></li>
-        <li><a href="/login/out">ログアウト</a></li>
+        <?php if(Auth::check()): ?>
+            <li><a href="/mypage"><?php echo Auth::get_screen_name(); ?>さんマイページ</a></li>
+            <li><a href="/login/out">ログアウト</a></li>
+        <?php else: ?>
+            <li><a href="/signup">会員登録</a></li>
+            <li><a href="/login">ログイン</a></li>
+        <?php endif; ?>
       </ul>
     </div><!--/.nav-collapse -->
   </div>

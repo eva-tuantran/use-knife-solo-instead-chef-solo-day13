@@ -26,7 +26,6 @@ class Controller_Login extends Controller_Template
             'return_url'    => $return_url,
         );
 
-
         $auth_info = Session::get_flash('auth_info');
         switch($auth_info){
             case 'login_denied':
