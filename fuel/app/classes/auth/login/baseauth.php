@@ -1,6 +1,10 @@
 <?php
 
-
+/**
+ * 共通ログインコントローラ
+ *
+ * @author Ricky <master@mistdev.com>
+ */
 class Auth_Login_BaseAuth extends Auth\Auth_Login_Driver
 {
 
@@ -12,9 +16,11 @@ class Auth_Login_BaseAuth extends Auth\Auth_Login_Driver
 
     protected $user;
 
-
-    //@TODO: SQLではなくORMのModel_Userを利用して取得しないか考える
-    //@TODO: セキュリティ強化にsaltを入れるのか否か検討する
+    /**
+     * @todo セキュリティ強化にsaltを入れるのか否か検討
+     * @todo sqlではなくOrm\Model_Userを利用して取得しないか検討
+     * @todo 仮登録ユーザの取り扱い(ログインできないようにする？)
+     */
     protected function perform_check()
     {
         $current_user = Session::get('current_user');
@@ -38,7 +44,7 @@ WHERE
     deleted_at IS NULL
 QUERY;
 
-        //1段階強化するのであれば、salt =:salt AND を入れて、2つのキーから内容をチェックする
+        //@TODO: 1段階強化するのであれば、salt =:salt AND を入れて、2つのキーから内容をチェックする
         $users = \DB::query($query)->parameters($placeholders)->as_object('Model_User')->execute()->as_array();
 
         if (!is_null($users) && count($users) === 1){
@@ -54,8 +60,10 @@ QUERY;
     }
 
 
-    //@TODO: SQLではなくORMのModel_Userを利用して取得しないか考える
-    public function validate_user($username_or_email = '', $password = '') 
+    /**
+     * @todo sqlではなくOrm\Model_Userを利用して取得しないか検討
+     */
+    public function validate_user($username_or_email = '', $password = '')
     {
 
         if(empty($username_or_email) || empty($password)){
@@ -199,6 +207,5 @@ QUERY;
         }
         return 1;
     }
-
 
 }

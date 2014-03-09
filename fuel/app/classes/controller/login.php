@@ -1,98 +1,121 @@
 <?php
 
-
+/**
+ * ログイン画面
+ *
+ * @author Ricky <master@mistdev.com>
+ */
 class Controller_Login extends Controller_Template
 {
+    //SSL設定の項目です。テスト期間につきSSLは利用していません。
+    // public $_secure = array('index', 'auth');
 
-    public function before()
-    {
-        parent::before();
-    }
-
-
-    public function after($response)
-    {
-        $response = parent::after($response);
-
-        return $response;
-    }
-
-
-    //@TODO: rurlの実装(認証が必要なページでリダイレクト仕返してくれるgetのパラメータ)
-    //       ただしループにならないように実装を気をつけること
-    //@TODO: sslを利用した強制リダイレクト実装
+    /**
+     * 初期画面
+     *
+     * @access public
+     * @return void
+     */
     public function action_index()
     {
+        $return_url = Input::get('rurl');
+
+        $data = array(
+            'info_message'  => '',
+            'error_message' => '',
+            'return_url'    => $return_url,
+        );
+
+
+        $auth_info = Session::get_flash('auth_info');
+        switch($auth_info){
+            case 'login_denied':
+                $data['error_message'] = 'ログインできません。';
+                Session::destroy();
+                break;
+            case 'session_expired':
+                $data['error_message'] = 'セッションが切れました。';
+                Session::destroy();
+                break;
+        }
+
+        if(Auth::check()){
+            $data['info_message'] = Auth::get_screen_name().' さんとしてログインしています';
+        }
+
         $this->template->title = 'Login';
-        $this->template->content = View::forge('login/index');
+        $this->template->content = View::forge('login/index', $data);
     }
 
 
-    //@TODO: index_actionとの統合(logintestの廃止)
-    //@TODO: Authチェックのエラーの表示(set_flashを利用して作成出来るはず)
-    public function action_logintest()
+    /**
+     * ユーザ認証をします
+     *
+     * @access public
+     * @return void
+     */
+    public function action_auth()
     {
-        //すでにログイン済みの人は下記のURLに流し込む
-        //@TODO: ここの完成
-        if(Auth::check()){
-            exit(Auth::get_screen_name() . 'さん。既にログイン済みです');
-            Response::redirect($this->get_groups_redirect_path());
+        if(Input::method() !== 'POST'){
+            Response::redirect('/login');
         }
 
-        //@TODO: ここの完成
-        //POST以外の人はトップページに飛ばします
-        if (Input::method() != 'POST') {
-            Response::redirect('/');
-        };
+        $rurl = Input::get('rurl');
+        $validation = self::create_validation();
 
+        /**
+         * ログイン確認をします。
+         */
+        if ($validation->run() && Auth::instance()->login(Input::post('email'), Input::post('password'))) {
+            $return_url = '/mypage';
+            if(!empty($rurl)){
+                $return_url = $rurl;
+            }
+            Session::set_flash('auth_info', 'login_success');
+        } else {
+            $return_url = '/login';
+            if(!empty($rurl)){
+                $return_url = "/login?rurl=$rurl";
+            }
+            Session::set_flash('auth_info', 'login_denied');
+        }
+
+        Response::redirect($return_url);
+        die;
+    }
+
+
+    /**
+     * ログイン用のValidationをレスポンスします
+     *
+     * @access public
+     * @return Validation $validation
+     */
+    public static function create_validation()
+    {
         $validation = Validation::forge();
         $validation->add('email', 'Email')->add_rule('required');
         $validation->add('password', 'Password')->add_rule('required');
-        if ($validation->run()) {
-            if (Auth::instance()->login(Input::post('email'), Input::post('password'))) {
-                // $current_user = Model_User::find_by_username(Auth::get_screen_name());
-                // Session::set_flash('success', e('Welcome, '.$current_user->username));
 
-                // Response::redirect($this->get_groups_redirect_path());
-                exit(Auth::get_screen_name()."さん、ログイン成功しました");
-            }
-            // Session::set_flash('error', e('login error. please try agein'));
-        }
-
-        $this->template->title   = 'Login';
-        $this->template->content = '認証に失敗しました';
-        // $this->template->content = View::forge('admin/login')->set('val', $validation, false);
+        return $validation;
     }
 
 
-    //@TODO: URLを遷移すると強制的にログアウトするので何らかのリファラをチェックしたい
-    //@TODO: 名前を決める
+    /**
+     * ログアウトします
+     * Auth::logout()を利用し、失敗した場合は強制的にSessionを削除します。
+     *
+     * @access public
+     * @return void
+     */
     public function action_out()
     {
-        if(!Auth::logout())
-        {
-            Session::set_flash('info', e('logout success'));
-            Response::redirect('login');
+        if(!Auth::logout()) {
+            Session::destroy();
         }
+
+        Session::set_flash('auth_info', 'logout_success');
+        Response::redirect('login');
     }
 
-
-    //@TODO: ある程度確認出来たら削除
-    public function action_test()
-    {
-        Auth::check();
-        exit(Auth::get_screen_name());
-    }
-
-
-    //@TODO: 実装としてこちらを利用するか確認(ユーザの属性ごとにリダイレクト先を変更する)
-    public function get_groups_redirect_path()
-    {
-        $groups = Auth::instance()->get_groups();
-        $group = $groups[0][1];
-
-        $redirect_path = '/';
-
-        return $redirect_path;
-    }
 }
