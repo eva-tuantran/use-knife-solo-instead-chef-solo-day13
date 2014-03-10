@@ -155,7 +155,7 @@ print '<hr>';
      * The 404 action for the application.
      *
      * @access  public
-     * @return  Response
+     * @return Response
      */
     public function action_404()
     {
@@ -167,8 +167,8 @@ print '<hr>';
      * @param type $fieldset
      * @param type $data
      */
-    private function set_data($fieldset, $data) {
-
+    private function set_data($fieldset, $data)
+    {
     }
 
     /**

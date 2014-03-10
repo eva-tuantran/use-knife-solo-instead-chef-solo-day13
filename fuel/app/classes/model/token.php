@@ -42,7 +42,7 @@ class Model_Token extends Orm\Model_Soft
 
     public static function createToken($user_id)
     {
-        if(! Model_User::find($user_id)){
+        if (! Model_User::find($user_id)) {
             //@TODO: Errorをthrowするか検討
             return false;
         }
@@ -68,7 +68,6 @@ class Model_Token extends Orm\Model_Soft
         return $hash;
     }
 
-
     public static function findByUserId($user_id)
     {
         $token = self::find('last', array(
@@ -82,7 +81,6 @@ class Model_Token extends Orm\Model_Soft
         return $token;
     }
 
-
     public static function findByHash($hash)
     {
         $token = self::find('last', array(
@@ -95,70 +93,4 @@ class Model_Token extends Orm\Model_Soft
 
         return $token;
     }
-
-
-
-
-
-//    public static function _findByUserId($user_id)
-//    {
-//        $placeholders = array(
-//            'user_id' => $user_id,
-//        );
-//
-//        $query = <<<QUERY
-//SELECT
-//    *
-//FROM
-//    user_tokens
-//WHERE
-//    user_id = :user_id AND
-//    expired_at > NOW()
-//ORDER BY
-//    expired_at DESC
-//LIMIT
-//    1
-//QUERY;
-//
-//        $res = \DB::query($query)->parameters($placeholders)->execute()->as_array();
-//
-//        if (!empty($res)) {
-//            return $res[0];
-//        }
-//
-//        return array();
-//    }
-//
-//
-//    public static function _findByHash($hash)
-//    {
-//        $placeholders = array(
-//            'hash' => $hash,
-//        );
-//
-//        $query = <<<QUERY
-//SELECT
-//    *
-//FROM
-//    user_tokens
-//WHERE
-//    hash = :hash AND
-//    expired_at > NOW() AND
-//    deleted_at IS NULL
-//ORDER BY
-//    expired_at DESC
-//LIMIT
-//    1
-//QUERY;
-//
-//        $res = \DB::query($query)->parameters($placeholders)->execute()->as_array();
-//
-//        if (!empty($res)) {
-//            return $res[0];
-//        }
-//
-//        return array();
-//    }
-//
-
 }

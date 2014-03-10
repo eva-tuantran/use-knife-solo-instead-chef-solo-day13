@@ -21,7 +21,6 @@ class Controller_Template extends Fuel\Core\Controller_Template
      */
     public $_secure = array();
 
-
     /**
      * リダイレクト先のSSLホスト名
      *
@@ -29,7 +28,6 @@ class Controller_Template extends Fuel\Core\Controller_Template
      * @access public
      */
     public $_ssl_host = 'ssl.rakuichi-rakuza.jp';
-
 
     /**
      * 要求するプロトコルと一致しない場合はリダイレクト処理をします。
@@ -45,8 +43,7 @@ class Controller_Template extends Fuel\Core\Controller_Template
 
         if ($should_be_secure && ! $is_secure) {
             $this->redirect_to_protocol('https');
-        }
-        else if (! $should_be_secure && $is_secure) {
+        } elseif (! $should_be_secure && $is_secure) {
             $this->redirect_to_protocol('http');
         }
 
@@ -61,15 +58,15 @@ class Controller_Template extends Fuel\Core\Controller_Template
      */
     private function redirect_to_protocol($protocol = 'http')
     {
-        switch($protocol){
+        switch ($protocol) {
             case 'https':
-                $http_host = $this->_ssl_host;
+                $server_host = $this->_ssl_host;
                 break;
             default:
-                $http_host = $_SERVER['HTTP_HOST'];
+                $server_host = $_SERVER['HTTP_HOST'];
         }
 
-        $url = $protocol . '://' . $http_host . $_SERVER['REQUEST_URI'];
+        $url = $protocol . '://' . $server_host . $_SERVER['REQUEST_URI'];
         Response::redirect($url, 'location', 301);
         die;
     }

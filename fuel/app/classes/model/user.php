@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * 楽市楽座会員基本モデル
+ *
+ * @author Ricky <master@mistdev.com>
+ */
 class Model_User extends Orm\Model_Soft
 {
     protected static $_table_name = 'users';
@@ -310,7 +315,6 @@ class Model_User extends Orm\Model_Soft
         ),
     );
 
-    //@TODO:動作確認
     protected static $_soft_delete = array(
         'deleted_field'   => 'deleted_at',
         'mysql_timestamp' => true,
@@ -330,9 +334,7 @@ class Model_User extends Orm\Model_Soft
         'Orm\\Observer_Validation' => array(
             'events'          => array('before_save'),
         ),
-        'Orm\\Observer_User',
     );
-
 
     protected static $_conditions = array(
         'where' => array(
@@ -340,20 +342,29 @@ class Model_User extends Orm\Model_Soft
     );
 
 
-    protected static $_password_salt = '3xfAqSZRzxZttfqRkpwA3dwtV688R5ubyNEVUH2m';
-
-    public function setPassword($password)
+    /**
+     * 新しいパスワードをセットします
+     * パスワードの強制的な上書きなどに利用します。
+     * ただし基本的にFuelのAuthで用意されているので、そちらを活用します。
+     *
+     * @param string $new_password 新パスワード
+     * @access public
+     * @return void
+     */
+    public function setPassword($new_password)
     {
-        $this->password = Auth::instance()->hash_password($password);;
+        $this->password = Auth::instance()->hash_password($new_password);;
     }
 
-    // public static function password_hash($password)
-    // {
-        // return md5(self::_password_salt.$password);
-    // }
-
-
-    //@TODO: カスタムフィールドセットを用意したいために残っている(メールアドレス重複チェックなど)
+    /**
+     * getBaseFieldset
+     *
+     * @todo カスタムフィールドセット(メールアドレスの重複セット)が正常に動作するか確認
+     * @param \Fieldset $fieldset
+     * @static
+     * @access public
+     * @return Fieldset fieldset
+     */
     public static function getBaseFieldset(\Fieldset $fieldset)
     {
         $fieldset->validation()->add_callable('Model_User');
@@ -362,11 +373,19 @@ class Model_User extends Orm\Model_Soft
         return $fieldset;
     }
 
-
-    //@TODO: 未使用(ソースを参考にコピーしてきたのみ)
+    /**
+     * ユーザ名がユニークか否かvalidationで判定します
+     *
+     * @todo 他所を参考にソースを引っ張ってきてまだ動作未確認および未使用
+     * @param string $username
+     * @param Model_User $user
+     * @static
+     * @access public
+     * @return bool
+     */
     public static function _validation_unique_username($username, Model_User $user)
     {
-        if ( ! $user->is_new() and $user->username === $username){
+        if ( ! $user->is_new() and $user->username === $username) {
             return true;
         }
 
@@ -376,6 +395,14 @@ class Model_User extends Orm\Model_Soft
 
     }
 
+    /**
+     * ユーザにメールを送信します
+     *
+     * @param string $subject
+     * @param string $body
+     * @access public
+     * @return bool
+     */
     public function sendmail($subject, $body)
     {
         $email = \Email::forge();
@@ -383,53 +410,14 @@ class Model_User extends Orm\Model_Soft
         $email->to($this->email);
         $email->subject($subject);
         $email->body(mb_convert_encoding($body, 'jis'));
-        try{
+        try {
             $email->send();
-        }catch(\EmailValidationFailedException $e) {
+        } catch (\EmailValidationFailedException $e) {
             return false;
-        }catch(\EmailSendingFailedException $e) {
+        } catch (\EmailSendingFailedException $e) {
             return false;
         }
 
         return true;
     }
-
-    // public static function create($array = array())
-    // {
-
-        // $return = \DB::insert('user_id', 'email', 'familyname', 'firstname', 'privilege')->from('users')
-        // ->where_open()
-        // ->where('email', $email)
-        // ->and_where('password', $this->getSaltedPassword($password))
-        // ->and_where('record_status', \VALID_RECORD)
-        // ->where_close()
-        // ->limit(1)->execute();
-
-        // if (! empty($return[0])) {
-            // return $return[0];
-        // }
-
-        // return false;
-
-        // return $this;
-    // }
-
-
-    // public static function auth($name, $password)
-    // {
-        // $return = \DB::select('user_id', 'email')->from('users')
-        // ->where_open()
-        // ->where('email', $email)
-        // ->and_where('password', self::getSaltedPassword($password))
-        // ->and_where('record_status', \VALID_RECORD)
-        // ->where_close()
-        // ->limit(1)->execute();
-
-        // if (! empty($return[0])) {
-            // return $return[0];
-        // }
-
-        // return false;
-    // }
-
 }

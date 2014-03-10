@@ -2,20 +2,24 @@
 
 namespace Orm;
 
+/**
+ * 自動的に有効期限を設定するオブザーバ
+ *
+ * @author Ricky <master@mistdev.com>
+ */
 class Observer_Token extends Observer
 {
 
     /**
      * トークンの有効期限付きのものをセットする
-     * @TODO: 引数としてproperty_arrayで受け取ったフィールドに対して実行したい
      *
+     * @todo 引数としてproperty_arrayで受け取ったフィールドに対して実行したい
+     * @todo トークン有効期限の外出し
      * @access public
-     * @author shimma
      * @param Model_User
      */
     public function before_insert(Model $token)
     {
-        // $token->expired_at = date('Y-m-d H:i:s', strtotime('+ 3 hour'));
         $token->expired_at = \Date::forge(strtotime('+ 3 hour'))->format('mysql');
     }
 

@@ -31,7 +31,6 @@ class Controller_Signup extends Controller_Template
         // }
     }
 
-
     /**
      * 初期画面
      *
@@ -48,7 +47,6 @@ class Controller_Signup extends Controller_Template
         $this->template->content->set('errmsg', '');
     }
 
-
     /**
      * ユーザ入力項目確認画面
      *
@@ -57,7 +55,7 @@ class Controller_Signup extends Controller_Template
      */
     public function action_confirm()
     {
-        if (Input::method() !== 'POST'){
+        if (Input::method() !== 'POST') {
             Response::redirect('/');
         }
 
@@ -66,7 +64,7 @@ class Controller_Signup extends Controller_Template
         $validation = $fieldset->validation();
 
         $this->template->title = '楽市楽座ID(無料)を登録する';
-        if(!$validation->run()){
+        if (!$validation->run()) {
             $this->template->content = ViewModel::forge('signup/index');
             $this->template->content->set('html_form', $fieldset->build('signup/confirm'), false);
             $this->template->content->set('errmsg',  $validation->show_errors(), false);
@@ -75,7 +73,6 @@ class Controller_Signup extends Controller_Template
             $this->template->content->set('user_input', $validation->validated());
         };
     }
-
 
     /**
      * 仮登録完了画面
@@ -88,7 +85,7 @@ class Controller_Signup extends Controller_Template
      */
     public function action_verify()
     {
-        if(Input::method() !== 'POST'){
+        if (Input::method() !== 'POST') {
             Response::redirect('/');
         }
 
@@ -96,7 +93,7 @@ class Controller_Signup extends Controller_Template
         $fieldset->repopulate();
         $validation = $fieldset->validation();
 
-        if(!$validation->run()){
+        if (!$validation->run()) {
             $this->template->content->set('errmsg',  $validation->show_errors(), false);
         } else {
             $user_data = $validation->validated();
@@ -104,12 +101,12 @@ class Controller_Signup extends Controller_Template
             $user_data['register_status'] = \REGISTER_STATUS_INACTIVATED;
             unset($user_data['deleted_at']); //validatedから取得するとdelete_atに0が入るので消す
 
-            try{
+            try {
                 $new_user = Model_User::forge($user_data);
                 $new_user->save();
                 $new_token = Model_Token::createToken($new_user->user_id);
                 self::sendActivateEmail($new_user);
-            }catch (Orm\ValidationFailed $e) {
+            } catch (Orm\ValidationFailed $e) {
                 $this->template->content->set('errmsg',  $e->getMessage(), false);
             }
         };
@@ -118,13 +115,12 @@ class Controller_Signup extends Controller_Template
         $this->template->content = ViewModel::forge('signup/verify');
     }
 
-
     /**
      * 該当ユーザへアクティベートメールの配信
      * tokenテーブルをチェックし、該当するトークンURLを含むメールを配信します
      *
      * @todo 仮想環境(vagrant)上からメール送信が出来ていないので、そこが確認できていない
-     * @param Model_User $user
+     * @param  Model_User $user
      * @access public
      * @return bool
      */
@@ -132,7 +128,7 @@ class Controller_Signup extends Controller_Template
     {
         $valid_token = Model_Token::findByUserId($user->user_id);
 
-        if(empty($valid_token)){
+        if (empty($valid_token)) {
             return false;
         }
 
@@ -148,7 +144,6 @@ class Controller_Signup extends Controller_Template
         $user->sendmail('確認メール', $body);
     }
 
-
     /**
      * Emailアドレス認証
      * 発行されたトークンを認証し、会員DBのユーザステータスを仮登録から認証済みに変更します
@@ -161,18 +156,18 @@ class Controller_Signup extends Controller_Template
     public function action_activate()
     {
         $hash = Input::get('token');
-        if(empty($hash)){
+        if (empty($hash)) {
             Response::redirect('/');
         }
 
-        try{
+        try {
             $valid_token = Model_Token::findByHash($hash);
             $user = Model_User::find($valid_token->user_id);
             $user->register_status = \REGISTER_STATUS_ACTIVATED;
             $user->save();
             $valid_token->delete();
             Response::redirect('signup/thanks');
-        }catch(Exception $e){
+        } catch (Exception $e) {
             Response::redirect('error/503');
         }
 
@@ -191,7 +186,6 @@ class Controller_Signup extends Controller_Template
         $this->template->title = '楽市楽座ID(無料)を登録する';
         $this->template->content = View::forge('signup/thanks');
     }
-
 
     /**
      * フォーム項目作成

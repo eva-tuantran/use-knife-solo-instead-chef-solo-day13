@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 class View_Signup_Confirm extends ViewModel
 {
@@ -10,11 +10,13 @@ class View_Signup_Confirm extends ViewModel
         $this->set('user_hidden_inputs', self::renderHiddenInputs($form_inputs), false);
     }
 
-
     /**
      * フォームinput情報から確認画面用にhiddenパラメータを作成します
      *
-     * @author shimma
+     * @param array $form_inputs
+     * @static
+     * @access public
+     * @return string
      */
     public static function renderHiddenInputs($form_inputs = array())
     {
@@ -23,8 +25,8 @@ class View_Signup_Confirm extends ViewModel
         );
 
         $html = '';
-        foreach($form_inputs as $id => $value){
-            if(in_array($id, $ignore_id)){
+        foreach ($form_inputs as $id => $value) {
+            if (in_array($id, $ignore_id)) {
                 continue;
             }
             $html .= "<input type=\"hidden\" id=\"form_${id}\" name=\"${id}\" value=\"${value}\" >\n";
@@ -32,7 +34,5 @@ class View_Signup_Confirm extends ViewModel
 
         return $html;
     }
-
-
 
 }

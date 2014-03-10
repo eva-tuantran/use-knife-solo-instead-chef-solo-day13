@@ -2,7 +2,9 @@
 
 /**
  * 共通ログインコントローラ
+ * 基本的にFuelのAuthを楽市楽座のデータベース仕様に拡張しており、Authに準拠しています。
  *
+ * @see http://fuelphp.jp/docs/1.6/packages/auth/intro.html
  * @author Ricky <master@mistdev.com>
  */
 class Auth_Login_BaseAuth extends Auth\Auth_Login_Driver
@@ -17,16 +19,20 @@ class Auth_Login_BaseAuth extends Auth\Auth_Login_Driver
     protected $user;
 
     /**
+     * perform_check。Auth::check()で動くオーバーライドです。
+     *
      * @todo セキュリティ強化にsaltを入れるのか否か検討
      * @todo sqlではなくOrm\Model_Userを利用して取得しないか検討
      * @todo 仮登録ユーザの取り扱い(ログインできないようにする？)
+     * @access protected
+     * @return void
      */
     protected function perform_check()
     {
         $current_user = Session::get('current_user');
 
         //@TODO: エラーが出ていないか確認
-        if(empty($current_user['user_id'])) {
+        if (empty($current_user['user_id'])) {
             return false;
         }
 
@@ -44,10 +50,10 @@ WHERE
     deleted_at IS NULL
 QUERY;
 
-        //@TODO: 1段階強化するのであれば、salt =:salt AND を入れて、2つのキーから内容をチェックする
+        //1段階強化するのであれば、salt =:salt AND を入れて、2つのキーから内容をチェックする
         $users = \DB::query($query)->parameters($placeholders)->as_object('Model_User')->execute()->as_array();
 
-        if (!is_null($users) && count($users) === 1){
+        if (!is_null($users) && count($users) === 1) {
             $this->user = reset($users);
             $this->user->last_login = Date::forge()->format('mysql');
             // $this->user->salt       = $this->create_salt();
@@ -61,12 +67,18 @@ QUERY;
 
 
     /**
+     * validate_user
+     *
      * @todo sqlではなくOrm\Model_Userを利用して取得しないか検討
+     * @param string $username_or_email
+     * @param string $password
+     * @access public
+     * @return bool
      */
     public function validate_user($username_or_email = '', $password = '')
     {
 
-        if(empty($username_or_email) || empty($password)){
+        if (empty($username_or_email) || empty($password)) {
             return false;
         }
 
@@ -92,7 +104,7 @@ QUERY;
 
         $users = \DB::query($query)->parameters($placeholders)->as_object('Model_User')->execute()->as_array();
 
-        if (!is_null($users) && count($users) === 1){
+        if (!is_null($users) && count($users) === 1) {
             $this->user = reset($users);
             $this->user->last_login = Date::forge()->format('mysql');
             // $this->user->salt       = $this->create_salt();
@@ -109,11 +121,25 @@ QUERY;
         return false;
     }
 
+    /**
+     * login
+     *
+     * @param string $username_or_email
+     * @param string $password
+     * @access public
+     * @return bool
+     */
     public function login($username_or_email = '', $password = '')
     {
         return $this->validate_user($username_or_email, $password);
     }
 
+    /**
+     * logout
+     *
+     * @access public
+     * @return bool
+     */
     public function logout()
     {
         Session::delete('current_user');
@@ -121,17 +147,28 @@ QUERY;
         return true;
     }
 
+    /**
+     * get_user_id
+     *
+     * @access public
+     * @return mixed
+     */
     public function get_user_id()
     {
         if (!empty($this->user) && isset($this->user['user_id'])) {
-            // return array($this->user, (int)$this->user['user_id']);
-            return (int)$this->user['user_id'];
+            return (int) $this->user['user_id'];
         }
 
         return null;
     }
 
-    //@TODO: 未使用 (auth login driverにデフォルトで用意されているため、一応配置してある)
+    /**
+     * get_groups
+     * Auth\Auth_Login_Driverにデフォルトで用意されているため、一応オーバーライドしていますが未使用。
+     *
+     * @access public
+     * @return void
+     */
     public function get_groups()
     {
         if (!empty($this->user) && isset($this->user['group'])) {
@@ -141,7 +178,16 @@ QUERY;
         return null;
     }
 
-    //@TODO: 未使用/要確認
+    /**
+     * has_access
+     * Auth\Auth_Login_Driverにデフォルトで用意されているため、一応オーバーライドしていますが未使用。
+     *
+     * @param mixed $condition
+     * @param mixed $driver
+     * @param mixed $entity
+     * @access public
+     * @return void
+     */
     public function has_access($condition, $driver = null, $entity = null)
     {
         if (is_null($entity) && !empty($this->user)) {
@@ -152,6 +198,12 @@ QUERY;
         return parent::has_access($condition, $driver, $entity);
     }
 
+    /**
+     * get_email
+     *
+     * @access public
+     * @return string
+     */
     public function get_email()
     {
         if (!empty($this->user) && isset($this->user['email'])) {
@@ -161,6 +213,12 @@ QUERY;
         return null;
     }
 
+    /**
+     * get_screen_name
+     *
+     * @access public
+     * @return string
+     */
     public function get_screen_name()
     {
         if (!empty($this->user) && isset($this->user['nick_name'])) {
@@ -170,7 +228,14 @@ QUERY;
         return null;
     }
 
-    //@TODO: 今のところ未使用。saltでユーザログイン認証を強化するのであれば、利用する。
+    /**
+     * create_salt
+     * 今のところ未使用。saltでユーザログイン認証を強化するのであれば、利用する。
+     *
+     * @todo sessionのチェックでsaltを利用するのか検討
+     * @access public
+     * @return void
+     */
     public function create_salt()
     {
         if (empty($this->user)) {
@@ -181,8 +246,17 @@ QUERY;
     }
 
 
-    //@TODO: 究極いらないが、oil経由でユーザを作成出来る箇所を作るか検討
-    //       法人IDの一括発行をコマンドラインから出来るなど便利ではある
+    /**
+     * oil経由で実行するための関数 [未実装]
+     * 法人IDの一括発行をコマンドライン生成できるようになるので、必要になったら実装する
+     *
+     * @todo 実装完了およびテスト
+     * @param mixed $username
+     * @param mixed $password
+     * @param mixed $email
+     * @access public
+     * @return int
+     */
     public function create_user($username, $password, $email)
     {
         $password = trim($password);
@@ -200,11 +274,12 @@ QUERY;
 
         $user = Model_User::forge($data);
 
-        try{
+        try {
             $user->save();
-        }catch(Exception $e){
+        } catch (Exception $e) {
             throw new Exception('create user registry error');
         }
+
         return 1;
     }
 

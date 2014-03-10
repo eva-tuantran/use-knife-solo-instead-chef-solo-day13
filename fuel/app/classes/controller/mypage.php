@@ -12,11 +12,10 @@ class Controller_Mypage extends Controller_Template
     {
         parent::before();
 
-        if(!Auth::check()){
+        if (!Auth::check()) {
             Response::redirect('/login');
         }
     }
-
 
     /**
      * ユーザ情報をSTG用に全て取得してpopulate

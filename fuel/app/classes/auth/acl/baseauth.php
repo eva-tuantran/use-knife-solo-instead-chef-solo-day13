@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 class Auth_Acl_BaseAuth extends Auth\Auth_Acl_Driver
 {

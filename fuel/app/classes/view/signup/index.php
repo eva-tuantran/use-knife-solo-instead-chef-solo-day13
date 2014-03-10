@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 class View_Signup_Index extends ViewModel
 {

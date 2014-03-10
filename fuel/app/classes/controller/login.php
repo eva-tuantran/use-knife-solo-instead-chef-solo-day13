@@ -27,7 +27,7 @@ class Controller_Login extends Controller_Template
         );
 
         $auth_info = Session::get_flash('auth_info');
-        switch($auth_info){
+        switch ($auth_info) {
             case 'login_denied':
                 $data['error_message'] = 'ログインできません。';
                 Session::destroy();
@@ -38,14 +38,13 @@ class Controller_Login extends Controller_Template
                 break;
         }
 
-        if(Auth::check()){
+        if (Auth::check()) {
             $data['info_message'] = Auth::get_screen_name().' さんとしてログインしています';
         }
 
         $this->template->title = 'Login';
         $this->template->content = View::forge('login/index', $data);
     }
-
 
     /**
      * ユーザ認証をします
@@ -55,7 +54,7 @@ class Controller_Login extends Controller_Template
      */
     public function action_auth()
     {
-        if(Input::method() !== 'POST'){
+        if (Input::method() !== 'POST') {
             Response::redirect('/login');
         }
 
@@ -67,13 +66,13 @@ class Controller_Login extends Controller_Template
          */
         if ($validation->run() && Auth::instance()->login(Input::post('email'), Input::post('password'))) {
             $return_url = '/mypage';
-            if(!empty($rurl)){
+            if (!empty($rurl)) {
                 $return_url = $rurl;
             }
             Session::set_flash('auth_info', 'login_success');
         } else {
             $return_url = '/login';
-            if(!empty($rurl)){
+            if (!empty($rurl)) {
                 $return_url = "/login?rurl=$rurl";
             }
             Session::set_flash('auth_info', 'login_denied');
@@ -82,7 +81,6 @@ class Controller_Login extends Controller_Template
         Response::redirect($return_url);
         die;
     }
-
 
     /**
      * ログイン用のValidationをレスポンスします
@@ -99,7 +97,6 @@ class Controller_Login extends Controller_Template
         return $validation;
     }
 
-
     /**
      * ログアウトします
      * Auth::logout()を利用し、失敗した場合は強制的にSessionを削除します。
@@ -109,7 +106,7 @@ class Controller_Login extends Controller_Template
      */
     public function action_out()
     {
-        if(!Auth::logout()) {
+        if (!Auth::logout()) {
             Session::destroy();
         }
 
