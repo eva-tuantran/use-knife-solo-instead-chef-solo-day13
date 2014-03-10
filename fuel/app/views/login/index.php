@@ -9,6 +9,7 @@
 <?php endif ?>
 
 <form id="logintest" action="/login/auth?rurl=<?php echo $return_url; ?>" accept-charset="utf-8" method="post">
+  <?php echo \Form::csrf(); ?>
   <label id="label_email" for="form_email">メールアドレス</label>
   <input id="email" name="email" type="text" value="">
   <label id="label_password" for="label_password">パスワード</label>

@@ -16,19 +16,12 @@ class Controller_Signup extends Controller_Template
      *
      * @access public
      * @return void
-     * @todo CSRFの実装
      * @todo 既にログインしているユーザに対して、会員IDを発行できるようにするのか確認
+     * @todo タイムアウト時間の確認
      */
     public function before()
     {
         parent::before();
-
-        // CSRFチェック
-        // if (Input::method() === 'POST') {
-            // if (!Security::check_token()) {
-                // Response::redirect('signup/timeout');
-            // }
-        // }
     }
 
     /**
@@ -76,7 +69,8 @@ class Controller_Signup extends Controller_Template
 
     /**
      * 仮登録完了画面
-     * ユーザ登録実行後、アクティベートURLを含む認証メールをユーザに送付
+     * ユーザ登録実行後、アクティベートURLを含む認証メールをユーザに送付します
+     * ユーザ作成箇所につきこの箇所のみCSRFチェックを実行いたします。
      *
      * @todo エラーメッセージのview側への組み込み
      * @todo 検討: emailにunique制約が入っており、ここで中途半端にページを閉じると同じIDで登録できない
@@ -89,6 +83,10 @@ class Controller_Signup extends Controller_Template
             Response::redirect('/');
         }
 
+        if (!Security::check_token()) {
+            Response::redirect('signup/timeout');
+        }
+
         $fieldset = $this->create_fieldset();
         $fieldset->repopulate();
         $validation = $fieldset->validation();
@@ -99,7 +97,6 @@ class Controller_Signup extends Controller_Template
             $user_data = $validation->validated();
             $user_data['password']        = \Auth::hash_password($user_data['password']);
             $user_data['register_status'] = \REGISTER_STATUS_INACTIVATED;
-            unset($user_data['deleted_at']); //validatedから取得するとdelete_atに0が入るので消す
 
             try {
                 $new_user = Model_User::forge($user_data);
@@ -185,6 +182,18 @@ class Controller_Signup extends Controller_Template
     {
         $this->template->title = '楽市楽座ID(無料)を登録する';
         $this->template->content = View::forge('signup/thanks');
+    }
+
+    /**
+     * タイムアウト画面。基本的にverifyのCSRFでチェック失敗した時に飛びます。
+     *
+     * @access public
+     * @return void
+     */
+    public function action_timeout()
+    {
+        $this->template->title = '楽市楽座ID(無料)を登録する';
+        $this->template->content = View::forge('signup/timeout');
     }
 
     /**

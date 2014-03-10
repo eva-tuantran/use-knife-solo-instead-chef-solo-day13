@@ -54,7 +54,10 @@ class Controller_Login extends Controller_Template
      */
     public function action_auth()
     {
-        if (Input::method() !== 'POST') {
+        /**
+         * loginから来る正常なauth以外は弾きます
+         */
+        if (Input::method() !== 'POST' || !Security::check_token()) {
             Response::redirect('/login');
         }
 

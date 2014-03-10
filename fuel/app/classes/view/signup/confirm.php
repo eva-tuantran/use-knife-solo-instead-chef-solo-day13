@@ -1,11 +1,19 @@
 <?php
 
+/**
+ * 確認画面用のViewモデル
+ *
+ * @todo ユーザ投稿をformのhidden要素で持つため生成ロジックがあるが、set_flashでsession側でデータ保持をさせるのであればそちらに統一
+ * @author Ricky <master@mistdev.com>
+ */
 class View_Signup_Confirm extends ViewModel
 {
 
     public function view()
     {
+        //getでそのまま取得するとdbのプロパティが全て取得されてしまうため、array_filterを利用して削除します
         $form_inputs = $this->_view->get('user_input', null);
+        $form_inputs = array_filter($form_inputs, 'strlen');
 
         $this->set('user_hidden_inputs', self::renderHiddenInputs($form_inputs), false);
     }
