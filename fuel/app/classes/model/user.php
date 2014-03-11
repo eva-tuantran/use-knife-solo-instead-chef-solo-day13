@@ -75,10 +75,11 @@ class Model_User extends Orm\Model_Soft
             'label' => '誕生日',
             'validation' => array(
                 'trim',
+                'strip_tags',
                 'max_length' => array(10),
             ),
             'form' => array(
-                'type' => false
+                'type' => 'text'
             ),
         ),
         'gender' => array(
@@ -86,8 +87,8 @@ class Model_User extends Orm\Model_Soft
             'validation' => array(
                 'trim',
                 'strip_tags',
-                'numeric_min' => array(0),
-                'numeric_max' => array(5),
+                'numeric_min'  => array(0),
+                'numeric_max'  => array(5),
                 'valid_string' => array('numeric'),
             ),
             'form' => array(
@@ -147,15 +148,15 @@ class Model_User extends Orm\Model_Soft
                 'trim',
                 'max_length' => array(100),
             ),
-            'form'       => array(
-                'type'       => 'text'
+            'form' => array(
+                'type' => 'text'
             ),
         ),
         'tel' => array(
             'label' => '電話番号',
             'validation' => array(
                 'trim',
-                'max_length'    => array(10),
+                'max_length' => array(15),
             ),
         ),
         'mobile_tel' => array(
@@ -166,12 +167,12 @@ class Model_User extends Orm\Model_Soft
             ),
         ),
         'email' => array(
-            'label'      => 'メールアドレス',
+            'label' => 'メールアドレス',
             'validation' => array(
                 'required',
                 'trim',
                 'valid_email',
-                'max_length'    => array(50),
+                'max_length' => array(50),
             ),
             'form'       => array(
                 'type'  => 'text',
@@ -180,7 +181,7 @@ class Model_User extends Orm\Model_Soft
             ),
         ),
         'mobile_email' => array(
-            'label'      => '携帯電話アドレス',
+            'label' => '携帯電話アドレス',
             'validation' => array(
                 'trim',
                 'valid_email',
@@ -195,7 +196,7 @@ class Model_User extends Orm\Model_Soft
         'device' => array(
             'label' => '携帯端末',
             'form' => array(
-                'type' => false
+                'type'  => 'text',
             ),
         ),
         'mm_flag' => array(
@@ -204,14 +205,13 @@ class Model_User extends Orm\Model_Soft
                 'trim',
                 'numeric_min'  => array(0),
                 'numeric_max'  => array(100),
-                'valid_string' => array('alpha','numeric'),
+                'valid_string' => array('numeric'),
             ),
             'form' => array(
-                'type' => false,
-                // 'type' => 'select',
+                'type' => 'select',
                 'options' => array(
-                    1 => '未購読しない',
-                    2 => '購読する',
+                    1 => '購読する',
+                    2 => '未購読しない',
                 ),
             ),
         ),
@@ -221,7 +221,12 @@ class Model_User extends Orm\Model_Soft
                 'trim',
             ),
             'form' => array(
-                'type' => false,
+                'type' => 'select',
+                'options' => array(
+                    1 => 'PC',
+                    2 => '携帯電話',
+                    3 => '両方',
+                ),
             ),
         ),
         'mm_error_flag' => array(
@@ -233,7 +238,14 @@ class Model_User extends Orm\Model_Soft
         'mobile_carrier' => array(
             'label' => '携帯キャリア',
             'form' => array(
-                'type' => false
+                'type' => 'select',
+                'options' => array(
+                    1 => 'docomo',
+                    2 => 'au',
+                    3 => 'softbank',
+                    4 => 'emobile',
+                    5 => 'その他',
+                ),
             ),
         ),
         'mobile_uid' => array(
@@ -245,7 +257,7 @@ class Model_User extends Orm\Model_Soft
         'password' => array(
             'label' => 'パスワード',
             'validation' => array(
-                'required',
+                // 'required', //現在passwordのrequiredをどうするか検討中
                 'min_length' => array(6),
                 'max_length' => array(50),
             ),
@@ -353,13 +365,14 @@ class Model_User extends Orm\Model_Soft
      */
     public function setPassword($new_password)
     {
-        $this->password = Auth::instance()->hash_password($new_password);;
+        $this->password = Auth::hash_password($new_password);;
     }
 
     /**
      * getBaseFieldset
      *
      * @todo カスタムフィールドセット(メールアドレスの重複セット)が正常に動作するか確認
+     * @todo 現状未使用
      * @param \Fieldset $fieldset
      * @static
      * @access public

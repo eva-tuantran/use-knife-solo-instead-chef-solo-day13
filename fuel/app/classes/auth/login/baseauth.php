@@ -228,6 +228,24 @@ QUERY;
         return null;
     }
 
+
+    /**
+     * get_user_instance
+     *
+     * @access public
+     * @return string
+     */
+    public function get_user_instance()
+    {
+        if (empty($this->user)) {
+            return false;
+        };
+
+        return $this->user;
+    }
+
+
+
     /**
      * create_salt
      * 今のところ未使用。saltでユーザログイン認証を強化するのであれば、利用する。
