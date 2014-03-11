@@ -23,7 +23,5 @@
   <div class="row">
       <div class="col-xs-12 alert-info"><?php echo $errmsg ?></div>
     <div class="col-xs-12"><?php echo $html_form ?></div>
-
-    <?php echo Form::hidden( Config::get('security.csrf_token_key'), Security::fetch_token() ); ?>
   </div>
 </div>

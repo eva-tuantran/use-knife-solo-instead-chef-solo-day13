@@ -22,9 +22,10 @@
   <div class="row">
     <div class="col-xs-12">
 
-      <form id="confirmation" action="register/create" accept-charset="utf-8" method="post">
+      <form id="confirmation" action="verify" accept-charset="utf-8" method="post">
         <table>
           <?php echo $user_hidden_inputs; ?>
+          <?php echo \Form::csrf(); ?>
           <tr>
             <td class=""><label id="label_first_name" for="form_first_name">名</label>*</td>
             <td class=""><?php echo $user_input["first_name"]; ?></td>
@@ -46,8 +47,13 @@
           </tr>
 
           <tr>
-            <td class=""><label id="label_prefecture" for="form_prefecture">都道府県</label></td>
-            <td class=""><?php echo $user_input["prefecture"]; ?></td>
+            <td class=""><label id="label_gender" for="form_gender">性別</label></td>
+            <td class=""><?php echo $user_input["gender"]; ?></td>
+          </tr>
+
+          <tr>
+            <td class=""><label id="label_prefecture_id" for="form_prefecture_id">都道府県</label></td>
+            <td class=""><?php echo $user_input["prefecture_id"]; ?></td>
           </tr>
 
           <tr>

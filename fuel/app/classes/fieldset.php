@@ -1,26 +1,40 @@
 <?php
 
+/**
+ * フィールドセットの拡張。
+ * validatedの拡張以外あまりまだ活用されていません。
+ *
+ * @author Ricky <master@mistdev.com>
+ */
 class Fieldset extends Fuel\Core\Fieldset
 {
 
     /**
      * バリデーションエラーが発生した場合でもvalidatedされた値を返すようにする
+     *
+     * @param  mixed $field
+     * @access public
+     * @return void
      */
     public function validated($field = null)
     {
         $value = $this->fieldset()->validation()->validated($this->name);
 
-        if ($this->error())
-        {
+        if ($this->error()) {
             $value = $this->input();
         }
 
         return $value;
     }
 
-
     /**
      * フォーム要素をviewで使いやすい配列で取得
+     *
+     * @todo あまり活用されていないので、不要であれば削除
+     * @param  string $open
+     * @param  array  $hidden
+     * @access public
+     * @return void
      */
     public function getFormElements($open = '', $hidden = array())
     {
@@ -49,9 +63,13 @@ class Fieldset extends Fuel\Core\Fieldset
 
     /**
      * 数値の入力を受け付けるinput text要素
-     *
      * - 自動的に数値バリデーションが追加される
      * - 自動的にime-modeがdisabledに設定される
+     *
+     * @param  mixed $name
+     * @param  mixed $label
+     * @access public
+     * @return void
      */
     public function addTextForNumeric($name, $label)
     {
@@ -67,6 +85,12 @@ class Fieldset extends Fuel\Core\Fieldset
 
     /**
      * 選択肢を一行で表示するRadio要素
+     *
+     * @param  mixed $name
+     * @param  mixed $label
+     * @param  mixed $options
+     * @access public
+     * @return void
      */
     public function addRadioInline($name, $label, $options)
     {
@@ -82,6 +106,12 @@ class Fieldset extends Fuel\Core\Fieldset
 
     /**
      * 選択肢を改行するRadio要素
+     *
+     * @param  mixed $name
+     * @param  mixed $label
+     * @param  mixed $options
+     * @access public
+     * @return void
      */
     public function addRadioWithBr($name, $label, $options)
     {

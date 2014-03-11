@@ -83,6 +83,12 @@ return array(
              100  => array('name' => 'Administrators', 'roles' => array('user', 'moderator', 'admin')),
         ),
 
+        'auth_type' => array(
+            1 => array('type' => 'Basic'),
+            2 => array('type' => 'Twitter'),
+            3 => array('type' => 'Facebook'),
+        ),
+
         /**
          * Roles as name => array(location => rights)
          */
@@ -115,7 +121,7 @@ return array(
         /**
          * $_POST key for login username
          */
-        'username_post_key' => 'user_name',
+        // 'username_post_key' => 'user_name',
 
         /**
          * $_POST key for login password
