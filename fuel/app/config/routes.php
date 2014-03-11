@@ -6,6 +6,7 @@ return array(
     'login'      => 'login',
     'fleamarket' => 'fleamarket',
     'mypage'     => 'mypage',
-    'error'      => 'error',
+    'errors'     => 'errors',
+    '_404_'      => 'errors/notfound',    // The main 404 route
 );
 
