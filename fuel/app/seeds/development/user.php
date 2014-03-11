@@ -1,0 +1,96 @@
+<?php
+
+use \Model_User;
+
+$seeds = array(
+
+    array(
+        'email'           => 'shimma@aucfan.com',
+        'password'        => \Auth::hash_password('shimma'),
+        'last_name'       => 'Shimma',
+        'last_name_kana'  => 'シンマ',
+        'first_name'      => 'Riki',
+        'first_name_kana' => 'リキ',
+        'nick_name'       => 'りっきー',
+        'gender'          => 1,
+        'prefecture_id'   => 40,
+        'zip'             => 'aaaa',
+        'address'         => '東京都渋谷区道玄坂1-14-6 ヒューマックス渋谷ビル6階',
+        'register_status' => \REGISTER_STATUS_ACTIVATED,
+    ),
+    array(
+        'email'           => 'ichiba@aucfan.com',
+        'password'        => \Auth::hash_password('ichiba'),
+        'last_name'       => 'Ichiba',
+        'last_name_kana'  => 'イチバ',
+        'first_name'      => 'Yuma',
+        'first_name_kana' => 'ユウマ',
+        'nick_name'       => 'ばいち',
+        'prefecture_id'   => 40,
+        'zip'             => 'aaaa',
+        'gender'          => 1,
+        'address'         => '東京都渋谷区道玄坂1-14-6 ヒューマックス渋谷ビル6階',
+        'register_status' => \REGISTER_STATUS_ACTIVATED,
+    ),
+    array(
+        'email'           => 'ida@aucfan.com',
+        'password'        => \Auth::hash_password('ida'),
+        'last_name'       => 'ida',
+        'last_name_kana'  => 'イダ',
+        'first_name'      => 'isamu',
+        'first_name_kana' => 'イサム',
+        'nick_name'       => 'いだっち',
+        'prefecture_id'   => 40,
+        'zip'             => 'aaaa',
+        'gender'          => 1,
+        'address'         => '東京都渋谷区道玄坂1-14-6 ヒューマックス渋谷ビル6階',
+        'register_status' => \REGISTER_STATUS_ACTIVATED,
+    ),
+    array(
+        'email'           => 'kobayashi@aucfan.com',
+        'password'        => \Auth::hash_password('kobayashi'),
+        'last_name'       => 'kobayashi',
+        'last_name_kana'  => 'コバヤシ',
+        'first_name'      => 'hiroyuki',
+        'first_name_kana' => 'ヒロユキ',
+        'nick_name'       => 'こばやん',
+        'prefecture_id'   => 40,
+        'zip'             => 'aaaa',
+        'gender'          => 1,
+        'address'         => '東京都渋谷区道玄坂1-14-6 ヒューマックス渋谷ビル6階',
+        'register_status' => \REGISTER_STATUS_ACTIVATED,
+    ),
+    array(
+        'email'           => 'tokunaga@aucfan.com',
+        'password'        => \Auth::hash_password('tokunaga'),
+        'last_name'       => 'tokunaga',
+        'last_name_kana'  => 'トクナガ',
+        'first_name'      => 'takeshi',
+        'first_name_kana' => 'タケシ',
+        'nick_name'       => 'とくちゃん',
+        'gender'          => 1,
+        'prefecture_id'   => 40,
+        'zip'             => 'aaaa',
+        'address'         => '東京都渋谷区道玄坂1-14-6 ヒューマックス渋谷ビル6階',
+        'register_status' => \REGISTER_STATUS_ACTIVATED,
+    ),
+    array(
+        'email'           => 'test01@aucfan.com',
+        'password'        => \Auth::hash_password('test01'),
+        'last_name'       => 'test01',
+        'last_name_kana'  => 'test01',
+        'first_name'      => 'test01',
+        'first_name_kana' => 'test01',
+        'nick_name'       => 'test01',
+        'prefecture_id'   => 40,
+        'zip'             => 'test',
+        'gender'          => 1,
+        'address'         => '東京都渋谷区道玄坂1-14-6 ヒューマックス渋谷ビル6階',
+        'register_status' => \REGISTER_STATUS_INACTIVATED,
+    ),
+);
+
+foreach ($seeds as $line) {
+    $model = Model_User::forge($line);
+    $model->save();
+}
