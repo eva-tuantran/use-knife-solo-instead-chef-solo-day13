@@ -14,6 +14,7 @@ class Fleamarket extends \Model
 {
     /**
      * 開催状況ステータス
+     *  1:開催予定,2:予約受付中,3:受付終了,4:開催終了,5:中止
      */
     const EVENT_SCHEDULE = 1;
     const EVENT_RESERVATION_RECEIPT = 2;
@@ -22,40 +23,60 @@ class Fleamarket extends \Model
     const EVENT_CANCEL = 5;
 
     /**
-     * 予約可否フラグ
+     * 出店料
+     *  1:有料,2:無料
      */
-    const RESERVATION_FLAG_NG = 0;
-    const RESERVATION_FLAG_OK = 0;
+    const SHOP_FEE_FLAG_CHARGE = 1;
+    const SHOP_FEE_FLAG_FREE = 2;
 
     /**
-     * 車出店可否フラグ
+     * 車出店
+     *  0:NG,1:OK
      */
     const CAR_SHOP_FLAG_NG = 0;
-    const CAR_SHOP_FLAG_OK = 0;
+    const CAR_SHOP_FLAG_OK = 1;
 
     /**
-     * 車出店可否フラグ
+     * プロ出店
+     *  0:NG,1:OK
      */
-    const PARKING_FLAG_NG = 0;
-    const PARKING_FLAG_OK = 0;
+    const PRO_SHOP_FLAG_NG = 0;
+    const PRO_SHOP_FLAG_OK = 1;
 
     /**
-     * 出店料フラグ
+     * 有料駐車場
+     *  有料駐車場 0:なし,1:あり
      */
-    const SHOP_FEE_FLAG_FREE = 0;
-    const PARKING_FLAG_CHARGE = 1;
+    const CHARGE_PARKING_FLAG_NONE = 0;
+    const CHARGE_PARKING_FLAG_EXIST = 1;
 
     /**
-     * 表示フラグ
+     * 無料駐車場
+     *  無料駐車場 0:なし,1:あり
      */
-    const DISPLAY_FLAG_OFF = 0;
-    const DISPLAY_FLAG_ON = 1;
+    const FREE_PARKING_FLAG_NONE = 0;
+    const FREE_PARKING_FLAG_EXIST = 1;
+
+    /**
+     * 雨天開催会場
+     *  0:NG 1:OK
+     */
+    const RAINY_LOCATION_FLAG_NONE = 0;
+    const RAINY_LOCATION_FLAG_EXIST = 1;
 
     /**
      * 登録タイプ
+     *  1:運営者,2:ユーザ投稿
      */
     const REGISTER_TYPE_ADMIN = 1;
     const REGISTER_TYPE_USER = 2;
+
+    /**
+     * 表示フラグ
+     *  0:非表示,1:表示
+     */
+    const DISPLAY_FLAG_OFF = 0;
+    const DISPLAY_FLAG_ON = 1;
 
     /**
      * テーブル名
@@ -88,10 +109,112 @@ QUERY;
 
         $rows = null;
         if (! empty($result)) {
-            $rows = $result->as_assoc();
+            $rows = $result->as_array();
         }
 
         return $rows;
+    }
+
+    /**
+     * 指定された条件でフリーマーケット情報リストを取得する
+     *
+     * フリーマーケット説明情報をJOINする
+     *
+     * @TODO: about_idの指定をかえたい
+     *
+     * @access public
+     * @param array $conditions 検索条件
+     * @return array フリーマーケット情報
+     * @author ida
+     */
+    public static function findBySearch($conditions)
+    {
+var_dump($conditions);
+        if (!empty($conditions)) {
+            $placeholders = array();
+            $condition_list = array();
+
+            foreach ($conditions as $condition) {
+                $field = $condition[0];
+                $placeholder = ':' . $field;
+                $operator = $condition[1];
+                $value = trim($condition[2]);
+                $condition_list[] = $field . ' ' . $operator . ' ' . $placeholder;
+                $placeholders[$placeholder] = $value;
+            }
+        }
+
+        $table_name = self::$_table_name;
+        $placeholders[':display_flag'] = self::DISPLAY_FLAG_ON;
+        $where = implode(' AND ', $condition_list);
+        $query = <<<"QUERY"
+SELECT
+    f.fleamarket_id,
+    f.name,
+    f.promoter_name,
+    DATE_FORMAT(f.event_date, '%Y年%m月%d日') AS event_date,
+    DATE_FORMAT(f.event_start_time, '%k時%i分') AS event_start_time,
+    DATE_FORMAT(f.event_end_time, '%k時%i分') AS event_end_time,
+    f.event_status,
+    f.description,
+    f.reservation_start,
+    f.reservation_end,
+    f.reservation_tel,
+    f.reservation_email,
+    f.website,
+    f.shop_fee_flag,
+    f.car_shop_flag,
+    f.pro_shop_flag,
+    f.charge_parking_flag,
+    f.free_parking_flag,
+    f.rainy_location_flag,
+    f.register_type,
+    l.name AS location_name,
+    l.zip AS zip,
+    l.prefecture_id AS prefecture_id,
+    l.address AS address,
+    l.googlemap_address AS googlemap_address,
+    fa.description AS about_access
+FROM
+    {$table_name} AS f
+LEFT JOIN
+    locations AS l ON f.location_id = l.location_id
+LEFT JOIN
+    fleamarket_abouts AS fa ON f.fleamarket_id = fa.fleamarket_id
+    AND fa.about_id = 1
+WHERE
+    {$where}
+    AND f.display_flag = :display_flag
+ORDER BY
+    f.event_date DESC,
+    f.event_start_time DESC
+QUERY;
+        $statement = \DB::query($query)->parameters($placeholders);
+        $result = $statement->execute();
+
+        $rows = null;
+        if (! empty($result)) {
+            $rows = $result->as_array();
+        }
+
+        return $rows;
+    }
+
+    /**
+     * 指定された条件でフリーマーケット情報リストを取得する
+     *
+     * フリーマーケット説明情報をJOINする
+     *
+     * @TODO: about_idの指定をかえたい
+     *
+     * @access public
+     * @param array $conditions 検索条件
+     * @return array フリーマーケット情報
+     * @author ida
+     */
+    public static function findJoins($conditions)
+    {
+        return array();
     }
 
     /**
@@ -168,7 +291,7 @@ QUERY;
 
         $rows = false;
         if (! empty($result)) {
-            $rows = $result->as_assoc();
+            $rows = $result->as_array();
         }
 
         return $rows;
