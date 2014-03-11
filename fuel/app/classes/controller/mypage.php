@@ -15,6 +15,7 @@ class Controller_Mypage extends Controller_Template
         if (!Auth::check()) {
             Response::redirect('/login');
         }
+        Asset::js('holder.js', array(), 'add_js');
     }
 
     /**

@@ -33,6 +33,7 @@ class Controller_Template extends Fuel\Core\Controller_Template
      * 要求するプロトコルと一致しない場合はリダイレクト処理をします。
      * 一致する場合はそのまま描画処理を実行します。
      *
+     * @todo holder.jsの削除(現在デバッグで利用中)
      * @access private
      * @return void
      */
@@ -47,6 +48,7 @@ class Controller_Template extends Fuel\Core\Controller_Template
             $this->redirect_to_protocol('http');
         }
 
+Asset::js('holder.js', array(), 'add_js');
         parent::before();
     }
 
