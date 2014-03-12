@@ -1,5 +1,4 @@
 <?php
-use Fuel\Core\DB;
 use \Controller\Base;
 use \Model\Fleamarket;
 use \Model\Fleamarket_Entry_Style;
@@ -63,7 +62,7 @@ class Controller_Search extends Controller_Base
     public function action_index()
     {
         $this->template->title = 'フリーマーケット検索結果';
-        $fleamarket_list = Fleamarket::findJoinLocationBy(
+        $fleamarket_list = Fleamarket::findBySearch(
             $this->createCondition()
         );
 
@@ -152,11 +151,6 @@ class Controller_Search extends Controller_Base
             $conditions[] = array('prefecture_id', '=', $data['prefecture']);
         }
 
-        if (isset($data['region']) && $data['region'] !== '') {
-            $prefectures = $this->getPrefectureByRegion($data['region']);
-            $conditions[] = array('prefecture_id', 'in', $prefectures);
-        }
-
         if (isset($data['shop_fee']) && $data['shop_fee'] !== '') {
             $conditions[] = array('shop_fee_flag', '=', $data['shop_fee']);
         }
@@ -177,28 +171,14 @@ class Controller_Search extends Controller_Base
 
         if (isset($data['charge_parking']) && $data['charge_parking'] !== '') {
             $conditions[] = array(
-                'charge_parking', '=', $data['charge_parking']
+                'charge_parking_flag', '=', $data['charge_parking']
             );
         }
 
         if (isset($data['free_parking']) && $data['free_parking'] !== '') {
-            $conditions[] = array('free_parking', '=', $data['free_parking']);
+            $conditions[] = array('free_parking_flag', '=', $data['free_parking']);
         }
 
         return $conditions;
-    }
-
-    /**
-     * エリアから都道府県IDを取得する
-     *
-     * @access private
-     * @param mixed リージョンID
-     * @return array
-     * @author ida
-     */
-    private function getPrefectureByRegion($region_id = null)
-    {
-        $region_prefectures = Config::get('master.region_prefectures');
-        return $region_prefectures[$region_id];
     }
 }
