@@ -1,10 +1,17 @@
 <script type="text/javascript">
 $(function() {
-    $("#form_event_datetime").datetimepicker({
-        numberOfMonths: 3,
-        showButtonPanel: true,
-        stepMinute: 5
-    });
+  $("#form_event_date").datepicker({
+    numberOfMonths: 3,
+    showButtonPanel: true
+  });
+  $("#form_event_time_start").timepicker({
+    showButtonPanel: true,
+    stepMinute: 5
+  });
+  $("#form_event_time_end").timepicker({
+    showButtonPanel: true,
+    stepMinute: 5
+  });
 });
 </script>
 <?php
@@ -61,29 +68,13 @@ $(function() {
                     ->set_template('{label}');
             ?></td>
             <td><?php
-                echo $form->field('reservation_tel1')
+                echo $form->field('reservation_tel')
                     ->set_template('{field}')
-                    ->set_attribute('class', 'xx-small')
-                    ->set_attribute('maxlength', 4);
-                echo ' - ';
-                echo $form->field('reservation_tel2')
-                    ->set_template('{field}')
-                    ->set_attribute('class', 'xx-small')
-                    ->set_attribute('maxlength', 4);
-                echo ' - ';
-                echo $form->field('reservation_tel3')
-                    ->set_template('{field}')
-                    ->set_attribute('class', 'xx-small')
-                    ->set_attribute('maxlength', 4);
-                if (isset($errors['reservation_tel1'])):
-                    echo '<div>' . $errors['reservation_tel1'] . '</div>';
-                endif;
-                if (isset($errors['reservation_tel2'])):
-                    echo '<div>' . $errors['reservation_tel2'] . '</div>';
-                endif;
-                if (isset($errors['reservation_tel3'])):
-                    echo '<div>' . $errors['reservation_tel3'] . '</div>';
-                endif;
+                    ->set_attribute('class', 'medium')
+                    ->set_attribute('maxlength', 13);
+                ?>
+                <div>※「-(ハイフン）」を入れてご入力ください。</div>
+                <?php
                 if (isset($errors['reservation_tel'])):
                     echo '<div>' . $errors['reservation_tel'] . '</div>';
                 endif;
@@ -109,11 +100,25 @@ $(function() {
                     ->set_template('{label}<span class="text-danger">{required}<span>');
             ?></td>
             <td><?php
-                echo $form->field('event_datetime')
+                echo $form->field('event_date')
                     ->set_template('{field}')
-                    ->set_attribute(array('class' => 'small'));
-                if (isset($errors['event_datetime'])):
-                    echo '<div>' . $errors['event_datetime'] . '</div>';
+                    ->set_attribute(array('class' => 'x-small'));
+                echo $form->field('event_time_start')
+                    ->set_template('{field}')
+                    ->set_attribute(array('class' => 'xx-small'));
+                echo ' ～ ';
+                echo $form->field('event_time_end')
+                    ->set_template('{field}')
+                    ->set_attribute(array('class' => 'xx-small'));
+
+                if (isset($errors['event_date'])):
+                    echo '<div>' . $errors['event_date'] . '</div>';
+                endif;
+                if (isset($errors['event_time_start'])):
+                    echo '<div>' . $errors['event_time_start'] . '</div>';
+                endif;
+                if (isset($errors['event_time_end'])):
+                    echo '<div>' . $errors['event_time_end'] . '</div>';
                 endif;
            ?></td>
         </tr>
@@ -165,6 +170,138 @@ $(function() {
                     ->set_attribute('class', 'description');
                 if (isset($errors['description'])):
                     echo '<div>' . $errors['description'] . '</div>';
+                endif;
+            ?></td>
+        </tr>
+        <tr>
+            <td><?php
+                echo $form->field('shop_fee_flag')
+                    ->set_template('{label}<span class="text-danger">{required}<span>');
+            ?></td>
+            <td><?php
+                $shop_fee_flag = $form->field('shop_fee_flag')
+                    ->set_template('{field}')
+                    ->set_type('checkbox')
+                    ->set_value(FLEAMARKET_SHOP_FEE_FLAG_CHARGE);
+                if (isset($data['shop_fee_flag'])
+                    && $data['shop_fee_flag'] == FLEAMARKET_SHOP_FEE_FLAG_CHARGE
+                ):
+                    $shop_fee_flag->set_attribute('checked', 'checked');
+                endif;
+                echo $shop_fee_flag;
+
+                if (isset($errors['shop_fee_flag'])):
+                    echo '<div>' . $errors['shop_fee_flag'] . '</div>';
+                endif;
+            ?></td>
+        </tr>
+        <tr>
+            <td><?php
+                echo $form->field('car_shop_flag')
+                    ->set_template('{label}<span class="text-danger">{required}<span>');
+            ?></td>
+            <td><?php
+                $car_shop_flag = $form->field('car_shop_flag')
+                    ->set_template('{field}')
+                    ->set_type('checkbox')
+                    ->set_value(FLEAMARKET_CAR_SHOP_FLAG_OK);
+                if (isset($data['car_shop_flag'])
+                    && $data['car_shop_flag'] == FLEAMARKET_CAR_SHOP_FLAG_OK
+                ):
+                    $car_shop_flag->set_attribute('checked', 'checked');
+                endif;
+                echo $car_shop_flag;
+
+                if (isset($errors['car_shop_flag'])):
+                    echo '<div>' . $errors['car_shop_flag'] . '</div>';
+                endif;
+            ?></td>
+        </tr>
+        <tr>
+            <td><?php
+                echo $form->field('pro_shop_flag')
+                    ->set_template('{label}<span class="text-danger">{required}<span>');
+            ?></td>
+            <td><?php
+                $pro_shop_flag = $form->field('pro_shop_flag')
+                    ->set_template('{field}')
+                    ->set_type('checkbox')
+                    ->set_value(FLEAMARKET_PRO_SHOP_FLAG_OK);
+                if (isset($data['pro_shop_flag'])
+                    && $data['pro_shop_flag'] == FLEAMARKET_PRO_SHOP_FLAG_OK
+                ):
+                    $pro_shop_flag->set_attribute('checked', 'checked');
+                endif;
+                echo $pro_shop_flag;
+
+                if (isset($errors['pro_shop_flag'])):
+                    echo '<div>' . $errors['pro_shop_flag'] . '</div>';
+                endif;
+            ?></td>
+        </tr>
+        <tr>
+            <td><?php
+                echo $form->field('charge_parking_flag')
+                    ->set_template('{label}<span class="text-danger">{required}<span>');
+            ?></td>
+            <td><?php
+                $charge_parking_flag = $form->field('charge_parking_flag')
+                    ->set_template('{field}')
+                    ->set_type('checkbox')
+                    ->set_value(FLEAMARKET_CHARGE_PARKING_FLAG_EXIST);
+                if (isset($data['charge_parking_flag'])
+                    && $data['charge_parking_flag'] == FLEAMARKET_CHARGE_PARKING_FLAG_EXIST
+                ):
+                    $charge_parking_flag->set_attribute('checked', 'checked');
+                endif;
+                echo $charge_parking_flag;
+
+                if (isset($errors['charge_parking_flag'])):
+                    echo '<div>' . $errors['charge_parking_flag'] . '</div>';
+                endif;
+            ?></td>
+        </tr>
+        <tr>
+            <td><?php
+                echo $form->field('free_parking_flag')
+                    ->set_template('{label}<span class="text-danger">{required}<span>');
+            ?></td>
+            <td><?php
+                $free_parking_flag = $form->field('free_parking_flag')
+                    ->set_template('{field}')
+                    ->set_type('checkbox')
+                    ->set_value(FLEAMARKET_FREE_PARKING_FLAG_EXIST);
+                if (isset($data['free_parking_flag'])
+                    && $data['free_parking_flag'] == FLEAMARKET_FREE_PARKING_FLAG_EXIST
+                ):
+                    $free_parking_flag->set_attribute('checked', 'checked');
+                endif;
+                echo $free_parking_flag;
+
+                if (isset($errors['free_parking_flag'])):
+                    echo '<div>' . $errors['free_parking_flag'] . '</div>';
+                endif;
+            ?></td>
+        </tr>
+        <tr>
+            <td><?php
+                echo $form->field('rainy_location_flag')
+                    ->set_template('{label}<span class="text-danger">{required}<span>');
+            ?></td>
+            <td><?php
+                $rainy_location_flag = $form->field('rainy_location_flag')
+                    ->set_template('{field}')
+                    ->set_type('checkbox')
+                    ->set_value(FLEAMARKET_RAINY_LOCATION_FLAG_EXIST);
+                if (isset($data['rainy_location_flag'])
+                    && $data['rainy_location_flag'] == FLEAMARKET_RAINY_LOCATION_FLAG_EXIST
+                ):
+                    $rainy_location_flag->set_attribute('checked', 'checked');
+                endif;
+                echo $rainy_location_flag;
+
+                if (isset($errors['rainy_location_flag'])):
+                    echo '<div>' . $errors['rainy_location_flag'] . '</div>';
                 endif;
             ?></td>
         </tr>

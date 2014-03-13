@@ -46,17 +46,18 @@ class Controller_Fleamarket extends Controller_Base
         Asset::js('jquery-ui-timepicker.js', array(), 'add_js');
         Asset::js('jquery-ui-timepicker-ja.js', array(), 'add_js');
 
-        $fieldset = $this->createFieldset();
-
         $view_model = ViewModel::forge('fleamarket/index');
-        $view_model->set('form', $fieldset->form(), false);
         $this->template->title = 'フリーマーケット情報登録';
+
+        $fieldset = $this->createFieldset();
+        if (isset($session_fleamarket['data'])) {
+            $fieldset->populate($session_fleamarket['data']);
+        }
+        $view_model->set('form', $fieldset->form(), false);
+        $view_model->set('data', $session_fleamarket['data'], false);
 
         if (isset($session_fleamarket['errors'])) {
             $view_model->set('errors', $session_fleamarket['errors']);
-        }
-        if (isset($session_fleamarket['data'])) {
-            $fieldset->populate($session_fleamarket['data']);
         }
 
         $this->template->content = $view_model;
@@ -72,7 +73,6 @@ class Controller_Fleamarket extends Controller_Base
     public function action_confirm()
     {
         $data = Input::post();
-        $this->castReservationTel($data);
         $fieldset = $this->createFieldset();
 
         $validation = $fieldset->validation();
@@ -100,6 +100,7 @@ class Controller_Fleamarket extends Controller_Base
     /**
      * 登録処理
      *
+     * @TODO: 登録ユーザIDの取得の実装
      * @access public
      * @return void
      * @author ida
@@ -118,58 +119,39 @@ class Controller_Fleamarket extends Controller_Base
 
             $location = $this->createLocation($data);
             $location_result = Location::insert($location);
+            if ($location_result['affected_rows'] == 0) {
+                throw new Exception;
+            }
 
             $location_id = $location_result['last_insert_id'];
             $fleamarket = $this->createFleamarket($location_id, $data);
             $fleamarket_result = Fleamarket::insert($fleamarket);
+            if ($fleamarket_result['affected_rows'] == 0) {
+                throw new Exception;
+            }
 
             $fleamarket_id = $fleamarket_result['last_insert_id'];
             $fleamarket_abouts = $this->createFleamarketAbouts(
                 $fleamarket_id, $data
             );
-            $fleamarket_about_result = Fleamarket_About::insertMany(
-                $fleamarket_abouts
-            );
+            if (! empty($fleamarket_abouts)) {
+                $fleamarket_about_result = Fleamarket_About::insertMany(
+                    $fleamarket_abouts
+                );
+                if (false === $fleamarket_about_result) {
+                    throw new Exception;
+                }
+            }
 
             DB::commit_transaction();
         } catch (Exception $e) {
             DB::rollback_transaction();
-            exit;
             Response::redirect('errors/index');
         }
 
         $view_model = ViewModel::forge('fleamarket/thanks');
         $this->template->title = 'フリーマーケット情報登録';
         $this->template->content = $view_model;
-    }
-
-    /**
-     * 予約電話番号を成形し取得する
-     *
-     * @access private
-     * @para array $data 入力データの配列（参照渡し）
-     * @return void
-     * @author ida
-     */
-    private function castReservationTel(&$data)
-    {
-        $reservationTel = '';
-        if (isset($data['reservation_tel1'])
-            && $data['reservation_tel1'] !== ''
-        ) {
-            $reservationTel = $data['reservation_tel1'];
-        }
-        if (isset($data['reservation_tel2'])
-            && $data['reservation_tel2'] !== ''
-        ) {
-            $reservationTel .= '-' . $data['reservation_tel2'];
-        }
-        if (isset($data['reservation_tel3'])
-            && $data['reservation_tel3'] !== ''
-        ) {
-            $reservationTel .= '-' . $data['reservation_tel3'];
-        }
-        $data['reservation_tel'] = $reservationTel;
     }
 
     /**
@@ -192,7 +174,7 @@ class Controller_Fleamarket extends Controller_Base
             'prefecture_id' => $data['prefecture_id'],
             'address'       => $data['address'],
             'googlemap_address' => $address,
-            'register_type' => Location::REGISTER_TYPE_USER,
+            'register_type' => LOCATION_REGISTER_TYPE_USER,
             'created_user'  => $data['created_user'],
         );
 
@@ -211,16 +193,18 @@ class Controller_Fleamarket extends Controller_Base
     private function createFleamarket($location_id, $data)
     {
         if (! $location_id) {
-            throw new Exception();
+            throw new Exception;
         }
 
         $fleamarket = array(
             'location_id'       => $location_id,
-            'name'              =>  $data['name'],
+            'name'              => $data['name'],
             'promoter_name'     => $data['promoter_name'],
             'event_number'      => 1,
-            'event_datetime'    => $data['event_datetime'],
-            'event_status'      => Fleamarket::EVENT_SCHEDULE,
+            'event_date'        => $data['event_date'],
+            'event_time_start'  => $data['event_time_start'],
+            'event_time_end'    => $data['event_time_end'],
+            'event_status'      => FLEAMARKET_EVENT_SCHEDULE,
             'headline'          => '',
             'information'       => '',
             'description'       => $data['description'],
@@ -232,14 +216,16 @@ class Controller_Fleamarket extends Controller_Base
             'website'           => $data['website'],
             'item_categories'   => '',
             'link_from_list'    => '',
-            'reservation_flag'  => Fleamarket::RESERVATION_FLAG_NG,
-            'car_shop_flag'     => Fleamarket::CAR_SHOP_FLAG_NG,
-            'parking_flag'      => Fleamarket::PARKING_FLAG_NG,
-            'shop_fee_flag'     => Fleamarket::SHOP_FEE_FLAG_FREE,
+            'shop_fee_flag'     => 0,
+            'car_shop_flag'     => 0,
+            'pro_shop_flag'     => 0,
+            'charge_parking_flag'   => 0,
+            'free_parking_flag' => 0,
+            'rainy_location_flag'   => 0,
             'donation_fee'      => 0,
             'donation_point'    => '',
-            'register_type'     => Fleamarket::REGISTER_TYPE_USER,
-            'display_flag'      => Fleamarket::DISPLAY_FLAG_ON,
+            'register_type'     => FLEAMARKET_REGISTER_TYPE_USER,
+            'display_flag'      => FLEAMARKET_DISPLAY_FLAG_ON,
             'created_user'      => $data['created_user'],
         );
 
@@ -263,15 +249,16 @@ class Controller_Fleamarket extends Controller_Base
 
         $event_abouts = Config::get('master.event_abouts');
         $fleamarket_abouts = array();
-        foreach ($event_abouts as $i => $event_about) {
+        foreach ($event_abouts as $about_id => $event_about) {
             if (!isset($data[$event_about['name']])
                 || $data[$event_about['name']] === ''
             ) {
                 continue;
             }
 
-            $fleamarket_abouts[$i] = array(
+            $fleamarket_abouts[] = array(
                 'fleamarket_id' => $fleamarket_id,
+                'about_id'      => $about_id,
                 'title'         => $event_about['title'],
                 'description'   => $data[$event_about['name']],
                 'created_user'  => $data['created_user'],
@@ -308,9 +295,6 @@ class Controller_Fleamarket extends Controller_Base
         $fieldset->add('website', '主催者ホームページ')
             ->add_rule('max_length', 250);
 
-        $fieldset->add('reservation_tel1', '市外局番');
-        $fieldset->add('reservation_tel2', '市内局番');
-        $fieldset->add('reservation_tel3', '加入者番号');
         $fieldset->add('reservation_tel', '予約受付電話番号')
             ->add_rule('valid_tel');
 
@@ -318,9 +302,16 @@ class Controller_Fleamarket extends Controller_Base
             ->add_rule('max_length', 250)
             ->add_rule('valid_email');
 
-        $fieldset->add('event_datetime', '開催日時')
+        $fieldset->add('event_datetime', '開催日時');
+        $fieldset->add('event_date', '開催日')
             ->add_rule('required')
-            ->add_rule('valid_datetime');
+            ->add_rule('valid_date');
+        $fieldset->add('event_time_start', '開始時間')
+            ->add_rule('required')
+            ->add_rule('valid_time');
+        $fieldset->add('event_time_end', '終了時間')
+            ->add_rule('required')
+            ->add_rule('valid_time');
 
         $fieldset->add('location_name', '会場名')
             ->add_rule('required')
@@ -337,7 +328,25 @@ class Controller_Fleamarket extends Controller_Base
 
         $fieldset->add('address', '住所')
             ->add_rule('required')
-            ->add_rule('max_length', 50);
+            ->add_rule('max_length', 100);
+
+        $fieldset->add('shop_fee_flag', '出店無料')
+            ->add_rule('numeric_between', 0, 1);
+
+        $fieldset->add('car_shop_flag', '車出店可')
+            ->add_rule('numeric_between', 0, 1);
+
+        $fieldset->add('pro_shop_flag', 'プロ出店可')
+            ->add_rule('numeric_between', 0, 1);
+
+        $fieldset->add('rainy_location_flag', '雨天開催会場')
+            ->add_rule('numeric_between', 0, 1);
+
+        $fieldset->add('charge_parking_flag', '有料駐車場あり')
+            ->add_rule('numeric_between', 0, 1);
+
+        $fieldset->add('free_parking_flag', '無料駐車場あり')
+            ->add_rule('numeric_between', 0, 1);
 
         $fieldset->add('description', '詳細')
             ->add_rule('required')
