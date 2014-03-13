@@ -71,7 +71,7 @@ Asset::js('holder.js', array(), 'add_js');
         $url = $protocol . '://' . $server_host . $_SERVER['REQUEST_URI'];
         Response::redirect($url, 'location', 301);
 
-        // return;
+        return;
     }
 
 }
