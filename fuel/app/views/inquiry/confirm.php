@@ -11,7 +11,7 @@
     <?php echo $fields['inquiry_type']->set_template('{label}'); ?>
     </td>
     <td>
-    <?php echo e(Model_Contact::inquiry_type_label($input['inquiry_type'])); ?>
+    <?php echo e(Model_Contact::to_inquiry_type_label($input['inquiry_type'])); ?>
     </td>
   </tr>
 

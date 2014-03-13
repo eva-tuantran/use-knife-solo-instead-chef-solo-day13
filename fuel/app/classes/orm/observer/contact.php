@@ -8,4 +8,8 @@ class Observer_Contact extends Observer
     {
         $contact->inquiry_datetime = \Date::forge()->format('mysql');
     }
+    public function after_load(Model $contact)
+    {
+        $contact->inquiry_type_label = Model_Contact::inquiry_type_label($contact->inquiry_type);
+    }
 }

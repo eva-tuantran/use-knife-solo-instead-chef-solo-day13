@@ -145,9 +145,13 @@ class Model_Contact extends \Orm\Model
 	);
 	protected static $_table_name = 'contacts';
 
-    public static function inquiry_type_label ($inquiry_type)
+    public static function to_inquiry_type_label ($inquiry_type)
     {
         $properties = self::properties();
         return $properties['inquiry_type']['form']['options'][$inquiry_type];
+    }
+    
+    public function inquiry_type_label (){
+        return self::to_inquiry_type_label($this->inquiry_type);
     }
 }

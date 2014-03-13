@@ -17,9 +17,10 @@ class Controller_Inquiry extends Controller_Template
      */
     public function action_index()
     {
-        $this->template->title   = 'お問い合わせ';
+        $this->template->title = 'お問い合わせ';
         $view = View::forge('inquiry/index');
         $fieldset = $this->createFieldset();
+        $fieldset->repopulate();
         $view->set('fieldset', $fieldset, false);
         $this->template->content = $view;
     }
@@ -35,24 +36,18 @@ class Controller_Inquiry extends Controller_Template
         $validation = $fieldset->validation();
 
         if(! $validation->run() ){
-            $fieldset->repopulate();
-            $this->template->title   = 'お問い合わせ';
-            $view = View::forge('inquiry/index');
-        }else{
-            $this->template->title   = 'お問い合わせ';
-
-            $validated = $validation->validated();
-
-            $view = View::forge('inquiry/confirm');
-            $view->set('input', $validated,false);
-            $this->template->content = $view;
-            
-            Session::set_flash('inquiry',array(
-                'data' => $validated,
-            ));
+            Session::set_flash('inquiry.fieldset',$fieldset);
+            return Response::redirect('inquiry');
         }
 
+        $input = $validation->validated();
+        Session::set_flash('inquiry.input',$input);
+
+        $view = View::forge('inquiry/confirm');
+        $view->set('input', $input,false);
         $view->set('fieldset', $fieldset, false);
+
+        $this->template->title   = 'お問い合わせ';
         $this->template->content = $view;
     }
 
@@ -64,13 +59,15 @@ class Controller_Inquiry extends Controller_Template
      */
     public function action_thanks()
     {
-        $contact = $this->register_contact();
-        if(! $contact){
-            return Response::redirect('inquiry');
-        }else{
-            $this->sendmailToUser($contact);
-            $this->template->title   = 'お問い合わせ';
-            $this->template->content = View::forge('inquiry/thanks');
+        $view = View::forge('inquiry/thanks');
+        $this->template->title   = 'お問い合わせ';
+        $this->template->content = $view;
+
+        try {
+            $contact = $this->registerContact();
+            $this->sendMail($contact);
+        } catch ( Exception $e ) {
+            $view->set('error',true);
         }
     }
 
@@ -82,34 +79,39 @@ class Controller_Inquiry extends Controller_Template
      */
     private function createFieldset()
     {
-        $contact = Model_Contact::forge();
-        $fieldset = Fieldset::forge();
-        $fieldset->add_model($contact);
-        $fieldset->add('submit','',array('type' => 'submit','value' => '確認'));
-        $fieldset->add('email2','メールアドレス確認用',array(
-            'type' => 'text',
-        ));
-        $fieldset->field('email2')
-            ->add_rule('required')
-            ->add_rule('match_field','email');
+        $fieldset = Session::get_flash('inquiry.fieldset');
+
+        if(! $fieldset){
+            $contact = Model_Contact::forge();
+            $fieldset = Fieldset::forge();
+            $fieldset->add_model($contact);
+            $fieldset->add('submit','',array('type' => 'submit','value' => '確認'));
+            $fieldset->add('email2','メールアドレス確認用',array(
+                'type' => 'text',
+            ));
+            $fieldset->field('email2')
+                ->add_rule('required')
+                ->add_rule('match_field','email');
+        }
+
         return $fieldset;
     }
 
     /**
-     * contactテーブルへの登録
+     * contacts テーブルへの登録
      *
      * @access private
      * @return Model_Contactオブジェクト
      */
-    private function register_contact()
+    private function registerContact()
     {
         $data = $this->getContactData();
         if(! $data ){
-            return false;
+            throw new Exception();
         }else{
             $contact = Model_Contact::forge();
             $contact->set($data);
-            $contact->save();
+            $contact->save(NULL,true);
             return $contact;
         }
     }
@@ -121,55 +123,60 @@ class Controller_Inquiry extends Controller_Template
      * @return array contactのデータ
      */
     private function getContactData(){
-        $data = Session::get_flash('inquiry.data');
+        $input = Session::get_flash('inquiry.input');
 
-        if(! isset($data)){
+        if(! isset($input)){
             return false;
         }
 
         foreach( array('email2','submit') as $column ){
-            unset($data[$column]);
+            unset($input[$column]);
         }
 
-        return array_merge($data,array(
-            'user_id' => 1,
+        return array_merge($input,array(
+            'user_id' => 1, // @TODO ログインユーザー
         ));
     }
 
     /**
      * ユーザーにメールを送信
      *
-     * @para $contact Model_Contact のobject
+     * @para $contact Model_Contact
      * @access private
      * @return void
      */
-    private function sendmailToUser($contact)
+    private function sendMail($contact)
     {
-        $email = Email::forge();
-        $email->from('h_kobayashi@aucfan.com','Hiroyuki Kobayashi');
-        $email->to(array('h_kobayashi@aucfan.com'));
-        $email->subject(mb_encode_mimeheader('subject'),'jis');
-        $email->body(mb_convert_encoding($this->createMailBody($contact),'jis'));
-        
-        try {
+        Lang::load('email');
+        foreach( array('admin','user') as $type ){
+            $lang = Lang::get("inquiry.{$type}");
+
+            $email = Email::forge();
+            $email->from($lang['from'],$lang['from_name']);
+            if( $type == 'admin' ){
+                $email->to($lang['email']);
+            }else{
+                $email->to(array($contact->email));
+            }
+            $email->subject($lang['subject']);
+            $email->body($this->createMailBody($lang['body'],$contact));
             $email->send();
-        }catch( \EmailValidationFailedException $e ){
-            var_dump($e);
-        }catch( \EmailSendingFailedException $e ){
-            var_dump($e);
         }
     }
 
     /**
      * メール本文の作成
      *
+     * @para $contact Model_Contact
      * @access private
-     * @return Viewオブジェクト
+     * @return string
      */
-    private function createMailBody($contact)
+    private function createMailBody($body,$contact)
     {
-        $view = View::forge('inquiry/mail_body');
-        $view->set('contact',$contact,false);
-        return $view;
+        foreach( array('subject','email','tel','contents') as $column ){
+            $body = str_replace("{{$column}}",$contact->$column,$body);
+        }
+        $body = str_replace('{inquiry_type_label}',$contact->inquiry_type_label(),$body);
+        return mb_convert_encoding($body,'jis');
     }
 }

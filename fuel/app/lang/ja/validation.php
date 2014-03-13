@@ -8,5 +8,6 @@ return array(
     'valid_string'      => ':label に不正な文字が含まれています',
     'required_tel'      => ':label を入力してください',
     'valid_tel'         => ':label は正しくありません',
-    'valid_datetime'    => ':label は正しくありません'
+    'valid_datetime'    => ':label は正しくありません',
+    'match_field'       => ':label と :param:1 が一致しません',
 );
