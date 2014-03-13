@@ -10,7 +10,6 @@ class Create_contacts
 			'contact_id' => array('constraint' => 11, 'type' => 'int', 'auto_increment' => true,),
 			'user_id' => array('constraint' => 11, 'type' => 'int'),
 			'inquiry_type' => array('type' => 'tinyint'),
-			'response_type' => array('type' => 'tinyint'),
 			'inquiry_datetime' => array('type' => 'datetime'),
 			'subject' => array('constraint' => 255, 'type' => 'varchar'),
 			'contents' => array('type' => 'text'),

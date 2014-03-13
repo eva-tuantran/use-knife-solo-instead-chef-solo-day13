@@ -1,81 +1,182 @@
 <?php
 
 /**
- * Controller_Inquiry
+ * お問い合わせフォーム
  *
  * @extends  Controller_Template
- * @author
+ * @author Hiroyuki Kobayashi
  */
 
 class Controller_Inquiry extends Controller_Template
 {
     /**
-     * index
+     * 初期画面
      *
      * @access public
      * @return void
      */
     public function action_index()
     {
-        $this->template->title   = 'title';
-        $this->template->content = View::forge('inquiry/index');
-        //$this->set_fields();
-        $fieldset = $this->create_fieldset();
-        $this->template->content->set_safe('fieldset', $fieldset);
+        $this->template->title = 'お問い合わせ';
+        $view = View::forge('inquiry/index');
+        $fieldset = $this->createFieldset();
+        $fieldset->repopulate();
+        $view->set('fieldset', $fieldset, false);
+        $this->template->content = $view;
     }
     /**
-     * confirm
+     * 確認画面
      *
      * @access public
      * @return void
      */
     public function action_confirm()
     {
-        $fieldset = $this->create_fieldset();
+        $fieldset = $this->createFieldset();
         $validation = $fieldset->validation();
 
         if(! $validation->run() ){
-            $fieldset->repopulate();
-            $this->template->title   = 'title';
-            $this->template->content = View::forge('inquiry/index');
-            $this->template->content->set_safe('fieldset', $fieldset);
-        }else{
-            $this->template->title   = 'title';
-            $this->template->content = View::forge('inquiry/confirm');
-            Session::set_flash('inquiry',array(
-                'data' => $validation->validated(),
-            ));
+            Session::set_flash('inquiry.fieldset',$fieldset);
+            return Response::redirect('inquiry');
+        }
+
+        $input = $validation->validated();
+        Session::set_flash('inquiry.input',$input);
+
+        $view = View::forge('inquiry/confirm');
+        $view->set('input', $input,false);
+        $view->set('fieldset', $fieldset, false);
+
+        $this->template->title   = 'お問い合わせ';
+        $this->template->content = $view;
+    }
+
+    /**
+     * 完了画面
+     *
+     * @access public
+     * @return void
+     */
+    public function action_thanks()
+    {
+        $view = View::forge('inquiry/thanks');
+        $this->template->title   = 'お問い合わせ';
+        $this->template->content = $view;
+
+        try {
+            $contact = $this->registerContact();
+            $this->sendMail($contact);
+        } catch ( Exception $e ) {
+            $view->set('error',true);
         }
     }
 
-    public function action_thanks()
+    /**
+     * fieldsetの作成
+     *
+     * @access private
+     * @return Fieldsetオブジェクト
+     */
+    private function createFieldset()
     {
-        $this->register_contact();
-        $this->sendmail_to_user();
-        $this->template->title   = 'title';
-        $this->template->content = View::forge('inquiry/thanks');
-    }
+        $fieldset = Session::get_flash('inquiry.fieldset');
 
-    private function create_fieldset()
-    {
-        $contact = Model_Contact::forge();
-        $fieldset = Fieldset::forge();
-        $fieldset->add_model($contact);
-        $fieldset->add('submit','',array('type' => 'submit','value' => '確認'));
-        $fieldset->add('email2','メールアドレス確認用',array(
-            'type' => 'text',
-        ));
-        $fieldset->field('email2')
-            ->add_rule('required')
-            ->add_rule('match_field','email');
+        if(! $fieldset){
+            $contact = Model_Contact::forge();
+            $fieldset = Fieldset::forge();
+            $fieldset->add_model($contact);
+            $fieldset->add('submit','',array('type' => 'submit','value' => '確認'));
+            $fieldset->add('email2','メールアドレス確認用',array(
+                'type' => 'text',
+            ));
+            $fieldset->field('email2')
+                ->add_rule('required')
+                ->add_rule('match_field','email');
+        }
+
         return $fieldset;
     }
 
-    private function register_contact()
+    /**
+     * contacts テーブルへの登録
+     *
+     * @access private
+     * @return Model_Contactオブジェクト
+     */
+    private function registerContact()
     {
+        $data = $this->getContactData();
+        if(! $data ){
+            throw new Exception();
+        }else{
+            $contact = Model_Contact::forge();
+            $contact->set($data);
+            $contact->save(NULL,true);
+            return $contact;
+        }
     }
 
-    private function sendmail_to_user()
+    /**
+     * セッションからcontactのデータを取得、整形
+     *
+     * @access private
+     * @return array contactのデータ
+     */
+    private function getContactData(){
+        $input = Session::get_flash('inquiry.input');
+
+        if(! isset($input)){
+            return false;
+        }
+
+        foreach( array('email2','submit') as $column ){
+            unset($input[$column]);
+        }
+
+        return array_merge($input,array(
+            'user_id' => 1, // @TODO ログインユーザー
+        ));
+    }
+
+    /**
+     * ユーザーにメールを送信
+     *
+     * @para $contact Model_Contact
+     * @access private
+     * @return void
+     */
+    private function sendMail($contact)
     {
+        Lang::load('email');
+        foreach( array('admin','user') as $type ){
+            $lang = Lang::get("inquiry.{$type}");
+
+            $email = Email::forge();
+            $email->from($lang['from'],$lang['from_name']);
+            if( $type == 'admin' ){
+                $email->to($lang['email']);
+            }else{
+                $email->to(array($contact->email));
+            }
+            $email->subject($lang['subject']);
+            $email->body($this->createMailBody($lang['body'],$contact));
+            $email->send();
+        }
+    }
+
+    /**
+     * メール本文の作成
+     *
+     * @para $contact Model_Contact
+     * @access private
+     * @return string
+     */
+    private function createMailBody($body,$contact)
+    {
+        foreach( array('subject','email','tel','contents') as $column ){
+            $body = str_replace("{{$column}}",$contact->$column,$body);
+        }
+        $body = str_replace('{inquiry_type_label}',$contact->inquiry_type_label(),$body);
+        return mb_convert_encoding($body,'jis');
     }
 }

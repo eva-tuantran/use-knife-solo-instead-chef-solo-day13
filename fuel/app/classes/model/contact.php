@@ -2,6 +2,8 @@
 
 class Model_Contact extends \Orm\Model
 {
+    protected static $_primary_key = array('contact_id');
+
 	protected static $_properties = array(
 		'contact_id' => array(
             'label' => 'contact_id',
@@ -31,12 +33,6 @@ class Model_Contact extends \Orm\Model
                     '3' => '楽市楽座のウェブサイトについて',
                     '4' => 'そのほかのお問い合わせ',
                 ),
-            ),
-        ),
-		'response_type' => array(
-            'label' => 'response_type',
-            'form' => array(
-                'type' =>  false,
             ),
         ),
 		'inquiry_datetime' => array(
@@ -137,13 +133,25 @@ class Model_Contact extends \Orm\Model
 	protected static $_observers = array(
 		'Orm\Observer_CreatedAt' => array(
 			'events' => array('before_insert'),
-			'mysql_timestamp' => false,
+			'mysql_timestamp' => true,
+            'property' => 'created_at',
 		),
 		'Orm\Observer_UpdatedAt' => array(
 			'events' => array('before_update'),
-			'mysql_timestamp' => false,
+			'mysql_timestamp' => true,
+            'property' => 'updated_at',
 		),
+        'Orm\Observer_Contact',
 	);
 	protected static $_table_name = 'contacts';
 
+    public static function to_inquiry_type_label ($inquiry_type)
+    {
+        $properties = self::properties();
+        return $properties['inquiry_type']['form']['options'][$inquiry_type];
+    }
+    
+    public function inquiry_type_label (){
+        return self::to_inquiry_type_label($this->inquiry_type);
+    }
 }

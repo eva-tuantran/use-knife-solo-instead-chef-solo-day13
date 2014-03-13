@@ -10,5 +10,6 @@ defined('REGISTER_STATUS_BANNED')      || define('REGISTER_STATUS_BANNED'     , 
 
 defined('DEFAULT_EMAIL')        || define('DEFAULT_EMAIL'     , 'info@rakuichi-rakuza.jp');
 defined('DEFAULT_EMAIL_NAME')   || define('DEFAULT_EMAIL_NAME', '楽市楽座 運営事務局');
+defined('ADMIN_EMAIL')          || define('ADMIN_EMAIL', 'h_kobayashi@aucfan.com'); // @TODO とりあえず
 
 return array();
