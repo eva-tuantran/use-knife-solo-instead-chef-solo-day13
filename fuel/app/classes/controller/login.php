@@ -62,7 +62,7 @@ class Controller_Login extends Controller_Template
         }
 
         $rurl = Input::get('rurl');
-        $validation = self::create_validation();
+        $validation = self::createValidation();
 
         /**
          * ログイン確認をします。
@@ -82,7 +82,6 @@ class Controller_Login extends Controller_Template
         }
 
         Response::redirect($return_url);
-        die;
     }
 
     /**
@@ -91,7 +90,7 @@ class Controller_Login extends Controller_Template
      * @access public
      * @return Validation $validation
      */
-    public static function create_validation()
+    public static function createValidation()
     {
         $validation = Validation::forge();
         $validation->add('email', 'Email')->add_rule('required');
