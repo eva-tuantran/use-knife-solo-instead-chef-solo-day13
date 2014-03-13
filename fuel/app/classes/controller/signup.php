@@ -8,8 +8,7 @@
 class Controller_Signup extends Controller_Template
 {
 
-    //SSL設定の項目です。テスト期間につきSSLは利用していません。
-    // public $_secure = array('index', 'auth');
+    protected $_secure_actions = array('index', 'auth');
 
     /**
      * 各アクション共通実行項目

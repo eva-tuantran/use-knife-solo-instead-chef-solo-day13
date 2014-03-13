@@ -7,8 +7,7 @@
  */
 class Controller_Login extends Controller_Template
 {
-    //SSL設定の項目です。テスト期間につきSSLは利用していません。
-    // public $_secure = array('index', 'auth');
+    protected $_secure_actions = array('index', 'auth', 'out');
 
     /**
      * 初期画面

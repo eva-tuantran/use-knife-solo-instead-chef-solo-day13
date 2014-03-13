@@ -18,31 +18,36 @@ class Controller_Template extends Fuel\Core\Controller_Template
      *
      * @var array
      * @access public
+     * @author shimma
      */
-    public $_secure = array();
+    protected $_secure_actions = array();
 
     /**
      * リダイレクト先のSSLホスト名
      *
      * @var string
      * @access public
+     * @author shimma
      */
-    public $_ssl_host = 'ssl.rakuichi-rakuza.jp';
+    protected $_ssl_host = 'ssl.rakuichi-rakuza.jp';
 
     /**
      * 要求するプロトコルと一致しない場合はリダイレクト処理をします。
      * 一致する場合はそのまま描画処理を実行します。
+     * app/config/config.phpのuse_sslがtrueの時のみ処理を実行します。
      *
      * @todo holder.jsの削除(現在デバッグで利用中)
+     * @author shimma
      * @access private
      * @return void
      */
     public function before()
     {
-        $should_be_secure = in_array($this->request->action, $this->_secure);
+        $should_be_secure = in_array($this->request->action, $this->_secure_actions);
         $is_secure = isset($_SERVER['HTTPS']);
+        $use_ssl = \Config::get('use_ssl');
 
-        if ($should_be_secure && ! $is_secure) {
+        if ($should_be_secure && ! $is_secure && $use_ssl) {
             $this->redirect_to_protocol('https');
         } elseif (! $should_be_secure && $is_secure) {
             $this->redirect_to_protocol('http');
@@ -56,6 +61,7 @@ Asset::js('holder.js', array(), 'add_js');
      * http/httpsの引数で現状のURIを引き継いでリダイレクトします
      *
      * @access private
+     * @author shimma
      * @return void
      */
     private function redirect_to_protocol($protocol = 'http')
