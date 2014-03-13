@@ -1,16 +1,16 @@
 <?php
 
 /**
- * Controller_Inquiry
+ * お問い合わせフォーム
  *
  * @extends  Controller_Template
- * @author
+ * @author Hiroyuki Kobayashi
  */
 
 class Controller_Inquiry extends Controller_Template
 {
     /**
-     * index
+     * 初期画面
      *
      * @access public
      * @return void
@@ -19,19 +19,19 @@ class Controller_Inquiry extends Controller_Template
     {
         $this->template->title   = 'お問い合わせ';
         $view = View::forge('inquiry/index');
-        $fieldset = $this->create_fieldset();
+        $fieldset = $this->createFieldset();
         $view->set('fieldset', $fieldset, false);
         $this->template->content = $view;
     }
     /**
-     * confirm
+     * 確認画面
      *
      * @access public
      * @return void
      */
     public function action_confirm()
     {
-        $fieldset = $this->create_fieldset();
+        $fieldset = $this->createFieldset();
         $validation = $fieldset->validation();
 
         if(! $validation->run() ){
@@ -56,19 +56,31 @@ class Controller_Inquiry extends Controller_Template
         $this->template->content = $view;
     }
 
+    /**
+     * 完了画面
+     *
+     * @access public
+     * @return void
+     */
     public function action_thanks()
     {
         $contact = $this->register_contact();
         if(! $contact){
             return Response::redirect('inquiry');
         }else{
-            $this->sendmail_to_user($contact);
+            $this->sendmailToUser($contact);
             $this->template->title   = 'お問い合わせ';
             $this->template->content = View::forge('inquiry/thanks');
         }
     }
 
-    private function create_fieldset()
+    /**
+     * fieldsetの作成
+     *
+     * @access private
+     * @return Fieldsetオブジェクト
+     */
+    private function createFieldset()
     {
         $contact = Model_Contact::forge();
         $fieldset = Fieldset::forge();
@@ -83,9 +95,15 @@ class Controller_Inquiry extends Controller_Template
         return $fieldset;
     }
 
+    /**
+     * contactテーブルへの登録
+     *
+     * @access private
+     * @return Model_Contactオブジェクト
+     */
     private function register_contact()
     {
-        $data = $this->get_contact_data();
+        $data = $this->getContactData();
         if(! $data ){
             return false;
         }else{
@@ -96,7 +114,13 @@ class Controller_Inquiry extends Controller_Template
         }
     }
 
-    private function get_contact_data(){
+    /**
+     * セッションからcontactのデータを取得、整形
+     *
+     * @access private
+     * @return array contactのデータ
+     */
+    private function getContactData(){
         $data = Session::get_flash('inquiry.data');
 
         if(! isset($data)){
@@ -112,13 +136,20 @@ class Controller_Inquiry extends Controller_Template
         ));
     }
 
-    private function sendmail_to_user($contact)
+    /**
+     * ユーザーにメールを送信
+     *
+     * @para $contact Model_Contact のobject
+     * @access private
+     * @return void
+     */
+    private function sendmailToUser($contact)
     {
         $email = Email::forge();
         $email->from('h_kobayashi@aucfan.com','Hiroyuki Kobayashi');
         $email->to(array('h_kobayashi@aucfan.com'));
         $email->subject(mb_encode_mimeheader('subject'),'jis');
-        $email->body(mb_convert_encoding($this->create_mail_body($contact),'jis'));
+        $email->body(mb_convert_encoding($this->createMailBody($contact),'jis'));
         
         try {
             $email->send();
@@ -129,7 +160,13 @@ class Controller_Inquiry extends Controller_Template
         }
     }
 
-    private function create_mail_body($contact)
+    /**
+     * メール本文の作成
+     *
+     * @access private
+     * @return Viewオブジェクト
+     */
+    private function createMailBody($contact)
     {
         $view = View::forge('inquiry/mail_body');
         $view->set('contact',$contact,false);
