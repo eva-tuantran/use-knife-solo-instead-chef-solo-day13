@@ -11,72 +11,6 @@ namespace Model;
 class Fleamarket extends \Model
 {
     /**
-     * 開催状況ステータス
-     *  1:開催予定,2:予約受付中,3:受付終了,4:開催終了,5:中止
-     */
-    const EVENT_SCHEDULE = 1;
-    const EVENT_RESERVATION_RECEIPT = 2;
-    const EVENT_RECEIPT_END = 3;
-    const EVENT_CLOSE = 4;
-    const EVENT_CANCEL = 5;
-
-    /**
-     * 出店料
-     *  1:有料,2:無料
-     */
-    const SHOP_FEE_FLAG_CHARGE = 1;
-    const SHOP_FEE_FLAG_FREE = 2;
-
-    /**
-     * 車出店
-     *  0:NG,1:OK
-     */
-    const CAR_SHOP_FLAG_NG = 0;
-    const CAR_SHOP_FLAG_OK = 1;
-
-    /**
-     * プロ出店
-     *  0:NG,1:OK
-     */
-    const PRO_SHOP_FLAG_NG = 0;
-    const PRO_SHOP_FLAG_OK = 1;
-
-    /**
-     * 有料駐車場
-     *  有料駐車場 0:なし,1:あり
-     */
-    const CHARGE_PARKING_FLAG_NONE = 0;
-    const CHARGE_PARKING_FLAG_EXIST = 1;
-
-    /**
-     * 無料駐車場
-     *  無料駐車場 0:なし,1:あり
-     */
-    const FREE_PARKING_FLAG_NONE = 0;
-    const FREE_PARKING_FLAG_EXIST = 1;
-
-    /**
-     * 雨天開催会場
-     *  0:NG 1:OK
-     */
-    const RAINY_LOCATION_FLAG_NONE = 0;
-    const RAINY_LOCATION_FLAG_EXIST = 1;
-
-    /**
-     * 登録タイプ
-     *  1:運営者,2:ユーザ投稿
-     */
-    const REGISTER_TYPE_ADMIN = 1;
-    const REGISTER_TYPE_USER = 2;
-
-    /**
-     * 表示フラグ
-     *  0:非表示,1:表示
-     */
-    const DISPLAY_FLAG_OFF = 0;
-    const DISPLAY_FLAG_ON = 1;
-
-    /**
      * テーブル名
      *
      * @var string $table_name
@@ -127,7 +61,6 @@ QUERY;
      */
     public static function findBySearch($conditions)
     {
-var_dump($conditions);
         if (!empty($conditions)) {
             $placeholders = array();
             $condition_list = array();
@@ -137,7 +70,7 @@ var_dump($conditions);
                 $placeholder = ':' . $field;
                 $operator = $condition[1];
                 $value = trim($condition[2]);
-                $condition_list[] = $field . ' ' . $operator . ' ' . $placeholder;
+                $condition_list[] = $field . $operator . $placeholder;
                 $placeholders[$placeholder] = $value;
             }
         }
