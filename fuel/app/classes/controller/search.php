@@ -13,6 +13,13 @@ use \Model\Location;
 class Controller_Search extends Controller_Base
 {
     /**
+     * 検索結果1ページあたりの行数
+     *
+     * @var int
+     */
+    const SEARCH_RESULT_PER_PAGE = 1;
+
+    /**
      * postが必須のアクション配列
      *
      * @var array
@@ -47,8 +54,9 @@ class Controller_Search extends Controller_Base
         Asset::js('jquery-ui.min.js', array(), 'add_js');
         Asset::js('jquery.ui.datepicker-ja.js', array(), 'add_js');
 
-        $this->template->title = 'フリーマーケット検索';
         $view_model = ViewModel::forge('search/top');
+
+        $this->template->title = 'フリーマーケット検索';
         $this->template->content = $view_model;
     }
 
@@ -59,16 +67,41 @@ class Controller_Search extends Controller_Base
      * @return void
      * @author ida
      */
-    public function action_index()
+    public function action_index($page = null)
     {
-        $this->template->title = 'フリーマーケット検索結果';
-        $fleamarket_list = Fleamarket::findBySearch(
-            $this->createCondition()
-        );
+        Asset::js('jquery.js', array(), 'add_js');
 
+        if ($page == '') {
+            $page = 1;
+        }
+
+        $filter = Input::post('filter');
+        $conditions = Input::post('conditions');
+        if (is_array($filter) && count($filter) > 0) {
+            $conditions = array_merge($conditions, $filter);
+        }
+//var_dump($filter);
+
+        $condition_list = $this->createConditionList($conditions);
+        $total_count = Fleamarket::findBySearchCount($condition_list);
+        $fleamarket_list = Fleamarket::findBySearch(
+            $condition_list, $page, self::SEARCH_RESULT_PER_PAGE
+        );
         $fleamarket_list = $this->getFleamarketRelatedData($fleamarket_list);
+
+        $pagination = Pagination::forge(
+            'fleamarket_pagination',
+            $this->getPaginationConfig($total_count)
+        );
+        $entry_styles = Config::get('master.entry_styles');
+
         $view_model = ViewModel::forge('search/index');
+        $view_model->set('conditions', $conditions, false);
+        $view_model->set('pagination', $pagination, false);
         $view_model->set('fleamarket_list', $fleamarket_list, false);
+        $view_model->set('entry_styles', $entry_styles, false);
+
+        $this->template->title = 'フリーマーケット検索結果';
         $this->template->content = $view_model;
     }
 
@@ -81,11 +114,12 @@ class Controller_Search extends Controller_Base
      */
     public function action_detail($fleamarket_id)
     {
-        $this->template->title = 'フリーマーケット詳細情報';
         $fleamarket = Fleamarket::findJoins($fleamarket_id);
 
         $view_model = ViewModel::forge('search/detail');
         $view_model->set('fleamarket', $fleamarket, false);
+
+        $this->template->title = 'フリーマーケット詳細情報';
         $this->template->content = $view_model;
     }
 
@@ -99,7 +133,7 @@ class Controller_Search extends Controller_Base
      */
     private function getFleamarketRelatedData($fleamarket_list = array())
     {
-        if (!is_array($fleamarket_list) || count($fleamarket_list) ==0) {
+        if (!is_array($fleamarket_list) || count($fleamarket_list) == 0) {
             return $fleamarket_list;
         }
 
@@ -125,12 +159,12 @@ class Controller_Search extends Controller_Base
      * 検索条件を取得する
      *
      * @access private
+     * @param array $data 選択された検索条件
      * @return array 検索条件
      * @author void
      */
-    private function createCondition()
+    private function createConditionList($data)
     {
-        $data = Input::post();
         $conditions = array();
 
         if (isset($data['event_date']) && $data['event_date'] !== '') {
@@ -176,9 +210,42 @@ class Controller_Search extends Controller_Base
         }
 
         if (isset($data['free_parking']) && $data['free_parking'] !== '') {
-            $conditions[] = array('free_parking_flag', '=', $data['free_parking']);
+            $conditions[] = array(
+                'free_parking_flag', '=', $data['free_parking']
+            );
+        }
+
+        if (isset($data['event_status']) && is_array($data['event_status'])) {
+            $conditions[] = array(
+                'f.event_status', 'IN', $data['event_status']
+            );
+        }
+
+        if (isset($data['entry_style']) && is_array($data['entry_style'])) {
+            $conditions[] = array(
+                'fes.entry_style_id', 'IN', $data['entry_style']
+            );
         }
 
         return $conditions;
+    }
+
+    /**
+     * ページネーション設定を取得する
+     *
+     * @access private
+     * @param int $count 総行数
+     * @return array
+     * @author ida
+     */
+    private function getPaginationConfig($count)
+    {
+        return array(
+            'pagination_url' => 'search/index',
+            'uri_segment' => 3,
+            'num_links' => 5,
+            'per_page' => self::SEARCH_RESULT_PER_PAGE,
+            'total_items' => $count,
+        );
     }
 }

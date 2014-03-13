@@ -8,7 +8,7 @@ $(function() {
     $("#calendar").datepicker({
         onSelect: function(selected_date) {
             var $form = $("#form_search_calendar");
-            $form.append('<input type="hidden" name="event_date" value="' + selected_date + '">');
+            $form.append('<input type="hidden" name="conditions[event_date]" value="' + selected_date + '">');
             $form.submit();
         }
     });
@@ -52,7 +52,7 @@ $(function() {
                 echo Form::label('キーワード');
             ?></td>
             <td><?php
-                echo Form::input('keyword');
+                echo Form::input('conditions[keyword]');
             ?></td>
         </tr>
         <tr>
@@ -62,7 +62,7 @@ $(function() {
             <td>
                 <div><?php
                     $prefectures = array_merge(array('' => ''), $prefectures);
-                    echo Form::select('prefecture', null, $prefectures);
+                    echo Form::select('conditions[prefecture]', null, $prefectures);
                 ?></div>
                 <div><?php
                 ?></div>
@@ -74,19 +74,19 @@ $(function() {
             ?></td>
             <td>
                 <div><?php
-                    echo Form::checkbox('shop_fee', FLEAMARKET_SHOP_FEE_FLAG_FREE, null, array('id' => 'form_shop_fee'));
+                    echo Form::checkbox('conditions[shop_fee]', FLEAMARKET_SHOP_FEE_FLAG_FREE, null, array('id' => 'form_shop_fee'));
                     echo Form::label('出店無料', null, array('for' => 'form_shop_fee'));
-                    echo Form::checkbox('car_shop', FLEAMARKET_CAR_SHOP_FLAG_OK, null, array('id' => 'form_car_shop'));
+                    echo Form::checkbox('conditions[car_shop]', FLEAMARKET_CAR_SHOP_FLAG_OK, null, array('id' => 'form_car_shop'));
                     echo Form::label('車出店可', null, array('for' => 'form_car_shop'));
-                    echo Form::checkbox('pro_shop', FLEAMARKET_PRO_SHOP_FLAG_OK, null, array('id' => 'form_pro_shop'));
+                    echo Form::checkbox('conditions[pro_shop]', FLEAMARKET_PRO_SHOP_FLAG_OK, null, array('id' => 'form_pro_shop'));
                     echo Form::label('プロ出店可', null, array('for' => 'form_pro_shop'));
                 ?></div>
                 <div><?php
-                    echo Form::checkbox('rainy_location', FLEAMARKET_RAINY_LOCATION_FLAG_EXIST, null, array('id' => 'form_rainy_location'));
-                    echo Form::label('雨天開催会場', null, array('for' => 'form_rainy_location'));
-                    echo Form::checkbox('charge_parking', FLEAMARKET_CHARGE_PARKING_FLAG_EXIST, null, array('id' => 'form_charge_parking'));
+                    echo Form::checkbox('conditions[rainy_location]', FLEAMARKET_RAINY_LOCATION_FLAG_EXIST, null, array('id' => 'form_rainy_location'));
+                    echo Form::label('雨天開催会場]', null, array('for' => 'form_rainy_location'));
+                    echo Form::checkbox('conditions[charge_parking', FLEAMARKET_CHARGE_PARKING_FLAG_EXIST, null, array('id' => 'form_charge_parking'));
                     echo Form::label('有料駐車場あり', null, array('for' => 'form_charge_parking'));
-                    echo Form::checkbox('free_parking', FLEAMARKET_FREE_PARKING_FLAG_EXIST, null, array('id' => 'form_free_parking'));
+                    echo Form::checkbox('conditions[free_parking]', FLEAMARKET_FREE_PARKING_FLAG_EXIST, null, array('id' => 'form_free_parking'));
                     echo Form::label('無料駐車場あり', null, array('for' => 'form_free_parking'));
                 ?></div>
             </td>

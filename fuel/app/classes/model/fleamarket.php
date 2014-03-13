@@ -50,42 +50,58 @@ QUERY;
     /**
      * 指定された条件でフリーマーケット情報リストを取得する
      *
-     * フリーマーケット説明情報をJOINする
-     *
-     * @TODO: about_idの指定をかえたい
-     *
      * @access public
-     * @param array $conditions 検索条件
+     * @param array $condition_list 検索条件
+     * @param mixed $page ページ
+     * @param mixed $row_count ページあたりの行数
      * @return array フリーマーケット情報
      * @author ida
      */
-    public static function findBySearch($conditions)
-    {
-        if (!empty($conditions)) {
-            $placeholders = array();
-            $condition_list = array();
+    public static function findBySearch(
+        $condition_list, $page = 0, $row_count = 0
+    ) {
+        $placeholders = array(
+            ':display_flag' => FLEAMARKET_DISPLAY_FLAG_ON,
+            ':about_access_id' => FLEAMARKET_ABOUT_ACCESS,
+            ':register_status' => LOCATION_REGISTER_TYPE_ADMIN,
+        );
 
-            foreach ($conditions as $condition) {
+        $where = '';
+        if (! empty($condition_list)) {
+            $conditions = array();
+            foreach ($condition_list as $condition) {
                 $field = $condition[0];
                 $placeholder = ':' . $field;
                 $operator = $condition[1];
-                $value = trim($condition[2]);
-                $condition_list[] = $field . $operator . $placeholder;
+                if ($operator === 'IN') {
+                    $value = implode(',', $condition[2]);
+                    $conditions[] = $field . ' ' . $operator . ' (' . $placeholder . ')';
+                } else {
+                    $value = @trim($condition[2]);
+                    $conditions[] = $field . ' ' . $operator . ' ' . $placeholder;
+                }
                 $placeholders[$placeholder] = $value;
             }
+
+            $where = ' AND ';
+            $where .= implode(' AND ', $conditions);
+        }
+
+        $limit = '';
+        if (is_numeric($page) && is_numeric($row_count)) {
+            $offset = ($page * $row_count) - 1;
+            $limit = ' LIMIT ' . $offset . ', ' . $row_count;
         }
 
         $table_name = self::$_table_name;
-        $placeholders[':display_flag'] = self::DISPLAY_FLAG_ON;
-        $where = implode(' AND ', $condition_list);
         $query = <<<"QUERY"
 SELECT
     f.fleamarket_id,
     f.name,
     f.promoter_name,
     DATE_FORMAT(f.event_date, '%Y年%m月%d日') AS event_date,
-    DATE_FORMAT(f.event_start_time, '%k時%i分') AS event_start_time,
-    DATE_FORMAT(f.event_end_time, '%k時%i分') AS event_end_time,
+    DATE_FORMAT(f.event_time_start, '%k時%i分') AS event_time_start,
+    DATE_FORMAT(f.event_time_end, '%k時%i分') AS event_time_end,
     f.event_status,
     f.description,
     f.reservation_start,
@@ -112,14 +128,19 @@ LEFT JOIN
     locations AS l ON f.location_id = l.location_id
 LEFT JOIN
     fleamarket_abouts AS fa ON f.fleamarket_id = fa.fleamarket_id
-    AND fa.about_id = 1
+    AND fa.about_id = :about_access_id
+LEFT JOIN
+    fleamarket_entry_styles AS fes ON f.fleamarket_id = fes.fleamarket_id
 WHERE
+    f.display_flag = :display_flag
     {$where}
-    AND f.display_flag = :display_flag
 ORDER BY
+    f.register_type = :register_status,
     f.event_date DESC,
-    f.event_start_time DESC
+    f.event_time_start
+{$limit}
 QUERY;
+
         $statement = \DB::query($query)->parameters($placeholders);
         $result = $statement->execute();
 
@@ -132,20 +153,73 @@ QUERY;
     }
 
     /**
-     * 指定された条件でフリーマーケット情報リストを取得する
-     *
-     * フリーマーケット説明情報をJOINする
-     *
-     * @TODO: about_idの指定をかえたい
+     * 指定された条件でフリーマーケット情報の件数を取得する
      *
      * @access public
-     * @param array $conditions 検索条件
+     * @param array $condition_list 検索条件
      * @return array フリーマーケット情報
      * @author ida
      */
-    public static function findJoins($conditions)
+    public static function findBySearchCount($condition_list)
     {
-        return array();
+        $placeholders = array(
+            ':display_flag' => FLEAMARKET_DISPLAY_FLAG_ON,
+            ':about_access_id' => FLEAMARKET_ABOUT_ACCESS,
+            ':register_status' => LOCATION_REGISTER_TYPE_ADMIN,
+        );
+
+        $where = '';
+        if (! empty($condition_list)) {
+            $conditions = array();
+            foreach ($condition_list as $condition) {
+                $field = $condition[0];
+                $placeholder = ':' . $field;
+                $operator = $condition[1];
+                if ($operator === 'IN') {
+                    $value = implode(',', $condition[2]);
+                    $conditions[] = $field . ' ' . $operator . ' (' . $placeholder . ')';
+                } else {
+                    $value = @trim($condition[2]);
+                    $conditions[] = $field . ' ' . $operator . ' ' . $placeholder;
+                }
+                $placeholders[$placeholder] = $value;
+            }
+
+            $where = ' AND ';
+            $where .= implode(' AND ', $conditions);
+        }
+
+        $table_name = self::$_table_name;
+        $query = <<<"QUERY"
+SELECT
+    COUNT(f.fleamarket_id) AS cnt
+FROM
+    {$table_name} AS f
+LEFT JOIN
+    locations AS l ON f.location_id = l.location_id
+LEFT JOIN
+    fleamarket_abouts AS fa ON f.fleamarket_id = fa.fleamarket_id
+    AND fa.about_id = :about_access_id
+LEFT JOIN
+    fleamarket_entry_styles AS fes ON f.fleamarket_id = fes.fleamarket_id
+WHERE
+    f.display_flag = :display_flag
+    {$where}
+ORDER BY
+    f.register_type = :register_status,
+    f.event_date DESC,
+    f.event_time_start
+QUERY;
+
+        $statement = \DB::query($query)->parameters($placeholders);
+        $result = $statement->execute();
+
+        $rows = null;
+        if (! empty($result)) {
+            $rows = $result->as_array();
+        }
+
+        return $rows[0]['cnt'];
     }
 
     /**
@@ -187,6 +261,7 @@ QUERY;
             $res['last_insert_id'] = $result[0];
             $res['affected_rows'] = $result[1];
         }
+
         return $res;
     }
 
