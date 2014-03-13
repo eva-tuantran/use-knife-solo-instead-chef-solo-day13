@@ -3,7 +3,6 @@
 /**
  * 新規ユーザ登録
  *
- * @author Ricky <master@mistdev.com>
  */
 class Controller_Signup extends Controller_Template
 {
@@ -13,6 +12,7 @@ class Controller_Signup extends Controller_Template
     /**
      * 各アクション共通実行項目
      *
+     * @author shimma
      * @access public
      * @return void
      * @todo 既にログインしているユーザに対して、会員IDを発行できるようにするのか確認
@@ -26,6 +26,7 @@ class Controller_Signup extends Controller_Template
     /**
      * 初期画面
      *
+     * @author shimma
      * @access public
      * @return void
      */
@@ -42,6 +43,7 @@ class Controller_Signup extends Controller_Template
     /**
      * ユーザ入力項目確認画面
      *
+     * @author shimma
      * @access public
      * @return void
      */
@@ -73,6 +75,7 @@ class Controller_Signup extends Controller_Template
      *
      * @todo エラーメッセージのview側への組み込み
      * @todo 検討: emailにunique制約が入っており、ここで中途半端にページを閉じると同じIDで登録できない
+     * @author shimma
      * @access public
      * @return void
      */
@@ -116,6 +119,7 @@ class Controller_Signup extends Controller_Template
      * tokenテーブルをチェックし、該当するトークンURLを含むメールを配信します
      *
      * @todo 仮想環境(vagrant)上からメール送信が出来ていないので、そこが確認できていない
+     * @author shimma
      * @param  Model_User $user
      * @access public
      * @return bool
@@ -146,6 +150,7 @@ class Controller_Signup extends Controller_Template
      *
      * @todo 検討: 夫々の処理でエラーが発生した際にどのようにユーザ側に見える表示するのか
      * @todo エラーのリダイレクト先を共通コントローラ完成後修正
+     * @author shimma
      * @access public
      * @return void
      */
@@ -174,6 +179,7 @@ class Controller_Signup extends Controller_Template
     /**
      * ユーザ登録完了画面
      *
+     * @author shimma
      * @access public
      * @return void
      */
@@ -186,6 +192,7 @@ class Controller_Signup extends Controller_Template
     /**
      * タイムアウト画面。基本的にverifyのCSRFでチェック失敗した時に飛びます。
      *
+     * @author shimma
      * @access public
      * @return void
      */
@@ -199,6 +206,7 @@ class Controller_Signup extends Controller_Template
      * フォーム項目作成
      * Model_Userに記載されたデフォルトの登録項目で不要な箇所をfalseにして非表示にします
      *
+     * @author shimma
      * @access public
      * @return Fieldset $fieldset
      */

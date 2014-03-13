@@ -3,7 +3,6 @@
 /**
  * ログイン画面
  *
- * @author Ricky <master@mistdev.com>
  */
 class Controller_Login extends Controller_Template
 {
@@ -14,6 +13,7 @@ class Controller_Login extends Controller_Template
      *
      * @access public
      * @return void
+     * @author shimma
      */
     public function action_index()
     {
@@ -50,6 +50,7 @@ class Controller_Login extends Controller_Template
      *
      * @access public
      * @return void
+     * @author shimma
      */
     public function action_auth()
     {
@@ -88,6 +89,7 @@ class Controller_Login extends Controller_Template
      *
      * @access public
      * @return Validation $validation
+     * @author shimma
      */
     public static function createValidation()
     {
@@ -104,6 +106,7 @@ class Controller_Login extends Controller_Template
      *
      * @access public
      * @return void
+     * @author shimma
      */
     public function action_out()
     {

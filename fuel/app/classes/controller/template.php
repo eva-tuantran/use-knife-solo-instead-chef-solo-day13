@@ -7,7 +7,6 @@
  * Controller_Base的なファイルを作成して進めるのであればそちらでも問題ありません
  * (そのタイミングでこちらのファイルを削除)
  *
- * @author Ricky <master@mistdev.com>
  * @todo ベースコントローラが出来ればそちらに下記のmethodの移動
  */
 class Controller_Template extends Fuel\Core\Controller_Template

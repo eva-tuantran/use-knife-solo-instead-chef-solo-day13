@@ -3,7 +3,6 @@
 /**
  * 楽市楽座会員基本モデル
  *
- * @author Ricky <master@mistdev.com>
  */
 class Model_User extends Orm\Model_Soft
 {
@@ -362,6 +361,7 @@ class Model_User extends Orm\Model_Soft
      * @param string $new_password 新パスワード
      * @access public
      * @return void
+     * @author shimma
      */
     public function setPassword($new_password)
     {
@@ -377,6 +377,7 @@ class Model_User extends Orm\Model_Soft
      * @static
      * @access public
      * @return Fieldset fieldset
+     * @author shimma
      */
     public static function getBaseFieldset(\Fieldset $fieldset)
     {
@@ -395,6 +396,7 @@ class Model_User extends Orm\Model_Soft
      * @static
      * @access public
      * @return bool
+     * @author shimma
      */
     public static function _validation_unique_username($username, Model_User $user)
     {
@@ -415,6 +417,7 @@ class Model_User extends Orm\Model_Soft
      * @param string $body
      * @access public
      * @return bool
+     * @author shimma
      */
     public function sendmail($subject, $body)
     {
