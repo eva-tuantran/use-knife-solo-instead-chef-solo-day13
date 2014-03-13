@@ -82,7 +82,6 @@ class Controller_Login extends Controller_Template
         }
 
         Response::redirect($return_url);
-        die;
     }
 
     /**
