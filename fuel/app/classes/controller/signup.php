@@ -12,11 +12,11 @@ class Controller_Signup extends Controller_Template
     /**
      * 各アクション共通実行項目
      *
-     * @author shimma
-     * @access public
-     * @return void
      * @todo 既にログインしているユーザに対して、会員IDを発行できるようにするのか確認
      * @todo タイムアウト時間の確認
+     * @access public
+     * @return void
+     * @author shimma
      */
     public function before()
     {
@@ -26,44 +26,40 @@ class Controller_Signup extends Controller_Template
     /**
      * 初期画面
      *
-     * @author shimma
      * @access public
      * @return void
+     * @author shimma
      */
     public function action_index()
     {
         $fieldset = $this->createFieldset();
 
         $this->template->title = '楽市楽座ID(無料)を登録する';
-        $this->template->content = ViewModel::forge('signup/index');
+        $this->template->content = View::forge('signup/index');
         $this->template->content->set('html_form', $fieldset->build('signup/confirm'), false);
-        $this->template->content->set('errmsg', '');
+        $this->template->content->set('errmsg', $fieldset->validation()->show_errors(), false);
     }
 
     /**
      * ユーザ入力項目確認画面
      *
-     * @author shimma
      * @access public
      * @return void
+     * @author shimma
      */
     public function action_confirm()
     {
-        if (Input::method() !== 'POST') {
-            Response::redirect('/');
-        }
-
         $fieldset = $this->createFieldset();
         $fieldset->repopulate();
         $validation = $fieldset->validation();
 
         $this->template->title = '楽市楽座ID(無料)を登録する';
+
+        Session::set_flash('signup.fieldset', $fieldset);
         if (!$validation->run()) {
-            $this->template->content = ViewModel::forge('signup/index');
-            $this->template->content->set('html_form', $fieldset->build('signup/confirm'), false);
-            $this->template->content->set('errmsg',  $validation->show_errors(), false);
+            return Response::redirect('signup');
         } else {
-            $this->template->content = ViewModel::forge('signup/confirm');
+            $this->template->content = View::forge('signup/confirm');
             $this->template->content->set('user_input', $validation->validated());
         };
     }
@@ -81,37 +77,26 @@ class Controller_Signup extends Controller_Template
      */
     public function action_verify()
     {
-        if (Input::method() !== 'POST') {
-            Response::redirect('/');
-        }
-
         if (!Security::check_token()) {
             Response::redirect('signup/timeout');
         }
 
         $fieldset = $this->createFieldset();
-        $fieldset->repopulate();
-        $validation = $fieldset->validation();
+        $user_data = $fieldset->validation()->validated();
+        $user_data['password']        = \Auth::hash_password($user_data['password']);
+        $user_data['register_status'] = \REGISTER_STATUS_INACTIVATED;
 
-        if (!$validation->run()) {
-            $this->template->content->set('errmsg',  $validation->show_errors(), false);
-        } else {
-            $user_data = $validation->validated();
-            $user_data['password']        = \Auth::hash_password($user_data['password']);
-            $user_data['register_status'] = \REGISTER_STATUS_INACTIVATED;
-
-            try {
-                $new_user = Model_User::forge($user_data);
-                $new_user->save();
-                $new_token = Model_Token::createToken($new_user->user_id);
-                self::sendActivateEmail($new_user);
-            } catch (Orm\ValidationFailed $e) {
-                $this->template->content->set('errmsg',  $e->getMessage(), false);
-            }
-        };
+        try {
+            $new_user = Model_User::forge($user_data);
+            $new_user->save();
+            $new_token = Model_Token::createToken($new_user->user_id);
+            self::sendActivateEmail($new_user);
+        } catch (Orm\ValidationFailed $e) {
+            $this->template->content->set('errmsg',  $e->getMessage(), false);
+        }
 
         $this->template->title = '楽市楽座ID(無料)を登録する';
-        $this->template->content = ViewModel::forge('signup/verify');
+        $this->template->content = View::forge('signup/verify');
     }
 
     /**
@@ -119,10 +104,11 @@ class Controller_Signup extends Controller_Template
      * tokenテーブルをチェックし、該当するトークンURLを含むメールを配信します
      *
      * @todo 仮想環境(vagrant)上からメール送信が出来ていないので、そこが確認できていない
-     * @author shimma
+     * @todo view::forgeのrenderを移動する
      * @param  Model_User $user
      * @access public
      * @return bool
+     * @author shimma
      */
     public static function sendActivateEmail(Model_User $user)
     {
@@ -206,19 +192,23 @@ class Controller_Signup extends Controller_Template
      * フォーム項目作成
      * Model_Userに記載されたデフォルトの登録項目で不要な箇所をfalseにして非表示にします
      *
-     * @author shimma
      * @access public
      * @return Fieldset $fieldset
+     * @author shimma
      */
     public function createFieldset()
     {
-        $fieldset = Fieldset::forge('signup');
-        $fieldset = Model_User::getBaseFieldset($fieldset);
+        $fieldset = Session::get_flash('signup.fieldset');
 
-        $fieldset->field('device')->set_type(false);
-        $fieldset->field('tel')->set_type(false);
-        $fieldset->field('mobile_email')->set_type(false);
-        $fieldset->add('submit', '確認', array('type' => 'submit','value' => '確認'));
+        if (! $fieldset) {
+            $fieldset = Fieldset::forge('signup');
+            $fieldset = Model_User::getBaseFieldset($fieldset);
+
+            $fieldset->field('device')->set_type(false);
+            $fieldset->field('tel')->set_type(false);
+            $fieldset->field('mobile_email')->set_type(false);
+            $fieldset->add('submit', '確認', array('type' => 'submit','value' => '確認'));
+        }
 
         return $fieldset;
     }
