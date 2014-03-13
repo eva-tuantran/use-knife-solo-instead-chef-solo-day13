@@ -32,7 +32,7 @@ class Controller_Signup extends Controller_Template
      */
     public function action_index()
     {
-        $fieldset = $this->create_fieldset();
+        $fieldset = $this->createFieldset();
 
         $this->template->title = '楽市楽座ID(無料)を登録する';
         $this->template->content = ViewModel::forge('signup/index');
@@ -52,7 +52,7 @@ class Controller_Signup extends Controller_Template
             Response::redirect('/');
         }
 
-        $fieldset = $this->create_fieldset();
+        $fieldset = $this->createFieldset();
         $fieldset->repopulate();
         $validation = $fieldset->validation();
 
@@ -87,7 +87,7 @@ class Controller_Signup extends Controller_Template
             Response::redirect('signup/timeout');
         }
 
-        $fieldset = $this->create_fieldset();
+        $fieldset = $this->createFieldset();
         $fieldset->repopulate();
         $validation = $fieldset->validation();
 
@@ -203,7 +203,7 @@ class Controller_Signup extends Controller_Template
      * @access public
      * @return Fieldset $fieldset
      */
-    public function create_fieldset()
+    public function createFieldset()
     {
         $fieldset = Fieldset::forge('signup');
         $fieldset = Model_User::getBaseFieldset($fieldset);
