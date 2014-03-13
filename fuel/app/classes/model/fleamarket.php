@@ -1,8 +1,6 @@
 <?php
 namespace Model;
 
-use \DB;
-
 /**
  * Fleamarkets Model
  *
@@ -12,51 +10,6 @@ use \DB;
  */
 class Fleamarket extends \Model
 {
-    /**
-     * 開催状況ステータス
-     */
-    const EVENT_SCHEDULE = 1;
-    const EVENT_RESERVATION_RECEIPT = 2;
-    const EVENT_RECEIPT_END = 3;
-    const EVENT_CLOSE = 4;
-    const EVENT_CANCEL = 5;
-
-    /**
-     * 予約可否フラグ
-     */
-    const RESERVATION_FLAG_NG = 0;
-    const RESERVATION_FLAG_OK = 0;
-
-    /**
-     * 車出店可否フラグ
-     */
-    const CAR_SHOP_FLAG_NG = 0;
-    const CAR_SHOP_FLAG_OK = 0;
-
-    /**
-     * 車出店可否フラグ
-     */
-    const PARKING_FLAG_NG = 0;
-    const PARKING_FLAG_OK = 0;
-
-    /**
-     * 出店料フラグ
-     */
-    const SHOP_FEE_FLAG_FREE = 0;
-    const PARKING_FLAG_CHARGE = 1;
-
-    /**
-     * 表示フラグ
-     */
-    const DISPLAY_FLAG_OFF = 0;
-    const DISPLAY_FLAG_ON = 1;
-
-    /**
-     * 登録タイプ
-     */
-    const REGISTER_TYPE_ADMIN = 1;
-    const REGISTER_TYPE_USER = 2;
-
     /**
      * テーブル名
      *
@@ -88,7 +41,7 @@ QUERY;
 
         $rows = null;
         if (! empty($result)) {
-            $rows = $result->as_assoc();
+            $rows = $result->as_array();
         }
 
         return $rows;
@@ -111,6 +64,7 @@ QUERY;
         $placeholders = array();
         $field_list = array();
         $value_list = array();
+
         foreach ($data as $field => $value) {
             $placeholder = ':' . $field;
             $field_list[] = $field;
@@ -127,12 +81,12 @@ QUERY;
         $statement = \DB::query($query)->parameters($placeholders);
         $result = $statement->execute();
 
-        $rows = false;
+        $res = false;
         if (! empty($result)) {
-            $rows['last_insert_id'] = $result[0];
-            $rows['affected_rows'] = $result[1];
+            $res['last_insert_id'] = $result[0];
+            $res['affected_rows'] = $result[1];
         }
-        return $rows;
+        return $res;
     }
 
     /**
@@ -140,17 +94,20 @@ QUERY;
      *
      * @access public
      * @param array $data 更新するデータ配列
-     * @return array 登録結果
+     * @return int 更新した件数
      * @author ida
      */
     public static function update($data)
     {
-        if (! $data) {
+        if (! $data || ! isset($data['flearmarket_id'])) {
             return false;
         }
 
-        $placeholders = array();
+        $placeholders = array('flearmarket_id' => $data['fleamarket_id']);
+        unset($data['fleamarket_id']);
         $field_list = array();
+
+
         foreach ($data as $field => $value) {
             $placeholder = ':' . $field;
             $field_list[] = $field . '=' . $placeholder;
@@ -160,17 +117,12 @@ QUERY;
         $fields = implode(',', $field_list);
         $table_name = self::$_table_name;
         $query = <<<"QUERY"
-UPDATE FROM {$table_name} SET {$fields},updated_at = now()
+UPDATE FROM {$table_name} SET {$fields},updated_at=now()
 WHERE fleamarket_id = :fleamarket_id
 QUERY;
         $statement = \DB::query($query)->parameters($placeholders);
         $result = $statement->execute();
 
-        $rows = false;
-        if (! empty($result)) {
-            $rows = $result->as_assoc();
-        }
-
-        return $rows;
+        return $result;
     }
 }

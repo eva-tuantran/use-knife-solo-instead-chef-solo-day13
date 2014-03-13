@@ -1,8 +1,6 @@
 <?php
 namespace Model;
 
-use \DB;
-
 /**
  * Locations Model
  *
@@ -49,7 +47,7 @@ QUERY;
 
         $rows = null;
         if (! empty($result)) {
-            $rows = $result->as_assoc();
+            $rows = $result->as_array();
         }
 
         return $rows;
@@ -72,6 +70,7 @@ QUERY;
         $placeholders = array();
         $field_list = array();
         $value_list = array();
+
         foreach ($data as $field => $value) {
             $placeholder = ':' . $field;
             $field_list[] = $field;
@@ -88,13 +87,13 @@ QUERY;
         $statement = \DB::query($query)->parameters($placeholders);
         $result = $statement->execute();
 
-        $rows = false;
+        $res = false;
         if (! empty($result)) {
-            $rows['last_insert_id'] = $result[0];
-            $rows['affected_rows'] = $result[1];
+            $res['last_insert_id'] = $result[0];
+            $res['affected_rows'] = $result[1];
         }
 
-        return $rows;
+        return $res;
     }
 
     /**
@@ -102,18 +101,19 @@ QUERY;
      *
      * @access public
      * @param array $data 更新するデータ配列
-     * @return array 登録結果
+     * @return int 更新した件数
      * @author ida
      */
     public static function update($data)
     {
-        if (! $data) {
+        if (! $data || ! isset($data['location_id'])) {
             return false;
         }
 
-        $location_id = $data['location_id'];
-        $placeholders = array();
+        $placeholders = array('location_id' => $data['location_id']);
+        unset($data['location_id']);
         $field_list = array();
+
         foreach ($data as $field => $value) {
             $placeholder = ':' . $field;
             $field_list[] = $field . '=' . $placeholder;
@@ -123,17 +123,12 @@ QUERY;
         $fields = implode(',', $field_list);
         $table_name = self::$_table_name;
         $query = <<<"QUERY"
-UPDATE FROM {$table_name} SET {$fields},updated_at = now(),
+UPDATE FROM {$table_name} SET {$fields},updated_at=now(),
 WHERE location_id = :location_id
 QUERY;
         $statement = \DB::query($query)->parameters($placeholders);
         $result = $statement->execute();
 
-        $rows = false;
-        if (! empty($result)) {
-            $rows = $result->as_assoc();
-        }
-
-        return $rows;
+        return $result;
     }
 }
