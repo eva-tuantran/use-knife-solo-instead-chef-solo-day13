@@ -7,7 +7,7 @@
  * @author Hiroyuki Kobayashi
  */
 
-class Controller_Inquiry extends Controller_Template
+class controller_inquiry extends Controller_Template
 {
     /**
      * 初期画面
@@ -17,12 +17,13 @@ class Controller_Inquiry extends Controller_Template
      */
     public function action_index()
     {
-        $this->template->title = 'お問い合わせ';
         $view = View::forge('inquiry/index');
         $fieldset = $this->createFieldset();
         $fieldset->repopulate();
         $view->set('fieldset', $fieldset, false);
         $this->template->content = $view;
+        $this->template->title = 'hoge';
+        var_dump($view->filename);
     }
     /**
      * 確認画面
@@ -35,8 +36,9 @@ class Controller_Inquiry extends Controller_Template
         $fieldset = $this->createFieldset();
         $validation = $fieldset->validation();
 
-        if(! $validation->run() ){
+        if (! $validation->run()) {
             Session::set_flash('inquiry.fieldset',$fieldset);
+
             return Response::redirect('inquiry');
         }
 
@@ -70,8 +72,7 @@ class Controller_Inquiry extends Controller_Template
         try {
             $contact = $this->registerContact();
             $this->sendMail($contact);
-        }
-        catch ( Exception $e ) {
+        } catch ( Exception $e ) {
             $view->set('error',$e,false);
         }
     }
@@ -86,21 +87,21 @@ class Controller_Inquiry extends Controller_Template
     {
         $fieldset = Session::get_flash('inquiry.fieldset');
 
-        if(! $fieldset){
+        if (! $fieldset) {
             $contact = Model_Contact::forge();
             $fieldset = Fieldset::forge();
             $fieldset->add_model($contact);
             $fieldset->add(
-                'submit','',
-                array('type' => 'submit','value' => '確認')
+                'submit', '',
+                array('type' => 'submit', 'value' => '確認')
             );
             $fieldset->add(
-                'email2','メールアドレス確認用',
+                'email2', 'メールアドレス確認用',
                 array('type' => 'text')
             );
             $fieldset->field('email2')
                 ->add_rule('required')
-                ->add_rule('match_field','email');
+                ->add_rule('match_field', 'email');
         }
 
         return $fieldset;
@@ -115,12 +116,13 @@ class Controller_Inquiry extends Controller_Template
     private function registerContact()
     {
         $data = $this->getContactData();
-        if(! $data ){
+        if (! $data) {
             throw new Exception();
-        }else{
+        } else {
             $contact = Model_Contact::forge();
             $contact->set($data);
-            $contact->save(NULL,true);
+            $contact->save(NULL, true);
+
             return $contact;
         }
     }
@@ -131,10 +133,11 @@ class Controller_Inquiry extends Controller_Template
      * @access private
      * @return array contactのデータ
      */
-    private function getContactData(){
+    private function getContactData()
+    {
         $input = Session::get_flash('inquiry.input');
 
-        if($input){
+        if ($input) {
             unset($input['email2']);
             unset($input['submit']);
             $input['user_id'] = Auth::get_user_id();
@@ -153,14 +156,14 @@ class Controller_Inquiry extends Controller_Template
     private function sendMail($contact)
     {
         Lang::load('email');
-        foreach( array('admin','user') as $type ){
-            $lang = Lang::get("inquiry.{$type}");
+        foreach ( array('admin','user') as $type ) {
+            $lang = Lang::get("inquiry_{$type}");
 
             $email = Email::forge();
             $email->from($lang['from'],$lang['from_name']);
-            if( $type == 'admin' ){
+            if ($type == 'admin') {
                 $email->to($lang['email']);
-            }else{
+            } else {
                 $email->to(array($contact->email));
             }
             $email->subject($lang['subject']);
@@ -178,10 +181,11 @@ class Controller_Inquiry extends Controller_Template
      */
     private function createMailBody($body,$contact)
     {
-        foreach( array('subject','email','tel','contents') as $column ){
+        foreach ( array('subject','email','tel','contents') as $column ) {
             $body = str_replace("{{$column}}",$contact->$column,$body);
         }
         $body = str_replace('{inquiry_type_label}',$contact->inquiry_type_label(),$body);
+
         return mb_convert_encoding($body,'jis');
     }
 }
