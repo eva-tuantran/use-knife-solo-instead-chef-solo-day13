@@ -295,7 +295,8 @@ return array(
                      */
 
                     'config' => array(
-                        'constants'
+            'master' => 'master',
+            'constants' => 'constants',
                         // 'app', //@TODO: 常に読み込む必要ないかもしれない
                     ),
 

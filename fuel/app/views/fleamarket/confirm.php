@@ -35,26 +35,14 @@
         </tr>
         <tr>
             <td><?php
-                echo $form->field('reservation_tel1')
+                echo $form->field('reservation_tel')
                     ->set_template('{label}');
             ?></td>
             <td><?php
-                if (isset($data['reservation_tel1'])
-                    && $data['reservation_tel1'] != ''
+                if (isset($data['reservation_tel'])
+                    && $data['reservation_tel'] != ''
                 ):
-                    $tel1 = e($data['reservation_tel1']);
-                    echo $tel1 . '-';
-                endif;
-                if (isset($data['reservation_tel2'])
-                    && $data['reservation_tel2'] != ''
-                ):
-                    $tel2 = e($data['reservation_tel2']);
-                    echo $tel2 . '-';
-                endif;
-                if (isset($data['reservation_tel3'])
-                    && $data['reservation_tel3'] != ''
-                ):
-                    echo e($data['reservation_tel3']);
+                    $tel1 = e($data['reservation_tel']);
                 endif;
             ?></td>
         </tr>
@@ -75,10 +63,22 @@
                     ->set_template('{label}');
             ?></td>
             <td><?php
-                if (isset($data['event_datetime'])
-                    && $data['event_datetime'] != ''
+                if (isset($data['event_date'])
+                    && $data['event_date'] != ''
                 ):
-                    echo e($data['event_datetime']);
+                    echo e($data['event_date']);
+                endif;
+                echo '&nbsp;';
+                if (isset($data['event_time_start'])
+                    && $data['event_time_start'] != ''
+                ):
+                    echo e($data['event_time_start']);
+                endif;
+                echo ' ～ ';
+                if (isset($data['event_time_end'])
+                    && $data['event_time_end'] != ''
+                ):
+                    echo e($data['event_time_end']);
                 endif;
             ?></td>
         </tr>
@@ -122,6 +122,72 @@
             <td><?php
                 if (isset($data['description'])):
                     echo e($data['description']);
+                endif;
+            ?></td>
+        </tr>
+        <tr>
+            <td><?php
+                echo $form->field('shop_fee_flag')
+                    ->set_template('{label}');
+            ?></td>
+            <td><?php
+                if (isset($data['shop_fee_flag'])):
+                    echo e($data['shop_fee_flag']);
+                endif;
+            ?></td>
+        </tr>
+        <tr>
+            <td><?php
+                echo $form->field('car_shop_flag')
+                    ->set_template('{label}');
+            ?></td>
+            <td><?php
+                if (isset($data['car_shop_flag'])):
+                    echo e($data['car_shop_flag']);
+                endif;
+            ?></td>
+        </tr>
+        <tr>
+            <td><?php
+                echo $form->field('pro_shop_flag')
+                    ->set_template('{label}');
+            ?></td>
+            <td><?php
+                if (isset($data['pro_shop_flag'])):
+                    echo e($data['pro_shop_flag']);
+                endif;
+            ?></td>
+        </tr>
+        <tr>
+            <td><?php
+                echo $form->field('charge_parking_flag')
+                    ->set_template('{label}');
+            ?></td>
+            <td><?php
+                if (isset($data['charge_parking_flag'])):
+                    echo e($data['charge_parking_flag']);
+                endif;
+            ?></td>
+        </tr>
+        <tr>
+            <td><?php
+                echo $form->field('free_parking_flag')
+                    ->set_template('{label}');
+            ?></td>
+            <td><?php
+                if (isset($data['free_parking_flag'])):
+                    echo e($data['free_parking_flag']);
+                endif;
+            ?></td>
+        </tr>
+        <tr>
+            <td><?php
+                echo $form->field('rainy_location_flag')
+                    ->set_template('{label}');
+            ?></td>
+            <td><?php
+                if (isset($data['rainy_location_flag'])):
+                    echo e($data['rainy_location_flag']);
                 endif;
             ?></td>
         </tr>
