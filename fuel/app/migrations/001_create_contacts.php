@@ -8,7 +8,7 @@ class Create_contacts
 	{
 		\DBUtil::create_table('contacts', array(
 			'contact_id' => array('constraint' => 11, 'type' => 'int', 'auto_increment' => true,),
-			'user_id' => array('constraint' => 11, 'type' => 'int'),
+			'user_id' => array('constraint' => 11, 'type' => 'int', 'null' => true),
 			'inquiry_type' => array('type' => 'tinyint'),
 			'inquiry_datetime' => array('type' => 'datetime'),
 			'subject' => array('constraint' => 255, 'type' => 'varchar'),

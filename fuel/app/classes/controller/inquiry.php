@@ -30,7 +30,7 @@ class Controller_Inquiry extends Controller_Template
      * @access public
      * @return void
      */
-    public function action_confirm()
+    public function post_confirm()
     {
         $fieldset = $this->createFieldset();
         $validation = $fieldset->validation();
@@ -57,8 +57,12 @@ class Controller_Inquiry extends Controller_Template
      * @access public
      * @return void
      */
-    public function action_thanks()
+    public function post_thanks()
     {
+        if (! Security::check_token()) {
+            return Response::redirect('errors/doubletransmission');
+        }
+
         $view = View::forge('inquiry/thanks');
         $this->template->title   = 'お問い合わせ';
         $this->template->content = $view;
@@ -66,8 +70,9 @@ class Controller_Inquiry extends Controller_Template
         try {
             $contact = $this->registerContact();
             $this->sendMail($contact);
-        } catch ( Exception $e ) {
-            $view->set('error',true);
+        }
+        catch ( Exception $e ) {
+            $view->set('error',$e,false);
         }
     }
 
@@ -85,10 +90,14 @@ class Controller_Inquiry extends Controller_Template
             $contact = Model_Contact::forge();
             $fieldset = Fieldset::forge();
             $fieldset->add_model($contact);
-            $fieldset->add('submit','',array('type' => 'submit','value' => '確認'));
-            $fieldset->add('email2','メールアドレス確認用',array(
-                'type' => 'text',
-            ));
+            $fieldset->add(
+                'submit','',
+                array('type' => 'submit','value' => '確認')
+            );
+            $fieldset->add(
+                'email2','メールアドレス確認用',
+                array('type' => 'text')
+            );
             $fieldset->field('email2')
                 ->add_rule('required')
                 ->add_rule('match_field','email');
@@ -125,17 +134,13 @@ class Controller_Inquiry extends Controller_Template
     private function getContactData(){
         $input = Session::get_flash('inquiry.input');
 
-        if(! isset($input)){
-            return false;
+        if($input){
+            unset($input['email2']);
+            unset($input['submit']);
+            $input['user_id'] = Auth::get_user_id();
         }
 
-        foreach( array('email2','submit') as $column ){
-            unset($input[$column]);
-        }
-
-        return array_merge($input,array(
-            'user_id' => 1, // @TODO ログインユーザー
-        ));
+        return $input;
     }
 
     /**

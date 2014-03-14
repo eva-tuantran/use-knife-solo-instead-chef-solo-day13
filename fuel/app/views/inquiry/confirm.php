@@ -53,5 +53,10 @@
 
 </table>
 
+<?php
+    echo Form::hidden(
+        Config::get('security.csrf_token_key'), Security::fetch_token()
+    );
+?>
 <input type="submit" value="確認">
 <?php echo $form->close(); ?>
