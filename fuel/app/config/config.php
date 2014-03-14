@@ -56,6 +56,14 @@ return array(
      */
     'caching'         => false,
     // 'cache_lifetime'  => 3600, // In Seconds
+    //
+    //
+
+    /**
+     * Settings for ssl
+     * @author shimma
+     */
+    'use_ssl'         => false,
 
     /**
      * Callback to use with ob_start(), set this to 'ob_gzhandler' for gzip encoding of output

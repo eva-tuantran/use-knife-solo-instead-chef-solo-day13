@@ -5,7 +5,6 @@ namespace Orm;
 /**
  * 自動的に有効期限を設定するオブザーバ
  *
- * @author Ricky <master@mistdev.com>
  */
 class Observer_Token extends Observer
 {
@@ -17,6 +16,7 @@ class Observer_Token extends Observer
      * @todo トークン有効期限の外出し
      * @access public
      * @param Model_User
+     * @author shimma
      */
     public function before_insert(Model $token)
     {

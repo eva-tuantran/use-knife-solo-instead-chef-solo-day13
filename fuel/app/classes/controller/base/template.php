@@ -1,51 +1,65 @@
 <?php
 
 /**
- * 全共通のController_Templateの拡張
+ * Base Controller.
  *
- * Controller_Template自体を拡張する仕様ですが、
- * Controller_Base的なファイルを作成して進めるのであればそちらでも問題ありません
- * (そのタイミングでこちらのファイルを削除)
- *
- * @author Ricky <master@mistdev.com>
- * @todo ベースコントローラが出来ればそちらに下記のmethodの移動
+ * @extends  Controller_Template
  */
-class Controller_Template extends Fuel\Core\Controller_Template
+class Controller_Base_Template extends Controller_Template
 {
 
     /**
      * SSL通信対象のアクション名を配列で記載します
      *
      * @var array
-     * @access public
+     * @access protected
+     * @author shimma
      */
-    public $_secure = array();
+    protected $_secure_actions = array();
+
+    /**
+     * ログインが必須のアクション配列
+     *
+     * @var array
+     * @access protected
+     * @author ida
+     */
+    protected $_login_actions = array();
 
     /**
      * リダイレクト先のSSLホスト名
      *
      * @var string
-     * @access public
+     * @access protected
+     * @author shimma
      */
-    public $_ssl_host = 'ssl.rakuichi-rakuza.jp';
+    protected $_ssl_host = 'ssl.rakuichi-rakuza.jp';
+
 
     /**
-     * 要求するプロトコルと一致しない場合はリダイレクト処理をします。
-     * 一致する場合はそのまま描画処理を実行します。
+     * 事前処理
      *
-     * @todo holder.jsの削除(現在デバッグで利用中)
-     * @access private
+     * アクション実行前の共通処理
+     *
+     * @access public
      * @return void
+     * @author ida
+     * @author shimma
      */
     public function before()
     {
-        $should_be_secure = in_array($this->request->action, $this->_secure);
+        $should_be_secure = in_array($this->request->action, $this->_secure_actions);
         $is_secure = isset($_SERVER['HTTPS']);
+        $use_ssl = \Config::get('use_ssl');
 
-        if ($should_be_secure && ! $is_secure) {
+        if ($should_be_secure && ! $is_secure && $use_ssl) {
             $this->redirect_to_protocol('https');
         } elseif (! $should_be_secure && $is_secure) {
             $this->redirect_to_protocol('http');
+        }
+
+        if (in_array($this->request->action, $this->_login_actions) && !Auth::check()) {
+            Response::redirect('/login');
         }
 
 Asset::js('holder.js', array(), 'add_js');
@@ -57,6 +71,7 @@ Asset::js('holder.js', array(), 'add_js');
      *
      * @access private
      * @return void
+     * @author shimma
      */
     private function redirect_to_protocol($protocol = 'http')
     {
@@ -70,7 +85,7 @@ Asset::js('holder.js', array(), 'add_js');
 
         $url = $protocol . '://' . $server_host . $_SERVER['REQUEST_URI'];
         Response::redirect($url, 'location', 301);
-        die;
-    }
 
+        return;
+    }
 }

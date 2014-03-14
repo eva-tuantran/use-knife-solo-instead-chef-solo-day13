@@ -3,11 +3,17 @@
 /**
  * 会員ページ
  *
- * @author Ricky <master@mistdev.com>
  */
-class Controller_Mypage extends Controller_Template
+class Controller_Mypage extends Controller_Base_Template
 {
 
+    /**
+     * before
+     *
+     * @access public
+     * @return void
+     * @author shimma
+     */
     public function before()
     {
         parent::before();
@@ -22,6 +28,7 @@ class Controller_Mypage extends Controller_Template
      *
      * @access public
      * @return void
+     * @author shimma
      */
     public function action_index()
     {
@@ -40,6 +47,7 @@ class Controller_Mypage extends Controller_Template
      *
      * @access public
      * @return void
+     * @author shimma
      */
     public function action_password()
     {
@@ -59,6 +67,7 @@ class Controller_Mypage extends Controller_Template
      * @todo Model_Userでfieldsetを作成するのか、ここで作成するか検討
      * @access public
      * @return void
+     * @author shimma
      */
     public function action_account()
     {
@@ -92,6 +101,7 @@ class Controller_Mypage extends Controller_Template
      * @todo POST以外を弾く
      * @access public
      * @return void
+     * @author shimma
      */
     public function action_save()
     {
