@@ -60,32 +60,9 @@ QUERY;
     public static function findBySearch(
         $condition_list, $page = 0, $row_count = 0
     ) {
-        $placeholders = array(
-            ':display_flag' => FLEAMARKET_DISPLAY_FLAG_ON,
-            ':about_access_id' => FLEAMARKET_ABOUT_ACCESS,
-            ':register_status' => LOCATION_REGISTER_TYPE_ADMIN,
+        list($where, $placeholders) = self::createWhereSearch(
+            $condition_list
         );
-
-        $where = '';
-        if (! empty($condition_list)) {
-            $conditions = array();
-            foreach ($condition_list as $condition) {
-                $field = $condition[0];
-                $placeholder = ':' . $field;
-                $operator = $condition[1];
-                if ($operator === 'IN') {
-                    $value = implode(',', $condition[2]);
-                    $conditions[] = $field . ' ' . $operator . ' (' . $placeholder . ')';
-                } else {
-                    $value = @trim($condition[2]);
-                    $conditions[] = $field . ' ' . $operator . ' ' . $placeholder;
-                }
-                $placeholders[$placeholder] = $value;
-            }
-
-            $where = ' AND ';
-            $where .= implode(' AND ', $conditions);
-        }
 
         $limit = '';
         if (is_numeric($page) && is_numeric($row_count)) {
@@ -134,6 +111,33 @@ LEFT JOIN
 WHERE
     f.display_flag = :display_flag
     {$where}
+GROUP BY
+	f.fleamarket_id,
+	f.name,
+	f.promoter_name,
+	event_date,
+	event_time_start,
+	event_time_end,
+	f.event_status,
+	f.description,
+	f.reservation_start,
+	f.reservation_end,
+	f.reservation_tel,
+	f.reservation_email,
+	f.website,
+	f.shop_fee_flag,
+	f.car_shop_flag,
+	f.pro_shop_flag,
+	f.charge_parking_flag,
+	f.free_parking_flag,
+	f.rainy_location_flag,
+	f.register_type,
+	location_name,
+	zip,
+	prefecture_id,
+	address,
+	googlemap_address,
+	about_access
 ORDER BY
     f.register_type = :register_status,
     f.event_date DESC,
@@ -162,37 +166,14 @@ QUERY;
      */
     public static function findBySearchCount($condition_list)
     {
-        $placeholders = array(
-            ':display_flag' => FLEAMARKET_DISPLAY_FLAG_ON,
-            ':about_access_id' => FLEAMARKET_ABOUT_ACCESS,
-            ':register_status' => LOCATION_REGISTER_TYPE_ADMIN,
+        list($where, $placeholders) = self::createWhereSearch(
+            $condition_list
         );
-
-        $where = '';
-        if (! empty($condition_list)) {
-            $conditions = array();
-            foreach ($condition_list as $condition) {
-                $field = $condition[0];
-                $placeholder = ':' . $field;
-                $operator = $condition[1];
-                if ($operator === 'IN') {
-                    $value = implode(',', $condition[2]);
-                    $conditions[] = $field . ' ' . $operator . ' (' . $placeholder . ')';
-                } else {
-                    $value = @trim($condition[2]);
-                    $conditions[] = $field . ' ' . $operator . ' ' . $placeholder;
-                }
-                $placeholders[$placeholder] = $value;
-            }
-
-            $where = ' AND ';
-            $where .= implode(' AND ', $conditions);
-        }
 
         $table_name = self::$_table_name;
         $query = <<<"QUERY"
 SELECT
-    COUNT(f.fleamarket_id) AS cnt
+    COUNT(DISTINCT f.fleamarket_id) AS cnt
 FROM
     {$table_name} AS f
 LEFT JOIN
@@ -300,5 +281,56 @@ QUERY;
         $result = $statement->execute();
 
         return $result;
+    }
+
+    /**
+     * 指定された検索条件よりWHERE句とプレースホルダ―を生成する
+     *
+     * @access private
+     * @param array $condition_list
+     * @return array
+     * @author ida
+     */
+    private static function createWhereSearch($condition_list)
+    {
+        $where = '';
+        $placeholders = array(
+            ':display_flag' => FLEAMARKET_DISPLAY_FLAG_ON,
+            ':about_access_id' => FLEAMARKET_ABOUT_ACCESS,
+            ':register_status' => LOCATION_REGISTER_TYPE_ADMIN,
+        );
+
+        if (empty($condition_list)) {
+            return array($where, $placeholders);
+        }
+
+        $conditions = array();
+        foreach ($condition_list as $condition) {
+            $field = $condition[0];
+            $operator = $condition[1];
+            if ($operator === 'IN') {
+                $placeholder = ':' . $field;
+                $values = $condition[2];
+                $placeholder_string = '';
+                foreach ($values as $key => $value) {
+                    $placeholder_in = $placeholder . $key;
+                    $placeholder_string .= $placeholder_string == '' ? '' : ',';
+                    $placeholder_string .= $placeholder_in;
+                    $placeholders[$placeholder_in] = $value;
+                }
+                $value = implode(',', $values);
+                $conditions[] = $field . ' ' . $operator . ' (' . $placeholder_string . ')';
+            } else {
+                $placeholder = ':' . $field;
+                $value = trim($condition[2]);
+                $conditions[] = $field . ' ' . $operator . ' ' . $placeholder;
+                $placeholders[$placeholder] = $value;
+            }
+        }
+
+        $where = ' AND ';
+        $where .= implode(' AND ', $conditions);
+
+        return array($where, $placeholders);
     }
 }
