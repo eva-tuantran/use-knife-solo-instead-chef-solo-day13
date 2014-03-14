@@ -52,12 +52,12 @@ class Controller_Login extends Controller_Template
      * @return void
      * @author shimma
      */
-    public function action_auth()
+    public function post_auth()
     {
         /**
          * loginから来る正常なauth以外は弾きます
          */
-        if (Input::method() !== 'POST' || !Security::check_token()) {
+        if (!Security::check_token()) {
             Response::redirect('/login');
         }
 

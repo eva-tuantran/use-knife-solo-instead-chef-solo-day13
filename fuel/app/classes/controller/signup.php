@@ -47,7 +47,7 @@ class Controller_Signup extends Controller_Template
      * @return void
      * @author shimma
      */
-    public function action_confirm()
+    public function post_confirm()
     {
         $fieldset = $this->createFieldset();
         $fieldset->repopulate();
@@ -75,7 +75,7 @@ class Controller_Signup extends Controller_Template
      * @access public
      * @return void
      */
-    public function action_verify()
+    public function post_verify()
     {
         if (!Security::check_token()) {
             Response::redirect('signup/timeout');
@@ -140,7 +140,7 @@ class Controller_Signup extends Controller_Template
      * @access public
      * @return void
      */
-    public function action_activate()
+    public function get_activate()
     {
         $hash = Input::get('token');
         if (empty($hash)) {
