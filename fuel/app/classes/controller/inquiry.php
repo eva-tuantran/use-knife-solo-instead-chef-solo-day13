@@ -7,7 +7,7 @@
  * @author Hiroyuki Kobayashi
  */
 
-class controller_inquiry extends Controller_Template
+class Controller_Inquiry extends Controller_Base_Template
 {
     /**
      * 初期画面
@@ -17,13 +17,12 @@ class controller_inquiry extends Controller_Template
      */
     public function action_index()
     {
+        $this->setMetaTag('inquiry/index');
         $view = View::forge('inquiry/index');
         $fieldset = $this->createFieldset();
         $fieldset->repopulate();
         $view->set('fieldset', $fieldset, false);
         $this->template->content = $view;
-        $this->template->title = 'hoge';
-        var_dump($view->filename);
     }
     /**
      * 確認画面
@@ -49,7 +48,7 @@ class controller_inquiry extends Controller_Template
         $view->set('input', $input,false);
         $view->set('fieldset', $fieldset, false);
 
-        $this->template->title   = 'お問い合わせ';
+        $this->setMetaTag('inquiry/confirm');
         $this->template->content = $view;
     }
 
@@ -66,14 +65,16 @@ class controller_inquiry extends Controller_Template
         }
 
         $view = View::forge('inquiry/thanks');
-        $this->template->title   = 'お問い合わせ';
+        $this->setMetaTag('inquiry/thanks');
+
         $this->template->content = $view;
 
         try {
             $contact = $this->registerContact();
-            $this->sendMail($contact);
+            $this->sendMailToUserAndAdmin($contact);
         } catch ( Exception $e ) {
             $view->set('error',$e,false);
+            throw $e;
         }
     }
 
@@ -153,39 +154,16 @@ class controller_inquiry extends Controller_Template
      * @access private
      * @return void
      */
-    private function sendMail($contact)
+    private function sendMailToUserAndAdmin($contact)
     {
-        Lang::load('email');
-        foreach ( array('admin','user') as $type ) {
-            $lang = Lang::get("inquiry_{$type}");
+        $params = array();
 
-            $email = Email::forge();
-            $email->from($lang['from'],$lang['from_name']);
-            if ($type == 'admin') {
-                $email->to($lang['email']);
-            } else {
-                $email->to(array($contact->email));
-            }
-            $email->subject($lang['subject']);
-            $email->body($this->createMailBody($lang['body'],$contact));
-            $email->send();
+        foreach ( array('subject','email','tel','contents') as $key ){
+            $params[$key] = $contact->get($key);
         }
-    }
+        $params['inquiry_type_label'] = $contact->inquiry_type_label();
 
-    /**
-     * メール本文の作成
-     *
-     * @para $contact Model_Contact
-     * @access private
-     * @return string
-     */
-    private function createMailBody($body,$contact)
-    {
-        foreach ( array('subject','email','tel','contents') as $column ) {
-            $body = str_replace("{{$column}}",$contact->$column,$body);
-        }
-        $body = str_replace('{inquiry_type_label}',$contact->inquiry_type_label(),$body);
-
-        return mb_convert_encoding($body,'jis');
+        $this->sendMailByParams("inquiry_user" , $params, array($contact->email));
+        $this->sendMailByParams("inquiry_admin", $params);
     }
 }

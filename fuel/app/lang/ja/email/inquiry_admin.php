@@ -7,11 +7,11 @@ return array(
     'subject'   => 'お問い合わせフォーム(admin向け)',
     'body'      => <<<'EOT'
 (admin向け)
-お問い合わせの種類 {inquiry_type_label}
-件名 {subject}
-メールアドレス {email}
-電話番号 {tel}
-内容 {contents}
+お問い合わせの種類 ##inquiry_type_label##
+件名 ##subject##
+メールアドレス ##email##
+電話番号 ##tel##
+内容 ##contents##
 EOT
 );
 
