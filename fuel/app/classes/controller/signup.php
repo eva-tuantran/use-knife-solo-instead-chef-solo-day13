@@ -4,7 +4,7 @@
  * 新規ユーザ登録
  *
  */
-class Controller_Signup extends Controller_Template
+class Controller_Signup extends Controller_Base_Template
 {
 
     protected $_secure_actions = array('index', 'auth');

@@ -4,7 +4,7 @@
  * ログイン画面
  *
  */
-class Controller_Login extends Controller_Template
+class Controller_Login extends Controller_Base_Template
 {
     protected $_secure_actions = array('index', 'auth', 'out');
 

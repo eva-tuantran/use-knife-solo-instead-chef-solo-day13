@@ -4,7 +4,7 @@
  * 会員ページ
  *
  */
-class Controller_Mypage extends Controller_Template
+class Controller_Mypage extends Controller_Base_Template
 {
 
     /**
