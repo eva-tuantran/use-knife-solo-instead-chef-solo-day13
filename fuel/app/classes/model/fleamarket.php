@@ -186,10 +186,6 @@ LEFT JOIN
 WHERE
     f.display_flag = :display_flag
     {$where}
-ORDER BY
-    f.register_type = :register_status,
-    f.event_date DESC,
-    f.event_time_start
 QUERY;
 
         $statement = \DB::query($query)->parameters($placeholders);
