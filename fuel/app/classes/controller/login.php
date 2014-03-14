@@ -37,10 +37,6 @@ class Controller_Login extends Controller_Template
                 break;
         }
 
-        if (Auth::check()) {
-            $data['info_message'] = Auth::get_screen_name().' さんとしてログインしています';
-        }
-
         $this->template->title = 'Login';
         $this->template->content = View::forge('login/index', $data);
     }
@@ -54,50 +50,52 @@ class Controller_Login extends Controller_Template
      */
     public function post_auth()
     {
-        /**
-         * loginから来る正常なauth以外は弾きます
-         */
         if (!Security::check_token()) {
             Response::redirect('/login');
         }
 
         $rurl = Input::get('rurl');
-        $validation = self::createValidation();
+        $fieldset = self::createFieldset();
+        $validation = $fieldset->validation();
 
-        /**
-         * ログイン確認をします。
-         */
-        if ($validation->run() && Auth::instance()->login(Input::post('email'), Input::post('password'))) {
-            $return_url = '/mypage';
-            if (!empty($rurl)) {
-                $return_url = $rurl;
-            }
-            Session::set_flash('auth_info', 'login_success');
-        } else {
-            $return_url = '/login';
-            if (!empty($rurl)) {
-                $return_url = "/login?rurl=$rurl";
-            }
-            Session::set_flash('auth_info', 'login_denied');
+        if (!$validation->run()) {
+            Session::set_flash('login.fieldset', $fieldset);
+            return Response::redirect("login?rurl=$rurl");
         }
 
-        Response::redirect($return_url);
+        if (!Auth::instance()->login(Input::post('email'), Input::post('password'))) {
+            Session::set_flash('auth_info', 'login_denied');
+            Session::set_flash('login.fieldset', $fieldset);
+            return Response::redirect("/login?rurl=$rurl");
+        }
+
+        $return_url = empty($rurl) ? '/mypage/' : $rurl;
+        Session::set_flash('auth_info', 'login_success');
+        return Response::redirect($return_url);
     }
 
+
     /**
-     * ログイン用のValidationをレスポンスします
+     * ログイン用のFieldsetをレスポンスします
      *
      * @access public
-     * @return Validation $validation
+     * @return Fieldset fieldset
      * @author shimma
      */
-    public static function createValidation()
+    public static function createFieldset()
     {
-        $validation = Validation::forge();
-        $validation->add('email', 'Email')->add_rule('required');
-        $validation->add('password', 'Password')->add_rule('required');
+        $fieldset = Session::get_flash('login.fieldset');
 
-        return $validation;
+        if (! $fieldset) {
+            $fieldset = \Fieldset::forge();
+            $fieldset->add('email', 'Email')
+                ->add_rule('required')
+                ->add_rule('valid_email');
+            $fieldset->add('password', 'Password')
+                ->add_rule('required');
+        }
+
+        return $fieldset;
     }
 
     /**
