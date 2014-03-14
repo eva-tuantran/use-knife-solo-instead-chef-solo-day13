@@ -1,23 +1,23 @@
 <?php
 
-class Model_Contact extends \Orm\Model
+class model_contact extends \Orm\Model
 {
     protected static $_primary_key = array('contact_id');
 
-	protected static $_properties = array(
-		'contact_id' => array(
+    protected static $_properties = array(
+        'contact_id' => array(
             'label' => 'contact_id',
             'form'  => array(
                 'type' => false,
             ),
         ),
-		'user_id' => array(
+        'user_id' => array(
             'label' => 'user_id',
             'form'  => array(
                 'type' => false,
             ),
         ),
-		'inquiry_type' => array(
+        'inquiry_type' => array(
             'label' => 'お問い合わせの種類',
             'validation' => array(
                 'required',
@@ -35,14 +35,14 @@ class Model_Contact extends \Orm\Model
                 ),
             ),
         ),
-		'inquiry_datetime' => array(
+        'inquiry_datetime' => array(
             'label' => 'inquiry_datetime',
             'form' => array(
                 'type' => false,
             ),
         ),
 
-		'subject' => array(
+        'subject' => array(
             'label' => '件名',
             'form' => array(
                 'type' => 'text',
@@ -52,7 +52,7 @@ class Model_Contact extends \Orm\Model
                 'max_length' => array(50),
             ),
         ),
-		'email' => array(
+        'email' => array(
             'label' => 'メールアドレス',
             'form' => array(
                 'type' => 'text',
@@ -63,7 +63,7 @@ class Model_Contact extends \Orm\Model
                 'max_length' => array(255),
             ),
         ),
-		'tel' => array(
+        'tel' => array(
             'label' => '電話番号',
             'form' => array(
                 'type' => 'text',
@@ -72,7 +72,7 @@ class Model_Contact extends \Orm\Model
                 'max_length' => array(20),
             ),
         ),
-		'contents' => array(
+        'contents' => array(
             'label' => '内容',
             'form' => array(
                 'type' => 'textarea',
@@ -84,7 +84,7 @@ class Model_Contact extends \Orm\Model
             ),
         ),
 /*
-		'last_name' => array(
+        'last_name' => array(
             'label' => '姓',
             'form' => array(
                 'type' => 'text',
@@ -93,7 +93,7 @@ class Model_Contact extends \Orm\Model
                 'max_length' => array(50),
             ),
         ),
-		'first_name' => array(
+        'first_name' => array(
             'label' => '名',
             'form' => array(
                 'type' => 'text',
@@ -103,22 +103,22 @@ class Model_Contact extends \Orm\Model
             ),
         ),
 */
-		'created_user' => array(
+        'created_user' => array(
             'form' => array(
                 'type' => false,
             ),
         ),
-		'updated_user' => array(
+        'updated_user' => array(
             'form' => array(
                 'type' => false,
             ),
         ),
-		'created_at' => array(
+        'created_at' => array(
             'form' => array(
                 'type' => false,
             ),
         ),
-		'updated_at' => array(
+        'updated_at' => array(
             'form' => array(
                 'type' => false,
             ),
@@ -128,30 +128,32 @@ class Model_Contact extends \Orm\Model
                 'type' => false,
             ),
         ),
-	);
+    );
 
-	protected static $_observers = array(
-		'Orm\Observer_CreatedAt' => array(
-			'events' => array('before_insert'),
-			'mysql_timestamp' => true,
+    protected static $_observers = array(
+        'Orm\Observer_CreatedAt' => array(
+            'events' => array('before_insert'),
+            'mysql_timestamp' => true,
             'property' => 'created_at',
-		),
-		'Orm\Observer_UpdatedAt' => array(
-			'events' => array('before_update'),
-			'mysql_timestamp' => true,
+        ),
+        'Orm\Observer_UpdatedAt' => array(
+            'events' => array('before_update'),
+            'mysql_timestamp' => true,
             'property' => 'updated_at',
-		),
+        ),
         'Orm\Observer_Contact',
-	);
-	protected static $_table_name = 'contacts';
+    );
+    protected static $_table_name = 'contacts';
 
-    public static function to_inquiry_type_label ($inquiry_type)
+    public static function to_inquiry_type_label($inquiry_type)
     {
         $properties = self::properties();
+
         return $properties['inquiry_type']['form']['options'][$inquiry_type];
     }
-    
-    public function inquiry_type_label (){
+
+    public function inquiry_type_label()
+    {
         return self::to_inquiry_type_label($this->inquiry_type);
     }
 }
