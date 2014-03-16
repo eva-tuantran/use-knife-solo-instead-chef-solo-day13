@@ -17,10 +17,6 @@ class Controller_Mypage extends Controller_Base_Template
     public function before()
     {
         parent::before();
-
-        if (!Auth::check()) {
-            Response::redirect('/login');
-        }
     }
 
     /**
@@ -118,7 +114,8 @@ class Controller_Mypage extends Controller_Base_Template
             $user->set($update_data);
             $user->save();
             Session::set_flash('account_info', 'status_changed');
-            Response::redirect('/mypage/account');
+
+            return Response::redirect('/mypage/account');
         }
     }
 

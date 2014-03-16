@@ -71,6 +71,7 @@ class Controller_Login extends Controller_Base_Template
 
         $return_url = empty($rurl) ? '/mypage/' : $rurl;
         Session::set_flash('auth_info', 'login_success');
+
         return Response::redirect($return_url);
     }
 
