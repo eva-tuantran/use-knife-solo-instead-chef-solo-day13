@@ -7,6 +7,10 @@
 class Controller_Mypage extends Controller_Base_Template
 {
 
+    protected $_login_actions = array('index', 'password', 'account', 'save');
+
+    protected $_secure_actions = array('index', 'password', 'account', 'save');
+
     /**
      * before
      *
@@ -94,12 +98,11 @@ class Controller_Mypage extends Controller_Base_Template
      * @todo save失敗の処理を検討する
      * @todo ユーザインプットの更新でarray_filterで果たしていいのか再検討
      * @todo CSRF実装検討
-     * @todo POST以外を弾く
      * @access public
      * @return void
      * @author shimma
      */
-    public function action_save()
+    public function post_save()
     {
         $fieldset = Fieldset::forge()->add_model('Model_User');
         $fieldset->repopulate();

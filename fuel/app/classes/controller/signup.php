@@ -7,7 +7,7 @@
 class Controller_Signup extends Controller_Base_Template
 {
 
-    protected $_secure_actions = array('index', 'auth');
+    protected $_secure_actions = array('index', 'confirm', 'verify', 'activate', 'auth');
 
     /**
      * 各アクション共通実行項目

@@ -35,6 +35,10 @@ class Controller_Login extends Controller_Base_Template
                 $data['error_message'] = 'セッションが切れました。';
                 Session::destroy();
                 break;
+            case 'logout_success':
+                $data['info_message'] = 'ログアウトしました。';
+                Session::destroy();
+                break;
         }
 
         $this->template->title = 'Login';
