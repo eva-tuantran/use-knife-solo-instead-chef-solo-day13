@@ -157,9 +157,6 @@ class Controller_Signup extends Controller_Base_Template
         } catch (Exception $e) {
             return Response::redirect('error/503');
         }
-
-        $this->template->title = '楽市楽座ID(無料)を登録する';
-        $this->template->content = '認証しています...';
     }
 
     /**
