@@ -59,7 +59,8 @@ class Controller_Base_Template extends Controller_Template
         }
 
         if (in_array($this->request->action, $this->_login_actions) && !Auth::check()) {
-            return Response::redirect('/login');
+            $referrer = \Input::referrer();
+            return \Response::redirect('/login?rurl='.$referrer);
         }
 
 Asset::js('holder.js', array(), 'add_js');
@@ -85,6 +86,6 @@ Asset::js('holder.js', array(), 'add_js');
 
         $url = $protocol . '://' . $server_host . $_SERVER['REQUEST_URI'];
 
-        return Response::redirect($url, 'location', 301);
+        return \Response::redirect($url, 'location', 301);
     }
 }
