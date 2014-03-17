@@ -1,74 +1,87 @@
 <h2>inquiry</h2>
 
-<?php $form = $fieldset->form(); ?>
-<?php $fields = $fieldset->field(); ?>
+<?php $input  = $fieldset->input(); ?>
 <?php $errors = $fieldset->validation()->error_message(); ?>
 
-<?php echo $form->open('inquiry/confirm') ?>
+<form action="/inquiry/confirm" method="POST">
 
 <table>
   <tr>
     <td>
-    <?php echo $fields['inquiry_type']->set_template('{label}'); ?>
+     お問い合わせの種類
     </td>
     <td>
-    <?php echo $fields['inquiry_type']->set_template('{field}'); ?>
-    <?php if( isset($errors['inquiry_type']) ){ ?>
+      <select name="inquiry_type">
+       <option value="1"<?php if ($input['inquiry_type'] == 1){ echo ' selected=selected'; }?>>
+         楽市楽座について
+       </option>
+       <option value="2"<?php if ($input['inquiry_type'] == 2){ echo ' selected=selected'; }?>>
+         フリーマーケットについて
+       </option>
+       <option value="3"<?php if ($input['inquiry_type'] == 3){ echo ' selected=selected'; }?>>
+         楽市楽座のウェブサイトについて
+       </option>
+       <option value="4"<?php if ($input['inquiry_type'] == 4){ echo ' selected=selected'; }?>>
+         そのほかのお問い合わせについて
+       </option>
+      </select>
+    </td>
+    <?php if (isset($errors['inquiry_type'])) { ?>
     <?php echo $errors['inquiry_type']; ?>
     <?php } ?>
     </td>
   </tr>
   <tr>
     <td>
-    <?php echo $fields['subject']->set_template('{label}'); ?>
+      件名
     </td>
     <td>
-    <?php echo $fields['subject']->set_template('{field}'); ?>
-    <?php if( isset($errors['subject']) ){ ?>
-    <?php echo $errors['subject']; ?>
-    <?php } ?>
-    </td>
-  </tr>
-  <tr>
-    <td>
-    <?php echo $fields['email']->set_template('{label}'); ?>
-    </td>
-    <td>
-    <?php echo $fields['email']->set_template('{field}'); ?>
-    <?php if( isset($errors['email']) ){ ?>
-    <?php echo $errors['email']; ?>
-    <?php } ?>
+      <input type="text" name="subject" value="<?php echo e($input['subject']); ?>">
+      <?php if (isset($errors['subject'])) { ?>
+      <?php echo $errors['subject']; ?>
+      <?php } ?>
     </td>
   </tr>
   <tr>
     <td>
-    <?php echo $fields['email2']->set_template('{label}'); ?>
+      メールアドレス
     </td>
     <td>
-    <?php echo $fields['email2']->set_template('{field}'); ?>
-    <?php if( isset($errors['email2']) ){ ?>
-    <?php echo $errors['email2']; ?>
-    <?php } ?>
-    </td>
-  </tr>
-  <tr>
-    <td>
-    <?php echo $fields['tel']->set_template('{label}'); ?>
-    </td>
-    <td>
-    <?php echo $fields['tel']->set_template('{field}'); ?>
-    <?php if( isset($errors['tel']) ){ ?>
-    <?php echo $errors['tel']; ?>
-    <?php } ?>
+      <input type="text" name="email" value="<?php echo e($input['email']); ?>">
+      <?php if (isset($errors['email'])) { ?>
+      <?php echo $errors['email']; ?>
+      <?php } ?>
     </td>
   </tr>
   <tr>
     <td>
-    <?php echo $fields['contents']->set_template('{label}'); ?>
+      メールアドレス確認用
     </td>
     <td>
-    <?php echo $fields['contents']->set_template('{field}'); ?>
-    <?php if( isset($errors['contents']) ){ ?>
+      <input type="text" name="email2" value="<?php echo e($input['email2']); ?>">
+      <?php if (isset($errors['email2'])) { ?>
+      <?php echo $errors['email2']; ?>
+      <?php } ?>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      電話番号
+    </td>
+    <td>
+      <input type="text" name="tel" value="<?php echo e($input['tel']); ?>">
+      <?php if (isset($errors['tel'])) { ?>
+      <?php echo $errors['tel']; ?>
+      <?php } ?>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      内容
+    </td>
+    <td>
+    <textarea name="contents" cols=80 rows=10><?php echo e($input['contents']); ?></textarea>
+    <?php if (isset($errors['contents'])) { ?>
     <?php echo $errors['contents']; ?>
     <?php } ?>
     </td>
@@ -77,4 +90,5 @@
 </table>
 
 <input type="submit" value="確認">
-<?php echo $form->close(); ?>
+</form>
+

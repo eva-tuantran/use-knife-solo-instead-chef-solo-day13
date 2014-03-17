@@ -1,9 +1,8 @@
 <?php
-
 /**
  * お問い合わせフォーム
  *
- * @extends  Controller_Template
+ * @extends  Controller_Base_Template
  * @author Hiroyuki Kobayashi
  */
 
@@ -33,19 +32,13 @@ class Controller_Inquiry extends Controller_Base_Template
     public function post_confirm()
     {
         $fieldset = $this->createFieldset();
-        $validation = $fieldset->validation();
-
-        if (! $validation->run()) {
-            Session::set_flash('inquiry.fieldset',$fieldset);
-
+        Session::set_flash('inquiry.fieldset',$fieldset);
+        
+        if (! $fieldset->validation()->run()) {
             return Response::redirect('inquiry');
         }
 
-        $input = $validation->validated();
-        Session::set_flash('inquiry.input',$input);
-
         $view = View::forge('inquiry/confirm');
-        $view->set('input', $input,false);
         $view->set('fieldset', $fieldset, false);
 
         $this->setMetaTag('inquiry/confirm');
@@ -74,7 +67,6 @@ class Controller_Inquiry extends Controller_Base_Template
             $this->sendMailToUserAndAdmin($contact);
         } catch ( Exception $e ) {
             $view->set('error',$e,false);
-            throw $e;
         }
     }
 
@@ -89,20 +81,7 @@ class Controller_Inquiry extends Controller_Base_Template
         $fieldset = Session::get_flash('inquiry.fieldset');
 
         if (! $fieldset) {
-            $contact = Model_Contact::forge();
-            $fieldset = Fieldset::forge();
-            $fieldset->add_model($contact);
-            $fieldset->add(
-                'submit', '',
-                array('type' => 'submit', 'value' => '確認')
-            );
-            $fieldset->add(
-                'email2', 'メールアドレス確認用',
-                array('type' => 'text')
-            );
-            $fieldset->field('email2')
-                ->add_rule('required')
-                ->add_rule('match_field', 'email');
+            $fieldset = Model_Contact::createFieldset();
         }
 
         return $fieldset;
@@ -136,11 +115,16 @@ class Controller_Inquiry extends Controller_Base_Template
      */
     private function getContactData()
     {
-        $input = Session::get_flash('inquiry.input');
+        $fieldset = Session::get_flash('inquiry.fieldset');
+
+        if (! $fieldset) {
+            return false;
+        }
+
+        $input = $fieldset->validation()->validated();
 
         if ($input) {
             unset($input['email2']);
-            unset($input['submit']);
             $input['user_id'] = Auth::get_user_id();
         }
 
@@ -158,7 +142,7 @@ class Controller_Inquiry extends Controller_Base_Template
     {
         $params = array();
 
-        foreach ( array('subject','email','tel','contents') as $key ){
+        foreach (array('subject','email','tel','contents') as $key) {
             $params[$key] = $contact->get($key);
         }
         $params['inquiry_type_label'] = $contact->inquiry_type_label();

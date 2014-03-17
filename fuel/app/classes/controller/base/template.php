@@ -91,9 +91,11 @@ class Controller_Base_Template extends Controller_Template
     }
 
     /**
+     * meta tag 関連を lang より設定 
      *  
-     *  
-     *  
+     * @access protected
+     * @return void
+     * @author kobayasi
      */
     protected function setMetaTag($path)
     {
@@ -107,6 +109,7 @@ class Controller_Base_Template extends Controller_Template
      * @para $name メールの識別子 $params 差し込むデータ $to 送り先(指定しなければ langの値を使用)
      * @access protected
      * @return void
+     * @author kobayasi
      */
     protected function sendMailByParams($name,$params = array(), $to = null)
     {
@@ -117,7 +120,7 @@ class Controller_Base_Template extends Controller_Template
         $email->subject(Lang::get('subject'));
         $email->body($this->createMailBody(Lang::get('body'),$params));
 
-        if (! $to){
+        if (! $to) {
             $to = Lang::get('email');
         }
 
@@ -131,10 +134,11 @@ class Controller_Base_Template extends Controller_Template
      * @para $contact Model_Contact
      * @access protected
      * @return string
+     * @author kobayasi
      */
     private function createMailBody($body,$params)
     {
-        foreach ( $params as $key => $value ){
+        foreach ( $params as $key => $value ) {
             $body = str_replace("##{$key}##",$value,$body);
         }
         return mb_convert_encoding($body,'jis');

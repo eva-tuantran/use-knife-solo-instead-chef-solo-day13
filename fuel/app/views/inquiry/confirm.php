@@ -1,23 +1,22 @@
 <h2>inquiry</h2>
 
-<?php $form = $fieldset->form(); ?>
-<?php $fields = $fieldset->field(); ?>
+<?php $input = $fieldset->input(); ?>
 
-<?php echo $form->open('inquiry/thanks') ?>
+<form action="/inquiry/thanks" method="POST">
 
 <table>
   <tr>
     <td>
-    <?php echo $fields['inquiry_type']->set_template('{label}'); ?>
+      お問い合わせの種類
     </td>
     <td>
-    <?php echo e(Model_Contact::to_inquiry_type_label($input['inquiry_type'])); ?>
+    <?php echo e(\Model_Contact::inquiry_type_to_label($input['inquiry_type'])); ?>
     </td>
   </tr>
 
   <tr>
     <td>
-    <?php echo $fields['subject']->set_template('{label}'); ?>
+      件名
     </td>
     <td>
     <?php echo e($input['subject']); ?>
@@ -26,7 +25,7 @@
 
   <tr>
     <td>
-    <?php echo $fields['email']->set_template('{label}'); ?>
+      メールアドレス
     </td>
     <td>
     <?php echo e($input['email']); ?>
@@ -35,7 +34,7 @@
 
   <tr>
     <td>
-    <?php echo $fields['tel']->set_template('{label}'); ?>
+      電話番号
     </td>
     <td>
     <?php echo e($input['tel']); ?>
@@ -44,7 +43,7 @@
 
   <tr>
     <td>
-    <?php echo $fields['contents']->set_template('{label}'); ?>
+      内容
     </td>
     <td>
     <?php echo nl2br(e($input['contents'])); ?>
@@ -53,10 +52,7 @@
 
 </table>
 
-<?php
-    echo Form::hidden(
-        Config::get('security.csrf_token_key'), Security::fetch_token()
-    );
-?>
+<?php echo \Form::csrf(); ?>
+
 <input type="submit" value="確認">
-<?php echo $form->close(); ?>
+</form>
