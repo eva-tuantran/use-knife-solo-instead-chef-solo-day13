@@ -200,6 +200,72 @@ QUERY;
     }
 
     /**
+     * 指定された条件でフリーマーケット情報を取得する
+     *
+     * 開催地情報、フリーマーケットエントリスタイル情報、フリーマーケット説明情報
+     *
+     * @access public
+     * @param mixed $fleamarket_id フリーマーケットID
+     * @return array フリーマーケット情報
+     * @author ida
+     */
+    public static function findByDetail($fleamarket_id)
+    {
+        $placeholders = array(
+            ':fleamarket_id' => $fleamarket_id,
+            ':display_flag' => \FLEAMARKET_DISPLAY_FLAG_ON,
+            ':register_status' => \LOCATION_REGISTER_TYPE_ADMIN,
+        );
+
+        $table_name = self::$_table_name;
+        $query = <<<"QUERY"
+SELECT
+    f.fleamarket_id,
+    f.name,
+    f.promoter_name,
+    DATE_FORMAT(f.event_date, '%Y年%m月%d日') AS event_date,
+    DATE_FORMAT(f.event_time_start, '%k時%i分') AS event_time_start,
+    DATE_FORMAT(f.event_time_end, '%k時%i分') AS event_time_end,
+    f.event_status,
+    f.description,
+    f.reservation_start,
+    f.reservation_end,
+    f.reservation_tel,
+    f.reservation_email,
+    f.website,
+    f.shop_fee_flag,
+    f.car_shop_flag,
+    f.pro_shop_flag,
+    f.charge_parking_flag,
+    f.free_parking_flag,
+    f.rainy_location_flag,
+    f.register_type,
+    l.name AS location_name,
+    l.zip AS zip,
+    l.prefecture_id AS prefecture_id,
+    l.address AS address,
+    l.googlemap_address AS googlemap_address
+FROM
+    {$table_name} AS f
+LEFT JOIN
+    locations AS l ON f.location_id = l.location_id
+WHERE
+    f.display_flag = :display_flag
+    AND f.fleamarket_id = :fleamarket_id
+QUERY;
+
+        $statement = \DB::query($query)->parameters($placeholders);
+        $result = $statement->execute();
+
+        $rows = null;
+        if (! empty($result)) {
+            $rows = $result->as_array();
+        }
+
+        return $rows[0];
+    }
+
+    /**
      * フリーマーケット情報を登録する
      *
      * @access public
@@ -291,9 +357,9 @@ QUERY;
     {
         $where = '';
         $placeholders = array(
-            ':display_flag' => FLEAMARKET_DISPLAY_FLAG_ON,
-            ':about_access_id' => FLEAMARKET_ABOUT_ACCESS,
-            ':register_status' => LOCATION_REGISTER_TYPE_ADMIN,
+            ':display_flag' => \FLEAMARKET_DISPLAY_FLAG_ON,
+            ':about_access_id' => \FLEAMARKET_ABOUT_ACCESS,
+            ':register_status' => \LOCATION_REGISTER_TYPE_ADMIN,
         );
 
         if (empty($condition_list)) {

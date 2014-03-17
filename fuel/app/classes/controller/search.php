@@ -2,6 +2,7 @@
 use \Controller\Base_Template;
 use \Model\Fleamarket;
 use \Model\Fleamarket_Entry_Style;
+use \Model\Fleamarket_About;
 use \Model\Entry;
 use \Model\Location;
 
@@ -107,7 +108,18 @@ class Controller_Search extends Controller_Base_Template
      */
     public function get_detail($fleamarket_id)
     {
-        $fleamarket = Fleamarket::findJoins($fleamarket_id);
+        Asset::js('jquery.js', array(), 'add_js');
+
+        $fleamarket = Fleamarket::findByDetail($fleamarket_id);
+        $fleamarket['fleamarket_abouts'] = Fleamarket_About::findByFleamarketId(
+            $fleamarket_id
+        );
+        $fleamarket['entry_styles'] = Fleamarket_Entry_Style::findByFleamarketId(
+            $fleamarket_id
+        );
+        $fleamarket['entries'] = Entry::getTotalEntryByFlearmarketId(
+            $fleamarket_id
+        );
 
         $view_model = ViewModel::forge('search/detail');
         $view_model->set('fleamarket', $fleamarket, false);

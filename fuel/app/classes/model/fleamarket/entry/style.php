@@ -24,13 +24,47 @@ class Fleamarket_Entry_Style extends \Model
      *
      * @access public
      * @param mixed $fleamarket_id フリーマーケットID
+     * @return array フリーマーケット情報
+     * @author ida
+     */
+    public static function find($fleamarket_entry_style_id = null)
+    {
+        if (! $fleamarket_entry_style_id) {
+            return null;
+        }
+
+        $placeholders = array(
+            'fleamarket_entry_style_id' => $fleamarket_entry_style_id
+        );
+        $table_name = self::$_table_name;
+        $query = <<<"QUERY"
+SELECT * FROM {$table_name}
+WHERE fleamarket_entry_style_id = :fleamarket_entry_style_id
+QUERY;
+        $statement = \DB::query($query)->parameters($placeholders);
+        $result = $statement->execute();
+
+        $rows = null;
+        if (! empty($result)) {
+            $rows = $result->as_array();
+        }
+
+        return $rows;
+    }
+
+    /**
+     * 指定されたフリーマーケットIDでフリーマーケット出店形態情報を取得する
+     *
+     * @access public
+     * @param mixed $fleamarket_id フリーマーケットID
      * @param array $options オプション設定
      *  'field': 取得するフィールドを配列で指定する
      * @return array フリーマーケット情報
      * @author ida
      */
-    public static function find($fleamarket_id = null, $options = array())
-    {
+    public static function findByFleamarketId(
+        $fleamarket_id = null, $options = array()
+    ) {
         if (! $fleamarket_id) {
             return null;
         }
