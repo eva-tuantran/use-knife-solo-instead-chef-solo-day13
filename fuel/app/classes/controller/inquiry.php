@@ -1,13 +1,12 @@
 <?php
-
 /**
  * お問い合わせフォーム
  *
- * @extends  Controller_Template
+ * @extends  Controller_Base_Template
  * @author Hiroyuki Kobayashi
  */
 
-class Controller_Inquiry extends Controller_Template
+class Controller_Inquiry extends Controller_Base_Template
 {
     /**
      * 初期画面
@@ -17,7 +16,7 @@ class Controller_Inquiry extends Controller_Template
      */
     public function action_index()
     {
-        $this->template->title = 'お問い合わせ';
+        $this->setMetaTag('inquiry/index');
         $view = View::forge('inquiry/index');
         $fieldset = $this->createFieldset();
         $fieldset->repopulate();
@@ -33,21 +32,16 @@ class Controller_Inquiry extends Controller_Template
     public function post_confirm()
     {
         $fieldset = $this->createFieldset();
-        $validation = $fieldset->validation();
-
-        if(! $validation->run() ){
-            Session::set_flash('inquiry.fieldset',$fieldset);
+        Session::set_flash('inquiry.fieldset',$fieldset);
+        
+        if (! $fieldset->validation()->run()) {
             return Response::redirect('inquiry');
         }
 
-        $input = $validation->validated();
-        Session::set_flash('inquiry.input',$input);
-
         $view = View::forge('inquiry/confirm');
-        $view->set('input', $input,false);
         $view->set('fieldset', $fieldset, false);
 
-        $this->template->title   = 'お問い合わせ';
+        $this->setMetaTag('inquiry/confirm');
         $this->template->content = $view;
     }
 
@@ -64,14 +58,14 @@ class Controller_Inquiry extends Controller_Template
         }
 
         $view = View::forge('inquiry/thanks');
-        $this->template->title   = 'お問い合わせ';
+        $this->setMetaTag('inquiry/thanks');
+
         $this->template->content = $view;
 
         try {
             $contact = $this->registerContact();
-            $this->sendMail($contact);
-        }
-        catch ( Exception $e ) {
+            $this->sendMailToUserAndAdmin($contact);
+        } catch ( Exception $e ) {
             $view->set('error',$e,false);
         }
     }
@@ -86,21 +80,8 @@ class Controller_Inquiry extends Controller_Template
     {
         $fieldset = Session::get_flash('inquiry.fieldset');
 
-        if(! $fieldset){
-            $contact = Model_Contact::forge();
-            $fieldset = Fieldset::forge();
-            $fieldset->add_model($contact);
-            $fieldset->add(
-                'submit','',
-                array('type' => 'submit','value' => '確認')
-            );
-            $fieldset->add(
-                'email2','メールアドレス確認用',
-                array('type' => 'text')
-            );
-            $fieldset->field('email2')
-                ->add_rule('required')
-                ->add_rule('match_field','email');
+        if (! $fieldset) {
+            $fieldset = Model_Contact::createFieldset();
         }
 
         return $fieldset;
@@ -115,12 +96,13 @@ class Controller_Inquiry extends Controller_Template
     private function registerContact()
     {
         $data = $this->getContactData();
-        if(! $data ){
+        if (! $data) {
             throw new Exception();
-        }else{
+        } else {
             $contact = Model_Contact::forge();
             $contact->set($data);
-            $contact->save(NULL,true);
+            $contact->save(NULL, true);
+
             return $contact;
         }
     }
@@ -131,12 +113,18 @@ class Controller_Inquiry extends Controller_Template
      * @access private
      * @return array contactのデータ
      */
-    private function getContactData(){
-        $input = Session::get_flash('inquiry.input');
+    private function getContactData()
+    {
+        $fieldset = Session::get_flash('inquiry.fieldset');
 
-        if($input){
+        if (! $fieldset) {
+            return false;
+        }
+
+        $input = $fieldset->validation()->validated();
+
+        if ($input) {
             unset($input['email2']);
-            unset($input['submit']);
             $input['user_id'] = Auth::get_user_id();
         }
 
@@ -150,38 +138,16 @@ class Controller_Inquiry extends Controller_Template
      * @access private
      * @return void
      */
-    private function sendMail($contact)
+    private function sendMailToUserAndAdmin($contact)
     {
-        Lang::load('email');
-        foreach( array('admin','user') as $type ){
-            $lang = Lang::get("inquiry.{$type}");
+        $params = array();
 
-            $email = Email::forge();
-            $email->from($lang['from'],$lang['from_name']);
-            if( $type == 'admin' ){
-                $email->to($lang['email']);
-            }else{
-                $email->to(array($contact->email));
-            }
-            $email->subject($lang['subject']);
-            $email->body($this->createMailBody($lang['body'],$contact));
-            $email->send();
+        foreach (array('subject','email','tel','contents') as $key) {
+            $params[$key] = $contact->get($key);
         }
-    }
+        $params['inquiry_type_label'] = $contact->inquiry_type_label();
 
-    /**
-     * メール本文の作成
-     *
-     * @para $contact Model_Contact
-     * @access private
-     * @return string
-     */
-    private function createMailBody($body,$contact)
-    {
-        foreach( array('subject','email','tel','contents') as $column ){
-            $body = str_replace("{{$column}}",$contact->$column,$body);
-        }
-        $body = str_replace('{inquiry_type_label}',$contact->inquiry_type_label(),$body);
-        return mb_convert_encoding($body,'jis');
+        $this->sendMailByParams("inquiry_user" , $params, array($contact->email));
+        $this->sendMailByParams("inquiry_admin", $params);
     }
 }

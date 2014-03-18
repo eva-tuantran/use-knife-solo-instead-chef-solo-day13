@@ -1,23 +1,17 @@
 <?php
 
-class Model_Contact extends \Orm\Model
+class model_contact extends \Orm\Model
 {
     protected static $_primary_key = array('contact_id');
 
-	protected static $_properties = array(
-		'contact_id' => array(
+    protected static $_properties = array(
+        'contact_id' => array(
             'label' => 'contact_id',
-            'form'  => array(
-                'type' => false,
-            ),
         ),
-		'user_id' => array(
+        'user_id' => array(
             'label' => 'user_id',
-            'form'  => array(
-                'type' => false,
-            ),
         ),
-		'inquiry_type' => array(
+        'inquiry_type' => array(
             'label' => 'お問い合わせの種類',
             'validation' => array(
                 'required',
@@ -25,133 +19,115 @@ class Model_Contact extends \Orm\Model
                 'numeric_max' => array(4),
                 'valid_string' => array('numeric')
             ),
-            'form' => array(
-                'type' => 'select',
-                'options' => array(
-                    '1' => '楽市楽座について',
-                    '2' => 'フリーマーケットについて',
-                    '3' => '楽市楽座のウェブサイトについて',
-                    '4' => 'そのほかのお問い合わせ',
-                ),
-            ),
         ),
-		'inquiry_datetime' => array(
+        'inquiry_datetime' => array(
             'label' => 'inquiry_datetime',
-            'form' => array(
-                'type' => false,
-            ),
         ),
-
-		'subject' => array(
+        'subject' => array(
             'label' => '件名',
-            'form' => array(
-                'type' => 'text',
-            ),
             'validation' => array(
                 'required',
                 'max_length' => array(50),
             ),
         ),
-		'email' => array(
+        'email' => array(
             'label' => 'メールアドレス',
-            'form' => array(
-                'type' => 'text',
-            ),
             'validation' => array(
                 'required',
                 'valid_email',
                 'max_length' => array(255),
             ),
         ),
-		'tel' => array(
+        'tel' => array(
             'label' => '電話番号',
-            'form' => array(
-                'type' => 'text',
-            ),
             'validation' => array(
                 'max_length' => array(20),
             ),
         ),
-		'contents' => array(
+        'contents' => array(
             'label' => '内容',
-            'form' => array(
-                'type' => 'textarea',
-                'cols' => '80',
-                'rows' => '10',
-            ),
             'validation' => array(
                 'required',
             ),
         ),
-/*
-		'last_name' => array(
-            'label' => '姓',
-            'form' => array(
-                'type' => 'text',
-            ),
-            'validation' => array(
-                'max_length' => array(50),
-            ),
+        'created_user' => array(
         ),
-		'first_name' => array(
-            'label' => '名',
-            'form' => array(
-                'type' => 'text',
-            ),
-            'validation' => array(
-                'max_length' => array(50),
-            ),
+        'updated_user' => array(
         ),
-*/
-		'created_user' => array(
-            'form' => array(
-                'type' => false,
-            ),
+        'created_at' => array(
         ),
-		'updated_user' => array(
-            'form' => array(
-                'type' => false,
-            ),
-        ),
-		'created_at' => array(
-            'form' => array(
-                'type' => false,
-            ),
-        ),
-		'updated_at' => array(
-            'form' => array(
-                'type' => false,
-            ),
+        'updated_at' => array(
         ),
         'deleted_at' => array(
-            'form' => array(
-                'type' => false,
-            ),
         ),
-	);
+    );
 
-	protected static $_observers = array(
-		'Orm\Observer_CreatedAt' => array(
-			'events' => array('before_insert'),
-			'mysql_timestamp' => true,
+    protected static $_observers = array(
+        'Orm\Observer_CreatedAt' => array(
+            'events' => array('before_insert'),
+            'mysql_timestamp' => true,
             'property' => 'created_at',
-		),
-		'Orm\Observer_UpdatedAt' => array(
-			'events' => array('before_update'),
-			'mysql_timestamp' => true,
+        ),
+        'Orm\Observer_UpdatedAt' => array(
+            'events' => array('before_update'),
+            'mysql_timestamp' => true,
             'property' => 'updated_at',
-		),
+        ),
         'Orm\Observer_Contact',
-	);
-	protected static $_table_name = 'contacts';
+    );
+    protected static $_table_name = 'contacts';
 
-    public static function to_inquiry_type_label ($inquiry_type)
+    /*
+     * お問い合わせの種類 の名前定義
+     *
+     * @access protected
+     */
+    protected static $inquiry_type_label_define = array(
+        1 => '楽市楽座について',
+        2 => 'フリーマーケットについて',
+        3 => '楽市楽座のウェブサイトについて',
+        4 => 'そのほかのお問い合わせについて',
+    );
+        
+    /*
+     * お問い合わせの種類の番号から名前に変換する
+     *
+     * @param  int (お問い合わせ種類)
+     * @access public
+     * @return string
+     */
+    public static function inquiry_type_to_label($inquiry_type)
     {
-        $properties = self::properties();
-        return $properties['inquiry_type']['form']['options'][$inquiry_type];
+        return self::$inquiry_type_label_define[$inquiry_type];
     }
-    
-    public function inquiry_type_label (){
-        return self::to_inquiry_type_label($this->inquiry_type);
+
+    /*
+     * お問い合わせの種類の名前を返す
+     *
+     * @access public
+     * @return string
+     */
+    public function inquiry_type_label()
+    {
+        return self::inquiry_type_to_label($this->inquiry_type);
+    }
+
+    /*
+     * Fieldsetオブジェクトの生成
+     *
+     * @access public
+     * @return string
+     */
+    public static function createFieldset()
+    {
+        $contact = self::forge();
+        $fieldset = Fieldset::forge();
+        $fieldset->add_model($contact);
+        $fieldset->add('email2','メールアドレス確認用')
+            ->add_rule('required')
+            ->add_rule('match_field', 'email');
+
+        return $fieldset;
     }
 }
+
