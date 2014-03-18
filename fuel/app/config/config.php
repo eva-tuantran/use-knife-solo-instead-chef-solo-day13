@@ -56,6 +56,14 @@ return array(
      */
     'caching'         => false,
     // 'cache_lifetime'  => 3600, // In Seconds
+    //
+    //
+
+    /**
+     * Settings for ssl
+     * @author shimma
+     */
+    'use_ssl'         => false,
 
     /**
      * Callback to use with ob_start(), set this to 'ob_gzhandler' for gzip encoding of output
@@ -287,7 +295,8 @@ return array(
                      */
 
                     'config' => array(
-                        'constants'
+            'master' => 'master',
+            'constants' => 'constants',
                         // 'app', //@TODO: 常に読み込む必要ないかもしれない
                     ),
 
@@ -299,7 +308,7 @@ return array(
                      * add it like 'validation' => 'forms'.
                      * If you don't want the lang in a group use null as groupname.
                      */
-                    // 'language'  => array(),
+                    //'language'  => array('meta'),
                     // ),
                 )
             );

@@ -24,7 +24,6 @@
 
       <form id="confirmation" action="verify" accept-charset="utf-8" method="post">
         <table>
-          <?php echo $user_hidden_inputs; ?>
           <?php echo \Form::csrf(); ?>
           <tr>
             <td class=""><label id="label_first_name" for="form_first_name">名</label>*</td>

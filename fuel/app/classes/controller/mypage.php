@@ -3,18 +3,24 @@
 /**
  * 会員ページ
  *
- * @author Ricky <master@mistdev.com>
  */
-class Controller_Mypage extends Controller_Template
+class Controller_Mypage extends Controller_Base_Template
 {
 
+    protected $_login_actions = array('index', 'password', 'account', 'save');
+
+    protected $_secure_actions = array('index', 'password', 'account', 'save');
+
+    /**
+     * before
+     *
+     * @access public
+     * @return void
+     * @author shimma
+     */
     public function before()
     {
         parent::before();
-
-        if (!Auth::check()) {
-            Response::redirect('/login');
-        }
     }
 
     /**
@@ -22,6 +28,7 @@ class Controller_Mypage extends Controller_Template
      *
      * @access public
      * @return void
+     * @author shimma
      */
     public function action_index()
     {
@@ -40,6 +47,7 @@ class Controller_Mypage extends Controller_Template
      *
      * @access public
      * @return void
+     * @author shimma
      */
     public function action_password()
     {
@@ -59,6 +67,7 @@ class Controller_Mypage extends Controller_Template
      * @todo Model_Userでfieldsetを作成するのか、ここで作成するか検討
      * @access public
      * @return void
+     * @author shimma
      */
     public function action_account()
     {
@@ -89,11 +98,11 @@ class Controller_Mypage extends Controller_Template
      * @todo save失敗の処理を検討する
      * @todo ユーザインプットの更新でarray_filterで果たしていいのか再検討
      * @todo CSRF実装検討
-     * @todo POST以外を弾く
      * @access public
      * @return void
+     * @author shimma
      */
-    public function action_save()
+    public function post_save()
     {
         $fieldset = Fieldset::forge()->add_model('Model_User');
         $fieldset->repopulate();
@@ -108,7 +117,8 @@ class Controller_Mypage extends Controller_Template
             $user->set($update_data);
             $user->save();
             Session::set_flash('account_info', 'status_changed');
-            Response::redirect('/mypage/account');
+
+            return Response::redirect('/mypage/account');
         }
     }
 

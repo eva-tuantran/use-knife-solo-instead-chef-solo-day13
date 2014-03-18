@@ -4,7 +4,6 @@
  * フィールドセットの拡張。
  * validatedの拡張以外あまりまだ活用されていません。
  *
- * @author Ricky <master@mistdev.com>
  */
 class Fieldset extends Fuel\Core\Fieldset
 {
@@ -15,6 +14,7 @@ class Fieldset extends Fuel\Core\Fieldset
      * @param  mixed $field
      * @access public
      * @return void
+     * @author shimma
      */
     public function validated($field = null)
     {
@@ -35,6 +35,7 @@ class Fieldset extends Fuel\Core\Fieldset
      * @param  array  $hidden
      * @access public
      * @return void
+     * @author shimma
      */
     public function getFormElements($open = '', $hidden = array())
     {
@@ -70,6 +71,7 @@ class Fieldset extends Fuel\Core\Fieldset
      * @param  mixed $label
      * @access public
      * @return void
+     * @author shimma
      */
     public function addTextForNumeric($name, $label)
     {
@@ -91,6 +93,7 @@ class Fieldset extends Fuel\Core\Fieldset
      * @param  mixed $options
      * @access public
      * @return void
+     * @author shimma
      */
     public function addRadioInline($name, $label, $options)
     {
@@ -112,6 +115,7 @@ class Fieldset extends Fuel\Core\Fieldset
      * @param  mixed $options
      * @access public
      * @return void
+     * @author shimma
      */
     public function addRadioWithBr($name, $label, $options)
     {

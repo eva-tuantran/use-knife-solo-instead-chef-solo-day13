@@ -3,21 +3,20 @@
 /**
  * 新規ユーザ登録
  *
- * @author Ricky <master@mistdev.com>
  */
-class Controller_Signup extends Controller_Template
+class Controller_Signup extends Controller_Base_Template
 {
 
-    //SSL設定の項目です。テスト期間につきSSLは利用していません。
-    // public $_secure = array('index', 'auth');
+    protected $_secure_actions = array('index', 'confirm', 'verify', 'activate', 'auth');
 
     /**
      * 各アクション共通実行項目
      *
-     * @access public
-     * @return void
      * @todo 既にログインしているユーザに対して、会員IDを発行できるようにするのか確認
      * @todo タイムアウト時間の確認
+     * @access public
+     * @return void
+     * @author shimma
      */
     public function before()
     {
@@ -29,15 +28,16 @@ class Controller_Signup extends Controller_Template
      *
      * @access public
      * @return void
+     * @author shimma
      */
     public function action_index()
     {
-        $fieldset = $this->create_fieldset();
+        $fieldset = $this->createFieldset();
 
         $this->template->title = '楽市楽座ID(無料)を登録する';
-        $this->template->content = ViewModel::forge('signup/index');
+        $this->template->content = View::forge('signup/index');
         $this->template->content->set('html_form', $fieldset->build('signup/confirm'), false);
-        $this->template->content->set('errmsg', '');
+        $this->template->content->set('errmsg', $fieldset->validation()->show_errors(), false);
     }
 
     /**
@@ -45,24 +45,21 @@ class Controller_Signup extends Controller_Template
      *
      * @access public
      * @return void
+     * @author shimma
      */
-    public function action_confirm()
+    public function post_confirm()
     {
-        if (Input::method() !== 'POST') {
-            Response::redirect('/');
-        }
-
-        $fieldset = $this->create_fieldset();
+        $fieldset = $this->createFieldset();
         $fieldset->repopulate();
         $validation = $fieldset->validation();
 
         $this->template->title = '楽市楽座ID(無料)を登録する';
+
+        Session::set_flash('signup.fieldset', $fieldset);
         if (!$validation->run()) {
-            $this->template->content = ViewModel::forge('signup/index');
-            $this->template->content->set('html_form', $fieldset->build('signup/confirm'), false);
-            $this->template->content->set('errmsg',  $validation->show_errors(), false);
+            return Response::redirect('signup');
         } else {
-            $this->template->content = ViewModel::forge('signup/confirm');
+            $this->template->content = View::forge('signup/confirm');
             $this->template->content->set('user_input', $validation->validated());
         };
     }
@@ -74,42 +71,32 @@ class Controller_Signup extends Controller_Template
      *
      * @todo エラーメッセージのview側への組み込み
      * @todo 検討: emailにunique制約が入っており、ここで中途半端にページを閉じると同じIDで登録できない
+     * @author shimma
      * @access public
      * @return void
      */
-    public function action_verify()
+    public function post_verify()
     {
-        if (Input::method() !== 'POST') {
-            Response::redirect('/');
-        }
-
         if (!Security::check_token()) {
-            Response::redirect('signup/timeout');
+            return Response::redirect('signup/timeout');
         }
 
-        $fieldset = $this->create_fieldset();
-        $fieldset->repopulate();
-        $validation = $fieldset->validation();
+        $fieldset = $this->createFieldset();
+        $user_data = $fieldset->validation()->validated();
+        $user_data['password']        = \Auth::hash_password($user_data['password']);
+        $user_data['register_status'] = \REGISTER_STATUS_INACTIVATED;
 
-        if (!$validation->run()) {
-            $this->template->content->set('errmsg',  $validation->show_errors(), false);
-        } else {
-            $user_data = $validation->validated();
-            $user_data['password']        = \Auth::hash_password($user_data['password']);
-            $user_data['register_status'] = \REGISTER_STATUS_INACTIVATED;
-
-            try {
-                $new_user = Model_User::forge($user_data);
-                $new_user->save();
-                $new_token = Model_Token::createToken($new_user->user_id);
-                self::sendActivateEmail($new_user);
-            } catch (Orm\ValidationFailed $e) {
-                $this->template->content->set('errmsg',  $e->getMessage(), false);
-            }
-        };
+        try {
+            $new_user = Model_User::forge($user_data);
+            $new_user->save();
+            $new_token = Model_Token::createToken($new_user->user_id);
+            self::sendActivateEmail($new_user);
+        } catch (Orm\ValidationFailed $e) {
+            $this->template->content->set('errmsg',  $e->getMessage(), false);
+        }
 
         $this->template->title = '楽市楽座ID(無料)を登録する';
-        $this->template->content = ViewModel::forge('signup/verify');
+        $this->template->content = View::forge('signup/verify');
     }
 
     /**
@@ -117,9 +104,11 @@ class Controller_Signup extends Controller_Template
      * tokenテーブルをチェックし、該当するトークンURLを含むメールを配信します
      *
      * @todo 仮想環境(vagrant)上からメール送信が出来ていないので、そこが確認できていない
+     * @todo view::forgeのrenderを移動する
      * @param  Model_User $user
      * @access public
      * @return bool
+     * @author shimma
      */
     public static function sendActivateEmail(Model_User $user)
     {
@@ -147,14 +136,15 @@ class Controller_Signup extends Controller_Template
      *
      * @todo 検討: 夫々の処理でエラーが発生した際にどのようにユーザ側に見える表示するのか
      * @todo エラーのリダイレクト先を共通コントローラ完成後修正
+     * @author shimma
      * @access public
      * @return void
      */
-    public function action_activate()
+    public function get_activate()
     {
         $hash = Input::get('token');
         if (empty($hash)) {
-            Response::redirect('/');
+            return Response::redirect('/');
         }
 
         try {
@@ -163,18 +153,16 @@ class Controller_Signup extends Controller_Template
             $user->register_status = \REGISTER_STATUS_ACTIVATED;
             $user->save();
             $valid_token->delete();
-            Response::redirect('signup/thanks');
+            return Response::redirect('signup/thanks');
         } catch (Exception $e) {
-            Response::redirect('error/503');
+            return Response::redirect('error/503');
         }
-
-        $this->template->title = '楽市楽座ID(無料)を登録する';
-        $this->template->content = '認証しています...';
     }
 
     /**
      * ユーザ登録完了画面
      *
+     * @author shimma
      * @access public
      * @return void
      */
@@ -187,6 +175,7 @@ class Controller_Signup extends Controller_Template
     /**
      * タイムアウト画面。基本的にverifyのCSRFでチェック失敗した時に飛びます。
      *
+     * @author shimma
      * @access public
      * @return void
      */
@@ -202,16 +191,21 @@ class Controller_Signup extends Controller_Template
      *
      * @access public
      * @return Fieldset $fieldset
+     * @author shimma
      */
-    public function create_fieldset()
+    public function createFieldset()
     {
-        $fieldset = Fieldset::forge('signup');
-        $fieldset = Model_User::getBaseFieldset($fieldset);
+        $fieldset = Session::get_flash('signup.fieldset');
 
-        $fieldset->field('device')->set_type(false);
-        $fieldset->field('tel')->set_type(false);
-        $fieldset->field('mobile_email')->set_type(false);
-        $fieldset->add('submit', '確認', array('type' => 'submit','value' => '確認'));
+        if (! $fieldset) {
+            $fieldset = Fieldset::forge('signup');
+            $fieldset = Model_User::getBaseFieldset($fieldset);
+
+            $fieldset->field('device')->set_type(false);
+            $fieldset->field('tel')->set_type(false);
+            $fieldset->field('mobile_email')->set_type(false);
+            $fieldset->add('submit', '確認', array('type' => 'submit','value' => '確認'));
+        }
 
         return $fieldset;
     }
