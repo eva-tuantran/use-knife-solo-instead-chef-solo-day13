@@ -7,7 +7,7 @@ class Create_contacts
 	public function up()
 	{
 		\DBUtil::create_table('contacts', array(
-			'contact_id' => array('constraint' => 11, 'type' => 'int', 'auto_increment' => true,),
+			'contact_id' => array('constraint' => 11, 'type' => 'int', 'auto_increment' => true, 'unsigned' => true),
 			'user_id' => array('constraint' => 11, 'type' => 'int', 'null' => true),
 			'inquiry_type' => array('type' => 'tinyint'),
 			'inquiry_datetime' => array('type' => 'datetime'),
@@ -23,7 +23,7 @@ class Create_contacts
 			'updated_at' => array('constraint' => 11, 'type' => 'int', 'null' => true),
 			'deleted_at' => array('constraint' => 11, 'type' => 'int', 'null' => true),
 
-		), array('id'));
+		), array('contact_id'));
 	}
 
 	public function down()
