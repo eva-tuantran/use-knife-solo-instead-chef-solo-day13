@@ -1,16 +1,17 @@
 <?php
-use \Controller\Base;
+use \Controller\Base_Template;
 use \Model\Fleamarket;
 use \Model\Fleamarket_Entry_Style;
+use \Model\Fleamarket_About;
 use \Model\Entry;
 use \Model\Location;
 
 /**
  * Search Controller.
  *
- * @extends  Controller_Template
+ * @extends  Controller_Base_Template
  */
-class Controller_Search extends Controller_Base
+class Controller_Search extends Controller_Base_Template
 {
     /**
      * 検索結果1ページあたりの行数
@@ -18,13 +19,6 @@ class Controller_Search extends Controller_Base
      * @var int
      */
     const SEARCH_RESULT_PER_PAGE = 1;
-
-    /**
-     * postが必須のアクション配列
-     *
-     * @var array
-     */
-    protected $post_actions = array();
 
     /**
      * 事前処理
@@ -67,7 +61,7 @@ class Controller_Search extends Controller_Base
      * @return void
      * @author ida
      */
-    public function action_index($page = null)
+    public function post_index($page = null)
     {
         Asset::js('jquery.js', array(), 'add_js');
 
@@ -75,13 +69,11 @@ class Controller_Search extends Controller_Base
             $page = 1;
         }
 
-        $filter = Input::post('filter');
-        $conditions = Input::post('conditions');
-        if (is_array($filter) && count($filter) > 0) {
-            $conditions = array_merge($conditions, $filter);
-        }
-//var_dump($filter);
+        $base_conditions = Input::post('conditions');
+        $filters = Input::post('filters', array());
+        $conditions = array_merge($base_conditions, $filters);
 
+        // 検索条件から表示するフリーマーケット情報の取得
         $condition_list = $this->createConditionList($conditions);
         $total_count = Fleamarket::findBySearchCount($condition_list);
         $fleamarket_list = Fleamarket::findBySearch(
@@ -89,6 +81,7 @@ class Controller_Search extends Controller_Base
         );
         $fleamarket_list = $this->getFleamarketRelatedData($fleamarket_list);
 
+        // ページネーション設定
         $pagination = Pagination::forge(
             'fleamarket_pagination',
             $this->getPaginationConfig($total_count)
@@ -96,7 +89,8 @@ class Controller_Search extends Controller_Base
         $entry_styles = Config::get('master.entry_styles');
 
         $view_model = ViewModel::forge('search/index');
-        $view_model->set('conditions', $conditions, false);
+        $view_model->set('base_conditions', $base_conditions, false);
+        $view_model->set('filters', $filters, false);
         $view_model->set('pagination', $pagination, false);
         $view_model->set('fleamarket_list', $fleamarket_list, false);
         $view_model->set('entry_styles', $entry_styles, false);
@@ -112,9 +106,20 @@ class Controller_Search extends Controller_Base
      * @return void
      * @author ida
      */
-    public function action_detail($fleamarket_id)
+    public function get_detail($fleamarket_id)
     {
-        $fleamarket = Fleamarket::findJoins($fleamarket_id);
+        Asset::js('jquery.js', array(), 'add_js');
+
+        $fleamarket = Fleamarket::findByDetail($fleamarket_id);
+        $fleamarket['fleamarket_abouts'] = Fleamarket_About::findByFleamarketId(
+            $fleamarket_id
+        );
+        $fleamarket['entry_styles'] = Fleamarket_Entry_Style::findByFleamarketId(
+            $fleamarket_id
+        );
+        $fleamarket['entries'] = Entry::getTotalEntryByFlearmarketId(
+            $fleamarket_id
+        );
 
         $view_model = ViewModel::forge('search/detail');
         $view_model->set('fleamarket', $fleamarket, false);
@@ -186,7 +191,13 @@ class Controller_Search extends Controller_Base
         }
 
         if (isset($data['shop_fee']) && $data['shop_fee'] !== '') {
-            $conditions[] = array('shop_fee_flag', '=', $data['shop_fee']);
+            $operator = '=';
+            if (is_array($data['shop_fee'])) {
+                $operator = 'IN';
+            }
+            $conditions[] = array(
+                'shop_fee_flag', $operator, $data['shop_fee']
+            );
         }
 
         if (isset($data['car_shop']) && $data['car_shop'] !== '') {
@@ -216,14 +227,22 @@ class Controller_Search extends Controller_Base
         }
 
         if (isset($data['event_status']) && is_array($data['event_status'])) {
+            $operator = '=';
+            if (is_array($data['event_status'])) {
+                $operator = 'IN';
+            }
             $conditions[] = array(
-                'f.event_status', 'IN', $data['event_status']
+                'f.event_status', $operator, $data['event_status']
             );
         }
 
         if (isset($data['entry_style']) && is_array($data['entry_style'])) {
+            $operator = '=';
+            if (is_array($data['entry_style'])) {
+                $operator = 'IN';
+            }
             $conditions[] = array(
-                'fes.entry_style_id', 'IN', $data['entry_style']
+                'fes.entry_style_id', $operator, $data['entry_style']
             );
         }
 

@@ -47,6 +47,45 @@ QUERY;
         return $rows;
     }
 
+
+    /**
+     * 指定されたフリーマーケットIDでフリーマーケット説明情報を取得する
+     *
+     * @access public
+     * @param mixed $fleamarket_id フリーマーケットID
+     * @param array $options オプション設定
+     *  'field': 取得するフィールドを配列で指定する
+     * @return array フリーマーケット情報
+     * @author ida
+     */
+    public static function findByFleamarketId(
+        $fleamarket_id = null, $options = array()
+    ) {
+        if (! $fleamarket_id) {
+            return null;
+        }
+
+        $defaults = array('field' => array('*'));
+        $options = array_merge($defaults, $options);
+        $fielsds = implode(',', $options['field']);
+
+        $placeholders = array('flearmarket_id' => $fleamarket_id);
+        $table_name = self::$_table_name;
+        $query = <<<"QUERY"
+SELECT {$fielsds} FROM {$table_name} WHERE fleamarket_id = :flearmarket_id
+ORDER BY about_id
+QUERY;
+        $statement = \DB::query($query)->parameters($placeholders);
+        $result = $statement->execute();
+
+        $rows = null;
+        if (! empty($result)) {
+            $rows = $result->as_array();
+        }
+
+        return $rows;
+    }
+
     /**
      * フリーマーケット説明情報を登録する
      *
