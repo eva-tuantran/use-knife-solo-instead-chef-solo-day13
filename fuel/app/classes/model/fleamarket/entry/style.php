@@ -1,57 +1,33 @@
 <?php
-namespace Model;
 
-use \DB;
-
-/**
- * Fleamarket_Entry_Style Model
- *
- * フリーマーケット出店形態情報テーブル
- *
- * @author ida
- */
-class Fleamarket_Entry_Style extends \Model
+class Model_Fleamarket_Entry_Style extends \Orm\Model
 {
-    /**
-     * テーブル名
-     *
-     * @var string $table_name
-     */
-    protected static $_table_name = 'fleamarket_entry_styles';
+    protected static $_primary_key = array('fleamarket_entry_style_id');
+    protected static $_belongs_to = array('fleamarket');
 
-    /**
-     * 指定されたフリーマーケットIDでフリーマーケット出店形態情報を取得する
-     *
-     * @access public
-     * @param mixed $fleamarket_id フリーマーケットID
-     * @param array $options オプション設定
-     *  'field': 取得するフィールドを配列で指定する
-     * @return array フリーマーケット情報
-     * @author ida
-     */
-    public static function find($fleamarket_id = null, $options = array())
-    {
-        if (! $fleamarket_id) {
-            return null;
-        }
+	protected static $_properties = array(
+		'fleamarket_entry_style_id',
+		'fleamarket_id',
+		'entry_style_id',
+		'booth_fee',
+		'reservation_booth_limit',
+		'created_user',
+        'updated_user',
+		'created_at',
+		'updated_at',
+        'deleted_at',
+	);
 
-        $defaults = array('field' => array('*'));
-        $options = array_merge($defaults, $options);
-        $fielsds = implode(',', $options['field']);
+	protected static $_observers = array(
+		'Orm\Observer_CreatedAt' => array(
+			'events' => array('before_insert'),
+			'mysql_timestamp' => false,
+		),
+		'Orm\Observer_UpdatedAt' => array(
+			'events' => array('before_update'),
+			'mysql_timestamp' => false,
+		),
+	);
+	protected static $_table_name = 'fleamarket_entry_styles';
 
-        $placeholders = array('flearmarket_id' => $fleamarket_id);
-        $table_name = self::$_table_name;
-        $query = <<<"QUERY"
-SELECT {$fielsds} FROM {$table_name} WHERE fleamarket_id = :flearmarket_id
-QUERY;
-        $statement = \DB::query($query)->parameters($placeholders);
-        $result = $statement->execute();
-
-        $rows = null;
-        if (! empty($result)) {
-            $rows = $result->as_array();
-        }
-
-        return $rows;
-    }
 }

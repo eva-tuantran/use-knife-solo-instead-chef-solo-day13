@@ -22,6 +22,10 @@ class Controller_Reservation extends Controller_Base_Template
         $fieldset->repopulate();
         $view->set('fieldset', $fieldset, false);
         $this->template->content = $view;
+
+
+        $fleamarket = Model_Fleamarket::find(1);
+        var_dump($fleamarket->fleamarket_entry_styles);
     }
     /**
      * 確認画面
