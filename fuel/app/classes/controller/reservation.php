@@ -22,10 +22,9 @@ class Controller_Reservation extends Controller_Base_Template
         $fieldset->repopulate();
         $view->set('fieldset', $fieldset, false);
         $this->template->content = $view;
-
-
-        $fleamarket = Model_Fleamarket::find(1);
-        var_dump($fleamarket->fleamarket_entry_styles);
+        
+        $fleamarket = Model_Fleamarket::find(Input::all('fleamarket_id'));
+        $view->set('fleamarket', $fleamarket,false);
     }
     /**
      * 確認画面
@@ -71,6 +70,7 @@ class Controller_Reservation extends Controller_Base_Template
             $this->sendMailToUserAndAdmin($entry);
         } catch ( Exception $e ) {
             $view->set('error',$e,false);
+            throw $e;
         }
     }
 
@@ -85,8 +85,7 @@ class Controller_Reservation extends Controller_Base_Template
         $fieldset = Session::get_flash('reservation.fieldset');
 
         if (! $fieldset) {
-            //$fieldset = Model_Entry::createFieldset();
-            $fieldset = Fieldset::forge();
+            $fieldset = Model_Entry::createFieldset(Input::all());
         }
 
         return $fieldset;

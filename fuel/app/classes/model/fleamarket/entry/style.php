@@ -2,6 +2,8 @@
 
 class Model_Fleamarket_Entry_Style extends \Orm\Model
 {
+    protected static $_primary_key = array('fleamarket_entry_style_id');
+
 	protected static $_properties = array(
 		'fleamarket_entry_style_id',
 		'fleamarket_id',
