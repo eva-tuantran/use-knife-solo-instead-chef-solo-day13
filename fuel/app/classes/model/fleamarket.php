@@ -60,32 +60,9 @@ QUERY;
     public static function findBySearch(
         $condition_list, $page = 0, $row_count = 0
     ) {
-        $placeholders = array(
-            ':display_flag' => FLEAMARKET_DISPLAY_FLAG_ON,
-            ':about_access_id' => FLEAMARKET_ABOUT_ACCESS,
-            ':register_status' => LOCATION_REGISTER_TYPE_ADMIN,
+        list($where, $placeholders) = self::createWhereSearch(
+            $condition_list
         );
-
-        $where = '';
-        if (! empty($condition_list)) {
-            $conditions = array();
-            foreach ($condition_list as $condition) {
-                $field = $condition[0];
-                $placeholder = ':' . $field;
-                $operator = $condition[1];
-                if ($operator === 'IN') {
-                    $value = implode(',', $condition[2]);
-                    $conditions[] = $field . ' ' . $operator . ' (' . $placeholder . ')';
-                } else {
-                    $value = @trim($condition[2]);
-                    $conditions[] = $field . ' ' . $operator . ' ' . $placeholder;
-                }
-                $placeholders[$placeholder] = $value;
-            }
-
-            $where = ' AND ';
-            $where .= implode(' AND ', $conditions);
-        }
 
         $limit = '';
         if (is_numeric($page) && is_numeric($row_count)) {
@@ -134,6 +111,33 @@ LEFT JOIN
 WHERE
     f.display_flag = :display_flag
     {$where}
+GROUP BY
+	f.fleamarket_id,
+	f.name,
+	f.promoter_name,
+	event_date,
+	event_time_start,
+	event_time_end,
+	f.event_status,
+	f.description,
+	f.reservation_start,
+	f.reservation_end,
+	f.reservation_tel,
+	f.reservation_email,
+	f.website,
+	f.shop_fee_flag,
+	f.car_shop_flag,
+	f.pro_shop_flag,
+	f.charge_parking_flag,
+	f.free_parking_flag,
+	f.rainy_location_flag,
+	f.register_type,
+	location_name,
+	zip,
+	prefecture_id,
+	address,
+	googlemap_address,
+	about_access
 ORDER BY
     f.register_type = :register_status,
     f.event_date DESC,
@@ -162,37 +166,14 @@ QUERY;
      */
     public static function findBySearchCount($condition_list)
     {
-        $placeholders = array(
-            ':display_flag' => FLEAMARKET_DISPLAY_FLAG_ON,
-            ':about_access_id' => FLEAMARKET_ABOUT_ACCESS,
-            ':register_status' => LOCATION_REGISTER_TYPE_ADMIN,
+        list($where, $placeholders) = self::createWhereSearch(
+            $condition_list
         );
-
-        $where = '';
-        if (! empty($condition_list)) {
-            $conditions = array();
-            foreach ($condition_list as $condition) {
-                $field = $condition[0];
-                $placeholder = ':' . $field;
-                $operator = $condition[1];
-                if ($operator === 'IN') {
-                    $value = implode(',', $condition[2]);
-                    $conditions[] = $field . ' ' . $operator . ' (' . $placeholder . ')';
-                } else {
-                    $value = @trim($condition[2]);
-                    $conditions[] = $field . ' ' . $operator . ' ' . $placeholder;
-                }
-                $placeholders[$placeholder] = $value;
-            }
-
-            $where = ' AND ';
-            $where .= implode(' AND ', $conditions);
-        }
 
         $table_name = self::$_table_name;
         $query = <<<"QUERY"
 SELECT
-    COUNT(f.fleamarket_id) AS cnt
+    COUNT(DISTINCT f.fleamarket_id) AS cnt
 FROM
     {$table_name} AS f
 LEFT JOIN
@@ -205,10 +186,6 @@ LEFT JOIN
 WHERE
     f.display_flag = :display_flag
     {$where}
-ORDER BY
-    f.register_type = :register_status,
-    f.event_date DESC,
-    f.event_time_start
 QUERY;
 
         $statement = \DB::query($query)->parameters($placeholders);
@@ -220,6 +197,72 @@ QUERY;
         }
 
         return $rows[0]['cnt'];
+    }
+
+    /**
+     * 指定された条件でフリーマーケット情報を取得する
+     *
+     * 開催地情報、フリーマーケットエントリスタイル情報、フリーマーケット説明情報
+     *
+     * @access public
+     * @param mixed $fleamarket_id フリーマーケットID
+     * @return array フリーマーケット情報
+     * @author ida
+     */
+    public static function findByDetail($fleamarket_id)
+    {
+        $placeholders = array(
+            ':fleamarket_id' => $fleamarket_id,
+            ':display_flag' => \FLEAMARKET_DISPLAY_FLAG_ON,
+            ':register_status' => \LOCATION_REGISTER_TYPE_ADMIN,
+        );
+
+        $table_name = self::$_table_name;
+        $query = <<<"QUERY"
+SELECT
+    f.fleamarket_id,
+    f.name,
+    f.promoter_name,
+    DATE_FORMAT(f.event_date, '%Y年%m月%d日') AS event_date,
+    DATE_FORMAT(f.event_time_start, '%k時%i分') AS event_time_start,
+    DATE_FORMAT(f.event_time_end, '%k時%i分') AS event_time_end,
+    f.event_status,
+    f.description,
+    f.reservation_start,
+    f.reservation_end,
+    f.reservation_tel,
+    f.reservation_email,
+    f.website,
+    f.shop_fee_flag,
+    f.car_shop_flag,
+    f.pro_shop_flag,
+    f.charge_parking_flag,
+    f.free_parking_flag,
+    f.rainy_location_flag,
+    f.register_type,
+    l.name AS location_name,
+    l.zip AS zip,
+    l.prefecture_id AS prefecture_id,
+    l.address AS address,
+    l.googlemap_address AS googlemap_address
+FROM
+    {$table_name} AS f
+LEFT JOIN
+    locations AS l ON f.location_id = l.location_id
+WHERE
+    f.display_flag = :display_flag
+    AND f.fleamarket_id = :fleamarket_id
+QUERY;
+
+        $statement = \DB::query($query)->parameters($placeholders);
+        $result = $statement->execute();
+
+        $rows = null;
+        if (! empty($result)) {
+            $rows = $result->as_array();
+        }
+
+        return $rows[0];
     }
 
     /**
@@ -300,5 +343,56 @@ QUERY;
         $result = $statement->execute();
 
         return $result;
+    }
+
+    /**
+     * 指定された検索条件よりWHERE句とプレースホルダ―を生成する
+     *
+     * @access private
+     * @param array $condition_list
+     * @return array
+     * @author ida
+     */
+    private static function createWhereSearch($condition_list)
+    {
+        $where = '';
+        $placeholders = array(
+            ':display_flag' => \FLEAMARKET_DISPLAY_FLAG_ON,
+            ':about_access_id' => \FLEAMARKET_ABOUT_ACCESS,
+            ':register_status' => \LOCATION_REGISTER_TYPE_ADMIN,
+        );
+
+        if (empty($condition_list)) {
+            return array($where, $placeholders);
+        }
+
+        $conditions = array();
+        foreach ($condition_list as $condition) {
+            $field = $condition[0];
+            $operator = $condition[1];
+            if ($operator === 'IN') {
+                $placeholder = ':' . $field;
+                $values = $condition[2];
+                $placeholder_string = '';
+                foreach ($values as $key => $value) {
+                    $placeholder_in = $placeholder . $key;
+                    $placeholder_string .= $placeholder_string == '' ? '' : ',';
+                    $placeholder_string .= $placeholder_in;
+                    $placeholders[$placeholder_in] = $value;
+                }
+                $value = implode(',', $values);
+                $conditions[] = $field . ' ' . $operator . ' (' . $placeholder_string . ')';
+            } else {
+                $placeholder = ':' . $field;
+                $value = trim($condition[2]);
+                $conditions[] = $field . ' ' . $operator . ' ' . $placeholder;
+                $placeholders[$placeholder] = $value;
+            }
+        }
+
+        $where = ' AND ';
+        $where .= implode(' AND ', $conditions);
+
+        return array($where, $placeholders);
     }
 }
