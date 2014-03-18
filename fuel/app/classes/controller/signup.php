@@ -7,7 +7,7 @@
 class Controller_Signup extends Controller_Base_Template
 {
 
-    protected $_secure_actions = array('index', 'auth');
+    protected $_secure_actions = array('index', 'confirm', 'verify', 'activate', 'auth');
 
     /**
      * 各アクション共通実行項目
@@ -78,7 +78,7 @@ class Controller_Signup extends Controller_Base_Template
     public function post_verify()
     {
         if (!Security::check_token()) {
-            Response::redirect('signup/timeout');
+            return Response::redirect('signup/timeout');
         }
 
         $fieldset = $this->createFieldset();
@@ -144,7 +144,7 @@ class Controller_Signup extends Controller_Base_Template
     {
         $hash = Input::get('token');
         if (empty($hash)) {
-            Response::redirect('/');
+            return Response::redirect('/');
         }
 
         try {
@@ -153,13 +153,10 @@ class Controller_Signup extends Controller_Base_Template
             $user->register_status = \REGISTER_STATUS_ACTIVATED;
             $user->save();
             $valid_token->delete();
-            Response::redirect('signup/thanks');
+            return Response::redirect('signup/thanks');
         } catch (Exception $e) {
-            Response::redirect('error/503');
+            return Response::redirect('error/503');
         }
-
-        $this->template->title = '楽市楽座ID(無料)を登録する';
-        $this->template->content = '認証しています...';
     }
 
     /**
