@@ -28,12 +28,13 @@ class Controller_Base_Template extends Controller_Template
 
     /**
      * リダイレクト先のSSLホスト名
+     * 基本的にconfigのssl_connection内部の引数の値をデフォルトとして設定します
      *
      * @var string
      * @access protected
      * @author shimma
      */
-    protected $_ssl_host = 'ssl.rakuichi-rakuza.jp';
+    protected $_ssl_host;
 
 
     /**
@@ -49,13 +50,16 @@ class Controller_Base_Template extends Controller_Template
     public function before()
     {
         $should_be_secure = in_array($this->request->action, $this->_secure_actions);
-        $is_secure = isset($_SERVER['HTTPS']);
-        $use_ssl = \Config::get('use_ssl');
+        $is_secure        = isset($_SERVER['HTTPS']);
+        $use_ssl          = \Config::get('ssl_connection.use');
+        if (! $this->_ssl_host) {
+            $this->_ssl_host = \Config::get('ssl_connection.default_host');
+        }
 
         if ($should_be_secure && ! $is_secure && $use_ssl) {
-            $this->redirect_to_protocol('https');
+            $this->redirectToProtocol('https');
         } elseif (! $should_be_secure && $is_secure) {
-            $this->redirect_to_protocol('http');
+            $this->redirectToProtocol('http');
         }
 
         if (in_array($this->request->action, $this->_login_actions) && !Auth::check()) {
@@ -75,7 +79,7 @@ class Controller_Base_Template extends Controller_Template
      * @return void
      * @author shimma
      */
-    private function redirect_to_protocol($protocol = 'http')
+    private function redirectToProtocol($protocol = 'http')
     {
         switch ($protocol) {
             case 'https':

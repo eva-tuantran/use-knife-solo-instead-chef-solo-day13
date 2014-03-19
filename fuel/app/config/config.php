@@ -63,7 +63,10 @@ return array(
      * Settings for ssl
      * @author shimma
      */
-    'use_ssl'         => false,
+    'ssl_connection' => array(
+        'use'          => true,
+        'default_host' => 'ssl.rakuichi-rakuza.jp',
+    ),
 
     /**
      * Callback to use with ob_start(), set this to 'ob_gzhandler' for gzip encoding of output
