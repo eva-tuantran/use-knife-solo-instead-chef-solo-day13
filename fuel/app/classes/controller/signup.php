@@ -78,7 +78,7 @@ class Controller_Signup extends Controller_Base_Template
     public function post_verify()
     {
         if (!Security::check_token()) {
-            return Response::redirect('signup/timeout');
+            return \Response::redirect('signup/timeout');
         }
 
         $fieldset = $this->createFieldset();
@@ -89,45 +89,20 @@ class Controller_Signup extends Controller_Base_Template
         try {
             $new_user = Model_User::forge($user_data);
             $new_user->save();
+
             $new_token = Model_Token::createToken($new_user->user_id);
-            self::sendActivateEmail($new_user);
+            $data = array(
+                'nick_name'    => $new_user->nick_name,
+                'activate_url' => Uri::base().'signup/activate?token='.$new_token->hash,
+            );
+            $body = View::forge('email/signup/activate', $data)->render();
+            $new_user->sendmail('確認メール', $body);
         } catch (Orm\ValidationFailed $e) {
             $this->template->content->set('errmsg',  $e->getMessage(), false);
         }
 
         $this->template->title = '楽市楽座ID(無料)を登録する';
         $this->template->content = View::forge('signup/verify');
-    }
-
-    /**
-     * 該当ユーザへアクティベートメールの配信
-     * tokenテーブルをチェックし、該当するトークンURLを含むメールを配信します
-     *
-     * @todo 仮想環境(vagrant)上からメール送信が出来ていないので、そこが確認できていない
-     * @todo view::forgeのrenderを移動する
-     * @param  Model_User $user
-     * @access public
-     * @return bool
-     * @author shimma
-     */
-    public static function sendActivateEmail(Model_User $user)
-    {
-        $valid_token = Model_Token::findByUserId($user->user_id);
-
-        if (empty($valid_token)) {
-            return false;
-        }
-
-        $data = array(
-            'nick_name'    => $user->nick_name,
-            'activate_url' => Uri::base().'signup/activate?token='.$valid_token->hash,
-        );
-
-        $body = View::forge('email/signup/activate', $data)->render();
-
-        //@todo 以下要修正
-        exit($body);
-        $user->sendmail('確認メール', $body);
     }
 
     /**
