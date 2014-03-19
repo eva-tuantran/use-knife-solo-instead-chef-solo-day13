@@ -27,13 +27,8 @@ $(function() {
   });
 });
 </script>
+<form id="form_search" action="/search/index" method="post">
 <?php
-    echo Form::open(array(
-        'action' => 'search/index',
-        'method' => 'post',
-        'id' => 'form_search',
-    ));
-
     if (is_array($base_conditions) && count($base_conditions) > 0):
         foreach ($base_conditions as $field => $value):
             echo Form::hidden('conditions[' . $field . ']', $value);
@@ -180,6 +175,4 @@ $(function() {
 ?>
   </div>
 </div>
-<?php
-    Form::close();
-?>
+</form>

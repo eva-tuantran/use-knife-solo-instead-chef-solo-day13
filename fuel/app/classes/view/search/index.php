@@ -31,7 +31,7 @@ class View_Search_Index extends ViewModel
      */
     private function setDisplayString()
     {
-        if (count($this->fleamarket_list) == 0) {
+        if (! $this->fleamarket_list) {
             return;
         }
 
