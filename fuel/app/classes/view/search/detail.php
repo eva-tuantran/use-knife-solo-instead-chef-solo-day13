@@ -55,11 +55,11 @@ class View_Search_Detail extends ViewModel
     {
         $abouts = array();
 
-        if (count($this->fleamarket['fleamarket_abouts']) > 0) {
+        if (count($this->fleamarket_abouts) > 0) {
             $fleamarket_abouts = Config::get('master.fleamarket_abouts');
 
             $abouts = array();
-            foreach ($this->fleamarket['fleamarket_abouts'] as &$about) {
+            foreach ($this->fleamarket_abouts as &$about) {
                 if (! isset($about['about_id'])) {
                     continue;
                 }
@@ -90,10 +90,10 @@ class View_Search_Detail extends ViewModel
         $fee_list = array();
         $booth_list = array();
 
-        if (count($this->fleamarket['entry_styles']) > 0) {
+        if ($this->fleamarket_entry_styles) {
             $entry_styles = Config::get('master.entry_styles');
 
-            foreach ($this->fleamarket['entry_styles'] as &$entry_style) {
+            foreach ($this->fleamarket_entry_styles as &$entry_style) {
                 if (! isset($entry_style['entry_style_id'])) {
                     continue;
                 }

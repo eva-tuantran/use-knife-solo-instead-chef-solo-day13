@@ -48,23 +48,23 @@ $(function() {
       <p class="find_title">ステータス</p>
       <ul class="find_condtion">
         <li><?php
-            $is_checked = isset($filters['event_status']) && in_array(\FLEAMARKET_EVENT_SCHEDULE, $filters['event_status']);
-            echo Form::checkbox('filters[event_status][]', \FLEAMARKET_EVENT_SCHEDULE, $is_checked, array('id' => 'form_event_schedule'));
+            $is_checked = isset($filters['event_status']) && in_array(\Model_Fleamarket::EVENT_STATUS_SCHEDULE, $filters['event_status']);
+            echo Form::checkbox('filters[event_status][]', \Model_Fleamarket::EVENT_STATUS_SCHEDULE, $is_checked, array('id' => 'form_event_schedule'));
             echo Form::label('開催予定', null, array('for' => 'form_event_schedule'));
         ?></li>
         <li><?php
-            $is_checked = isset($filters['event_status']) && in_array(\FLEAMARKET_EVENT_RESERVATION_RECEIPT, $filters['event_status']);
-            echo Form::checkbox('filters[event_status][]', \FLEAMARKET_EVENT_RESERVATION_RECEIPT, $is_checked, array('id' => 'form_event_reservation_receipt'));
+            $is_checked = isset($filters['event_status']) && in_array(\Model_Fleamarket::EVENT_STATUS_RESERVATION_RECEIPT, $filters['event_status']);
+            echo Form::checkbox('filters[event_status][]', \Model_Fleamarket::EVENT_STATUS_RESERVATION_RECEIPT, $is_checked, array('id' => 'form_event_reservation_receipt'));
             echo Form::label('予約受付中', null, array('for' => 'form_event_reservation_receipt'));
         ?></li>
         <li><?php
-            $is_checked = isset($filters['event_status']) && in_array(\FLEAMARKET_EVENT_RECEIPT_END, $filters['event_status']);
-            echo Form::checkbox('filters[event_status][]', \FLEAMARKET_EVENT_RECEIPT_END, $is_checked, array('id' => 'form_event_receipt_end'));
+            $is_checked = isset($filters['event_status']) && in_array(\Model_Fleamarket::EVENT_STATUS_RECEIPT_END, $filters['event_status']);
+            echo Form::checkbox('filters[event_status][]', \Model_Fleamarket::EVENT_STATUS_RECEIPT_END, $is_checked, array('id' => 'form_event_receipt_end'));
             echo Form::label('受付終了', null, array('for' => 'form_event_receipt_end'));
         ?></li>
         <li><?php
-            $is_checked = isset($filters['event_status']) && in_array(\FLEAMARKET_EVENT_CLOSE, $filters['event_status']);
-            echo Form::checkbox('filters[event_status][]', \FLEAMARKET_EVENT_CLOSE, $is_checked, array('id' => 'form_event_close'));
+            $is_checked = isset($filters['event_status']) && in_array(\Model_Fleamarket::EVENT_STATUS_CLOSE, $filters['event_status']);
+            echo Form::checkbox('filters[event_status][]', \Model_Fleamarket::EVENT_STATUS_CLOSE, $is_checked, array('id' => 'form_event_close'));
             echo Form::label('開催終了', null, array('for' => 'form_event_close'));
         ?></li>
       </ul>
@@ -90,13 +90,13 @@ $(function() {
       <p class="find_title">出店料金</p>
       <ul class="find_condtion">
         <li><?php
-            $is_checked = isset($filters['shop_fee']) && in_array(\FLEAMARKET_SHOP_FEE_FLAG_FREE, $filters['shop_fee']);
-            echo Form::checkbox('filters[shop_fee][]', \FLEAMARKET_SHOP_FEE_FLAG_FREE, $is_checked, array('id' => 'form_shop_fee_free'));
+            $is_checked = isset($filters['shop_fee']) && in_array(\Model_Fleamarket::SHOP_FEE_FLAG_FREE, $filters['shop_fee']);
+            echo Form::checkbox('filters[shop_fee][]', \Model_Fleamarket::SHOP_FEE_FLAG_FREE, $is_checked, array('id' => 'form_shop_fee_free'));
             echo Form::label('無料出店', null, array('for' => 'form_shop_fee_free'));
         ?></li>
         <li><?php
-            $is_checked = isset($filters['shop_fee']) && in_array(\FLEAMARKET_SHOP_FEE_FLAG_CHARGE, $filters['shop_fee']);
-            echo Form::checkbox('filters[shop_fee][]', \FLEAMARKET_SHOP_FEE_FLAG_CHARGE, $is_checked, array('id' => 'form_shop_fee_charge'));
+            $is_checked = isset($filters['shop_fee']) && in_array(\Model_Fleamarket::SHOP_FEE_FLAG_CHARGE, $filters['shop_fee']);
+            echo Form::checkbox('filters[shop_fee][]', \Model_Fleamarket::SHOP_FEE_FLAG_CHARGE, $is_checked, array('id' => 'form_shop_fee_charge'));
             echo Form::label('有料出店', null, array('for' => 'form_shop_fee_charge'));
         ?></li>
       </ul>
@@ -128,7 +128,7 @@ $(function() {
           <td colspan="5" class="first-td"><?php echo e($fleamarket['name']);?></td>
         </tr>
         <tr>
-          <td rowspan="6" class="left-td"><?php echo Html::img('path/to/aaa.jpg');// @TODO: フリマ登録に画像登録機能追加後に実装?></td>
+          <td rowspan="6" class="left-td"><img src="path/to/aaa.jpg"></td>
           <td>開催日</td>
           <td><?php echo e($fleamarket['event_date']);?></td>
           <td>出店形態</td>
@@ -165,9 +165,9 @@ $(function() {
         <tr>
           <td colspan="4" class="last-td">
             <ul class="action_buttons">
-              <li><?php echo Html::anchor('/mypage/mylist/' . $fleamarket_id, 'マイリストに追加', array('id' => 'do_mylist', 'class' => ''));// @TODO: マイページ機能待ち?></li>
-              <li><?php echo Html::anchor('/search/detail/' . $fleamarket_id, '詳細情報を見る', array('id' => 'do_detail', 'class' => ''));?></li>
-              <li class="reservation"><?php echo Html::anchor('/reservation/index/' . $fleamarket_id, '出店予約をする', array('id' => 'do_reservation', 'class' => ''));?></li>
+              <li><a id="do_mylist" href="/mypage/listadd/<?php echo $fleamarket['fleamarket_id'];?>">マイリストに追加</li>
+              <li><a id="do_detail" href="/search/detail/<?php echo $fleamarket['fleamarket_id'];?>">詳細情報を見る</a></li>
+              <li class="reservation"><a id="do_reservation" href="/reservation/index/<?php echo $fleamarket['fleamarket_id'];?>">出店予約をする</a></li>
             </ul>
           </td>
         </tr>

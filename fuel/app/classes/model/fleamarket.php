@@ -1,5 +1,4 @@
 <?php
-namespace Model;
 
 /**
  * Fleamarkets Model
@@ -8,43 +7,100 @@ namespace Model;
  *
  * @author ida
  */
-class Fleamarket extends \Model
+class Model_Fleamarket extends \Orm\Model
 {
+    /**
+     * 開催状況 1:開催予定,2:予約受付中,3:受付終了,4:開催終了,5:中止
+     */
+    const EVENT_STATUS_SCHEDULE = 1;
+    const EVENT_STATUS_RESERVATION_RECEIPT = 2;
+    const EVENT_STATUS_RECEIPT_END = 3;
+    const EVENT_STATUS_CLOSE = 4;
+    const EVENT_STATUS_CANCEL = 5;
+
+    /**
+     * 出店料 0:有料,1:無料
+     */
+    const SHOP_FEE_FLAG_FREE = 0;
+    const SHOP_FEE_FLAG_CHARGE = 1;
+
+    /**
+     * 車出店 0:NG,1:OK
+     */
+    const CAR_SHOP_FLAG_NG = 0;
+    const CAR_SHOP_FLAG_OK = 1;
+
+    /**
+     * プロ出店 0:NG,1:OK
+     */
+    const PRO_SHOP_FLAG_NG = 0;
+    const PRO_SHOP_FLAG_OK = 1;
+
+    /**
+     * 有料駐車場 0:なし,1:あり
+     */
+    const CHARGE_PARKING_FLAG_NONE = 0;
+    const CHARGE_PARKING_FLAG_EXIST = 1;
+
+    /**
+     * 無料駐車場 0:なし,1:あり
+     */
+    const FREE_PARKING_FLAG_NONE = 0;
+    const FREE_PARKING_FLAG_EXIST = 1;
+
+    /**
+     * 雨天開催会場 0:NG 1:OK
+     */
+    const RAINY_LOCATION_FLAG_NONE = 0;
+    const RAINY_LOCATION_FLAG_EXIST = 1;
+
+    /**
+     * 登録タイプ 1:運営者,2:ユーザ投稿
+     */
+    const REGISTER_TYPE_ADMIN = 1;
+    const REGISTER_TYPE_USER = 2;
+
+    /**
+     * 表示 0:非表示,1:表示
+     */
+    const DISPLAY_FLAG_OFF = 0;
+    const DISPLAY_FLAG_ON = 1;
+
     /**
      * テーブル名
      *
-     * @var string $table_name
+     * @var string $_table_name
      */
     protected static $_table_name = 'fleamarkets';
 
     /**
-     * 指定されたIDでフリーマーケット情報を取得する
+     * プライマリーキー
+     *
+     * @var string $_primary_key
+     */
+    protected static $_primary_key = array('fleamarket_id');
+
+    /**
+     * 開催状況リスト
+     */
+    protected static $event_statuses = array(
+        self::EVENT_STATUS_SCHEDULE    => '開催予定',
+        self::EVENT_STATUS_RESERVATION_RECEIPT => '予約受付中',
+        self::EVENT_STATUS_RECEIPT_END => '受付終了',
+        self::EVENT_STATUS_CLOSE       => '開催終了',
+        self::EVENT_STATUS_CANCEL      => '開催中止',
+    );
+
+    /**
+     * 開催状況リストを取得する
      *
      * @access public
-     * @param mixed $fleamarket_id フリーマーケットID
-     * @return array フリーマーケット情報
+     * @return array
      * @author ida
      */
-    public static function find($fleamarket_id = null)
+    public static function getEventStatuses()
     {
-        if (! $fleamarket_id) {
-            return null;
-        }
-
-        $placeholders = array('flearmarket_id' => $fleamarket_id);
-        $table_name = self::$_table_name;
-        $query = <<<"QUERY"
-SELECT * FROM {$table_name} WHERE fleamarket_id = :flearmarket_id
-QUERY;
-        $statement = \DB::query($query)->parameters($placeholders);
-        $result = $statement->execute();
-
-        $rows = null;
-        if (! empty($result)) {
-            $rows = $result->as_array();
-        }
-
-        return $rows;
+        return $event_statuses;
     }
 
     /**
@@ -60,7 +116,7 @@ QUERY;
     public static function findBySearch(
         $condition_list, $page = 0, $row_count = 0
     ) {
-        list($where, $placeholders) = self::createWhereSearch(
+        list($where, $placeholders) = self::createWhereBySearch(
             $condition_list
         );
 
@@ -166,7 +222,7 @@ QUERY;
      */
     public static function findBySearchCount($condition_list)
     {
-        list($where, $placeholders) = self::createWhereSearch(
+        list($where, $placeholders) = self::createWhereBySearch(
             $condition_list
         );
 
@@ -213,8 +269,7 @@ QUERY;
     {
         $placeholders = array(
             ':fleamarket_id' => $fleamarket_id,
-            ':display_flag' => \FLEAMARKET_DISPLAY_FLAG_ON,
-            ':register_status' => \LOCATION_REGISTER_TYPE_ADMIN,
+            ':display_flag' => self::DISPLAY_FLAG_ON,
         );
 
         $table_name = self::$_table_name;
@@ -266,83 +321,92 @@ QUERY;
     }
 
     /**
-     * フリーマーケット情報を登録する
+     * 検索条件を取得する
      *
-     * @access public
-     * @param array $data 登録するデータ配列
-     * @return array 登録結果
-     * @author ida
+     * @access private
+     * @param array $data 選択された検索条件
+     * @return array 検索条件
+     * @author void
      */
-    public static function insert($data)
+    public static function createConditionList($data)
     {
-        if (! $data) {
-            return false;
+        $conditions = array();
+
+        if (isset($data['event_date']) && $data['event_date'] !== '') {
+            $conditions[] = array(
+                'DATE_FORMAT(event_date, \'%Y/%m/%d\')',
+                '=',
+                $data['event_date']
+            );
         }
 
-        $placeholders = array();
-        $field_list = array();
-        $value_list = array();
-
-        foreach ($data as $field => $value) {
-            $placeholder = ':' . $field;
-            $field_list[] = $field;
-            $value_list[] = $placeholder;
-            $placeholders[$placeholder] = $value;
+        if (isset($data['keyword']) && $data['keyword'] !== '') {
+            $conditions[] = array(
+                'f.name', 'like', '%' . $data['keyword'] . '%'
+            );
         }
 
-        $fields = implode(',', $field_list);
-        $values = implode(',', $value_list);
-        $table_name = self::$_table_name;
-        $query = <<<"QUERY"
-INSERT INTO {$table_name}({$fields},created_at) VALUES ({$values}, now())
-QUERY;
-        $statement = \DB::query($query)->parameters($placeholders);
-        $result = $statement->execute();
-
-        $res = false;
-        if (! empty($result)) {
-            $res['last_insert_id'] = $result[0];
-            $res['affected_rows'] = $result[1];
+        if (isset($data['prefecture']) && $data['prefecture'] !== '') {
+            $conditions[] = array('prefecture_id', '=', $data['prefecture']);
         }
 
-        return $res;
-    }
-
-    /**
-     * フリーマーケット情報を更新する
-     *
-     * @access public
-     * @param array $data 更新するデータ配列
-     * @return int 更新した件数
-     * @author ida
-     */
-    public static function update($data)
-    {
-        if (! $data || ! isset($data['flearmarket_id'])) {
-            return false;
+        if (isset($data['shop_fee']) && $data['shop_fee'] !== '') {
+            $operator = '=';
+            if (is_array($data['shop_fee'])) {
+                $operator = 'IN';
+            }
+            $conditions[] = array(
+                'shop_fee_flag', $operator, $data['shop_fee']
+            );
         }
 
-        $placeholders = array('flearmarket_id' => $data['fleamarket_id']);
-        unset($data['fleamarket_id']);
-        $field_list = array();
-
-
-        foreach ($data as $field => $value) {
-            $placeholder = ':' . $field;
-            $field_list[] = $field . '=' . $placeholder;
-            $placeholders[$placeholder] = $value;
+        if (isset($data['car_shop']) && $data['car_shop'] !== '') {
+            $conditions[] = array('car_shop_flag', '=', $data['car_shop']);
         }
 
-        $fields = implode(',', $field_list);
-        $table_name = self::$_table_name;
-        $query = <<<"QUERY"
-UPDATE FROM {$table_name} SET {$fields},updated_at=now()
-WHERE fleamarket_id = :fleamarket_id
-QUERY;
-        $statement = \DB::query($query)->parameters($placeholders);
-        $result = $statement->execute();
+        if (isset($data['pro_shop']) && $data['pro_shop'] !== '') {
+            $conditions[] = array('pro_shop_flag', '=', $data['pro_shop']);
+        }
 
-        return $result;
+        if (isset($data['rainy_location']) && $data['rainy_location'] !== '') {
+            $conditions[] = array(
+                'rainy_location_flag', '=', $data['rainy_location']
+            );
+        }
+
+        if (isset($data['charge_parking']) && $data['charge_parking'] !== '') {
+            $conditions[] = array(
+                'charge_parking_flag', '=', $data['charge_parking']
+            );
+        }
+
+        if (isset($data['free_parking']) && $data['free_parking'] !== '') {
+            $conditions[] = array(
+                'free_parking_flag', '=', $data['free_parking']
+            );
+        }
+
+        if (isset($data['event_status']) && is_array($data['event_status'])) {
+            $operator = '=';
+            if (is_array($data['event_status'])) {
+                $operator = 'IN';
+            }
+            $conditions[] = array(
+                'f.event_status', $operator, $data['event_status']
+            );
+        }
+
+        if (isset($data['entry_style']) && is_array($data['entry_style'])) {
+            $operator = '=';
+            if (is_array($data['entry_style'])) {
+                $operator = 'IN';
+            }
+            $conditions[] = array(
+                'fes.entry_style_id', $operator, $data['entry_style']
+            );
+        }
+
+        return $conditions;
     }
 
     /**
@@ -353,13 +417,13 @@ QUERY;
      * @return array
      * @author ida
      */
-    private static function createWhereSearch($condition_list)
+    private static function createWhereBySearch($condition_list)
     {
         $where = '';
         $placeholders = array(
-            ':display_flag' => \FLEAMARKET_DISPLAY_FLAG_ON,
-            ':about_access_id' => \FLEAMARKET_ABOUT_ACCESS,
-            ':register_status' => \LOCATION_REGISTER_TYPE_ADMIN,
+            ':display_flag' => self::DISPLAY_FLAG_ON,
+            ':about_access_id' => \Model_Fleamarket_About::ACCESS,
+            ':register_status' => self::REGISTER_TYPE_ADMIN,
         );
 
         if (empty($condition_list)) {

@@ -1,7 +1,4 @@
 <?php
-namespace Model;
-
-use \DB;
 
 /**
  * Entry Model
@@ -10,7 +7,7 @@ use \DB;
  *
  * @author ida
  */
-class Entry extends \Model
+class Model_Entry extends \Orm\Model
 {
     /**
      * テーブル名
@@ -20,34 +17,11 @@ class Entry extends \Model
     protected static $_table_name = 'entries';
 
     /**
-     * 指定されたフリーマーケットIDでフリーマーケット出店形態情報を取得する
+     * プライマリーキー
      *
-     * @access public
-     * @param mixed $fleamarket_id フリーマーケットID
-     * @return array フリーマーケット情報
-     * @author ida
+     * @var string $_primary_key
      */
-    public static function find($fleamarket_id = null)
-    {
-        if (! $fleamarket_id) {
-            return null;
-        }
-
-        $placeholders = array('flearmarket_id' => $fleamarket_id);
-        $table_name = self::$_table_name;
-        $query = <<<"QUERY"
-SELECT * FROM {$table_name} WHERE fleamarket_id = :flearmarket_id
-QUERY;
-        $statement = \DB::query($query)->parameters($placeholders);
-        $result = $statement->execute();
-
-        $rows = null;
-        if (! empty($result)) {
-            $rows = $result->as_array();
-        }
-
-        return $rows;
-    }
+    protected static $_primary_key  = array('entry_id');
 
     /**
      * エントリスタイルごとの予約数を取得する
