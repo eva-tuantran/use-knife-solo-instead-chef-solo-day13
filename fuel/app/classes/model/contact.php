@@ -1,6 +1,6 @@
 <?php
 
-class model_contact extends \Orm\Model
+class Model_Contact extends \Orm\Model
 {
     protected static $_primary_key = array('contact_id');
 
@@ -50,16 +50,15 @@ class model_contact extends \Orm\Model
                 'required',
             ),
         ),
-        'created_user' => array(
+        'name' => array(
+            'label' => '名前',
+            'validation' => array(
+                'max_length' => array(127),
+            ),
         ),
-        'updated_user' => array(
-        ),
-        'created_at' => array(
-        ),
-        'updated_at' => array(
-        ),
-        'deleted_at' => array(
-        ),
+        'created_at',
+        'updated_at',
+        'deleted_at',
     );
 
     protected static $_observers = array(
@@ -123,7 +122,7 @@ class model_contact extends \Orm\Model
         $contact = self::forge();
         $fieldset = Fieldset::forge();
         $fieldset->add_model($contact);
-        $fieldset->add('email2','メールアドレス確認用')
+        $fieldset->add('email2', 'メールアドレス確認用')
             ->add_rule('required')
             ->add_rule('match_field', 'email');
 

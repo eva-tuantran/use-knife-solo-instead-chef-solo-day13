@@ -16,6 +16,15 @@
 
   <tr>
     <td>
+      名前
+    </td>
+    <td>
+    <?php echo e($input['name']); ?>
+    </td>
+  </tr>
+
+  <tr>
+    <td>
       件名
     </td>
     <td>
