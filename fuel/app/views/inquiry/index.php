@@ -34,9 +34,13 @@
 	名前
       </td>
       <td>
-	<input type="text" name="name" value="<?php echo e($input['name']); ?>">
-	<?php if (isset($errors['name'])) { ?>
-	<?php echo $errors['name']; ?>
+	<input type="text" name="last_name" value="<?php echo e($input['last_name']); ?>">
+	<input type="text" name="first_name" value="<?php echo e($input['first_name']); ?>">
+	<?php if (isset($errors['last_name'])) { ?>
+	<?php echo $errors['last_name']; ?>
+	<?php } ?>
+	<?php if (isset($errors['first_name'])) { ?>
+	<?php echo $errors['first_name']; ?>
 	<?php } ?>
       </td>
     </tr>

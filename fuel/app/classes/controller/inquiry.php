@@ -142,7 +142,7 @@ class Controller_Inquiry extends Controller_Base_Template
     {
         $params = array();
 
-        foreach (array('name', 'subject', 'email', 'tel', 'contents') as $key) {
+        foreach (array('last_name', 'first_name', 'subject', 'email', 'tel', 'contents') as $key) {
             $params[$key] = $contact->get($key);
         }
         $params['inquiry_type_label'] = $contact->inquiry_type_label();

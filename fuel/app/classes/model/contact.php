@@ -50,10 +50,16 @@ class Model_Contact extends \Orm\Model
                 'required',
             ),
         ),
-        'name' => array(
+        'last_name' => array(
             'label' => '名前',
             'validation' => array(
-                'max_length' => array(127),
+                'max_length' => array(50),
+            ),
+        ),
+        'first_name' => array(
+            'label' => '名前',
+            'validation' => array(
+                'max_length' => array(50),
             ),
         ),
         'created_at',

@@ -19,7 +19,7 @@
       名前
     </td>
     <td>
-    <?php echo e($input['name']); ?>
+    <?php echo e($input['last_name']); ?><?php echo e($input['first_name']); ?>
     </td>
   </tr>
 
