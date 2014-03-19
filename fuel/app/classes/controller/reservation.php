@@ -8,6 +8,17 @@
 
 class Controller_Reservation extends Controller_Base_Template
 {
+    private $fleamarket = null;
+
+    public function before()
+    {
+        parent::before();
+        $this->fleamarket = Model_Fleamarket::find(Input::param('fleamarket_id'));
+        if (! $this->fleamarket) {
+            return Response::redirect('/');
+        }
+    }
+
     /**
      * 初期画面
      *
@@ -23,7 +34,12 @@ class Controller_Reservation extends Controller_Base_Template
         $view->set('fieldset', $fieldset, false);
         $this->template->content = $view;
         
-        $fleamarket = Model_Fleamarket::find(Input::all('fleamarket_id'));
+        $fleamarket = Model_Fleamarket::find(Input::param('fleamarket_id'));
+
+        if (! $fleamarket){
+            return Response::redirect('/');
+        }
+
         $view->set('fleamarket', $fleamarket,false);
     }
     /**

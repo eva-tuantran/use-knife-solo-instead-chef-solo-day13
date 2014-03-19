@@ -4,7 +4,7 @@ class Model_Entry extends \Orm\Model
 {
     protected static $_primary_key = array('entry_id');
 
-    protected static $_belongs_to = array('fleamarket','fleamarket_entry_style');
+    protected static $_belongs_to = array('fleamarket', 'fleamarket_entry_style');
     
 	protected static $_properties = array(
 		'entry_id',
@@ -54,31 +54,51 @@ class Model_Entry extends \Orm\Model
 	);
 	protected static $_table_name = 'entries';
 
+    const ITEM_CATEGORY_RECYCLE  = 1;
+    const ITEM_CATEGORY_HANDMADE = 2;
+
     public static $item_category_define = array(
-        1 => 'リサイクル品',
-        2 => '手作り品',
+        self::ITEM_CATEGORY_RECYCLE  => 'リサイクル品',
+        self::ITEM_CATEGORY_HANDMADE => '手作り品',
     );
 
+    const ITEM_GENRES_COMPUTER = 1;
+    const ITEM_GENRES_AV       = 2;
+    const ITEM_GENRES_CAMERA   = 3;
+    const ITEM_GENRES_MUSIC    = 4;
+    const ITEM_GENRES_TOY      = 5;
+    const ITEM_GENRES_ANTIQUE  = 6;
+    const ITEM_GENRES_SPORTS   = 7;
+    const ITEM_GENRES_FASHION  = 8;
+    const ITEM_GENRES_JEWELRY  = 9
+    const ITEM_GENRES_BEAUTY   = 10;
+    const ITEM_GENRES_INTERIOR = 11;
+    const ITEM_GENRES_OFFICE   = 12;
+    const ITEM_GENRES_BABY     = 13;
+    const ITEM_GENRES_GOODS    = 14;
+    const ITEM_GENRES_COMMIC   = 15;
+
     public static $item_genres_define = array(
-        1 => 'コンピュータ',
-        2 => '家電、AV',
-        3 => 'カメラ',
-        4 => '音楽、CD',
-        5 => 'おもちゃ、ゲーム',
-        6 => 'アンティーク、一点もの',
-        7 => 'スポーツ、レジャー',
-        8 => 'ファッション、ブランド',
-        9 => 'アクセサリー、時計',
-        10 => 'ビューティ、ヘルスケア',
-        11 => 'インテリア、DIY',
-        12 => '事務、店舗用品',
-        13 => 'ベビー用品',
-        14 => 'タレントグッズ',
-        15 => 'コミック、アニメグッズ',
+        self::ITEM_GENRES_COMPUTER => 'コンピュータ',
+        self::ITEM_GENRES_AV       => '家電、AV',
+        self::ITEM_GENRES_CAMERA   => 'カメラ',
+        self::ITEM_GENRES_MUSIC    => '音楽、CD',
+        self::ITEM_GENRES_TOY      => 'おもちゃ、ゲーム',
+        self::ITEM_GENRES_ANTIQUE  => 'アンティーク、一点もの',
+        self::ITEM_GENRES_SPORTS   => 'スポーツ、レジャー',
+        self::ITEM_GENRES_FASHION  => 'ファッション、ブランド',
+        self::ITEM_GENRES_JEWELRY  => 'アクセサリー、時計',
+        self::ITEM_GENRES_BEAUTY   => 'ビューティ、ヘルスケア',
+        self::ITEM_GENRES_INTERIOR => 'インテリア、DIY',
+        self::ITEM_GENRES_OFFICE   => '事務、店舗用品',
+        self::ITEM_GENRES_BABY     => 'ベビー用品',
+        self::ITEM_GENRES_GOODS    => 'タレントグッズ',
+        self::ITEM_GENRES_COMMIC   => 'コミック、アニメグッズ',
     );
     
     public function _validation_reserved_booth()
     {
+        return true;
         return $this->fleamarket_entry_style->reservation_booth_limit >= $this->reserved_booth;
     }
 
@@ -91,8 +111,8 @@ class Model_Entry extends \Orm\Model
     public static function createFieldset($input)
     {
         $entry = self::forge();
-        foreach (self::properties() as $key => $value){
-            if (isset($input[$key])){
+        foreach (self::properties() as $key => $value) {
+            if (isset($input[$key])) {
                 $entry->set($key,$input[$key]);
             }
         }
