@@ -9,13 +9,6 @@ use \Controller\Base_Template;
 class Controller_Top extends Controller_Base_Template
 {
     /**
-     * 検索結果1ページあたりの行数
-     *
-     * @var int
-     */
-    private $search_result_per_page = 1;
-
-    /**
      * 事前処理
      *
      * アクション実行前の共通処理
@@ -36,16 +29,20 @@ class Controller_Top extends Controller_Base_Template
      * @return void
      * @author ida
      */
-    public function action_top()
+    public function action_index()
     {
         Asset::css('jquery-ui.min.css', array(), 'add_css');
         Asset::js('jquery.js', array(), 'add_js');
         Asset::js('jquery-ui.min.js', array(), 'add_js');
         Asset::js('jquery.ui.datepicker-ja.js', array(), 'add_js');
 
-        $view_model = ViewModel::forge('search/top');
+        $view_model = ViewModel::forge('top/index');
 
+        $prefectures = Config::get('master.prefectures');
+        $view_model->set('prefectures', $prefectures, false);
         $this->template->title = 'フリーマーケット検索';
         $this->template->content = $view_model;
     }
+
+
 }

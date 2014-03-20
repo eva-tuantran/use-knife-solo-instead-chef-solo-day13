@@ -104,6 +104,24 @@ class Model_Fleamarket extends \Orm\Model
     }
 
     /**
+     * 指定された年月に開催されるフリーマーケット情報リストを取得する
+     *
+     * @access public
+     * @param mixed $year 対象年
+     * @param mixed $month 対象月
+     * @return array フリーマーケット情報
+     * @author ida
+     *
+     * @TODO: 実装途中
+     */
+    public static function findByEventDate($year, $month)
+    {
+        $query = self::find("all")
+            ->where('event_date', 'between', array($date.'000000', $date.'235959'))
+            ->get();
+    }
+
+    /**
      * 指定された条件でフリーマーケット情報リストを取得する
      *
      * @access public
