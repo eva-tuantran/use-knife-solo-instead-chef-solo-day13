@@ -12,6 +12,11 @@ class Controller_Login extends Controller_Base_Template
         'out',
     );
 
+    protected $_nologin_actions = array(
+        'index',
+    );
+
+
     /**
      * 初期画面
      *

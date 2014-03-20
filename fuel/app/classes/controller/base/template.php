@@ -26,6 +26,16 @@ class Controller_Base_Template extends Controller_Template
      */
     protected $_login_actions = array();
 
+
+    /**
+     * ログインしていない事が必須のアクション配列
+     *
+     * @var array
+     * @access protected
+     * @author ida
+     */
+    protected $_nologin_actions = array();
+
     /**
      * リダイレクト先のSSLホスト名
      * 基本的にconfigのssl_connection内部の引数の値をデフォルトとして設定します
@@ -66,6 +76,11 @@ class Controller_Base_Template extends Controller_Template
             $referrer = \Input::referrer();
             return \Response::redirect('/login?rurl='.$referrer);
         }
+
+        if (in_array($this->request->action, $this->_nologin_actions) && Auth::check()) {
+            return \Response::redirect('/mypage');
+        }
+
         Asset::js('holder.js', array(), 'add_js');
         Lang::load('meta');
 
