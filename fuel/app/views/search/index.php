@@ -161,7 +161,7 @@ $(function() {
           <td colspan="4" class="last-td">
             <ul class="action_buttons">
               <li><a id="do_mylist" href="/mypage/listadd/<?php echo $fleamarket['fleamarket_id'];?>">マイリストに追加</li>
-              <li><a id="do_detail" href="/search/detail/<?php echo $fleamarket['fleamarket_id'];?>">詳細情報を見る</a></li>
+              <li><a id="do_detail" href="/detail/<?php echo $fleamarket['fleamarket_id'];?>">詳細情報を見る</a></li>
               <li class="reservation"><a id="do_reservation" href="/reservation/index/<?php echo $fleamarket['fleamarket_id'];?>">出店予約をする</a></li>
             </ul>
           </td>
