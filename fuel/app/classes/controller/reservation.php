@@ -8,12 +8,25 @@
 
 class Controller_Reservation extends Controller_Base_Template
 {
+/*
+    protected $_login_actions = array(
+        'index',
+        'confirm',
+        'thanks',
+    );
+*/
     private $fleamarket = null;
+    private $fieldset = null;
 
     public function before()
     {
         parent::before();
-        $this->fleamarket = Model_Fleamarket::find(Input::param('fleamarket_id'));
+
+        $this->fieldset = $this->createFieldset();
+        $this->fieldset->repopulate();
+        $input = $this->fieldset->input();
+
+        $this->fleamarket = Model_Fleamarket::find($input['fleamarket_id']);
         if (! $this->fleamarket) {
             return Response::redirect('/');
         }
@@ -29,18 +42,9 @@ class Controller_Reservation extends Controller_Base_Template
     {
         $this->setMetaTag('reservation/index');
         $view = View::forge('reservation/index');
-        $fieldset = $this->createFieldset();
-        $fieldset->repopulate();
-        $view->set('fieldset', $fieldset, false);
         $this->template->content = $view;
-        
-        $fleamarket = Model_Fleamarket::find(Input::param('fleamarket_id'));
-
-        if (! $fleamarket){
-            return Response::redirect('/');
-        }
-
-        $view->set('fleamarket', $fleamarket,false);
+        $view->set('fieldset', $this->fieldset, false);
+        $view->set('fleamarket', $this->fleamarket,false);
     }
     /**
      * 確認画面
@@ -50,15 +54,14 @@ class Controller_Reservation extends Controller_Base_Template
      */
     public function post_confirm()
     {
-        $fieldset = $this->createFieldset();
-        Session::set_flash('reservation.fieldset',$fieldset);
+        Session::set_flash('reservation.fieldset',$this->fieldset);
         
-        if (! $fieldset->validation()->run()) {
+        if (! $this->fieldset->validation()->run()) {
             return Response::redirect('reservation');
         }
 
         $view = View::forge('reservation/confirm');
-        $view->set('fieldset', $fieldset, false);
+        $view->set('fieldset', $this->fieldset, false);
 
         $this->setMetaTag('reservation/confirm');
         $this->template->content = $view;
@@ -83,8 +86,7 @@ class Controller_Reservation extends Controller_Base_Template
 
         try {
             $entry = $this->registerEntry();
-            $this->sendMailToUserAndAdmin($entry);
-        } catch ( Exception $e ) {
+        } catch (Exception $e) {
             $view->set('error',$e,false);
             throw $e;
         }
@@ -144,7 +146,23 @@ class Controller_Reservation extends Controller_Base_Template
         $input = $fieldset->validation()->validated();
 
         if ($input) {
-            $input['user_id'] = Auth::get_user_id();
+            $item_genres_define = Model_Entry::getItemGenresDefine();
+            $to_label = function($value) use ($item_genres_define) {
+                return $item_genres_define[$value];
+            };
+
+            $user_id = 1;// Auth::get_user_id();
+
+            $input_other = array_merge($input,array(
+                'user_id'            => $user_id,
+                'reservation_number' => 1,
+                'link_from'          => '',
+                'entry_status'       => '',
+                'created_user'       => $user_id,
+                'updated_user'       => $user_id,
+                'item_genres'        => implode(',',array_map($to_label, $input['item_genres'])),
+            ));
+            $input = array_merge($input, $input_other);
         }
 
         return $input;
