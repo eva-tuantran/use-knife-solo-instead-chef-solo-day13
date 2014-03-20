@@ -147,10 +147,10 @@ $(function() {
         <tr>
           <td colspan="4" class="right-td">
             <ul class="event_info">
-              <li class="<?php echo $fleamarket['car_shop_flag'] == 0 ? 'invalid': '';?>">車出店可能</li>
-              <li class="<?php echo $fleamarket['charge_parking_flag'] == 0 ? 'invalid': '';?>">有料駐車場</li>
-              <li class="<?php echo $fleamarket['free_parking_flag'] == 0 ? 'invalid': '';?>">無料駐車場</li>
-              <li class="<?php echo $fleamarket['rainy_location_flag'] == 0 ? 'invalid': '';?>">雨天開催会場</li>
+              <li class="<?php echo $fleamarket['car_shop_flag'] == \Model_Fleamarket::CAR_SHOP_FLAG_NG ? 'invalid': '';?>">車出店可能</li>
+              <li class="<?php echo $fleamarket['charge_parking_flag'] == \Model_Fleamarket::CHARGE_PARKING_FLAG_NONE ? 'invalid': '';?>">有料駐車場</li>
+              <li class="<?php echo $fleamarket['free_parking_flag'] == \Model_Fleamarket::FREE_PARKING_FLAG_NONE ? 'invalid': '';?>">無料駐車場</li>
+              <li class="<?php echo $fleamarket['rainy_location_flag'] == \Model_Fleamarket::RAINY_LOCATION_FLAG_NONE ? 'invalid': '';?>">雨天開催会場</li>
             </ul>
           </td>
         </tr>
