@@ -32,7 +32,7 @@ class Controller_Signup extends Controller_Base_Template
      */
     public function action_index()
     {
-        $fieldset = $this->createFieldset();
+        $fieldset = self::createFieldset();
 
         $this->setMetaTag('signup/index');
         $this->template->content = View::forge('signup/index');
@@ -49,7 +49,7 @@ class Controller_Signup extends Controller_Base_Template
      */
     public function post_confirm()
     {
-        $fieldset = $this->createFieldset();
+        $fieldset = self::createFieldset();
         $fieldset->repopulate();
         $validation = $fieldset->validation();
 
@@ -81,7 +81,7 @@ class Controller_Signup extends Controller_Base_Template
             return \Response::redirect('errors/doubletransmission');
         }
 
-        $fieldset = $this->createFieldset();
+        $fieldset = self::createFieldset();
         $user_data = $fieldset->validation()->validated();
         $user_data['password']        = \Auth::hash_password($user_data['password']);
         $user_data['register_status'] = \REGISTER_STATUS_INACTIVATED;
@@ -156,7 +156,7 @@ class Controller_Signup extends Controller_Base_Template
      * @return Fieldset $fieldset
      * @author shimma
      */
-    public function createFieldset()
+    public static function createFieldset()
     {
         $fieldset = Session::get_flash('signup.fieldset');
 

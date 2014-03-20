@@ -95,8 +95,8 @@ class Controller_Base_Template extends Controller_Template
     }
 
     /**
-     * meta tag 関連を lang より設定 
-     *  
+     * meta tag 関連を lang より設定
+     *
      * @access protected
      * @return void
      * @author kobayasi
@@ -146,6 +146,25 @@ class Controller_Base_Template extends Controller_Template
             $body = str_replace("##{$key}##",$value,$body);
         }
         return mb_convert_encoding($body,'jis');
+    }
+
+
+    /**
+     * ステータス変更文字列を取得します。
+     *
+     * @param int $i
+     * @access protected
+     * @return String $status_message
+     * @author shimma
+     */
+    protected function getStatusMessage($i = '')
+    {
+        if (! $i) {
+            return '';
+        }
+
+        Lang::load('status');
+        return Lang::get($i);
     }
 
 }

@@ -7,9 +7,19 @@
 class Controller_Mypage extends Controller_Base_Template
 {
 
-    protected $_login_actions = array('index', 'password', 'account', 'save');
+    protected $_login_actions = array(
+        'index',
+        'password',
+        'account',
+        'save',
+    );
 
-    protected $_secure_actions = array('index', 'password', 'account', 'save');
+    protected $_secure_actions = array(
+        'index',
+        'password',
+        'account',
+        'save',
+    );
 
     /**
      * before
@@ -71,15 +81,8 @@ class Controller_Mypage extends Controller_Base_Template
     public function action_account()
     {
         $data = array();
-        $account_info = Session::get_flash('account_info');
-        switch ($account_info) {
-            case 'status_changed':
-                $data['info_message'] = 'ユーザ情報変更しました';
-                break;
-            case 'status_change_faild':
-                $data['info_message'] = 'ユーザ情報変更を失敗しました';
-                break;
-        }
+        $status_code = Session::get_flash('status_code');
+        $data['info_message'] = $this->getStatusMessage($status_code);
 
         $user = Auth::get_user_instance();
         $fieldset = Fieldset::forge()->add_model('Model_User')->populate($user);
@@ -108,17 +111,18 @@ class Controller_Mypage extends Controller_Base_Template
         $validation = $fieldset->validation();
 
         if (! $validation->run()) {
-            exit("項目エラー:".$validation->show_errors());
+            Session::set_flash('mypage.fieldset', $fieldset);
+            Session::set_flash('status_code', \STATUS_PROFILE_CHANGE_FAILED);
         } else {
             $user = Auth::get_user_instance();
             $update_data = array_filter($validation->validated(), 'strlen');
             $update_data['updated_user'] = Auth::get_user_id();
             $user->set($update_data);
             $user->save();
-            Session::set_flash('account_info', 'status_changed');
-
-            return \Response::redirect('/mypage/account');
+            Session::set_flash('status_code', \STATUS_PROFILE_CHANGE_SUCCESS);
         }
+
+        return \Response::redirect('/mypage/account');
     }
 
 }
