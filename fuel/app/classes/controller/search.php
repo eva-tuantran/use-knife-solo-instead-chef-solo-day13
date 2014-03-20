@@ -30,26 +30,6 @@ class Controller_Search extends Controller_Base_Template
     }
 
     /**
-     * フリーマーケット検索画面
-     *
-     * @access public
-     * @return void
-     * @author ida
-     */
-    public function action_top()
-    {
-        Asset::css('jquery-ui.min.css', array(), 'add_css');
-        Asset::js('jquery.js', array(), 'add_js');
-        Asset::js('jquery-ui.min.js', array(), 'add_js');
-        Asset::js('jquery.ui.datepicker-ja.js', array(), 'add_js');
-
-        $view_model = ViewModel::forge('search/top');
-
-        $this->template->title = 'フリーマーケット検索';
-        $this->template->content = $view_model;
-    }
-
-    /**
      * フリーマーケット検索結果画面
      *
      * @access public
