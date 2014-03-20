@@ -32,8 +32,8 @@ class Controller_Inquiry extends Controller_Base_Template
     public function post_confirm()
     {
         $fieldset = $this->createFieldset();
-        Session::set_flash('inquiry.fieldset',$fieldset);
-        
+        Session::set_flash('inquiry.fieldset', $fieldset);
+
         if (! $fieldset->validation()->run()) {
             return Response::redirect('inquiry');
         }
@@ -66,7 +66,7 @@ class Controller_Inquiry extends Controller_Base_Template
             $contact = $this->registerContact();
             $this->sendMailToUserAndAdmin($contact);
         } catch ( Exception $e ) {
-            $view->set('error',$e,false);
+            $view->set('error', $e, false);
         }
     }
 
@@ -142,7 +142,7 @@ class Controller_Inquiry extends Controller_Base_Template
     {
         $params = array();
 
-        foreach (array('subject','email','tel','contents') as $key) {
+        foreach (array('last_name', 'first_name', 'subject', 'email', 'tel', 'contents') as $key) {
             $params[$key] = $contact->get($key);
         }
         $params['inquiry_type_label'] = $contact->inquiry_type_label();
@@ -151,3 +151,4 @@ class Controller_Inquiry extends Controller_Base_Template
         $this->sendMailByParams("inquiry_admin", $params);
     }
 }
+
