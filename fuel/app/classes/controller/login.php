@@ -6,7 +6,11 @@
  */
 class Controller_Login extends Controller_Base_Template
 {
-    protected $_secure_actions = array('index', 'auth', 'out');
+    protected $_secure_actions = array(
+        'index',
+        'auth',
+        'out',
+    );
 
     /**
      * 初期画面
@@ -41,7 +45,7 @@ class Controller_Login extends Controller_Base_Template
                 break;
         }
 
-        $this->template->title = 'Login';
+        $this->setMetaTag('login/index');
         $this->template->content = View::forge('login/index', $data);
     }
 
@@ -54,8 +58,8 @@ class Controller_Login extends Controller_Base_Template
      */
     public function post_auth()
     {
-        if (!Security::check_token()) {
-            Response::redirect('/login');
+        if (! Security::check_token()) {
+            return \Response::redirect('/login');
         }
 
         $rurl = Input::get('rurl');
@@ -64,19 +68,19 @@ class Controller_Login extends Controller_Base_Template
 
         if (!$validation->run()) {
             Session::set_flash('login.fieldset', $fieldset);
-            return Response::redirect("login?rurl=$rurl");
+            return \Response::redirect("login?rurl=$rurl");
         }
 
         if (!Auth::instance()->login(Input::post('email'), Input::post('password'))) {
             Session::set_flash('auth_info', 'login_denied');
             Session::set_flash('login.fieldset', $fieldset);
-            return Response::redirect("/login?rurl=$rurl");
+            return \Response::redirect("/login?rurl=$rurl");
         }
 
         $return_url = empty($rurl) ? '/mypage/' : $rurl;
         Session::set_flash('auth_info', 'login_success');
 
-        return Response::redirect($return_url);
+        return \Response::redirect($return_url);
     }
 
 
@@ -118,7 +122,7 @@ class Controller_Login extends Controller_Base_Template
         }
 
         Session::set_flash('auth_info', 'logout_success');
-        Response::redirect('login');
+        return \Response::redirect('login');
     }
 
 }

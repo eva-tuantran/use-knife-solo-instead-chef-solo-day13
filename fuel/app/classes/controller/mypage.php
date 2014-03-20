@@ -37,7 +37,7 @@ class Controller_Mypage extends Controller_Base_Template
         $fieldset = Fieldset::forge();
         $fieldset->add_model('Model_User')->populate($user);
 
-        $this->template->title   = '楽市楽座トップページ';
+        $this->setMetaTag('mypage/index');
         $this->template->content = View::forge('mypage/index');
         $this->template->content->set('dump', $fieldset->build('test'), false);
     }
@@ -56,7 +56,6 @@ class Controller_Mypage extends Controller_Base_Template
         $fieldset = Fieldset::forge();
         $fieldset->add_model('Model_User')->populate($user);
 
-        $this->template->title   = '楽市楽座トップページ';
         $this->template->content = View::forge('mypage/index');
         $this->template->content->set('dump', $fieldset->build('test'), false);
     }
@@ -87,7 +86,7 @@ class Controller_Mypage extends Controller_Base_Template
         $fieldset->field('password')->set_type(false);
         $fieldset->add('submit', '', array('type' => 'submit','value' => '保存する'));
 
-        $this->template->title   = '楽市楽座トップページ';
+        $this->setMetaTag('mypage/account');
         $this->template->content = View::forge('mypage/account', $data);
         $this->template->content->set('user_account_form', $fieldset->build('/mypage/save'), false);
     }
@@ -108,7 +107,7 @@ class Controller_Mypage extends Controller_Base_Template
         $fieldset->repopulate();
         $validation = $fieldset->validation();
 
-        if (!$validation->run()) {
+        if (! $validation->run()) {
             exit("項目エラー:".$validation->show_errors());
         } else {
             $user = Auth::get_user_instance();
@@ -118,7 +117,7 @@ class Controller_Mypage extends Controller_Base_Template
             $user->save();
             Session::set_flash('account_info', 'status_changed');
 
-            return Response::redirect('/mypage/account');
+            return \Response::redirect('/mypage/account');
         }
     }
 

@@ -34,7 +34,7 @@ class Controller_Signup extends Controller_Base_Template
     {
         $fieldset = $this->createFieldset();
 
-        $this->template->title = '楽市楽座ID(無料)を登録する';
+        $this->setMetaTag('signup/index');
         $this->template->content = View::forge('signup/index');
         $this->template->content->set('html_form', $fieldset->build('signup/confirm'), false);
         $this->template->content->set('errmsg', $fieldset->validation()->show_errors(), false);
@@ -53,11 +53,11 @@ class Controller_Signup extends Controller_Base_Template
         $fieldset->repopulate();
         $validation = $fieldset->validation();
 
-        $this->template->title = '楽市楽座ID(無料)を登録する';
+        $this->setMetaTag('signup/confirm');
 
         Session::set_flash('signup.fieldset', $fieldset);
-        if (!$validation->run()) {
-            return Response::redirect('signup');
+        if (! $validation->run()) {
+            return \Response::redirect('signup');
         } else {
             $this->template->content = View::forge('signup/confirm');
             $this->template->content->set('user_input', $validation->validated());
@@ -77,8 +77,8 @@ class Controller_Signup extends Controller_Base_Template
      */
     public function post_verify()
     {
-        if (!Security::check_token()) {
-            return \Response::redirect('signup/timeout');
+        if (! Security::check_token()) {
+            return \Response::redirect('errors/doubletransmission');
         }
 
         $fieldset = $this->createFieldset();
@@ -90,18 +90,19 @@ class Controller_Signup extends Controller_Base_Template
             $new_user = Model_User::forge($user_data);
             $new_user->save();
 
-            $new_token = Model_Token::createToken($new_user->user_id);
+            $new_token = Model_Token::generate($new_user->user_id);
             $data = array(
                 'nick_name'    => $new_user->nick_name,
                 'activate_url' => Uri::base().'signup/activate?token='.$new_token->hash,
             );
+
             $body = View::forge('email/signup/activate', $data)->render();
             $new_user->sendmail('確認メール', $body);
         } catch (Orm\ValidationFailed $e) {
-            $this->template->content->set('errmsg',  $e->getMessage(), false);
+            return \Response::redirect('errors/timeout');
         }
 
-        $this->template->title = '楽市楽座ID(無料)を登録する';
+        $this->setMetaTag('signup/verify');
         $this->template->content = View::forge('signup/verify');
     }
 
@@ -143,21 +144,8 @@ class Controller_Signup extends Controller_Base_Template
      */
     public function action_thanks()
     {
-        $this->template->title = '楽市楽座ID(無料)を登録する';
+        $this->setMetaTag('signup/thanks');
         $this->template->content = View::forge('signup/thanks');
-    }
-
-    /**
-     * タイムアウト画面。基本的にverifyのCSRFでチェック失敗した時に飛びます。
-     *
-     * @author shimma
-     * @access public
-     * @return void
-     */
-    public function action_timeout()
-    {
-        $this->template->title = '楽市楽座ID(無料)を登録する';
-        $this->template->content = View::forge('signup/timeout');
     }
 
     /**
