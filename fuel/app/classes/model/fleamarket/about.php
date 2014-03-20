@@ -1,5 +1,4 @@
 <?php
-namespace Model;
 
 /**
  * FleamarketAbouts Model
@@ -8,8 +7,45 @@ namespace Model;
  *
  * @author ida
  */
-class Fleamarket_About extends \Model
+class Model_Fleamarket_About extends \Orm\Model
 {
+    /**
+     * 説明区分
+     */
+    const ACCESS = 1;
+    const EVENT_TIME = 2;
+    const BOOTH = 3;
+    const SHOP_STYLE = 4;
+    const SHOP_FEE = 5;
+    const SHOP_CAUTION = 6;
+    const PARKING = 7;
+
+    /**
+     * 説明区分タイトルリスト
+     */
+    protected static $about_titles = array(
+        self::ACCESS        => '最寄り駅または交通アクセス',
+        self::EVENT_TIME    => '開催時間について',
+        self::BOOTH         => '募集ブース数について',
+        self::SHOP_STYLE    => '出店形態について',
+        self::SHOP_FEE      => '出店料金について',
+        self::SHOP_CAUTION  => '出店に際してのご注意',
+        self::PARKING       => '駐車場について',
+    );
+
+    /**
+     * 説明区分リスト
+     */
+    protected static $about_names = array(
+        self::ACCESS        => 'about_access',
+        self::EVENT_TIME    => 'about_event_time',
+        self::BOOTH         => 'about_booth',
+        self::SHOP_STYLE    => 'about_shop_style',
+        self::SHOP_FEE      => 'about_shop_fee',
+        self::SHOP_CAUTION  => 'about_shop_caution',
+        self::PARKING       => 'about_parking',
+    );
+
     /**
      * テーブル名
      *
@@ -18,35 +54,35 @@ class Fleamarket_About extends \Model
     protected static $_table_name = 'fleamarket_abouts';
 
     /**
-     * 指定されたIDでフリーマーケット説明情報を取得する
+     * プライマリーキー
+     *
+     * @var string $_primary_key
+     */
+    protected static $_primary_key  = array('fleamarket_about_id');
+
+    /**
+     * 説明区分表示名リストを取得する
      *
      * @access public
-     * @param mixed $fleamarket_id フリーマーケットID
-     * @return array フリーマーケット説明情報
-     * @author ida
+     * @return array
+     * @author
      */
-    public static function find($fleamarket_about_id = null)
+    public static function getAboutTitles()
     {
-        if (! $fleamarket_about_id) {
-            return null;
-        }
-
-        $placeholders = array('fleamarket_about_id' => $fleamarket_about_id);
-        $table_name = self::$_table_name;
-        $query = <<<"QUERY"
-SELECT * FROM {$table_name} WHERE fleamarket_id = :flearmarket_id
-QUERY;
-        $statement = \DB::query($query)->parameters($placeholders);
-        $result = $statement->execute();
-
-        $rows = null;
-        if (! empty($result)) {
-            $rows = $result->as_array();
-        }
-
-        return $rows;
+        return self::about_titles;
     }
 
+    /**
+     * 説明区分リストを取得する
+     *
+     * @access public
+     * @return array
+     * @author
+     */
+    public static function getAboutNames()
+    {
+        return self::about_names;
+    }
 
     /**
      * 指定されたフリーマーケットIDでフリーマーケット説明情報を取得する
@@ -90,49 +126,6 @@ QUERY;
      * フリーマーケット説明情報を登録する
      *
      * @access public
-     * @param array $data 登録するデータ配列
-     * @return array 登録結果
-     * @author ida
-     */
-    public static function insert($data)
-    {
-        if (! $data) {
-            return false;
-        }
-
-        $placeholders = array();
-        $field_list = array();
-        $value_list = array();
-
-        foreach ($data as $field => $value) {
-            $placeholder = ':' . $field;
-            $field_list[] = $field;
-            $value_list[] = $placeholder;
-            $placeholders[$placeholder] = $value;
-        }
-
-        $fields = implode(',', $field_list);
-        $values = implode(',', $value_list);
-        $table_name = self::$_table_name;
-        $query = <<<"QUERY"
-INSERT INTO {$table_name}({$fields},created_at) VALUES ({$values},now())
-QUERY;
-        $statement = \DB::query($query)->parameters($placeholders);
-        $result = $statement->execute();
-
-        $res = false;
-        if (! empty($result)) {
-            $res['last_insert_id'] = $result[0];
-            $res['affected_rows'] = $result[1];
-        }
-
-        return $res;
-    }
-
-    /**
-     * フリーマーケット説明情報を登録する
-     *
-     * @access public
      * @param array $data_list 登録するデータ配列
      * @return bool 登録結果
      * @author ida
@@ -153,43 +146,5 @@ QUERY;
         }
 
         return $res;
-    }
-
-    /**
-     * フリーマーケット説明情報を更新する
-     *
-     * @access public
-     * @param array $data 更新するデータ配列
-     * @return int 更新した件数
-     * @author ida
-     */
-    public static function update($data)
-    {
-        if (! $data || ! isset($data['fleamarket_about_id'])) {
-            return false;
-        }
-
-        $placeholders = array(
-            'fleamarket_about_id' => $data['fleamarket_about_id']
-        );
-        unset($data['fleamarket_about_id']);
-        $field_list = array();
-
-        foreach ($data as $field => $value) {
-            $placeholder = ':' . $field;
-            $field_list[] = $field . '=' . $placeholder;
-            $placeholders[$placeholder] = $value;
-        }
-
-        $fields = implode(',', $field_list);
-        $table_name = self::$_table_name;
-        $query = <<<"QUERY"
-UPDATE {$table_name} SET {$fields},updated_at=now()
-WHERE fleamarket_about_id = :fleamarket_about_id
-QUERY;
-        $statement = \DB::query($query)->parameters($placeholders);
-        $result = $statement->execute();
-
-        return $result;
     }
 }

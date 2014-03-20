@@ -31,7 +31,7 @@ class View_Search_Index extends ViewModel
      */
     private function setDisplayString()
     {
-        if (count($this->fleamarket_list) == 0) {
+        if (! $this->fleamarket_list) {
             return;
         }
 
@@ -51,7 +51,6 @@ class View_Search_Index extends ViewModel
      * 出店形態、出店料金、残りブース
      *
      * @access private
-     * @param array $fleamarket フリーマーケット情報
      * @return array
      * @author ida
      */
@@ -61,11 +60,11 @@ class View_Search_Index extends ViewModel
         $fee_list = array();
         $booth_list = array();
 
-        if (count($fleamarket['entry_styles']) > 0) {
+        if ($fleamarket['entry_styles']) {
             $entry_styles = Config::get('master.entry_styles');
 
             foreach ($fleamarket['entry_styles'] as &$entry_style) {
-                if (!isset($entry_style['entry_style_id'])) {
+                if (! isset($entry_style['entry_style_id'])) {
                     continue;
                 }
 
@@ -129,8 +128,9 @@ class View_Search_Index extends ViewModel
     private function createBoothString(
         &$entries, $entry_style_id, $style_name, $booth_limit
     ) {
-        if (count($entries) == 0) {
-            return;
+        $booth_string = '';
+        if (! $entries) {
+            return $booth_string;
         }
 
         foreach ($entries as $entry) {

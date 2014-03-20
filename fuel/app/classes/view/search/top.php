@@ -18,6 +18,5 @@ class View_Search_Top extends ViewModel
     {
         $this->title = 'フリーマーケット検索';
         $this->prefectures = Config::get('master.prefectures');
-        $this->regions = Config::get('master.regions');
     }
 }
