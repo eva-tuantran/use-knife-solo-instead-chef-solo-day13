@@ -7,7 +7,7 @@
  *
  * @author ida
  */
-class Model_Entry extends \Orm\Model
+class Model_Entry extends \Orm\Model_Soft
 {
     /**
      * テーブル名
@@ -41,6 +41,25 @@ class Model_Entry extends \Orm\Model
         'created_at',
         'updated_at',
         'deleted_at',
+    );
+
+    protected static $_soft_delete = array(
+        'deleted_field'   => 'deleted_at',
+        'mysql_timestamp' => true,
+    );
+
+
+    protected static $_observers = array(
+        'Orm\\Observer_CreatedAt' => array(
+            'events'          => array('before_insert'),
+            'mysql_timestamp' => true,
+            'property'        => 'created_at',
+        ),
+        'Orm\\Observer_UpdatedAt' => array(
+            'events'          => array('before_update'),
+            'mysql_timestamp' => true,
+            'property'        => 'updated_at',
+        ),
     );
 
 

@@ -58,6 +58,33 @@ class Controller_Mypage extends Controller_Base_Template
         $this->setMetaTag('mypage/index');
     }
 
+
+    /**
+     * フリーマーケットのキャンセル
+     *
+     * @access public
+     * @return void
+     * @author shimma
+     *
+     * @todo ajaxの呼び出し箇所とつなぎ込み
+     */
+    public function post_cancel()
+    {
+        $fleamarket_id = Input::post('fleamarket_id');
+
+        if (! $fleamarket_id) {
+            return false;
+        }
+
+        if ($this->user->cancelEntry($fleamarket_id)) {
+            Session::set_flash('notice', \STATUS_FLEAMARKET_CANCEL_SUCCESS);
+            return true;
+        } else {
+            Session::set_flash('notice', \STATUS_FLEAMARKET_CANCEL_FAILED);
+            return false;
+        };
+    }
+
     /**
      * パスワード変更ページ
      *

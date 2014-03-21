@@ -34,8 +34,11 @@
                       <li><?php echo $entry['fleamarket_entry_style_name'] ?></li>
                       <li>ブース</li>
                     </ul>
-                    <p><a href="#" class="btn btn-warning" role="button">予約解除</a>
-                    <a href="#" class="btn btn-default" role="button">予約解除</a></p>
+                    <p>
+                      <form action="/mypage/cancel" accept-charset="utf8" method="post">
+                        <input type="hidden" name="fleamarket_id" value="<?php echo $entry['fleamarket_id'] ?>" />
+                        <input type="submit" name="submit" class="btn btn-primary" value="予約解除" />
+                      </form>
                     <p><a href="/detail/<?php echo $entry['fleamarket_id'] ?>" class="btn btn-primary" role="button">詳細を確認する</a></p>
                   </div>
                 </div>

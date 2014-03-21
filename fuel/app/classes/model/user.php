@@ -493,4 +493,32 @@ QUERY;
 
         return array();
     }
+
+
+    /**
+     * 対象のフリマIDのフリマ予約をキャンセルします
+     *
+     * @param int $fleamarket_id
+     * @access public
+     * @return void
+     * @author shimma
+     */
+    public function cancelEntry($fleamarket_id)
+    {
+        $entry = Model_Entry::find('last', array(
+            'where' => array(
+                array('user_id' => $this->user_id),
+                array('fleamarket_id' => $fleamarket_id),
+            )
+        ));
+
+        try {
+            $entry->delete();
+        } catch (Exception $e) {
+            return false;
+        }
+
+        return true;
+    }
+
 }
