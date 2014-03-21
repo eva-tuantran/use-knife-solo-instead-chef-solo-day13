@@ -4,6 +4,7 @@
  * Base Controller.
  *
  * @extends  Controller_Template
+ * @author shimma
  */
 class Controller_Base_Template extends Controller_Template
 {
@@ -181,5 +182,19 @@ class Controller_Base_Template extends Controller_Template
         Lang::load('status');
         return Lang::get($i);
     }
+
+
+    /**
+     * var_dumpとexitを一気にやってくれるtest用関数
+     *
+     * @param mixed $data
+     */
+    public static function vd($data)
+    {
+        var_dump($data);
+        exit();
+    }
+
+
 
 }

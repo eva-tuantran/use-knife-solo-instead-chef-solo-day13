@@ -450,4 +450,47 @@ class Model_User extends Orm\Model_Soft
 
         return true;
     }
+
+
+    /**
+     * エントリーしたフリーマーケットのリストを取得します
+     *
+     * @access public
+     * @return mixed
+     * @author shimma
+     */
+    public function getEntries($limit = 30, $offset = 0)
+    {
+        $placeholders = array(
+            'user_id' => $this->user_id,
+        );
+
+        $query = <<<QUERY
+SELECT
+    e.fleamarket_id,
+    e.fleamarket_entry_style_id,
+    f.event_date,
+    f.event_time_start,
+    f.event_time_end,
+    f.name
+FROM
+    entries AS e
+LEFT JOIN
+    fleamarkets AS f ON
+    e.fleamarket_id = f.fleamarket_id
+WHERE
+    e.user_id = :user_id AND
+    e.deleted_at IS NULL
+ORDER BY f.event_date DESC
+LIMIT {$limit}
+OFFSET {$offset}
+QUERY;
+
+        $res = \DB::query($query)->parameters($placeholders)->execute();
+        if (! empty($res)) {
+            return $res->as_array();
+        }
+
+        return array();
+    }
 }

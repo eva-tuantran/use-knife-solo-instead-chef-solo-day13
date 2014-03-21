@@ -22,16 +22,25 @@ class Controller_Mypage extends Controller_Base_Template
         'save',
     );
 
+    protected $user;
+
     /**
      * before
      *
      * @access public
      * @return void
      * @author shimma
+     *
+     * @todo ログイン通過にも関わらずインスタンスが取れなかった時はエラーを吐いて表示させる実装に切り替える
      */
     public function before()
     {
         parent::before();
+
+        $this->user = Auth::get_user_instance();
+        if (! $this->user) {
+            return \Response::redirect('/login');
+        }
     }
 
     /**
@@ -43,14 +52,10 @@ class Controller_Mypage extends Controller_Base_Template
      */
     public function action_index()
     {
-        $user = Model_User::find(Auth::get_user_id());
+        $entries = $this->user->getEntries(20);
 
-        $fieldset = Fieldset::forge();
-        $fieldset->add_model('Model_User')->populate($user);
-
+        $this->template->content = ViewModel::forge('mypage/index')->set('entries', $entries);
         $this->setMetaTag('mypage/index');
-        $this->template->content = View::forge('mypage/index');
-        $this->template->content->set('dump', $fieldset->build('test'), false);
     }
 
     /**
@@ -62,10 +67,8 @@ class Controller_Mypage extends Controller_Base_Template
      */
     public function action_password()
     {
-        $user = Model_User::find(Auth::get_user_id());
-
         $fieldset = Fieldset::forge();
-        $fieldset->add_model('Model_User')->populate($user);
+        $fieldset->add_model('Model_User')->populate($this->user);
 
         $this->template->content = View::forge('mypage/index');
         $this->template->content->set('dump', $fieldset->build('test'), false);
@@ -85,8 +88,7 @@ class Controller_Mypage extends Controller_Base_Template
         $status_code = Session::get_flash('status_code');
         $data['info_message'] = $this->getStatusMessage($status_code);
 
-        $user = Auth::get_user_instance();
-        $fieldset = Fieldset::forge()->add_model('Model_User')->populate($user);
+        $fieldset = Fieldset::forge()->add_model('Model_User')->populate($this->user);
         $fieldset->field('password')->set_type(false);
         $fieldset->add('submit', '', array('type' => 'submit','value' => '保存する'));
 
