@@ -8,6 +8,7 @@ return array(
     'body'      => <<<'EOT'
 (admin向け)
 お問い合わせの種類 ##inquiry_type_label##
+名前 ##last_name## ##first_name##
 件名 ##subject##
 メールアドレス ##email##
 電話番号 ##tel##

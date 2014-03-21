@@ -66,13 +66,7 @@ Map.prototype = {
   }
 };
 </script>
-<?php
-    echo Form::open(array(
-        'action' => 'search/index',
-        'method' => 'post',
-        'id' => 'form_search',
-    ));
-?>
+<form id="form_search" action="/search/" method="post">
 <h2><?php echo e($fleamarket['name']);?></h2>
 <h2><?php echo $title;?></h2>
 <div class="row">
@@ -101,8 +95,8 @@ Map.prototype = {
         <tr>
           <th>交通・アクセス</th>
           <td><?php
-            if (isset($fleamarket['abouts'][FLEAMARKET_ABOUT_ACCESS])):
-                echo e($fleamarket['abouts'][FLEAMARKET_ABOUT_ACCESS]['description']);
+            if (isset($fleamarket['abouts'][\Model_Fleamarket_About::ACCESS])):
+                echo e($fleamarket['abouts'][\Model_Fleamarket_About::ACCESS]['description']);
             endif;
           ?></td>
         </tr>
@@ -139,7 +133,7 @@ Map.prototype = {
             if (count($fleamarket['abouts']) > 0):
                 $about_count = 0;
                 foreach ($fleamarket['abouts'] as $about_id => $about):
-                    if ($about_id == FLEAMARKET_ABOUT_ACCESS):
+                    if ($about_id == \Model_Fleamarket_About::ACCESS):
                         continue;
                     endif;
                     if ($about_count % 2 == 0):
@@ -163,9 +157,10 @@ Map.prototype = {
 <div class="row">
   <div class="col-md-12">
     <ul class="action_buttons">
-      <li><?php echo Html::anchor('/mypage/listadd/' . $fleamarket['fleamarket_id'], 'マイリストに追加', array('id' => 'do_mylist', 'class' => ''));// @TODO: マイページ機能待ち?></li>
-      <li><?php echo Html::anchor('/mypage/mylist/' . $fleamarket['fleamarket_id'], 'マイリストを見る', array('id' => 'do_detail', 'class' => ''));// @TODO: マイページ機能待ち?></li>
-      <li class="reservation"><?php echo Html::anchor('/reservation/index/' . $fleamarket['fleamarket_id'], '出店予約をする', array('id' => 'do_reservation', 'class' => ''));// @TODO: 出店機能待ち?></li>
+      <li><a id="do_mylistadd" href="/mypage/listadd/<?php echo $fleamarket['fleamarket_id'];?>">マイリストに追加</li>
+      <li><a id="do_mylist" href="/mypage/mylist/<?php echo $fleamarket['fleamarket_id'];?>">マイリストを見る</a></li>
+      <li class="reservation"><a id="do_reservation" href="/reservation/index/<?php echo $fleamarket['fleamarket_id'];?>">出店予約をする</a></li>
+      <li><a id="do_return_list" href="/search">一覧に戻る</a></li>
     </ul>
   </div>
 </div>

@@ -26,14 +26,25 @@ class Controller_Base_Template extends Controller_Template
      */
     protected $_login_actions = array();
 
+
+    /**
+     * ログインしていない事が必須のアクション配列
+     *
+     * @var array
+     * @access protected
+     * @author ida
+     */
+    protected $_nologin_actions = array();
+
     /**
      * リダイレクト先のSSLホスト名
+     * 基本的にconfigのssl_connection内部の引数の値をデフォルトとして設定します
      *
      * @var string
      * @access protected
      * @author shimma
      */
-    protected $_ssl_host = 'ssl.rakuichi-rakuza.jp';
+    protected $_ssl_host;
 
 
     /**
@@ -49,19 +60,27 @@ class Controller_Base_Template extends Controller_Template
     public function before()
     {
         $should_be_secure = in_array($this->request->action, $this->_secure_actions);
-        $is_secure = isset($_SERVER['HTTPS']);
-        $use_ssl = \Config::get('use_ssl');
+        $is_secure        = isset($_SERVER['HTTPS']);
+        $use_ssl          = \Config::get('ssl_connection.use');
+        if (! $this->_ssl_host) {
+            $this->_ssl_host = \Config::get('ssl_connection.default_host');
+        }
 
         if ($should_be_secure && ! $is_secure && $use_ssl) {
-            $this->redirect_to_protocol('https');
+            $this->redirectToProtocol('https');
         } elseif (! $should_be_secure && $is_secure) {
-            $this->redirect_to_protocol('http');
+            $this->redirectToProtocol('http');
         }
 
         if (in_array($this->request->action, $this->_login_actions) && !Auth::check()) {
             $referrer = \Input::referrer();
             return \Response::redirect('/login?rurl='.$referrer);
         }
+
+        if (in_array($this->request->action, $this->_nologin_actions) && Auth::check()) {
+            return \Response::redirect('/mypage');
+        }
+
         Asset::js('holder.js', array(), 'add_js');
         Lang::load('meta');
 
@@ -75,7 +94,7 @@ class Controller_Base_Template extends Controller_Template
      * @return void
      * @author shimma
      */
-    private function redirect_to_protocol($protocol = 'http')
+    private function redirectToProtocol($protocol = 'http')
     {
         switch ($protocol) {
             case 'https':
@@ -91,8 +110,8 @@ class Controller_Base_Template extends Controller_Template
     }
 
     /**
-     * meta tag 関連を lang より設定 
-     *  
+     * meta tag 関連を lang より設定
+     *
      * @access protected
      * @return void
      * @author kobayasi
@@ -142,6 +161,25 @@ class Controller_Base_Template extends Controller_Template
             $body = str_replace("##{$key}##",$value,$body);
         }
         return mb_convert_encoding($body,'jis');
+    }
+
+
+    /**
+     * ステータス変更文字列を取得します。
+     *
+     * @param int $i
+     * @access protected
+     * @return String $status_message
+     * @author shimma
+     */
+    protected function getStatusMessage($i = '')
+    {
+        if (! $i) {
+            return '';
+        }
+
+        Lang::load('status');
+        return Lang::get($i);
     }
 
 }

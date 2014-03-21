@@ -3,7 +3,6 @@
 <?php $input = $fieldset->input(); ?>
 
 <form action="/inquiry/thanks" method="POST">
-
 <table>
   <tr>
     <td>
@@ -11,6 +10,15 @@
     </td>
     <td>
     <?php echo e(\Model_Contact::inquiry_type_to_label($input['inquiry_type'])); ?>
+    </td>
+  </tr>
+
+  <tr>
+    <td>
+      名前
+    </td>
+    <td>
+    <?php echo e($input['last_name']); ?><?php echo e($input['first_name']); ?>
     </td>
   </tr>
 

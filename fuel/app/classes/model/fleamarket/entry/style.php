@@ -1,7 +1,4 @@
 <?php
-namespace Model;
-
-use \DB;
 
 /**
  * Fleamarket_Entry_Style Model
@@ -10,7 +7,7 @@ use \DB;
  *
  * @author ida
  */
-class Fleamarket_Entry_Style extends \Model
+class Model_Fleamarket_Entry_Style extends \Orm\Model
 {
     /**
      * テーブル名
@@ -20,37 +17,11 @@ class Fleamarket_Entry_Style extends \Model
     protected static $_table_name = 'fleamarket_entry_styles';
 
     /**
-     * 指定されたフリーマーケットIDでフリーマーケット出店形態情報を取得する
+     * プライマリーキー
      *
-     * @access public
-     * @param mixed $fleamarket_id フリーマーケットID
-     * @return array フリーマーケット情報
-     * @author ida
+     * @var string $_primariy
      */
-    public static function find($fleamarket_entry_style_id = null)
-    {
-        if (! $fleamarket_entry_style_id) {
-            return null;
-        }
-
-        $placeholders = array(
-            'fleamarket_entry_style_id' => $fleamarket_entry_style_id
-        );
-        $table_name = self::$_table_name;
-        $query = <<<"QUERY"
-SELECT * FROM {$table_name}
-WHERE fleamarket_entry_style_id = :fleamarket_entry_style_id
-QUERY;
-        $statement = \DB::query($query)->parameters($placeholders);
-        $result = $statement->execute();
-
-        $rows = null;
-        if (! empty($result)) {
-            $rows = $result->as_array();
-        }
-
-        return $rows;
-    }
+    protected static $_primary_key  = array('fleamarket_entry_style_id');
 
     /**
      * 指定されたフリーマーケットIDでフリーマーケット出店形態情報を取得する

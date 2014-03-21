@@ -55,6 +55,24 @@ return array(
         '13' => 'Facebook',
         '14' => 'mixi',
     ),
+    'item_categories' => array(
+        '1' => 'リサイクル品',
+        '2' => '手作り品',
+    ),
+    'item_genre' => array(
+        '1' => 'コンピュータ',
+        '2' => '家電、AV',
+        '3' => 'おもちゃ、ゲーム',
+        '4' => 'アンティーク、一点もの',
+        '5' => 'スポーツ、レジャー',
+        '6' => 'ファッション、ブランド',
+        '7' => 'アクセサリー、時計',
+        '8' => 'ビューティ、ヘルスケア',
+        '9' => 'インテリア、DIY',
+        '10' => '事務、店舗用品',
+        '11' => 'タレントグッズ',
+        '12' => 'コミック、アニメグッズ ',
+    ),
     'shop_genres' => array(
         '1' => 'アロマ',
         '2' => 'アンケート調査',
@@ -76,36 +94,6 @@ return array(
         '18' => '移動販売車',
         '19' => '農産物販売',
         '99' => 'その他'
-    ),
-    'fleamarket_abouts' => array(
-        1 => array(
-            'title' => '最寄り駅または交通アクセス',
-            'name' => 'about_access',
-        ),
-        2 => array(
-            'title' => '開催時間について',
-            'name' => 'about_event_time',
-        ),
-        3 => array(
-            'title' => '募集ブース数について',
-            'name' => 'about_booth',
-        ),
-        4 => array(
-            'title' => '出店形態について',
-            'name' => 'about_shop_style',
-        ),
-        5 => array(
-            'title' => '出店料金について',
-            'name' => 'about_shop_fee',
-        ),
-        6 => array(
-            'title' => '出店に際してのご注意',
-            'name' => 'about_shop_caution'
-        ),
-        7 => array(
-            'title' => '駐車場について',
-            'name' => 'about_parking'
-        ),
     ),
     'response_types' => array(
         '1' => 'メール',
