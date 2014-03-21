@@ -3,6 +3,7 @@
 /**
  * 会員ページ
  *
+ * @author shimma
  */
 class Controller_Mypage extends Controller_Base_Template
 {

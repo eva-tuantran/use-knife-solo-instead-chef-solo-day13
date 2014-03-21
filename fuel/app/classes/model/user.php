@@ -3,6 +3,8 @@
 /**
  * 楽市楽座会員基本モデル
  *
+ * @author shimma
+ *
  */
 class Model_User extends Orm\Model_Soft
 {
@@ -351,6 +353,16 @@ class Model_User extends Orm\Model_Soft
         'where' => array(
         ),
     );
+
+
+    /**
+     * 登録ステータス 0:仮登録,1:本登録.2:退会,3:強制退会
+     *
+     */
+    const REGISTER_STATUS_INACTIVATED = 0;
+    const REGISTER_STATUS_ACTIVATED   = 1;
+    const REGISTER_STATUS_STOPPED     = 2;
+    const REGISTER_STATUS_BANNED      = 3;
 
 
     /**

@@ -5,6 +5,7 @@ namespace Orm;
 /**
  * 自動的に有効期限を設定するオブザーバ
  *
+ * @author shimma
  */
 class Observer_Token extends Observer
 {

@@ -3,6 +3,7 @@
 /**
  * ユーザ認証用トークンモデル
  *
+ * @author shimma
  */
 class Model_Token extends Orm\Model_Soft
 {

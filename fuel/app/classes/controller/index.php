@@ -3,7 +3,7 @@
 /**
  * トップページ
  *
- * @author Ricky <master@mistdev.com>
+ * @author shimma
  */
 class Controller_Index extends Controller_Template
 {

@@ -3,6 +3,7 @@
 /**
  * ログイン画面
  *
+ * @author shimma
  */
 class Controller_Login extends Controller_Base_Template
 {
