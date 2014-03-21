@@ -129,6 +129,19 @@ class Model_Fleamarket extends \Orm\Model
     );
 
 
+    protected static $_observers = array(
+        'Orm\\Observer_CreatedAt' => array(
+            'events'          => array('before_insert'),
+            'mysql_timestamp' => true,
+            'property'        => 'created_at',
+        ),
+        'Orm\\Observer_UpdatedAt' => array(
+            'events'          => array('before_update'),
+            'mysql_timestamp' => true,
+            'property'        => 'updated_at',
+        ),
+    );
+
     /**
      * 開催状況リスト
      */
