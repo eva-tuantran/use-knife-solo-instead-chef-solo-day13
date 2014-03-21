@@ -418,6 +418,8 @@ class Model_User extends Orm\Model_Soft
      * @access public
      * @return bool
      * @author shimma
+     *
+     * @todo エラーの箇所がfalseとなっているが、throwするように変更する
      */
     public function sendmail($subject, $body)
     {

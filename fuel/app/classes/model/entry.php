@@ -23,6 +23,32 @@ class Model_Entry extends \Orm\Model
      */
     protected static $_primary_key  = array('entry_id');
 
+
+    protected static $_properties = array(
+        'entry_id',
+        'user_id',
+        'fleamarket_id',
+        'fleamarket_entry_style_id',
+        'reservation_number',
+        'item_category',
+        'item_genres',
+        'reserved_booth',
+        'link_from',
+        'remarks',
+        'entry_status',
+        'created_user',
+        'updated_user',
+        'created_at',
+        'updated_at',
+        'deleted_at',
+    );
+
+
+    const ENTRY_STATUS_RESERVED = 1;
+    const ENTRY_STATUS_WAITING  = 2;
+    const ENTRY_STATUS_CANCELED = 3;
+
+
     /**
      * エントリスタイルごとの予約数を取得する
      *
