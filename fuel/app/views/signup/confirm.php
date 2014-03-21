@@ -9,18 +9,10 @@
   </div>
 </div>
 
-<div class="container">
-
-  <div class="row">
-    <div class="col-md-12">
-      <h2 class="text-center">楽市楽座ID(無料)を登録する</h2>
-    </div>
-  </div>
-</div>
 
 <div class="container">
   <div class="row">
-    <div class="col-xs-12">
+    <div class="col-xs-12 box">
 
       <form id="confirmation" action="verify" accept-charset="utf-8" method="post">
         <table>
