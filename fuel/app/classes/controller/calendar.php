@@ -8,8 +8,6 @@ use \Controller\Base_Template;
  */
 class Controller_Calendar extends Controller_Base_Template
 {
-    // settings
-    protected $is_navigation = true;
     protected $year;
     protected $month;
     protected $day;
@@ -39,11 +37,30 @@ class Controller_Calendar extends Controller_Base_Template
      */
     public function action_index()
     {
-        $year = $this->param('year', date('Y'));
-        $month = $this->param('month', date('n'));
+        $this->year = $this->param('year', date('Y'));
+        $this->month = $this->param('month', date('n'));
 
-        $fleamarket_list = \Fleamarket::findByEventDate($year, $month);
-        $calendar = $this->buildCalendar($year, $month, array());
+        if (is_null($this->year) || !is_int($this->year)) {
+            $this->year = date('Y');
+        }
+        if (strlen($this->year) < 4 and $this->year) {
+            $this->year = (int) str_pad($this->year, 4, 0, STR_PAD_RIGHT);
+        }
+        if (strlen($this->year) > 4 and $this->year) {
+            $this->year = (int) substr($this->year, 0, 4);
+        }
+
+        if (is_null($this->month) || !is_int($this->month)) {
+            $this->month = date('n');
+        }
+        $this->month > 12 and $this->month = 12;
+        $this->month < 1 and $this->month = 1;
+
+        $event_dates = \Model_Fleamarket::findByEventDate(
+            $this->year, $this->month
+        );
+
+        $calendar = $this->buildCalendar($event_dates);
 
         return new Response(View::forge('calendar/month', $calendar));
     }
@@ -52,48 +69,25 @@ class Controller_Calendar extends Controller_Base_Template
      * カレンダー情報を生成する
      *
      * @access private
-     * @param int $year 年
-     * @param int $month 月
-     * @param array $data 年月日データ
+     * @param array $event_dates 開催日リスト
      * @return array
      * @author ida
      *
      * @TODO: $dataを渡されたときの処理の追加
      */
-    private function buildCalendar(
-        $year = null, $month = null, $data = null
-    ) {
-        !is_int($year) && $year = (int)$year;
-        !is_int($month) && $month = (int)$month;
-
-        $year == null && $year = date('Y');
-        $month == null && $month = date('n');
-        $day = date('j');
-
-        strlen($year) < 4 and $year = (int)str_pad($year, 4, 0, STR_PAD_RIGHT);
-        strlen($year) > 4 and $year = (int)substr($year, 0, 4);
-        $month > 12 and $month = 12;
-        $month < 1 and $month = 1;
-
-        $daysInMonth = $this->getDaysInMonth($month, $year);
-        $day > $daysInMonth && $day = $daysInMonth;
-        $day < 1 and $day = 1;
-
-        $this->year = $year;
-        $this->month = $month;
-        $this->day = $day;
-        $this->days_in_month = $daysInMonth;
+    private function buildCalendar($event_dates = array())
+    {
+        $this->day = date('j');
+        $this->days_in_month = $this->getDaysInMonth();
         $this->action_url = \Config::get('base_url') . 'calendar/';
 
-        // set data
         $data = array(
             'days' => $this->getDays(),
             'month' => $this->getMonth(),
             'year' => $this->year,
-            'calendar' => $this->buildMonth(),
-            'is_navigation' => $this->is_navigation,
-            'nav_next' => ($this->is_navigation) ? $this->createNavigation('next') : null,
-            'nav_prev' => ($this->is_navigation) ? $this->createNavigation('prev') : null,
+            'calendar' => $this->buildMonth($event_dates),
+            'nav_next' => $this->createNavigation('next'),
+            'nav_prev' => $this->createNavigation('prev'),
         );
 
         return $data;
@@ -103,38 +97,37 @@ class Controller_Calendar extends Controller_Base_Template
      * 月カレンダーを生成する
      *
      * @access private
+     * @param array $event_dates
      * @return array
      * @author ida
      */
-    private function buildMonth()
+    private function buildMonth($event_dates)
     {
         $data = array();
 
-        //set vars for loop
+        $month = str_pad($this->month, 2, '0', STR_PAD_LEFT);
         $day_of_month = 0;
         $week = 1;
-        $first_weekday = $this->getFirstWeekdayOfMonth(
-            $this->month, $this->year
-        );
+        $first_weekday = $this->getFirstWeekdayOfMonth();
 
-        // start data loop
         while ($day_of_month <= $this->days_in_month) {
-            // loop through days in week - Sun = 1
             for ($day_of_week = 1; $day_of_week <= 7; $day_of_week++) {
-                // if add 1 to start month counter when week day = first day
                 if ($day_of_week == $first_weekday && $day_of_month == 0) {
                     $day_of_month++;
                 }
 
                 if ($day_of_month > 0 && $day_of_month <= $this->days_in_month) {
-                    $date = $this->year . '/' . $this->month . '/' . $day_of_month;
+                    $day = str_pad($day_of_month, 2, '0', STR_PAD_LEFT);
+                    $date = $this->year . '/' . $month . '/' . $day;
+                    $is_event = array_key_exists($date, $event_dates);
+
                     $data[$week][$day_of_week] = array(
-                        'day' => $day_of_month,
                         'date' => $date,
+                        'day' => $day_of_month,
+                        'is_event' => $is_event,
                     );
                     $day_of_month++;
                 } else {
-	                // blank cells
                     $data[$week][$day_of_week] = array(
                         'day' => null,
                         'date' => null,
@@ -151,29 +144,25 @@ class Controller_Calendar extends Controller_Base_Template
      * 対象年月の日数を取得する
      *
      * @access private
-     * @param int $month 月
-     * @param int $year 年
      * @return int
      * @author ida
      *
      */
-    private static function getDaysInMonth($month, $year)
+    private function getDaysInMonth()
     {
-        return date('t', mktime(0, 0, 0, $month, 1, $year));
+        return date('t', mktime(0, 0, 0, $this->month, 1, $this->year));
     }
 
 	/**
 	 * 対象年月の1日の曜日を取得する
 	 *
      * @access private
-     * @param int $month 月
-     * @param int $year 年
      * @return int
      * @author ida
 	 */
-	private static function getFirstWeekdayOfMonth($month, $year)
+	private function getFirstWeekdayOfMonth()
 	{
-		return date('N', mktime(0, 0, 0, $month, 1, $year));
+		return date('N', mktime(0, 0, 0, $this->month, 1, $this->year));
 	}
 
     /**
