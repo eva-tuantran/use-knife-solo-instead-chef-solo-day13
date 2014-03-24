@@ -29,7 +29,7 @@ class Controller_Reservation extends Controller_Base_Template
         $input = $this->fieldset->input();
         $fleamarket = Model_Fleamarket::find($input['fleamarket_id']);
 
-        if (!$fleamarket) {
+        if (! $fleamarket) {
             return Response::redirect('/');
         }
 
@@ -106,7 +106,7 @@ class Controller_Reservation extends Controller_Base_Template
     {
         if ($this->request->action == 'index') {
             $fieldset = Session::get_flash('reservation.fieldset');
-            if (!$fieldset) {
+            if (! $fieldset) {
                 $fieldset = $this->createFieldset();
             }
         } elseif ($this->request->action == 'confirm') {
