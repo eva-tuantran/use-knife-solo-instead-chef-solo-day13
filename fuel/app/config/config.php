@@ -63,7 +63,10 @@ return array(
      * Settings for ssl
      * @author shimma
      */
-    'use_ssl'         => false,
+    'ssl_connection' => array(
+        'use'          => false,
+        'default_host' => 'ssl.rakuichi-rakuza.jp',
+    ),
 
     /**
      * Callback to use with ob_start(), set this to 'ob_gzhandler' for gzip encoding of output
@@ -308,7 +311,7 @@ return array(
                      * add it like 'validation' => 'forms'.
                      * If you don't want the lang in a group use null as groupname.
                      */
-                    // 'language'  => array(),
+                    //'language'  => array('meta'),
                     // ),
                 )
             );

@@ -11,17 +11,10 @@
 </div>
 
 <div class="container">
-
-  <div class="row">
-    <div class="col-md-12">
-    <h2 class="text-center">楽市楽座ID(無料)を登録する</h2>
+    <div id="signup" class="col-sm-12">
+      <div class="box">
+      <?php echo $errmsg ?>
+      <?php echo $html_form ?>
+      </div>
     </div>
-  </div>
-</div>
-
-<div class="container">
-  <div class="row">
-      <div class="col-xs-12 alert-info"><?php echo $errmsg ?></div>
-    <div class="col-xs-12"><?php echo $html_form ?></div>
-  </div>
 </div>

@@ -67,6 +67,13 @@ class Model_Fleamarket extends \Orm\Model
     const DISPLAY_FLAG_ON = 1;
 
     /**
+     * ピックアップ 0:対象外,1:対象
+     */
+    const PICKUP_FLAG_OFF = 0;
+    const PICKUP_FLAG_ON = 1;
+
+
+    /**
      * テーブル名
      *
      * @var string $_table_name
@@ -79,6 +86,61 @@ class Model_Fleamarket extends \Orm\Model
      * @var string $_primary_key
      */
     protected static $_primary_key = array('fleamarket_id');
+
+
+    protected static $_properties = array(
+        'fleamarket_id',
+        'location_id',
+        'group_code',
+        'name',
+        'promoter_name',
+        'event_number',
+        'event_date',
+        'event_time_start',
+        'event_time_end',
+        'event_status',
+        'headline',
+        'information',
+        'description',
+        'reservation_serial',
+        'reservation_start',
+        'reservation_end',
+        'reservation_tel',
+        'reservation_email',
+        'website',
+        'item_categories',
+        'link_from_list',
+        'pickup_flag',
+        'shop_fee_flag',
+        'car_shop_flag',
+        'pro_shop_flag',
+        'charge_parking_flag',
+        'free_parking_flag',
+        'rainy_location_flag',
+        'donation_fee',
+        'donation_point',
+        'register_type',
+        'display_flag',
+        'created_user',
+        'updated_user',
+        'created_at',
+        'updated_at',
+        'deleted_at',
+    );
+
+
+    protected static $_observers = array(
+        'Orm\\Observer_CreatedAt' => array(
+            'events'          => array('before_insert'),
+            'mysql_timestamp' => true,
+            'property'        => 'created_at',
+        ),
+        'Orm\\Observer_UpdatedAt' => array(
+            'events'          => array('before_update'),
+            'mysql_timestamp' => true,
+            'property'        => 'updated_at',
+        ),
+    );
 
     /**
      * 開催状況リスト

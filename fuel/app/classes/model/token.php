@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * ユーザ認証用トークンモデル
+ *
+ * @author shimma
+ */
 class Model_Token extends Orm\Model_Soft
 {
     protected static $_table_name = 'user_tokens';
@@ -40,40 +45,71 @@ class Model_Token extends Orm\Model_Soft
         ),
     );
 
-    public static function createToken($user_id)
+    /**
+     * 特定のユーザIDに対する認証用トークンを発行します。
+     * 成功時にはModel_Tokenオブジェクトをリターンします。
+     *
+     * @todo エラーのハンドリングについて番号含めて調整
+     * @param int $user_id
+     * @static
+     * @access public
+     * @return Model_Token $token
+     * @author shimma
+     */
+    public static function generate($user_id)
     {
         if (! Model_User::find($user_id)) {
-            //@TODO: Errorをthrowするか検討
-            return false;
+            throw new Exception('E00001');
         }
 
-        $hash = self::hash($user_id.time());
+        $unique_hash = self::getUniqueHash($user_id);
 
         $data = array(
             'user_id' => $user_id,
-            'hash'    => $hash,
+            'hash'    => $unique_hash,
         );
 
-        $new_token = self::forge($data);
-        $new_token->save();
+        try {
+            $new_token = self::forge($data);
+            $new_token->save();
+        } catch (Exception $e) {
+            throw new Exception('E00002');
+        }
 
         return $new_token;
     }
 
-    public static function hash($str)
+    /**
+     * 引数として与えられた文字列を基準にユニークなmd5ハッシュ値を作成します
+     *
+     * @param string $str
+     * @static
+     * @access public
+     * @return string
+     * @author shimma
+     */
+    public static function getUniqueHash($str = '')
     {
         $salt = '5HDJ38xZBJVCwRxthiyB4XTFhdNR0e6tvVXf3aNG';
-        $hash = md5($salt.$str);
+        $random_hash = md5($salt.$str.time());
 
-        return $hash;
+        return $random_hash;
     }
 
+    /**
+     * ユーザIDから指定するトークンを取得します
+     *
+     * @param int $user_id
+     * @static
+     * @access public
+     * @return Model_Token $token
+     * @author shimma
+     */
     public static function findByUserId($user_id)
     {
         $token = self::find('last', array(
             'where' => array(
                 array('user_id' => $user_id),
-                // array('expired_at', '>', date('Y-m-d H:i:s')),
                 array('expired_at', '>', Date::forge()->format('mysql')),
             ),
         ));
@@ -81,12 +117,20 @@ class Model_Token extends Orm\Model_Soft
         return $token;
     }
 
+    /**
+     * トークンのハッシュ値から最新のトークンモデルを取得します
+     *
+     * @param int $user_id
+     * @static
+     * @access public
+     * @return Model_Token $token
+     * @author shimma
+     */
     public static function findByHash($hash)
     {
         $token = self::find('last', array(
             'where' => array(
                 array('hash' => $hash),
-                // array('expired_at', '>', date('Y-m-d H:i:s')),
                 array('expired_at', '>', Date::forge()->format('mysql')),
             ),
         ));

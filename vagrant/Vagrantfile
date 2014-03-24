@@ -22,6 +22,7 @@ Vagrant.configure("2") do |config|
     chef.add_recipe "base"
     chef.add_recipe "php-mysql-httpd"
     chef.add_recipe "composer"
+    chef.add_recipe "rakuichi-rakuza"
     chef.json = {
       :composer => {
         :install_path => "/usr/local/bin"

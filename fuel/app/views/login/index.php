@@ -22,9 +22,9 @@
           <form id="login" action="/login/auth?rurl=<?php echo $return_url; ?>" accept-charset="utf-8" method="post">
             <?php echo \Form::csrf(); ?>
             <label id="label_email" for="form_email">メールアドレス</label>
-            <input id="email" name="email" type="text" value="">
-            <label id="label_password" for="label_password">パスワード</label>
-            <input id="password" name="password" type="password" value="">
+            <input id="form_email" name="email" type="text" value="">
+            <label id="label_password" for="form_password">パスワード</label>
+            <input id="form_password" name="password" type="password" value="">
             <input type="submit" name="submit" class="btn btn-primary" value="ログイン">
           </form>
 

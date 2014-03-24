@@ -3,10 +3,20 @@
 /**
  * ログイン画面
  *
+ * @author shimma
  */
 class Controller_Login extends Controller_Base_Template
 {
-    protected $_secure_actions = array('index', 'auth', 'out');
+    protected $_secure_actions = array(
+        'index',
+        'auth',
+        'out',
+    );
+
+    protected $_nologin_actions = array(
+        'index',
+    );
+
 
     /**
      * 初期画面
@@ -25,19 +35,10 @@ class Controller_Login extends Controller_Base_Template
             'return_url'    => $return_url,
         );
 
-        $auth_info = Session::get_flash('auth_info');
-        switch ($auth_info) {
-            case 'login_denied':
-                $data['error_message'] = 'ログインできません。';
-                Session::destroy();
-                break;
-            case 'session_expired':
-                $data['error_message'] = 'セッションが切れました。';
-                Session::destroy();
-                break;
-        }
+        $status = Session::get_flash('status');
+        $data['info_message'] = $this->getStatusMessage($status);
 
-        $this->template->title = 'Login';
+        $this->setMetaTag('login/index');
         $this->template->content = View::forge('login/index', $data);
     }
 
@@ -50,28 +51,31 @@ class Controller_Login extends Controller_Base_Template
      */
     public function post_auth()
     {
-        if (!Security::check_token()) {
-            Response::redirect('/login');
+        if (! Security::check_token()) {
+            return \Response::redirect('/login');
         }
 
         $rurl = Input::get('rurl');
-        $fieldset = self::createFieldset();
+        $fieldset = $this->createFieldset();
+        $fieldset->repopulate();
         $validation = $fieldset->validation();
 
-        if (!$validation->run()) {
+        if (! $validation->run()) {
             Session::set_flash('login.fieldset', $fieldset);
-            return Response::redirect("login?rurl=$rurl");
+            Session::set_flash('status', \STATUS_LOGIN_DENIED);
+            return \Response::redirect("login?rurl=$rurl");
         }
 
-        if (!Auth::instance()->login(Input::post('email'), Input::post('password'))) {
-            Session::set_flash('auth_info', 'login_denied');
+        if (! Auth::instance()->login(Input::post('email'), Input::post('password'))) {
             Session::set_flash('login.fieldset', $fieldset);
-            return Response::redirect("/login?rurl=$rurl");
+            Session::set_flash('status', \STATUS_LOGIN_DENIED);
+            return \Response::redirect("/login?rurl=$rurl");
         }
 
         $return_url = empty($rurl) ? '/mypage/' : $rurl;
-        Session::set_flash('auth_info', 'login_success');
-        return Response::redirect($return_url);
+        Session::set_flash('status', \STATUS_LOGIN_SUCCESS);
+
+        return \Response::redirect($return_url);
     }
 
 
@@ -82,12 +86,12 @@ class Controller_Login extends Controller_Base_Template
      * @return Fieldset fieldset
      * @author shimma
      */
-    public static function createFieldset()
+    public function createFieldset()
     {
         $fieldset = Session::get_flash('login.fieldset');
 
         if (! $fieldset) {
-            $fieldset = \Fieldset::forge();
+            $fieldset = \Fieldset::forge('login');
             $fieldset->add('email', 'Email')
                 ->add_rule('required')
                 ->add_rule('valid_email');
@@ -108,12 +112,12 @@ class Controller_Login extends Controller_Base_Template
      */
     public function action_out()
     {
-        if (!Auth::logout()) {
+        if (! Auth::logout()) {
             Session::destroy();
         }
 
-        Session::set_flash('auth_info', 'logout_success');
-        Response::redirect('login');
+        Session::set_flash('status', \STATUS_LOGOUT_SUCCESS);
+        return \Response::redirect('login');
     }
 
 }

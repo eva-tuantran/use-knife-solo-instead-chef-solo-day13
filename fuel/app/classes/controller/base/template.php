@@ -4,6 +4,7 @@
  * Base Controller.
  *
  * @extends  Controller_Template
+ * @author shimma
  */
 class Controller_Base_Template extends Controller_Template
 {
@@ -26,14 +27,25 @@ class Controller_Base_Template extends Controller_Template
      */
     protected $_login_actions = array();
 
+
+    /**
+     * ログインしていない事が必須のアクション配列
+     *
+     * @var array
+     * @access protected
+     * @author ida
+     */
+    protected $_nologin_actions = array();
+
     /**
      * リダイレクト先のSSLホスト名
+     * 基本的にconfigのssl_connection内部の引数の値をデフォルトとして設定します
      *
      * @var string
      * @access protected
      * @author shimma
      */
-    protected $_ssl_host = 'ssl.rakuichi-rakuza.jp';
+    protected $_ssl_host;
 
 
     /**
@@ -49,20 +61,30 @@ class Controller_Base_Template extends Controller_Template
     public function before()
     {
         $should_be_secure = in_array($this->request->action, $this->_secure_actions);
-        $is_secure = isset($_SERVER['HTTPS']);
-        $use_ssl = \Config::get('use_ssl');
+        $is_secure        = isset($_SERVER['HTTPS']);
+        $use_ssl          = \Config::get('ssl_connection.use');
+        if (! $this->_ssl_host) {
+            $this->_ssl_host = \Config::get('ssl_connection.default_host');
+        }
 
         if ($should_be_secure && ! $is_secure && $use_ssl) {
-            $this->redirect_to_protocol('https');
+            $this->redirectToProtocol('https');
         } elseif (! $should_be_secure && $is_secure) {
-            $this->redirect_to_protocol('http');
+            $this->redirectToProtocol('http');
         }
 
         if (in_array($this->request->action, $this->_login_actions) && !Auth::check()) {
-            Response::redirect('/login');
+            $referrer = \Input::referrer();
+            return \Response::redirect('/login?rurl='.$referrer);
         }
 
-Asset::js('holder.js', array(), 'add_js');
+        if (in_array($this->request->action, $this->_nologin_actions) && Auth::check()) {
+            return \Response::redirect('/mypage');
+        }
+
+        Asset::js('holder.js', array(), 'add_js');
+        Lang::load('meta');
+
         parent::before();
     }
 
@@ -73,7 +95,7 @@ Asset::js('holder.js', array(), 'add_js');
      * @return void
      * @author shimma
      */
-    private function redirect_to_protocol($protocol = 'http')
+    private function redirectToProtocol($protocol = 'http')
     {
         switch ($protocol) {
             case 'https':
@@ -84,8 +106,95 @@ Asset::js('holder.js', array(), 'add_js');
         }
 
         $url = $protocol . '://' . $server_host . $_SERVER['REQUEST_URI'];
-        Response::redirect($url, 'location', 301);
 
-        return;
+        return \Response::redirect($url, 'location', 301);
     }
+
+    /**
+     * meta tag 関連を lang より設定
+     *
+     * @access protected
+     * @return void
+     * @author kobayasi
+     */
+    protected function setMetaTag($path)
+    {
+        $meta = Lang::get($path);
+        $this->template->title = $meta['title'];
+    }
+
+    /**
+     * ユーザーにメールを送信
+     *
+     * @para $name メールの識別子 $params 差し込むデータ $to 送り先(指定しなければ langの値を使用)
+     * @access protected
+     * @return void
+     * @author kobayasi
+     */
+    protected function sendMailByParams($name,$params = array(), $to = null)
+    {
+        Lang::load("email/{$name}");
+
+        $email = Email::forge();
+        $email->from(Lang::get('from'),Lang::get('from_name'));
+        $email->subject(Lang::get('subject'));
+        $email->body($this->createMailBody(Lang::get('body'),$params));
+
+        if (! $to) {
+            $to = Lang::get('email');
+        }
+
+        $email->to($to);
+        $email->send();
+    }
+
+    /**
+     * メール本文の作成
+     *
+     * @para $contact Model_Contact
+     * @access protected
+     * @return string
+     * @author kobayasi
+     */
+    private function createMailBody($body,$params)
+    {
+        foreach ( $params as $key => $value ) {
+            $body = str_replace("##{$key}##",$value,$body);
+        }
+        return mb_convert_encoding($body,'jis');
+    }
+
+
+    /**
+     * ステータス変更文字列を取得します。
+     *
+     * @param int $i
+     * @access protected
+     * @return String $status_message
+     * @author shimma
+     */
+    protected function getStatusMessage($i = '')
+    {
+        if (! $i) {
+            return '';
+        }
+
+        Lang::load('status');
+        return Lang::get($i);
+    }
+
+
+    /**
+     * var_dumpとexitを一気にやってくれるtest用関数
+     *
+     * @param mixed $data
+     */
+    public static function vd($data)
+    {
+        var_dump($data);
+        exit();
+    }
+
+
+
 }
