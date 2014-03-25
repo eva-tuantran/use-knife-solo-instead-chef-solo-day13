@@ -131,4 +131,25 @@ QUERY;
     {
         return $this->reservation_booth_limit <= $this->sumReservedBooth();
     }
+
+    /**
+     * キャンセル待ちしているエントリーを取得
+     *
+     * @access public
+     * @param  void
+     * @return Model_Entry の array
+     * @author kobayasi
+     */
+    public function getWaitingEntry()
+    {
+        $entries = 
+            Model_Entry::query()
+            ->where(array(
+                'fleamarket_id'             => $this->fleamarket_id,
+                'fleamarket_entry_style_id' => $this->fleamarket_entry_style_id,
+                'entry_status'              => \Model_Entry::ENTRY_STATUS_WAITING,
+            ))
+            ->get();
+        return $entries;
+    }
 }

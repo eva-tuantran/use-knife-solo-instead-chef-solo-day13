@@ -30,6 +30,9 @@ class Model_Entry extends \Orm\Model_Soft
         'fleamarket_entry_style' => array(
             'key_to' => 'fleamarket_entry_style_id',
         ),
+        'user' => array(
+            'key_to' => 'user_id',
+        ),
     );
 
     protected static $_properties = array(
