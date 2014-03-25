@@ -36,5 +36,10 @@
     </tr>
   </table>
   <?php echo \Form::csrf(); ?>
+  <?php if ($fleamarket_entry_style->isNeedWaiting()) { ?>
+  すでに予約数が限度に達しています。キャンセル待ちをしますか？
+  <input type="submit" name="cancel" value="キャンセル待ちする">
+  <?php } else { ?>
   <input type="submit" value="登録">
+  <?php } ?>
 </form>

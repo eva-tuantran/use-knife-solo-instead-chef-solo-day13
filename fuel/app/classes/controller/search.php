@@ -43,22 +43,18 @@ class Controller_Search extends Controller_Base_Template
         }
 
         $base_conditions = Input::post('conditions', array());
-        $year = $this->param('year');
-        $month = $this->param('month');
-        $day = $this->param('day');
-        if ($year && $month && $day) {
-            $base_conditions = array(
-                'year' => $year, 'month' => $month, 'day' => $day,
-            );
+        $date = Input::get('d');
+        if ($date) {
+            $base_conditions = array('date' => $date,);
         }
         $add_conditions = Input::post('add_conditions', array());
 
         $conditions = array_merge($base_conditions, $add_conditions);
 
         // 検索条件から表示するフリーマーケット情報の取得
-        $condition_list = Model_Fleamarket::createConditionList($conditions);
-        $total_count = Model_Fleamarket::findBySearchCount($condition_list);
-        $fleamarket_list = Model_Fleamarket::findBySearch(
+        $condition_list = \Model_Fleamarket::createSearchConditionList($conditions);
+        $total_count = \Model_Fleamarket::findBySearchCount($condition_list);
+        $fleamarket_list = \Model_Fleamarket::findBySearch(
             $condition_list, $page, $this->search_result_per_page
         );
         $fleamarket_list = $this->getFleamarketRelatedData($fleamarket_list);
@@ -95,18 +91,16 @@ class Controller_Search extends Controller_Base_Template
             Response::redirect('errors/notfound');
         }
 
-        Asset::js('jquery.js', array(), 'add_js');
-
-        $fleamarket = Model_Fleamarket::findByDetail($fleamarket_id);
-        $fleamarket_abouts = Model_Fleamarket_About::findByFleamarketId(
+        $fleamarket = \Model_Fleamarket::findByDetail($fleamarket_id);
+        $fleamarket_abouts = \Model_Fleamarket_About::findByFleamarketId(
             $fleamarket_id
         );
 
-        $entry_styles = Model_Fleamarket_Entry_Style::findByFleamarketId(
+        $entry_styles = \Model_Fleamarket_Entry_Style::findByFleamarketId(
             $fleamarket_id
         );
 
-        $entries = Model_Entry::getTotalEntryByFlearmarketId(
+        $entries = \Model_Entry::getTotalEntryByFlearmarketId(
             $fleamarket_id
         );
         $fleamarket['entries'] = $entries;
@@ -143,12 +137,12 @@ class Controller_Search extends Controller_Base_Template
             )
         );
         foreach ($fleamarket_list as &$fleamarket) {
-            $entry_styles = Model_Fleamarket_Entry_Style::findByFleamarketId(
+            $entry_styles = \Model_Fleamarket_Entry_Style::findByFleamarketId(
                 $fleamarket['fleamarket_id'], $entry_style_fields
             );
             $fleamarket['entry_styles'] = $entry_styles;
 
-            $entries = Model_Entry::getTotalEntryByFlearmarketId(
+            $entries = \Model_Entry::getTotalEntryByFlearmarketId(
                 $fleamarket['fleamarket_id']
             );
             $fleamarket['entries'] = $entries;
