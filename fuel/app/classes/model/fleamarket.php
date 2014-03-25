@@ -87,12 +87,11 @@ class Model_Fleamarket extends \Orm\Model
      */
     protected static $_primary_key = array('fleamarket_id');
 
-    protected static $_has_many = array(
-        'fleamarket_entry_styles' => array(
-            'key_from' => 'fleamarket_id',
-        )
-    );
-
+    /**
+     * フィールド設定
+     *
+     * @var array $_properties
+     */
     protected static $_properties = array(
         'fleamarket_id',
         'location_id',
@@ -133,7 +132,11 @@ class Model_Fleamarket extends \Orm\Model
         'deleted_at',
     );
 
-
+    /**
+     * オブサーバ設定
+     *
+     * @var array $_observers
+     */
     protected static $_observers = array(
         'Orm\\Observer_CreatedAt' => array(
             'events'          => array('before_insert'),
