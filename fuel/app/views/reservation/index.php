@@ -3,6 +3,7 @@
 <?php $input  = $fieldset->input(); ?>
 <?php $errors = $fieldset->validation()->error_message(); ?>
 <?php $entry_styles = Config::get('master.entry_styles'); ?>
+
 <?php
    $input_genres = array();
    if ($input['item_genres']) {
@@ -44,7 +45,9 @@
       <td>
 	<select name="item_category">
           <?php foreach (Model_Entry::getItemCategoryDefine() as $item_category => $name) { ?>
-	  <option value="<?php echo e($item_category); ?>"><?php echo e($name); ?></option>
+          <option value="<?php echo e($item_category); ?>"
+          <?php if($input['item_category'] == $item_category){ echo ' selected=selected'; } ?>>
+	  <?php echo e($name); ?></option>
 	  <?php } ?>
 	</select>
 	<?php if (isset($errors['item_category'])) { ?>
