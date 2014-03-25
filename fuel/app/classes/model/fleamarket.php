@@ -183,9 +183,32 @@ class Model_Fleamarket extends \Orm\Model
      */
     public static function findByEventDate($year, $month)
     {
-        $query = self::find("all")
-            ->where('event_date', 'between', array($date.'000000', $date.'235959'))
-            ->get();
+        $placeholders = array(
+            ':display_flag' => self::DISPLAY_FLAG_ON,
+            ':ym' => $year . '/' . $month,
+        );
+
+        $table_name = self::$_table_name;
+        $query = <<<"QUERY"
+SELECT
+    DATE_FORMAT(f.event_date, '%Y/%m/%d') AS event_date
+FROM
+    {$table_name} AS f
+WHERE
+    display_flag = :display_flag
+    AND DATE_FORMAT(f.event_date, '%Y/%c') = :ym
+    AND f.deleted_at IS NULL
+QUERY;
+
+        $statement = \DB::query($query)->parameters($placeholders);
+        $result = $statement->execute();
+
+        $rows = null;
+        if (! empty($result)) {
+            $rows = $result->as_array('event_date');
+        }
+
+        return $rows;
     }
 
     /**
@@ -251,6 +274,7 @@ LEFT JOIN
     fleamarket_entry_styles AS fes ON f.fleamarket_id = fes.fleamarket_id
 WHERE
     f.display_flag = :display_flag
+    AND f.deleted_at IS NULL
     {$where}
 GROUP BY
 	f.fleamarket_id,
@@ -288,7 +312,7 @@ QUERY;
 
         $statement = \DB::query($query)->parameters($placeholders);
         $result = $statement->execute();
-
+var_dump(\DB::last_query());
         $rows = null;
         if (! empty($result)) {
             $rows = $result->as_array();
@@ -326,6 +350,7 @@ LEFT JOIN
     fleamarket_entry_styles AS fes ON f.fleamarket_id = fes.fleamarket_id
 WHERE
     f.display_flag = :display_flag
+    AND f.deleted_at IS NULL
     {$where}
 QUERY;
 
@@ -391,6 +416,7 @@ LEFT JOIN
     locations AS l ON f.location_id = l.location_id
 WHERE
     f.display_flag = :display_flag
+    AND f.deleted_at IS NULL
     AND f.fleamarket_id = :fleamarket_id
 QUERY;
 
@@ -488,6 +514,18 @@ QUERY;
             }
             $conditions[] = array(
                 'fes.entry_style_id', $operator, $data['entry_style']
+            );
+        }
+
+        if (isset($data['year']) && $data['year']
+            && isset($data['month']) && $data['month']
+            && isset($data['day']) && $data['day']
+        ) {
+            $year = $data['year'];
+            $month = str_pad($data['month'], 2, '0', STR_PAD_LEFT);
+            $day = str_pad($data['day'], 2, '0', STR_PAD_LEFT);
+            $conditions[] = array(
+                'f.event_date', '=', $year . '-' . $month . '-' . $day
             );
         }
 

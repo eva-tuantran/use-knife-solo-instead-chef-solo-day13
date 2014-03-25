@@ -27,7 +27,7 @@ $(function() {
   });
 });
 </script>
-<form id="form_search" action="/search/index" method="post">
+<form id="form_search" action="/search/index/1/" method="post">
 <?php
     if (is_array($base_conditions) && count($base_conditions) > 0):
         foreach ($base_conditions as $field => $value):
@@ -43,23 +43,23 @@ $(function() {
       <p class="find_title">ステータス</p>
       <ul class="find_condtion">
         <li><?php
-            $is_checked = isset($filters['event_status']) && in_array(\Model_Fleamarket::EVENT_STATUS_SCHEDULE, $filters['event_status']);
-            echo Form::checkbox('filters[event_status][]', \Model_Fleamarket::EVENT_STATUS_SCHEDULE, $is_checked, array('id' => 'form_event_schedule'));
+            $is_checked = isset($add_conditions['event_status']) && in_array(\Model_Fleamarket::EVENT_STATUS_SCHEDULE, $add_conditions['event_status']);
+            echo Form::checkbox('add_conditions[event_status][]', \Model_Fleamarket::EVENT_STATUS_SCHEDULE, $is_checked, array('id' => 'form_event_schedule'));
             echo Form::label('開催予定', null, array('for' => 'form_event_schedule'));
         ?></li>
         <li><?php
-            $is_checked = isset($filters['event_status']) && in_array(\Model_Fleamarket::EVENT_STATUS_RESERVATION_RECEIPT, $filters['event_status']);
-            echo Form::checkbox('filters[event_status][]', \Model_Fleamarket::EVENT_STATUS_RESERVATION_RECEIPT, $is_checked, array('id' => 'form_event_reservation_receipt'));
+            $is_checked = isset($add_conditions['event_status']) && in_array(\Model_Fleamarket::EVENT_STATUS_RESERVATION_RECEIPT, $add_conditions['event_status']);
+            echo Form::checkbox('add_conditions[event_status][]', \Model_Fleamarket::EVENT_STATUS_RESERVATION_RECEIPT, $is_checked, array('id' => 'form_event_reservation_receipt'));
             echo Form::label('予約受付中', null, array('for' => 'form_event_reservation_receipt'));
         ?></li>
         <li><?php
-            $is_checked = isset($filters['event_status']) && in_array(\Model_Fleamarket::EVENT_STATUS_RECEIPT_END, $filters['event_status']);
-            echo Form::checkbox('filters[event_status][]', \Model_Fleamarket::EVENT_STATUS_RECEIPT_END, $is_checked, array('id' => 'form_event_receipt_end'));
+            $is_checked = isset($add_conditions['event_status']) && in_array(\Model_Fleamarket::EVENT_STATUS_RECEIPT_END, $add_conditions['event_status']);
+            echo Form::checkbox('add_conditions[event_status][]', \Model_Fleamarket::EVENT_STATUS_RECEIPT_END, $is_checked, array('id' => 'form_event_receipt_end'));
             echo Form::label('受付終了', null, array('for' => 'form_event_receipt_end'));
         ?></li>
         <li><?php
-            $is_checked = isset($filters['event_status']) && in_array(\Model_Fleamarket::EVENT_STATUS_CLOSE, $filters['event_status']);
-            echo Form::checkbox('filters[event_status][]', \Model_Fleamarket::EVENT_STATUS_CLOSE, $is_checked, array('id' => 'form_event_close'));
+            $is_checked = isset($add_conditions['event_status']) && in_array(\Model_Fleamarket::EVENT_STATUS_CLOSE, $add_conditions['event_status']);
+            echo Form::checkbox('add_conditions[event_status][]', \Model_Fleamarket::EVENT_STATUS_CLOSE, $is_checked, array('id' => 'form_event_close'));
             echo Form::label('開催終了', null, array('for' => 'form_event_close'));
         ?></li>
       </ul>
@@ -70,10 +70,10 @@ $(function() {
       <?php
           foreach ($entry_styles as $entry_style_id => $entry_style_name):
               $id = 'form_entry_style_' . $entry_style_id;
-              $is_checked = isset($filters['entry_style']) && in_array($entry_style_id, $filters['entry_style']);
+              $is_checked = isset($add_conditions['entry_style']) && in_array($entry_style_id, $add_conditions['entry_style']);
       ?>
       <li><?php
-          echo Form::checkbox('filters[entry_style][]', $entry_style_id, $is_checked, array('id' => $id));
+          echo Form::checkbox('add_conditions[entry_style][]', $entry_style_id, $is_checked, array('id' => $id));
           echo Form::label($entry_style_name, null, array('for' => $id));
       ?></li>
       <?php
@@ -85,13 +85,13 @@ $(function() {
       <p class="find_title">出店料金</p>
       <ul class="find_condtion">
         <li><?php
-            $is_checked = isset($filters['shop_fee']) && in_array(\Model_Fleamarket::SHOP_FEE_FLAG_FREE, $filters['shop_fee']);
-            echo Form::checkbox('filters[shop_fee][]', \Model_Fleamarket::SHOP_FEE_FLAG_FREE, $is_checked, array('id' => 'form_shop_fee_free'));
+            $is_checked = isset($add_conditions['shop_fee']) && in_array(\Model_Fleamarket::SHOP_FEE_FLAG_FREE, $add_conditions['shop_fee']);
+            echo Form::checkbox('add_conditions[shop_fee][]', \Model_Fleamarket::SHOP_FEE_FLAG_FREE, $is_checked, array('id' => 'form_shop_fee_free'));
             echo Form::label('無料出店', null, array('for' => 'form_shop_fee_free'));
         ?></li>
         <li><?php
-            $is_checked = isset($filters['shop_fee']) && in_array(\Model_Fleamarket::SHOP_FEE_FLAG_CHARGE, $filters['shop_fee']);
-            echo Form::checkbox('filters[shop_fee][]', \Model_Fleamarket::SHOP_FEE_FLAG_CHARGE, $is_checked, array('id' => 'form_shop_fee_charge'));
+            $is_checked = isset($add_conditions['shop_fee']) && in_array(\Model_Fleamarket::SHOP_FEE_FLAG_CHARGE, $add_conditions['shop_fee']);
+            echo Form::checkbox('add_conditions[shop_fee][]', \Model_Fleamarket::SHOP_FEE_FLAG_CHARGE, $is_checked, array('id' => 'form_shop_fee_charge'));
             echo Form::label('有料出店', null, array('for' => 'form_shop_fee_charge'));
         ?></li>
       </ul>
