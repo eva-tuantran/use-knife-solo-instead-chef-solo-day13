@@ -52,9 +52,15 @@ class Controller_Mypage extends Controller_Base_Template
      */
     public function action_index()
     {
+        $prefectures = Config::get('master.prefectures');
+        $view_model = ViewModel::forge('mypage/index');
         $entries = $this->user->getEntries();
 
-        $this->template->content = ViewModel::forge('mypage/index')->set('entries', $entries);
+        $view_model->set('prefectures', $prefectures, false);
+        $view_model->set('entries', $entries, false);
+
+        // $this->template->content = ViewModel::forge('mypage/index')->set('entries', $entries);
+        $this->template->content = $view_model;
         $this->setMetaTag('mypage/index');
     }
 
