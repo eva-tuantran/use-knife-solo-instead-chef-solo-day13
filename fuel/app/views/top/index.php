@@ -1,3 +1,4 @@
+<div id="contentHome" class="row">
 <script>
 $(function() {
   $(window).resize(function() {
@@ -119,7 +120,7 @@ $(function() {
 <!-- /search -->
 <!-- new -->
 <div id="new" class="container">
-  <div class="box">
+  <div class="box clearfix">
     <h2><i></i>最新のフリマ</h2>
     <ul id="scrollControl">
       <li id="prev">Prev</li>
@@ -374,3 +375,4 @@ var Calendar = {
   }
 };
 </script>
+</div>

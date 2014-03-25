@@ -186,7 +186,7 @@ class Model_Fleamarket extends \Orm\Model
         $table_name = self::$_table_name;
         $query = <<<"QUERY"
 SELECT
-    DATE_FORMAT(f.event_date, '%Y/%m/%d') AS event_date
+    DATE_FORMAT(f.event_date, '%Y-%m-%d') AS event_date
 FROM
     {$table_name} AS f
 WHERE
@@ -225,7 +225,7 @@ QUERY;
 
         $limit = '';
         if (is_numeric($page) && is_numeric($row_count)) {
-            $offset = ($page * $row_count) - 1;
+            $offset = ($page - 1) * $row_count;
             $limit = ' LIMIT ' . $offset . ', ' . $row_count;
         }
 
@@ -307,7 +307,7 @@ QUERY;
 
         $statement = \DB::query($query)->parameters($placeholders);
         $result = $statement->execute();
-var_dump(\DB::last_query());
+// var_dump(\DB::last_query());
         $rows = null;
         if (! empty($result)) {
             $rows = $result->as_array();
@@ -384,8 +384,8 @@ SELECT
     f.name,
     f.promoter_name,
     DATE_FORMAT(f.event_date, '%Y年%m月%d日') AS event_date,
-    DATE_FORMAT(f.event_time_start, '%k時%i分') AS event_time_start,
-    DATE_FORMAT(f.event_time_end, '%k時%i分') AS event_time_end,
+    DATE_FORMAT(f.event_time_start, '%k:%i') AS event_time_start,
+    DATE_FORMAT(f.event_time_end, '%k:%i') AS event_time_end,
     f.event_status,
     f.description,
     f.reservation_start,
@@ -434,7 +434,7 @@ QUERY;
      * @return array 検索条件
      * @author void
      */
-    public static function createConditionList($data)
+    public static function createSearchConditionList($data)
     {
         $conditions = array();
 
@@ -512,15 +512,9 @@ QUERY;
             );
         }
 
-        if (isset($data['year']) && $data['year']
-            && isset($data['month']) && $data['month']
-            && isset($data['day']) && $data['day']
-        ) {
-            $year = $data['year'];
-            $month = str_pad($data['month'], 2, '0', STR_PAD_LEFT);
-            $day = str_pad($data['day'], 2, '0', STR_PAD_LEFT);
+        if (isset($data['date']) && $data['date']) {
             $conditions[] = array(
-                'f.event_date', '=', $year . '-' . $month . '-' . $day
+                'f.event_date', '=', $data['date']
             );
         }
 
