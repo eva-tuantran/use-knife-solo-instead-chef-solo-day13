@@ -83,4 +83,52 @@ QUERY;
 
         return $rows;
     }
+
+    /**
+     * 予約ブース数の総数を取得
+     *
+     * @access public
+     * @param  int
+     * @return bool
+     * @author kobayasi
+     */
+    public function sumReservedBooth()
+    {
+        $query = DB::select(DB::expr('SUM(reserved_booth) as sum_result'));
+        $query->from(Model_Entry::table());
+
+        $query->where(array(
+            'fleamarket_id'             => $this->fleamarket_id,
+            'fleamarket_entry_style_id' => $this->fleamarket_entry_style_id,
+            'entry_status'              => Model_Entry::ENTRY_STATUS_RESERVED,
+        ));
+
+        return $query->execute()->get('sum_result');
+    }
+
+    /**
+     * 予約ブース数の最大数を超えてしまったかどうか
+     *
+     * @access public
+     * @param  int
+     * @return bool
+     * @author kobayasi
+     */
+    public function isOverReservationLimit()
+    {
+        return $this->reservation_booth_limit < $this->sumReservedBooth();
+    }
+
+    /**
+     * キャンセル待ちが必要かどうか
+     *
+     * @access public
+     * @param  int
+     * @return bool
+     * @author kobayasi
+     */
+    public function isNeedWaiting()
+    {
+        return $this->reservation_booth_limit <= $this->sumReservedBooth();
+    }
 }

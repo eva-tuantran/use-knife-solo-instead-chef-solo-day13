@@ -65,9 +65,6 @@ class Model_Entry extends \Orm\Model_Soft
             'validation' => array(
                 'required',
                 'valid_string' => array('numeric'),
-                'reserved_booth' => array(
-                    'valid_string' => array('numeric'),
-                ),
             ),
         ),
         'link_from',
@@ -214,29 +211,6 @@ QUERY;
     public static function getItemGenresDefine()
     {
         return self::$item_genres_define;
-    }
-
-    /**
-     * 予約済みブース数が最大値を超えていないかのチェック
-     *
-     * @access public
-     * @param  int
-     * @return bool
-     * @author kobayasi
-     */
-    public function _validation_reserved_booth($reserved_booth)
-    {
-        $query = DB::select(DB::expr('SUM(reserved_booth) as sum_result'));
-        $query->from(self::$_table_name);
-
-        $query->where(array(
-            'fleamarket_id'             => $this->fleamarket_id,
-            'fleamarket_entry_style_id' => $this->fleamarket_entry_style_id,
-        ));
-
-        $sum = $query->execute()->get('sum_result');
-
-        return $this->fleamarket_entry_style->reservation_booth_limit >= $sum + $reserved_booth;
     }
 
     /**
