@@ -245,6 +245,40 @@ QUERY;
     }
 
 
+    /**
+     * ユーザが予約しているフリマの予約数
+     *
+     * @access public
+     * @return int
+     */
+    public function getReservedEntryCount()
+    {
+        return $this->user->getReservedEntryCount();
+    }
+
+    /**
+     * ユーザが予約しているフリマの予約数
+     *
+     * @access public
+     * @return int
+     */
+    public function getFinishedEntryCount()
+    {
+        return $this->user->getFinishedEntryCount();
+    }
+
+    /**
+     * ユーザが予約しているフリマの予約数
+     *
+     * @access public
+     * @return int
+     */
+    public function getMylistCount()
+    {
+        return $this->user->getMylistCount();
+    }
+
+
 
     /**
      * create_salt

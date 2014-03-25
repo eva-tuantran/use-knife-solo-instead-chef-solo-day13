@@ -230,6 +230,64 @@ QUERY;
         return array();
     }
 
+    /**
+     * 特定のユーザのエントリーしたフリマの個数を取得します
+     *
+     * @param mixed $user_id
+     * @access public
+     * @return void
+     * @author shimma
+     */
+    public static function getUserFinishedEntryCount($user_id)
+    {
+        $count = self::query()->where('user_id', $user_id)->count();
+
+        if (! $count) {
+            return 0;
+        }
+
+        return $count;
+    }
+
+
+    /**
+     * 特定のユーザの予約済みのフリマの個数を取得します
+     *
+     * @param mixed $user_id
+     * @access public
+     * @return void
+     * @author shimma
+     */
+    public static function getUserReservedEntryCount($user_id)
+    {
+        $placeholders = array(
+            'user_id'         => $user_id,
+        );
+
+        $query = <<<QUERY
+SELECT
+    COUNT(*) as count
+FROM
+    entries AS e
+LEFT JOIN
+    fleamarkets AS f ON
+    e.fleamarket_id = f.fleamarket_id
+WHERE
+    e.user_id = :user_id AND
+    f.event_date > NOW() AND
+    e.deleted_at IS NULL
+QUERY;
+
+        $res = \DB::query($query)->parameters($placeholders)->execute()->as_array();
+        if (! empty($res[0]['count'])) {
+
+            return $res[0]['count'];
+        }
+
+        return 0;
+    }
+
+
 
 
     const ITEM_CATEGORY_RECYCLE  = 1;

@@ -20,9 +20,9 @@
   <div id="searchResult" class="col-sm-9">
     <!-- pills -->
     <ul class="nav nav-pills">
-      <li><a href="#">これまで参加したフリマ <span class="badge">42件</span></a></li>
-      <li><a href="#">出店予約中のフリマ <span class="badge">5件</span></a></li>
-      <li><a href="#">マイリスト <span class="badge">5件</span></a></li>
+    <li><a href="#">これまで参加したフリマ <span class="badge"><?php echo e(Auth::getFinishedEntryCount()); ?>件</span></a></li>
+      <li><a href="#">出店予約中のフリマ <span class="badge"><?php echo e(Auth::getReservedEntryCount()); ?>件</span></a></li>
+      <li><a href="#">マイリスト <span class="badge"><?php echo e(Auth::getMylistCount()); ?>件</span></a></li>
     </ul>
     <!-- /pills -->
     <!-- search -->
