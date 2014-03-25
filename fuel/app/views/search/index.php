@@ -15,7 +15,7 @@
             $fleamarket_id = $fleamarket['fleamarket_id'];
 ?>
     <div class="box result clearfix">
-      <h3><strong>楽市楽座主催</strong>&nbsp;<a href="#"><?php echo e($fleamarket['event_date']);?>&nbsp;<?php echo e($fleamarket['name']);?></a></h3>
+      <h3><?php if ($fleamarket['register_type'] == \Model_Fleamarket::REGISTER_TYPE_ADMIN):?><strong>楽市楽座主催</strong>&nbsp;<?php endif;?><a href="#"><?php echo e($fleamarket['event_date']);?>&nbsp;<?php echo e($fleamarket['name']);?></a></h3>
       <div class="resultPhoto"><a href="#"><img src="http://dummyimage.com/200x150/ccc/fff.jpg" class="img-rounded"></a></div>
       <div class="resultDetail">
         <dl class="col-md-3">
