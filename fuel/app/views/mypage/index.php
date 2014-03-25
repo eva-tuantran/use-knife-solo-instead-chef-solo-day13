@@ -20,93 +20,52 @@
   <div id="searchResult" class="col-sm-9">
     <!-- pills -->
     <ul class="nav nav-pills">
-      <li><a href="#">これまで参加したフリマ <span class="badge">42件</span></a></li>
-      <li><a href="#">出店予約中のフリマ <span class="badge">5件</span></a></li>
-      <li><a href="#">マイリスト <span class="badge">5件</span></a></li>
+    <li><a href="#">これまで参加したフリマ <span class="badge"><?php echo e(Auth::getFinishedEntryCount()); ?>件</span></a></li>
+      <li><a href="#">出店予約中のフリマ <span class="badge"><?php echo e(Auth::getReservedEntryCount()); ?>件</span></a></li>
+      <li><a href="#">マイリスト <span class="badge"><?php echo e(Auth::getMylistCount()); ?>件</span></a></li>
     </ul>
     <!-- /pills -->
     <!-- search -->
     <div id="search" class="box clearfix">
       <div class="row">
-        <form>
+        <form id="form_search" action="/search/1/" method="post">
           <fieldset>
             <div id="searchInput" class="col-md-7">
               <div class="form-group">
-                <input type="text" class="form-control" id="keywordInput" placeholder="キーワードを入力">
+                <input type="text" class="form-control" id="keywordInput" placeholder="キーワードを入力" name="conditions[keyword]">
               </div>
               <div id="searchCheckbox">
-                <label>
-                  <input type="checkbox">
-                  出店者無料 </label>
-                <label>
-                  <input type="checkbox">
-                  車出店無料 </label>
-                <label>
-                  <input type="checkbox">
-                  雨天開催会場 </label>
-                <label>
-                  <input type="checkbox">
-                  プロ出店可 </label>
-                <label>
-                  <input type="checkbox">
-                  有料駐車場あり </label>
-                <label>
-                  <input type="checkbox">
-                  無料駐車場あり </label>
+
+                <label for="form_shop_fee">
+                  <input id="form_shop_fee" type="checkbox" name="conditions[shop_fee]" value="<?php echo \Model_Fleamarket::SHOP_FEE_FLAG_FREE;?>">出店無料
+                </label>
+                <label for="form_car_shop">
+                  <input id="form_car_shop" type="checkbox" name="conditions[car_shop]" value="<?php echo \Model_Fleamarket::CAR_SHOP_FLAG_OK;?>">車出店可
+                </label>
+                <label for="form_rainy_location">
+                  <input id="form_rainy_location" type="checkbox" name="conditions[rainy_location]" value="<?php echo \Model_Fleamarket::RAINY_LOCATION_FLAG_EXIST;?>">雨天開催会場
+                </label>
+                <label for="form_pro_shop">
+                  <input id="form_pro_shop" type="checkbox" name="conditions[form_pro_shop]" value="<?php echo \Model_Fleamarket::PRO_SHOP_FLAG_OK;?>">プロ出店可
+                </label>
+                <label for="form_charge_parking">
+                  <input id="form_charge_parking" type="checkbox" name="conditions[charge_parking]" value="<?php echo \Model_Fleamarket::CHARGE_PARKING_FLAG_EXIST;?>">有料駐車場あり
+                </label>
+                <label for="form_free_parking">
+                  <input id="form_free_parking" type="checkbox" name="conditions[free_parking]" value="<?php echo \Model_Fleamarket::FREE_PARKING_FLAG_EXIST;?>">無料駐車場あり
+                </label>
+
               </div>
             </div>
             <div id="searchSelect" class="col-md-3">
               <div class="form-group">
-                <select class="form-control">
-                  <option>都道府県</option>
-                  <option label="北海道" value="1">北海道</option>
-                  <option label="青森県" value="2">青森県</option>
-                  <option label="岩手県" value="3">岩手県</option>
-                  <option label="宮城県" value="4">宮城県</option>
-                  <option label="秋田県" value="5">秋田県</option>
-                  <option label="山形県" value="6">山形県</option>
-                  <option label="福島県" value="7">福島県</option>
-                  <option label="茨城県" value="8">茨城県</option>
-                  <option label="栃木県" value="9">栃木県</option>
-                  <option label="群馬県" value="10">群馬県</option>
-                  <option label="埼玉県" value="11">埼玉県</option>
-                  <option label="千葉県" value="12">千葉県</option>
-                  <option label="東京都" value="13">東京都</option>
-                  <option label="神奈川県" value="14">神奈川県</option>
-                  <option label="新潟県" value="15">新潟県</option>
-                  <option label="富山県" value="16">富山県</option>
-                  <option label="石川県" value="17">石川県</option>
-                  <option label="福井県" value="18">福井県</option>
-                  <option label="山梨県" value="19">山梨県</option>
-                  <option label="長野県" value="20">長野県</option>
-                  <option label="岐阜県" value="21">岐阜県</option>
-                  <option label="静岡県" value="22">静岡県</option>
-                  <option label="愛知県" value="23">愛知県</option>
-                  <option label="三重県" value="24">三重県</option>
-                  <option label="滋賀県" value="25">滋賀県</option>
-                  <option label="京都府" value="26">京都府</option>
-                  <option label="大阪府" value="27">大阪府</option>
-                  <option label="兵庫県" value="28">兵庫県</option>
-                  <option label="奈良県" value="29">奈良県</option>
-                  <option label="和歌山県" value="30">和歌山県</option>
-                  <option label="鳥取県" value="31">鳥取県</option>
-                  <option label="島根県" value="32">島根県</option>
-                  <option label="岡山県" value="33">岡山県</option>
-                  <option label="広島県" value="34">広島県</option>
-                  <option label="山口県" value="35">山口県</option>
-                  <option label="徳島県" value="36">徳島県</option>
-                  <option label="香川県" value="37">香川県</option>
-                  <option label="愛媛県" value="38">愛媛県</option>
-                  <option label="高知県" value="39">高知県</option>
-                  <option label="福岡県" value="40">福岡県</option>
-                  <option label="佐賀県" value="41">佐賀県</option>
-                  <option label="長崎県" value="42">長崎県</option>
-                  <option label="熊本県" value="43">熊本県</option>
-                  <option label="大分県" value="44">大分県</option>
-                  <option label="宮崎県" value="45">宮崎県</option>
-                  <option label="鹿児島県" value="46">鹿児島県</option>
-                  <option label="沖縄県" value="47">沖縄県</option>
+                <select class="form-control" name="conditions[prefecture]">
+                  <option value="">都道府県</option>
+                  <?php foreach ($prefectures as $prefecture_id => $name): ?>
+                    <option value="<?php echo $prefecture_id;?>"><?php echo $name;?></option>
+                  <?php endforeach; ?>
                 </select>
+
               </div>
               <div class="form-group">
                 <select class="form-control">
@@ -392,6 +351,7 @@
       <li><a href="#mylist" data-toggle="tab">マイリスト</a></li>
     </ul>
     <!-- /nav-tabs -->
+
     <!-- tabGroup -->
     <div class="tabGroup">
       <div class="box clearfix">
@@ -400,56 +360,55 @@
           <!-- reservation -->
           <div class="tab-pane active" id="reservation">
 
-
             <?php if(empty($entries)): ?>
-                <p>現在予約しているフリーマーケットがありません。</p>
+              <p>現在予約しているフリーマーケットがありません。</p>
             <?php else: ?>
-                <?php foreach($entries as $entry): ?>
-                    <!-- result -->
-                    <div class="result clearfix">
-                      <h3><a href="/detail/<?php echo $entry['fleamarket_id'] ?>"><?php echo $entry['name'] ?></a></h3>
-                      <div class="resultPhoto"><a href="#"><img src="http://dummyimage.com/200x150/ccc/fff.jpg" class="img-rounded"></a></div>
-                      <div class="resultDetail">
-                        <dl class="col-md-3">
-                          <dt>出店数</dt>
-                          <dd><?php echo e(@$entry['booth_string']);?></dd>
-                        </dl>
-                        <dl class="col-md-3">
-                          <dt>開催時間</dt>
-                          <dd><?php echo e($entry['event_date']); ?></dd>
-                        </dl>
-                        <dl class="col-md-3">
-                          <dt>出店形態</dt>
-                          <dd><?php echo e($entry['fleamarket_entry_style_name']); ?></dd>
-                        </dl>
-                        <dl class="col-md-3">
-                          <dt>出店料金</dt>
-                          <dd><?php echo e(@$entry['fee_string']); ?></dd>
-                        </dl>
-                        <dl class="col-md-11">
-                          <dt>交通</dt>
-                          <dd><?php echo e($entry['about_access']);?></dd>
-                        </dl>
-                        <ul class="facilitys">
-                          <li class="facility1 <?php echo $entry['car_shop_flag'] == \Model_Fleamarket::CAR_SHOP_FLAG_NG ? 'invalid': '';?>">車出店可能</li>
-                          <li class="facility2 <?php echo $entry['charge_parking_flag'] == \Model_Fleamarket::CHARGE_PARKING_FLAG_NONE ? 'invalid': '';?>">有料駐車場</li>
-                          <li class="facility3 <?php echo $entry['free_parking_flag'] == \Model_Fleamarket::FREE_PARKING_FLAG_NONE ? 'invalid': '';?>">無料駐車場</li>
-                          <li class="facility4 <?php echo $entry['rainy_location_flag'] == \Model_Fleamarket::RAINY_LOCATION_FLAG_NONE ? 'invalid': '';?>">雨天開催会場</li>
-                        </ul>
-                        <ul class="detailLink">
-                          <li><a href="/detail/<?php echo $entry['fleamarket_id'] ?>">詳細情報を見る<i></i></a></li>
-                        </ul>
-                        <ul class="rightbutton">
-                          <li class="button change makeReservation"><a href="#"><i></i>予約変更</a></li>
-                          <form action="/mypage/cancel" accept-charset="utf8" method="post">
-                            <input type="hidden" name="fleamarket_id" value="<?php echo $entry['fleamarket_id'] ?>" />
-                            <li class="button cancel"><input type="submit" name="submit"><a href="#"><i></i>予約解除</a></li>
-                          </form>
-                        </ul>
-                      </div>
-                    </div>
-                    <!-- /result -->
-                <?php endforeach; ?>
+              <?php foreach($entries as $entry): ?>
+                <!-- result -->
+                <div class="result clearfix">
+                  <h3><a href="/detail/<?php echo $entry['fleamarket_id'] ?>"><?php echo $entry['name'] ?></a></h3>
+                  <div class="resultPhoto"><a href="#"><img src="http://dummyimage.com/200x150/ccc/fff.jpg" class="img-rounded"></a></div>
+                  <div class="resultDetail">
+                    <dl class="col-md-3">
+                      <dt>出店数</dt>
+                      <dd><?php echo e(@$entry['booth_string']);?></dd>
+                    </dl>
+                    <dl class="col-md-3">
+                      <dt>開催時間</dt>
+                      <dd><?php echo e($entry['event_date']); ?></dd>
+                    </dl>
+                    <dl class="col-md-3">
+                      <dt>出店形態</dt>
+                      <dd><?php echo e($entry['fleamarket_entry_style_name']); ?></dd>
+                    </dl>
+                    <dl class="col-md-3">
+                      <dt>出店料金</dt>
+                      <dd><?php echo e(@$entry['fee_string']); ?></dd>
+                    </dl>
+                    <dl class="col-md-11">
+                      <dt>交通</dt>
+                      <dd><?php echo e($entry['about_access']);?></dd>
+                    </dl>
+                    <ul class="facilitys">
+                      <li class="facility1 <?php echo $entry['car_shop_flag'] == \Model_Fleamarket::CAR_SHOP_FLAG_NG ? 'invalid': '';?>">車出店可能</li>
+                      <li class="facility2 <?php echo $entry['charge_parking_flag'] == \Model_Fleamarket::CHARGE_PARKING_FLAG_NONE ? 'invalid': '';?>">有料駐車場</li>
+                      <li class="facility3 <?php echo $entry['free_parking_flag'] == \Model_Fleamarket::FREE_PARKING_FLAG_NONE ? 'invalid': '';?>">無料駐車場</li>
+                      <li class="facility4 <?php echo $entry['rainy_location_flag'] == \Model_Fleamarket::RAINY_LOCATION_FLAG_NONE ? 'invalid': '';?>">雨天開催会場</li>
+                    </ul>
+                    <ul class="detailLink">
+                      <li><a href="/detail/<?php echo $entry['fleamarket_id'] ?>">詳細情報を見る<i></i></a></li>
+                    </ul>
+                    <ul class="rightbutton">
+                      <li class="button change makeReservation"><a href="#"><i></i>予約変更</a></li>
+                      <form action="/mypage/cancel" accept-charset="utf8" method="post">
+                        <input type="hidden" name="fleamarket_id" value="<?php echo $entry['fleamarket_id'] ?>" />
+                        <li class="button cancel"><input type="submit" name="submit"><a href="#"><i></i>予約解除</a></li>
+                      </form>
+                    </ul>
+                  </div>
+                </div>
+                <!-- /result -->
+              <?php endforeach; ?>
             <?php endif ?>
 
           </div>
@@ -464,11 +423,11 @@
 
 <script>
 $(function() {
-$(window).resize(function() {
-$("#newMarket").carouFredSel({
-    prev:{button:"#prev",key:"left"},
-    next:{button:"#next",key:"right"}
-  });});
-$(window).resize();
-});
+    $(window).resize(function() {
+      $("#newMarket").carouFredSel({
+prev:{button:"#prev",key:"left"},
+next:{button:"#next",key:"right"}
+});});
+    $(window).resize();
+    });
 </script>
