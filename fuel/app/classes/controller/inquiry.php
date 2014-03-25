@@ -18,8 +18,7 @@ class Controller_Inquiry extends Controller_Base_Template
     {
         $this->setMetaTag('inquiry/index');
         $view = View::forge('inquiry/index');
-        $fieldset = $this->createFieldset();
-        $fieldset->repopulate();
+        $fieldset = $this->getFieldset();
         $view->set('fieldset', $fieldset, false);
         $this->template->content = $view;
     }
@@ -31,7 +30,7 @@ class Controller_Inquiry extends Controller_Base_Template
      */
     public function post_confirm()
     {
-        $fieldset = $this->createFieldset();
+        $fieldset = $this->getFieldset();
         Session::set_flash('inquiry.fieldset', $fieldset);
 
         if (! $fieldset->validation()->run()) {
@@ -70,6 +69,21 @@ class Controller_Inquiry extends Controller_Base_Template
         }
     }
 
+    private function getFieldset()
+    {
+        if ($this->request->action == 'index') {
+            $fieldset = Session::get_flash('inquiry.fieldset');
+            if (! $fieldset) {
+                $fieldset = $this->createFieldset();
+            }
+        } elseif ($this->request->action == 'confirm') {
+            $fieldset = $this->createFieldset();
+        } elseif ($this->request->action == 'thanks') {
+            $fieldset = Session::set_flash('inquiry.fieldset', $fieldset);
+        }
+        return $fieldset;
+    }
+
     /**
      * fieldsetの作成
      *
@@ -78,12 +92,8 @@ class Controller_Inquiry extends Controller_Base_Template
      */
     private function createFieldset()
     {
-        $fieldset = Session::get_flash('inquiry.fieldset');
-
-        if (! $fieldset) {
-            $fieldset = Model_Contact::createFieldset();
-        }
-
+        $fieldset = Model_Contact::createFieldset();
+        $fieldset->repopulate();
         return $fieldset;
     }
 

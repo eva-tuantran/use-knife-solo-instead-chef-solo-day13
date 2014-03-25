@@ -19,7 +19,6 @@
 <link href="/assets/css/base.css" rel="stylesheet">
 <script src="/assets/js/jquery.min.js"></script>
 <script src="/assets/js/bootstrap.min.js"></script>
-<script src="/assets/js/jquery.easing.min.js"></script>
 <script src="/assets/js/jquery.carouFredSel.js"></script>
 <?php echo Asset::css('style.css');?>
 <?php echo Asset::render('add_css');?>
@@ -75,10 +74,7 @@
 <!-- content -->
 <div id="contentWrap" class="container">
   <div id="contentHome" class="row">
-
     <?php echo $content; ?>
-
-
   </div>
 </div>
 <!-- /content -->

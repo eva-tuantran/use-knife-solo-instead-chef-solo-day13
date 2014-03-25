@@ -8,13 +8,12 @@
 
 class Controller_Reservation extends Controller_Base_Template
 {
-/*
     protected $_login_actions = array(
         'index',
         'confirm',
         'thanks',
     );
-*/
+
     private $fleamarket = null;
     private $fieldset = null;
 
@@ -22,14 +21,19 @@ class Controller_Reservation extends Controller_Base_Template
     {
         parent::before();
 
-        $this->fieldset = $this->createFieldset();
-        $this->fieldset->repopulate();
-        $input = $this->fieldset->input();
-
-        $this->fleamarket = Model_Fleamarket::find($input['fleamarket_id']);
-        if (! $this->fleamarket) {
+        $this->fieldset = $this->getFieldset();
+        if (! $this->fieldset) {
             return Response::redirect('/');
         }
+
+        $input = $this->fieldset->input();
+        $fleamarket = Model_Fleamarket::find($input['fleamarket_id']);
+
+        if (! $fleamarket) {
+            return Response::redirect('/');
+        }
+
+        $this->fleamarket = $fleamarket;
     }
 
     /**
@@ -93,22 +97,39 @@ class Controller_Reservation extends Controller_Base_Template
     }
 
     /**
-     * fieldsetの作成
+     * アクションに応じたfieldsetを取得する
+     *
+     * @access public
+     * @return void
+     */
+    private function getFieldset()
+    {
+        if ($this->request->action == 'index') {
+            $fieldset = Session::get_flash('reservation.fieldset');
+            if (! $fieldset) {
+                $fieldset = $this->createFieldset();
+            }
+        } elseif ($this->request->action == 'confirm') {
+            $fieldset = $this->createFieldset();
+        } elseif ($this->request->action == 'thanks') {
+            $fieldset = Session::get_flash('reservation.fieldset');
+        }
+        return $fieldset;
+    }
+
+    /**
+     * fieldsetをInput::allから作成する
      *
      * @access private
      * @return Fieldsetオブジェクト
      */
     private function createFieldset()
     {
-        $fieldset = Session::get_flash('reservation.fieldset');
-
-        if (! $fieldset) {
-            $fieldset = Model_Entry::createFieldset(Input::all());
-        }
-
+        $fieldset = Model_Entry::createFieldset(Input::all());
+        $fieldset->repopulate();
         return $fieldset;
     }
-
+    
     /**
      * entries テーブルへの登録
      *
@@ -137,13 +158,7 @@ class Controller_Reservation extends Controller_Base_Template
      */
     private function getEntryData()
     {
-        $fieldset = Session::get_flash('reservation.fieldset');
-
-        if (! $fieldset) {
-            return false;
-        }
-
-        $input = $fieldset->validation()->validated();
+        $input = $this->fieldset->validation()->validated();
 
         if ($input) {
             $item_genres_define = Model_Entry::getItemGenresDefine();
@@ -151,7 +166,7 @@ class Controller_Reservation extends Controller_Base_Template
                 return $item_genres_define[$value];
             };
 
-            $user_id = 1;// Auth::get_user_id();
+            $user_id = Auth::get_user_id();
 
             $input_other = array_merge($input,array(
                 'user_id'            => $user_id,

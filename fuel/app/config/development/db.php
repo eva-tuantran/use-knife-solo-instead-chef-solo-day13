@@ -10,8 +10,8 @@ return array(
     'default' => array(
         'connection'  => array(
             'dsn'        => 'mysql:host=localhost;dbname=rakuichi-rakuza',
-            'username'   => 'root',
-            'password'   => '',
+            'username'   => 'rakuichi',
+            'password'   => 'rakuichi',
         ),
     ),
 );
