@@ -64,9 +64,17 @@ class Controller_Reservation extends Controller_Base_Template
             return Response::redirect('reservation');
         }
 
+        $fleamarket_entry_style = Model_Fleamarket_Entry_Style::query()
+            ->where(array(
+                'fleamarket_id'             => Input::param('fleamarket_id'),
+                'fleamarket_entry_style_id' => Input::param('fleamarket_entry_style_id'),
+            ))
+            ->get_one();
+
         $view = View::forge('reservation/confirm');
         $view->set('fieldset', $this->fieldset, false);
-
+        $view->set('fleamarket_entry_style',$fleamarket_entry_style);
+        
         $this->setMetaTag('reservation/confirm');
         $this->template->content = $view;
     }
@@ -91,9 +99,10 @@ class Controller_Reservation extends Controller_Base_Template
         try {
             $entry = $this->registerEntry();
         } catch (Exception $e) {
-            $view->set('error',$e,false);
+            $view->set('error', $e, false);
             throw $e;
         }
+        $view->set('entry', $entry, false);
     }
 
     /**
@@ -142,11 +151,21 @@ class Controller_Reservation extends Controller_Base_Template
         if (! $data) {
             throw new Exception();
         } else {
+            $db = Database_Connection::instance();
+            $db->start_transaction();
+
             $entry = Model_Entry::forge();
             $entry->set($data);
-            $entry->save(NULL, true);
-
-            return $entry;
+            $entry->save();
+            
+            if (! Input::post('cancel') && 
+                $entry->fleamarket_entry_style->isOverReservationLimit()) {
+                $db->rollback_transaction();
+                return false;
+            }else{
+                $db->commit_transaction();
+                return $entry;
+            }
         }
     }
 
@@ -172,7 +191,8 @@ class Controller_Reservation extends Controller_Base_Template
                 'user_id'            => $user_id,
                 'reservation_number' => 1,
                 'link_from'          => '',
-                'entry_status'       => '',
+                'entry_status'       => Input::post('cancel') ?
+                Model_Entry::ENTRY_STATUS_WAITING : Model_Entry::ENTRY_STATUS_RESERVED,
                 'created_user'       => $user_id,
                 'updated_user'       => $user_id,
                 'item_genres'        => implode(',',array_map($to_label, $input['item_genres'])),

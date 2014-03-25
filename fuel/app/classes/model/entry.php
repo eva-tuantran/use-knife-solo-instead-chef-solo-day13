@@ -30,8 +30,11 @@ class Model_Entry extends \Orm\Model_Soft
         'fleamarket_entry_style' => array(
             'key_to' => 'fleamarket_entry_style_id',
         ),
+        'user' => array(
+            'key_to' => 'user_id',
+        ),
     );
-    
+
     protected static $_properties = array(
         'entry_id',
         'user_id',
@@ -65,9 +68,6 @@ class Model_Entry extends \Orm\Model_Soft
             'validation' => array(
                 'required',
                 'valid_string' => array('numeric'),
-                'reserved_booth' => array(
-                    'valid_string' => array('numeric'),
-                ),
             ),
         ),
         'link_from',
@@ -144,6 +144,94 @@ QUERY;
         return $rows;
     }
 
+
+
+    /**
+     * 特定のユーザのエントリーしたフリマ情報を取得します。
+     *
+     * @param mixed $user_id
+     * @access public
+     * @return void
+     * @author shimma
+     */
+    public static function getUserEntries($user_id, $page = 0, $row_count = 0)
+    {
+        $placeholders = array(
+            'user_id'         => $user_id,
+            'about_access_id' => \Model_Fleamarket_About::ACCESS,
+            'register_status' => \Model_Fleamarket::REGISTER_TYPE_ADMIN,
+            'display_flag'    => \Model_Fleamarket::DISPLAY_FLAG_ON,
+        );
+
+        $limit = '';
+        if (is_numeric($page) && is_numeric($row_count)) {
+            $offset = ($page - 1) * $row_count;
+            $limit = $offset . ', ' . $row_count;
+        }
+
+        $query = <<<QUERY
+SELECT
+    f.fleamarket_id,
+    f.name,
+    f.promoter_name,
+    e.fleamarket_entry_style_id,
+    DATE_FORMAT(f.event_date, '%Y年%m月%d日') AS event_date,
+    DATE_FORMAT(f.event_time_start, '%k時%i分') AS event_time_start,
+    DATE_FORMAT(f.event_time_end, '%k時%i分') AS event_time_end,
+    f.event_status,
+    f.description,
+    f.reservation_start,
+    f.reservation_end,
+    f.reservation_tel,
+    f.reservation_email,
+    f.website,
+    f.shop_fee_flag,
+    f.car_shop_flag,
+    f.pro_shop_flag,
+    f.charge_parking_flag,
+    f.free_parking_flag,
+    f.rainy_location_flag,
+    f.register_type,
+    l.name AS location_name,
+    l.zip AS zip,
+    l.prefecture_id AS prefecture_id,
+    l.address AS address,
+    l.googlemap_address AS googlemap_address,
+    fa.description AS about_access
+FROM
+    entries AS e
+LEFT JOIN
+    fleamarkets AS f ON
+    e.fleamarket_id = f.fleamarket_id
+LEFT JOIN
+    locations AS l ON f.location_id = l.location_id
+LEFT JOIN
+    fleamarket_abouts AS fa ON f.fleamarket_id = fa.fleamarket_id
+    AND fa.about_id = :about_access_id
+LEFT JOIN
+    fleamarket_entry_styles AS fes ON f.fleamarket_id = fes.fleamarket_id
+WHERE
+    e.user_id = :user_id AND
+    f.display_flag = :display_flag AND
+    e.deleted_at IS NULL
+ORDER BY
+    f.register_type = :register_status,
+    f.event_date DESC,
+    f.event_time_start
+LIMIT
+    {$limit}
+QUERY;
+
+        $res = \DB::query($query)->parameters($placeholders)->execute();
+        if (! empty($res)) {
+            return $res->as_array();
+        }
+
+        return array();
+    }
+
+
+
     const ITEM_CATEGORY_RECYCLE  = 1;
     const ITEM_CATEGORY_HANDMADE = 2;
 
@@ -214,29 +302,6 @@ QUERY;
     public static function getItemGenresDefine()
     {
         return self::$item_genres_define;
-    }
-
-    /**
-     * 予約済みブース数が最大値を超えていないかのチェック
-     *
-     * @access public
-     * @param  int
-     * @return bool
-     * @author kobayasi
-     */
-    public function _validation_reserved_booth($reserved_booth)
-    {
-        $query = DB::select(DB::expr('SUM(reserved_booth) as sum_result'));
-        $query->from(self::$_table_name);
-
-        $query->where(array(
-            'fleamarket_id'             => $this->fleamarket_id,
-            'fleamarket_entry_style_id' => $this->fleamarket_entry_style_id,
-        ));
-
-        $sum = $query->execute()->get('sum_result');
-
-        return $this->fleamarket_entry_style->reservation_booth_limit >= $sum + $reserved_booth;
     }
 
     /**

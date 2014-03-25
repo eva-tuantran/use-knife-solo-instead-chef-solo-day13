@@ -105,7 +105,6 @@ class Model_User extends Orm\Model_Soft
             'validation' => array(
                 'trim',
                 'max_length'   => array(10),
-                'valid_string' => array('alpha','numeric'),
             ),
             'form'       => array(
                 'type'  => 'text',
@@ -459,8 +458,19 @@ class Model_User extends Orm\Model_Soft
      * @return mixed
      * @author shimma
      */
-    public function getEntries($limit = 30, $offset = 0)
+    // public function getEntries($limit = 30, $offset = 0)
+    public function getEntries($page = 1, $row_count = 30)
     {
+        $entries = \Model_Entry::getUserEntries($this->user_id, $page, $row_count);
+
+        return $entries;
+
+
+
+
+
+
+
         $placeholders = array(
             'user_id' => $this->user_id,
         );

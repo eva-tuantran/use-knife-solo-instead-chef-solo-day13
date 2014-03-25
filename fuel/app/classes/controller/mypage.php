@@ -52,7 +52,7 @@ class Controller_Mypage extends Controller_Base_Template
      */
     public function action_index()
     {
-        $entries = $this->user->getEntries(20);
+        $entries = $this->user->getEntries();
 
         $this->template->content = ViewModel::forge('mypage/index')->set('entries', $entries);
         $this->setMetaTag('mypage/index');
