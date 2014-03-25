@@ -37,8 +37,8 @@ class Controller_Calendar extends Controller_Base_Template
      */
     public function action_index()
     {
-        $this->year = $this->param('year', date('Y'));
-        $this->month = $this->param('month', date('n'));
+        $this->year = (int) $this->param('year', date('Y'));
+        $this->month = (int) $this->param('month', date('n'));
 
         if (is_null($this->year) || !is_int($this->year)) {
             $this->year = date('Y');
@@ -56,10 +56,10 @@ class Controller_Calendar extends Controller_Base_Template
         $this->month > 12 and $this->month = 12;
         $this->month < 1 and $this->month = 1;
 
+
         $event_dates = \Model_Fleamarket::findByEventDate(
             $this->year, $this->month
         );
-
         $calendar = $this->buildCalendar($event_dates);
 
         return new Response(View::forge('calendar/month', $calendar));
@@ -72,8 +72,6 @@ class Controller_Calendar extends Controller_Base_Template
      * @param array $event_dates 開催日リスト
      * @return array
      * @author ida
-     *
-     * @TODO: $dataを渡されたときの処理の追加
      */
     private function buildCalendar($event_dates = array())
     {
@@ -118,9 +116,8 @@ class Controller_Calendar extends Controller_Base_Template
 
                 if ($day_of_month > 0 && $day_of_month <= $this->days_in_month) {
                     $day = str_pad($day_of_month, 2, '0', STR_PAD_LEFT);
-                    $date = $this->year . '/' . $month . '/' . $day;
+                    $date = $this->year . '-' . $month . '-' . $day;
                     $is_event = array_key_exists($date, $event_dates);
-
                     $data[$week][$day_of_week] = array(
                         'date' => $date,
                         'day' => $day_of_month,
@@ -194,7 +191,7 @@ class Controller_Calendar extends Controller_Base_Template
             }
         }
 
-        return $this->action_url . $year . '/' . $month;
+        return $this->action_url . $year . '/' . $month . '/';
     }
 
     /**

@@ -1,27 +1,8 @@
-<style type="text/css">
-.title {text-align: left; border-bottom: 1px solid #ccc;}
-table {margin-bottom: 10px; width: 800px; border: 1px solid #ccc;}
-table th, table td {padding: 10px; border: 1px solid #ccc;}
-.event_info li {margin-left: 10px;padding: 5px; border: 1px solid #ccc; float: left;}
-.event_info .invalid {background-color: #666}
-.action_buttons li {margin-left: 10px; float: left;}
-.action_buttons .reservation {background-color: #ffa500}
-</style>
 <script type='text/javascript' src='http://maps.google.com/maps/api/js?sensor=false'></script>
 <script type="text/javascript">
 $(function() {
-  $(".pagination li").on("click", function(evt) {
-      evt.preventDefault();
-      var href = $(this).find("a").attr("href");
-      $("#form_search").attr("action", href).submit();
-  });
-
-  $("#do_filter").on("click", function(evt) {
-      evt.preventDefault();
-      $("#form_search").submit();
-  });
-
-  var map = new Map("access_map", "<?php echo $fleamarket['googlemap_address'];?>");
+/*  var map = new Map("access_map", "<?php echo $fleamarket['googlemap_address'];?>");*/
+  var map = new Map("access_map", "東京都渋谷区");
 });
 
 function Map() {
@@ -66,69 +47,93 @@ Map.prototype = {
   }
 };
 </script>
-<form id="form_search" action="/search/" method="post">
-<h2><?php echo e($fleamarket['name']);?></h2>
-<h2><?php echo $title;?></h2>
-<div class="row">
-  <div class="col-md-6">
-    <p>開催イメージ</p>
-    <div><img src="/path/to/aaa,jpg"></div>
+<div id="contentDetail" class="row">
+  <!-- title -->
+  <div id="title" class="container">
+    <div class="box clearfix">
+      <div class="titleLeft">
+        <h2><?php echo e($fleamarket['name']);?></h2>
+        <p class="date"><?php
+            echo e($fleamarket['event_date']);
+            echo e($fleamarket['event_time_start']);
+            if ($fleamarket['event_time_end']):
+                echo '～' . $fleamarket['event_time_end'];
+            endif;
+        ?></p>
+        <ul class="mylist">
+          <li class="button addMylist"><a href="#"><i></i>マイリストに追加</a></li>
+          <li class="button gotoMylist"><a href="#"><i></i>マイリストを見る</a></li>
+        </ul>
+      </div>
+      <ul class="rightbutton">
+        <li class="button makeReservation"><a href="#"><i></i>出店予約をする</a></li>
+        <li class="button print hidden-xs"><a href="#"><i></i>ページの印刷をする</a></li>
+      </ul>
+    </div>
   </div>
-  <div class="col-md-6">
-    <p>会場周辺地図</p>
-    <div id="access_map" style="width: 400px; height: 400px;"></div>
+  <!-- /title -->
+  <!-- image -->
+  <div id="image" class="col-sm-6">
+    <h3>開催イメージ</h3>
+    <div class="mainPhoto"><img src="img/photo_test_1.jpg" alt="" width="460px" height="300px" class="img-responsive"></div>
+    <ul class="thumbnailPhoto">
+      <li><img src="img/photo_test_2.jpg" alt="" width="100"></li>
+      <li><img src="img/photo_test_3.jpg" alt="" width="100"></li>
+      <li><img src="img/photo_test_4.jpg" alt="" width="100"></li>
+      <li><img src="img/photo_test_5.jpg" alt="" width="100"></li>
+    </ul>
   </div>
-</div>
-<div class="row">
-  <div class="col-md-12">
-    <p>基本情報</p>
-    <table>
-      <tbody>
-        <tr>
-          <th>会場名</th>
-          <td><?php echo e($fleamarket['location_name']);?></td>
-        </tr>
-        <tr>
-          <th>住所</th>
-          <td><?php echo e($fleamarket['address']);?></td>
-        </tr>
-        <tr>
-          <th>交通・アクセス</th>
-          <td><?php
+  <!-- /image -->
+  <!-- map -->
+  <div id="map" class="col-sm-6">
+    <h3>会場周辺地図</h3>
+    <div id="access_map" style="width: 100%; height: 390px;"></div>
+  </div>
+  <!-- /map -->
+  <!-- text -->
+  <div id="text" class="col-sm-12">
+<!--  <div id="text" class="container"> -->
+    <div class="box clearfix"><?php echo e($fleamarket['description']);?></div>
+  </div>
+  <!-- /text -->
+  <!-- table -->
+  <div id="table" class="col-sm-12">
+<!--  <div id="table" class="container"> -->
+    <div class="box clearfix">
+      <h3>開催情報</h3>
+      <dl class="dl-horizontal">
+        <dt>フリマ開催名</dt>
+        <dd><?php echo e($fleamarket['name']);?></dd>
+        <dt>開催日程</dt>
+        <dd><?php echo e($fleamarket['event_date']);?></dd>
+        <dt>開催時間</dt>
+        <dd><?php
+            echo e($fleamarket['event_time_start']);
+            if ($fleamarket['event_time_end']):
+                echo '～' . $fleamarket['event_time_end'];
+            endif;
+        ?></dd>
+        <dt>会場名</dt>
+        <dd><?php echo e($fleamarket['location_name']);?></dd>
+        <dt>住所</dt>
+        <dd><?php
+            if ($fleamarket['zip']):
+                echo '〒' . e($fleamarket['zip']);
+            endif;
+            echo e($fleamarket['address']);
+        ?></dd>
+        <dt>交通・アクセス</dt>
+        <dd><?php
             if (isset($fleamarket['abouts'][\Model_Fleamarket_About::ACCESS])):
                 echo e($fleamarket['abouts'][\Model_Fleamarket_About::ACCESS]['description']);
             endif;
-          ?></td>
-        </tr>
-      </tbody>
-  </table>
-</div>
-<div class="row">
-  <div class="col-md-12">
-    <p>詳細情報</p>
-    <table>
-      <tbody>
-        <tr>
-          <th>開催名</th>
-          <td colspan="3"><?php echo e($fleamarket['name']);?></td>
-        </tr>
-        <tr>
-          <th>開催時間</th>
-          <td><?php
-              echo e($fleamarket['event_time_start']);
-              if ($fleamarket['event_time_end'] != ''):
-                  echo '～' . $fleamarket['event_time_end'];
-              endif;
-          ?></td>
-          <th>出店料金</th>
-          <td><?php echo e($fleamarket['fee_string']);?></td>
-        </tr>
-        <tr>
-          <th>開催形態</th>
-          <td><?php echo e($fleamarket['style_string']);?></td>
-          <th>予約ブース数</th>
-          <td><?php echo e($fleamarket['booth_string']);?></td>
-        </tr>
+        ?></dd>
+        <dt>出店形態</dt>
+        <dd><?php echo e($fleamarket['style_string']);?></dd>
+        <dt>出店料金</dt>
+        <dd><?php echo e($fleamarket['fee_string']);?></dd>
+        <dt>募集ブース</dt>
+        <dd><?php echo e($fleamarket['booth_string']);?></dd>
         <?php
             if (count($fleamarket['abouts']) > 0):
                 $about_count = 0;
@@ -136,31 +141,25 @@ Map.prototype = {
                     if ($about_id == \Model_Fleamarket_About::ACCESS):
                         continue;
                     endif;
-                    if ($about_count % 2 == 0):
-                        echo "<tr>";
-                    endif;
         ?>
-          <th><?php echo e($about['title']);?></th>
-          <td><?php echo e($about['description']);?></td>
+        <dt><?php echo e($about['title']);?></dt>
+        <dd><?php echo e($about['description']);?></dd>
         <?php
-                    if ($about_count % 2 == 1):
-                        echo "</tr>";
-                    endif;
                     $about_count++;
                 endforeach;
             endif;
         ?>
-      </tbody>
-    </table>
+        <dt>備考・注意</dt>
+        <dd></dd>
+      </dl>
+      <ul class="mylist">
+        <li class="button addMylist"><a href="#"><i></i>マイリストに追加</a></li>
+        <li class="button gotoMylist"><a href="#"><i></i>マイリストを見る</a></li>
+      </ul>
+      <ul class="rightbutton">
+        <li class="button makeReservation"><a id="do_reservation" href="/reservation/index/<?php echo $fleamarket['fleamarket_id'];?>"><i></i>出店予約をする</a></li>
+      </ul>
+    </div>
   </div>
 </div>
-<div class="row">
-  <div class="col-md-12">
-    <ul class="action_buttons">
-      <li><a id="do_mylistadd" href="/mypage/listadd/<?php echo $fleamarket['fleamarket_id'];?>">マイリストに追加</li>
-      <li><a id="do_mylist" href="/mypage/mylist/<?php echo $fleamarket['fleamarket_id'];?>">マイリストを見る</a></li>
-      <li class="reservation"><a id="do_reservation" href="/reservation/index/<?php echo $fleamarket['fleamarket_id'];?>">出店予約をする</a></li>
-      <li><a id="do_return_list" href="/search">一覧に戻る</a></li>
-    </ul>
-  </div>
-</div>
+<!-- /table -->

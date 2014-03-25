@@ -20,7 +20,6 @@
 <script src="/assets/js/jquery.min.js"></script>
 <script src="/assets/js/bootstrap.min.js"></script>
 <script src="/assets/js/jquery.carouFredSel.js"></script>
-<?php echo Asset::css('style.css');?>
 <?php echo Asset::render('add_css');?>
 <?php echo Asset::render('add_js');?>
 </head>
@@ -64,6 +63,15 @@
         <li class="guide visible-xs"><a href="/guide">初めての方へ</a></li>
         <li class="inquiry visible-xs"><a href="/inquiry">お問い合せ</a></li>
       </ul>
+      <!-- globalNavBottom -->
+      <div id="globalNavBottom">
+        <ul class="breadcrumb hidden-xs">
+          <li><a href="#">ホーム</a></li>
+          <li class="active">◯◯◯◯◯◯</li>
+        </ul>
+        <form><input type="text" class="form-control hidden-xs" id="keywordInput"></form>
+      </div>
+      <!-- /globalNavBottom -->
     </div>
   </div>
 </div>
@@ -73,9 +81,7 @@
 
 <!-- content -->
 <div id="contentWrap" class="container">
-  <div id="contentHome" class="row">
-    <?php echo $content; ?>
-  </div>
+  <?php echo $content; ?>
 </div>
 <!-- /content -->
 <!-- footer -->
