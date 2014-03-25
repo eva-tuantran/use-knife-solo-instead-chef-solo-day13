@@ -105,7 +105,6 @@ class Model_User extends Orm\Model_Soft
             'validation' => array(
                 'trim',
                 'max_length'   => array(10),
-                'valid_string' => array('alpha','numeric'),
             ),
             'form'       => array(
                 'type'  => 'text',
