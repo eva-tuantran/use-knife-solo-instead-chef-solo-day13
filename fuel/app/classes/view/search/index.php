@@ -16,8 +16,7 @@ class View_Search_Index extends ViewModel
      */
     public function view()
     {
-        $this->title = 'フリーマーケット検索結果';
-        $this->setDisplayString();
+        $this->setItemsForDisplay();
     }
 
     /**
@@ -29,7 +28,7 @@ class View_Search_Index extends ViewModel
      * @return void
      * @author ida
      */
-    private function setDisplayString()
+    private function setItemsForDisplay()
     {
         if (! $this->fleamarket_list) {
             return;
@@ -37,11 +36,11 @@ class View_Search_Index extends ViewModel
 
         foreach ($this->fleamarket_list as &$fleamarket) {
             $strings = $this->createDisplayStrings($fleamarket);
-            list($style_string, $fee_string, $booth_string) = $strings;
+            list($style_list, $fee_list, $booth_list) = $strings;
 
-            $fleamarket['style_string'] = implode('／' , $style_string);
-            $fleamarket['fee_string'] = implode('／' , $fee_string);
-            $fleamarket['booth_string'] = implode('／' , $booth_string);
+            $fleamarket['style_string'] = implode('／' , $style_list);
+            $fleamarket['fee_string'] = implode('／' , $fee_list);
+            $fleamarket['booth_string'] = implode('／' , $booth_list);
         }
     }
 
@@ -79,9 +78,8 @@ class View_Search_Index extends ViewModel
 
                 $booth_list[] = $this->createBoothString(
                     $fleamarket['entries'],
-                    $entry_style_id,
-                    $style_name,
-                    $entry_style['reservation_booth_limit']
+                    $entry_style,
+                    $style_name
                 );
             }
         }
@@ -96,7 +94,8 @@ class View_Search_Index extends ViewModel
      * @param string $style_name 出店形態名
      * @author ida
      */
-    private function createStyleString($style_name) {
+    private function createStyleString($style_name)
+    {
         return $style_name;
     }
 
@@ -108,7 +107,8 @@ class View_Search_Index extends ViewModel
      * @param int $booth_fee 出店料金
      * @author ida
      */
-    private function createFeeString($style_name, $booth_fee) {
+    private function createFeeString($style_name, $booth_fee)
+    {
         $fee_string = $style_name . ':';
         $fee_string .= number_format($booth_fee) . '円';
 
@@ -120,27 +120,27 @@ class View_Search_Index extends ViewModel
      *
      * @access private
      * @param array $entries 出店予約情報
-     * @param string $entry_style_id 出店形態ID
+     * @param array $entry_style 出店形態
      * @param string $style_name 出店形態名
-     * @param int $booth_limit 出店形態別ブース数
      * @author ida
      */
-    private function createBoothString(
-        &$entries, $entry_style_id, $style_name, $booth_limit
-    ) {
+    private function createBoothString($entries, $entry_style, $style_name)
+    {
         $booth_string = '';
         if (! $entries) {
-            return $booth_string;
-        }
+            $booth_string = $style_name . ':' . $entry_style['max_booth'];
+        } else {
+            foreach ($entries as $entry) {
+                if ($entry_style_id !== $entry['fleamarket_entry_style_id']) {
+                    continue;
+                }
 
-        foreach ($entries as $entry) {
-            if ($entry_style_id !== $entry['fleamarket_entry_style_id']) {
-                continue;
+                $max_booth = $entry_style['max_booth'];
+                $reserved_booth = $entry['reserved_booth'];
+                $booth_string = $style_name . ':';
+                $booth_number = $max_booth - $reserved_booth;
+                $booth_string .= '残り ' . $booth_number;
             }
-
-            $booth_string = $style_name . ':';
-            $booth_number = ($booth_limit - $entry['reserved_booth']);
-            $booth_string .= '残り ' . $booth_number . 'ブース';
         }
 
         return $booth_string;

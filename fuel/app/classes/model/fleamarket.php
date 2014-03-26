@@ -307,7 +307,7 @@ GROUP BY
 	googlemap_address,
 	about_access
 ORDER BY
-    f.register_type = :register_status,
+    f.register_type = :register_status DESC,
     f.event_date DESC,
     f.event_time_start
 {$limit}

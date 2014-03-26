@@ -57,6 +57,7 @@
       <ul id="globalNav">
         <li class="market"><a href="/search"><i></i>会場一覧</a></li>
         <li class="reservation"><a href="/reservation"><i></i>出店予約</a></li>
+        <li class="reservation"><a href="/fleamarket"><i></i>フリマ投稿</a></li>
         <li class="news"><a href="/news"><i></i>新着情報</a></li>
         <li class="blog"><a href="/blog"><i></i>ブログ</a></li>
         <li class="mypage"><a href="/mypage"><i></i>マイページ</a></li>

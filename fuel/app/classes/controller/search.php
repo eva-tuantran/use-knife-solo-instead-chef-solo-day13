@@ -36,18 +36,24 @@ class Controller_Search extends Controller_Base_Template
      * @return void
      * @author ida
      */
-    public function action_index($page = null)
+    public function get_index($page = null)
     {
         if (! $page) {
             $page = 1;
         }
 
-        $base_conditions = Input::post('conditions', array());
+        $base_conditions = Input::get('conditions', array());
         $date = Input::get('d');
         if ($date) {
             $base_conditions = array('date' => $date,);
         }
-        $add_conditions = Input::post('add_conditions', array());
+        $add_conditions = Input::get('add_conditions', array());
+        if (isset($base_conditions['shop_fee'])
+            && $base_conditions['shop_fee'] == \Model_Fleamarket::SHOP_FEE_FLAG_FREE
+        ) {
+            $add_conditions['shop_fee'][] = \Model_Fleamarket::SHOP_FEE_FLAG_FREE;
+            unset($base_conditions['shop_fee']);
+        }
 
         $conditions = array_merge($base_conditions, $add_conditions);
 
@@ -73,7 +79,7 @@ class Controller_Search extends Controller_Base_Template
         $view_model->set('fleamarket_list', $fleamarket_list, false);
         $view_model->set('entry_styles', $entry_styles, false);
 
-        $this->template->title = 'フリーマーケット検索結果';
+        $this->setMetaTag('search/index');
         $this->template->content = $view_model;
     }
 
@@ -113,7 +119,7 @@ class Controller_Search extends Controller_Base_Template
         );
         $view_model->set('entries', $entries, false);
 
-        $this->template->title = 'フリーマーケット詳細情報';
+        $this->setMetaTag('search/detail');
         $this->template->content = $view_model;
     }
 
@@ -133,7 +139,10 @@ class Controller_Search extends Controller_Base_Template
 
         $entry_style_fields = array(
             'field' => array(
-                'entry_style_id', 'booth_fee', 'reservation_booth_limit'
+                'entry_style_id',
+                'booth_fee',
+                'max_booth',
+                'reservation_booth_limit',
             )
         );
         foreach ($fleamarket_list as &$fleamarket) {
