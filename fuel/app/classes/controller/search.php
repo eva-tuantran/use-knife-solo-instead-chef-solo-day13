@@ -33,6 +33,7 @@ class Controller_Search extends Controller_Base_Template
      * フリーマーケット検索結果画面
      *
      * @access public
+     * @param mixed $page ページ番号
      * @return void
      * @author ida
      */
