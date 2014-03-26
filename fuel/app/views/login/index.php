@@ -1,40 +1,31 @@
-<h2>ログインページ</h2>
-
-<div class="container">
-  <div class="row">
-    <div class="col-md-9">
-      <div class="thumbnail">
-        <img data-src="holder.js/815x503" alt="thumbnail">
-      </div>
-    </div>
-    <div class="col-md-3">
-      <div class="panel panel-default panel-primary">
-        <div class="panel-body">
-
-          <?php if($error_message): ?>
-            <div class="col-xs-12 alert-danger"><?php echo $error_message ?></div>
-          <?php endif ?>
-
-          <?php if($info_message): ?>
-            <div class="col-xs-12 alert-info"><?php echo $info_message ?></div>
-          <?php endif ?>
-
-          <form id="login" action="/login/auth?rurl=<?php echo $return_url; ?>" accept-charset="utf-8" method="post">
-            <?php echo \Form::csrf(); ?>
-            <label id="label_email" for="form_email">メールアドレス</label>
-            <input id="form_email" name="email" type="text" value="">
-            <label id="label_password" for="form_password">パスワード</label>
-            <input id="form_password" name="password" type="password" value="">
-            <input type="submit" name="submit" class="btn btn-primary" value="ログイン">
-          </form>
-
-          <ul style="padding-left: 0px; margin-top: 10px;">
-            <li>パスワードを忘れた方は<a href="#" target="_blank">コチラ</a></li>
-            <li>よくある質問は<a href="#" target="_blank">コチラ</a></li>
-          </ul>
+<div id="contentLogin" class="row">
+  <!-- ad -->
+  <div id="ad" class="col-sm-7">
+    <a href="#"><img src="http://dummyimage.com/535x250/ccc/fff.jpg"  class="img-responsive"></a>
+  </div>
+  <!-- /ad -->
+  <!-- loginForm -->
+  <div id="loginForm" class="col-sm-5">
+    <div class="box clearfix">
+      <?php if($error_message): ?>
+      <h3><?php echo $error_message ?></h3>
+      <?php endif ?>
+      <?php if($info_message): ?>
+      <h3><?php echo $info_message ?></h3>
+      <?php endif ?>
+      <form id="login" action="/login/auth?rurl=<?php echo $return_url; ?>" accept-charset="utf-8" method="post">
+        <?php echo \Form::csrf(); ?>
+        <div class="form-group">
+          <input type="text" class="form-control" id="mail" placeholder="メールアドレス(ログインID)" name="email">
+          <input type="text" class="form-control" id="password" placeholder="パスワード" name="password">
+          <button type="submit" class="btn btn-default">ログイン</button>
         </div>
-
-      </div>
+      </form>
+      <ul>
+        <li><a href="#" target="_blank">パスワードを忘れた方はこちら</a></li>
+        <li><a href="#" target="_blank">よくあるご質問はこちら</a></li>
+      </ul>
     </div>
   </div>
+  <!-- /loginForm -->
 </div>
