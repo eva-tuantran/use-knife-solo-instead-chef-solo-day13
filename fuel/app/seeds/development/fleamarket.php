@@ -220,10 +220,11 @@ for ($i = 1; $i <= 100; $i++) {
             $booth_fee = array_rand($booth_fee_list);
             $max_booth = mt_rand(20, 100);
             $reservation_booth_limit = mt_rand(1, 10);
+
             $entry_style_line = array(
                 'fleamarket_id' => $fleamarket_id,
                 'entry_style_id' => $entry_style_id,
-                'booth_fee' => $booth_fee,
+                'booth_fee' => $booth_fee_list[$booth_fee],
                 'max_booth' => $max_booth,
                 'reservation_booth_limit' => $reservation_booth_limit,
                 'created_user' => 0,
