@@ -189,5 +189,17 @@ $(function() {
       evt.preventDefault();
       $("#form_search").submit();
   });
+
+  $(".addMylist a").click(function(){
+      $.ajax({
+          type: "post",
+          url: '/favorite/add',
+          dataType: "json"
+      }).done(function(json, textStatus, jqXHR) {
+          alert(json);
+      }).fail(function(jqXHR, textStatus, errorThrown) {
+      }).always(function() {
+      });
+  });
 });
 </script>
