@@ -110,7 +110,7 @@ class Controller_Inquiry extends Controller_Base_Template
             throw new Exception();
         } else {
             $contact = Model_Contact::forge();
-23~            $contact->set($data);
+            $contact->set($data);
             $contact->save(NULL, true);
 
             return $contact;
