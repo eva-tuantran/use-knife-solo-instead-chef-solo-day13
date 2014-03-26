@@ -15,7 +15,7 @@
             $fleamarket_id = $fleamarket['fleamarket_id'];
 ?>
     <div class="box result clearfix">
-      <h3><strong>楽市楽座主催</strong>&nbsp;<a href="#"><?php echo e($fleamarket['event_date']);?>&nbsp;<?php echo e($fleamarket['name']);?></a></h3>
+      <h3><?php if ($fleamarket['register_type'] == \Model_Fleamarket::REGISTER_TYPE_ADMIN):?><strong>楽市楽座主催</strong>&nbsp;<?php endif;?><a href="#"><?php echo e($fleamarket['event_date']);?>&nbsp;<?php echo e($fleamarket['name']);?></a></h3>
       <div class="resultPhoto"><a href="#"><img src="http://dummyimage.com/200x150/ccc/fff.jpg" class="img-rounded"></a></div>
       <div class="resultDetail">
         <dl class="col-md-3">
@@ -44,10 +44,10 @@
           <dd><?php echo e(@$fleamarket['about_access']);?></dd>
         </dl>
         <ul class="facilitys">
-          <li class="facility1 <?php echo $fleamarket['car_shop_flag'] == \Model_Fleamarket::CAR_SHOP_FLAG_NG ? 'invalid': '';?>">車出店可能</li>
-          <li class="facility2 <?php echo $fleamarket['charge_parking_flag'] == \Model_Fleamarket::CHARGE_PARKING_FLAG_NONE ? 'invalid': '';?>">有料駐車場</li>
-          <li class="facility3 <?php echo $fleamarket['free_parking_flag'] == \Model_Fleamarket::FREE_PARKING_FLAG_NONE ? 'invalid': '';?>">無料駐車場</li>
-          <li class="facility4 <?php echo $fleamarket['rainy_location_flag'] == \Model_Fleamarket::RAINY_LOCATION_FLAG_NONE ? 'invalid': '';?>">雨天開催会場</li>
+          <li class="<?php echo $fleamarket['car_shop_flag'] == \Model_Fleamarket::CAR_SHOP_FLAG_NG ?: 'facility1';?>">車出店可能</li>
+          <li class="<?php echo $fleamarket['charge_parking_flag'] == \Model_Fleamarket::CHARGE_PARKING_FLAG_NONE ?: 'facility2';?>">有料駐車場</li>
+          <li class="<?php echo $fleamarket['free_parking_flag'] == \Model_Fleamarket::FREE_PARKING_FLAG_NONE ?: 'facility3';?>">無料駐車場</li>
+          <li class="<?php echo $fleamarket['rainy_location_flag'] == \Model_Fleamarket::RAINY_LOCATION_FLAG_NONE ?: 'facility4';?>">雨天開催会場</li>
         </ul>
         <ul class="detailLink">
           <li><a href="/detail/<?php echo $fleamarket['fleamarket_id'];?>">詳細情報を見る</a></li>

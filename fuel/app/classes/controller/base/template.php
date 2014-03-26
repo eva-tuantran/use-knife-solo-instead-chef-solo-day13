@@ -57,6 +57,8 @@ class Controller_Base_Template extends Controller_Template
      * @return void
      * @author ida
      * @author shimma
+     *
+     * @todo ログイン必須時のリダイレクトの挙動の確定
      */
     public function before()
     {
@@ -74,8 +76,8 @@ class Controller_Base_Template extends Controller_Template
         }
 
         if (in_array($this->request->action, $this->_login_actions) && !Auth::check()) {
-            $referrer = \Input::referrer();
-            return \Response::redirect('/login?rurl='.$referrer);
+            // return \Response::redirect('/login?rurl='.\Uri::main());
+            return \Response::redirect('/login');
         }
 
         if (in_array($this->request->action, $this->_nologin_actions) && Auth::check()) {

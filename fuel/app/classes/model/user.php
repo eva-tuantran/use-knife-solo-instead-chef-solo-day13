@@ -376,7 +376,7 @@ class Model_User extends Orm\Model_Soft
      */
     public function setPassword($new_password)
     {
-        $this->password = Auth::hash_password($new_password);;
+        $this->password = \Auth::hash_password($new_password);;
     }
 
     /**
@@ -452,47 +452,64 @@ class Model_User extends Orm\Model_Soft
 
 
     /**
-     * エントリーしたフリーマーケットのリストを取得します
+     * エントリーしたフリーマーケットの最新情報を取得します
      *
      * @access public
      * @return mixed
      * @author shimma
      */
-    public function getEntries($limit = 30, $offset = 0)
+    public function getEntries($page = 1, $row_count = 30)
     {
-        $placeholders = array(
-            'user_id' => $this->user_id,
-        );
+        $entries = \Model_Entry::getUserEntries($this->user_id, $page, $row_count);
 
-        $query = <<<QUERY
-SELECT
-    e.fleamarket_id,
-    e.fleamarket_entry_style_id,
-    f.event_date,
-    f.event_time_start,
-    f.event_time_end,
-    f.name
-FROM
-    entries AS e
-LEFT JOIN
-    fleamarkets AS f ON
-    e.fleamarket_id = f.fleamarket_id
-WHERE
-    e.user_id = :user_id AND
-    e.deleted_at IS NULL
-ORDER BY f.event_date DESC
-LIMIT {$limit}
-OFFSET {$offset}
-QUERY;
-
-        $res = \DB::query($query)->parameters($placeholders)->execute();
-        if (! empty($res)) {
-            return $res->as_array();
-        }
-
-        return array();
+        return $entries;
     }
 
+    /**
+     * これまで参加したフリマの数を取得します
+     *
+     * @access public
+     * @return int
+     * @author shimma
+     */
+    public function getFinishedEntryCount()
+    {
+        $count = \Model_Entry::getUserFinishedEntryCount($this->user_id);
+
+        return $count;
+    }
+
+    /**
+     * 現在予約中のフリマの数を取得します
+     *
+     * @access public
+     * @return int
+     * @author shimma
+     */
+    public function getReservedEntryCount()
+    {
+        $count = \Model_Entry::getUserReservedEntryCount($this->user_id);
+
+        return $count;
+    }
+
+
+    /**
+     * マイリスト数を取得します
+     *
+     * @access public
+     * @return int
+     * @author shimma
+     *
+     * @todo ここの完成
+     */
+    public function getMylistCount()
+    {
+        // $count = self::
+        $count = 10;
+
+        return $count;
+    }
 
     /**
      * 対象のフリマIDのフリマ予約をキャンセルします
@@ -511,10 +528,10 @@ QUERY;
             )
         ));
 
-        try {
-            $entry->delete();
-        } catch (Exception $e) {
+        if (! $entry) {
             return false;
+        } else {
+            $entry->delete();
         }
 
         return true;

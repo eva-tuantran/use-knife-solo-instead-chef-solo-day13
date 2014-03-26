@@ -13,7 +13,7 @@ class Controller_Search extends Controller_Base_Template
      *
      * @var int
      */
-    private $search_result_per_page = 1;
+    private $search_result_per_page = 20;
 
     /**
      * 事前処理
