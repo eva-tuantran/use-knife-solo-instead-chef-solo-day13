@@ -108,7 +108,7 @@ class Controller_Signup extends Controller_Base_Template
                 'nick_name'    => $new_user->nick_name,
                 'activate_url' => Uri::base().'signup/activate?token='.$new_token->hash,
             );
-            $new_user->sendmail('signup_verify', $email_template_params);
+            $new_user->sendmail('signup/verify', $email_template_params);
         } catch (Orm\ValidationFailed $e) {
             return \Response::redirect('errors/timeout');
         }
@@ -145,7 +145,7 @@ class Controller_Signup extends Controller_Base_Template
             $email_template_params = array(
                 'nick_name'    => $user->nick_name,
             );
-            $user->sendmail('signup_activate', $email_template_params);
+            $user->sendmail('signup/activate', $email_template_params);
 
             return \Response::redirect('signup/thanks');
         } catch (Exception $e) {

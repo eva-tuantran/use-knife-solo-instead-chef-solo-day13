@@ -5,13 +5,13 @@ use \Model_User;
 $seeds = array(
 
     array(
-        'email'           => 'test01@aucfan.com',
-        'password'        => \Auth::hash_password('test01'),
+        'email'           => 'rakuichi-test@aucfan.com',
+        'password'        => \Auth::hash_password('rakuichi-test@aucfan.com'),
         'last_name'       => 'テスト',
         'last_name_kana'  => 'テスト',
         'first_name'      => '楽市',
         'first_name_kana' => 'らくいち',
-        'nick_name'       => '楽市てすと君',
+        'nick_name'       => '楽市てすと',
         'gender'          => 1,
         'prefecture_id'   => 40,
         'zip'             => 'abababab',
@@ -19,8 +19,8 @@ $seeds = array(
         'register_status' => \REGISTER_STATUS_ACTIVATED,
     ),
     array(
-        'email'           => 'test02@aucfan.com',
-        'password'        => \Auth::hash_password('test02'),
+        'email'           => 'afml_dev@aucfan.com',
+        'password'        => \Auth::hash_password('afml_dev@aucfan.com'),
         'last_name'       => 'テスト2',
         'last_name_kana'  => 'テスト2',
         'first_name'      => '楽市',

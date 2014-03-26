@@ -82,12 +82,18 @@ class Controller_Mypage extends Controller_Base_Template
             return false;
         }
 
-        if ($this->user->cancelEntry($fleamarket_id)) {
-            Session::set_flash('notice', \STATUS_FLEAMARKET_CANCEL_SUCCESS);
-            return true;
-        } else {
+        if (! $this->user->cancelEntry($fleamarket_id)) {
             Session::set_flash('notice', \STATUS_FLEAMARKET_CANCEL_FAILED);
             return false;
+        } else {
+            Session::set_flash('notice', \STATUS_FLEAMARKET_CANCEL_SUCCESS);
+
+            $email_template_params = array(
+                'nick_name' => $this->user->nick_name,
+            );
+            $this->user->sendmail('common/user_cancel_fleamarket', $email_template_params);
+
+            return true;
         };
     }
 
