@@ -48,7 +48,7 @@ class send_mail_to_user_waiting_reservation
      */
     private function sendMailByFleamarketEntryStyle($fleamarket, $fleamarket_entry_style)
     {
-        if (! $fleamarket_entry_style->isNeedWaiting()){
+        if (! $fleamarket_entry_style->isNeedWaiting()) {
             $entries = $fleamarket_entry_style->getWaitingEntry();
             foreach ($entries as $entry) {
                 $this->sendMailToUser(array(
