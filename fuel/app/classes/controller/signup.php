@@ -47,10 +47,9 @@ class Controller_Signup extends Controller_Base_Template
     public function action_index()
     {
         $fieldset = self::createFieldset();
-
         $this->setMetaTag('signup/index');
         $this->template->content = View::forge('signup/index');
-        $this->template->content->set('html_form', $fieldset->build('signup/confirm'), false);
+        $this->template->content->set('prefectures', Config::get('master.prefectures'));
         $this->template->content->set('errmsg', $fieldset->validation()->show_errors(), false);
     }
 
