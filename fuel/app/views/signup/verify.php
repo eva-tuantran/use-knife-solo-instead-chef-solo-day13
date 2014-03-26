@@ -1,32 +1,33 @@
-
-<div class="container">
-  <div class="row">
-    <ul class="col-xs-12 nav navbar-nav">
-      <li class="col-xs-3 text-center"><dl><dt>STEP1</dt><dd>登録内容の入力</dd></dl></li>
-      <li class="col-xs-3 text-center"><dl><dt>STEP2</dt><dd>内容確認</dd></dl></li>
-      <li class="col-xs-3 text-center alert-info"><dl><dt>STEP3</dt><dd>仮登録メール送信</dd></dl></li>
-      <li class="col-xs-3 text-center"><dl><dt>STEP4</dt><dd>登録完了</dd></dl></li>
-    </ul>
-  </div>
-</div>
-
-<div class="container">
-
-  <div class="row">
-    <div class="col-md-12">
-    <h2 class="text-center">楽市楽座ID(無料)を登録する</h2>
+<div id="contentForm" class="row">
+  <!-- flow -->
+  <div id="flow" class="row hidden-xs">
+    <div class="steps col-sm-3">
+      <div class="box clearfix"><span class="step">STEP1.</span>登録内容の入力</div>
+    </div>
+    <div class="steps col-sm-3">
+      <div class="box clearfix"><span class="step">STEP2.</span>内容確認</div>
+    </div>
+    <div class="steps col-sm-3">
+      <div class="box active clearfix"><span class="step">STEP3.</span>仮登録メール送信</div>
+    </div>
+    <div class="steps col-sm-3">
+      <div class="box clearfix"><span class="step">STEP4.</span>登録完了</div>
     </div>
   </div>
-</div>
-
-<div class="container">
-  <div class="row">
-    <div class="col-xs-12">
+  <!-- /flow -->
+  <!-- form -->
+  <div id="form" class="container">
+    <div class="box clearfix">
+    <h3>仮登録メールを送信しました</h3>
     <p>
-    仮登録メールを送信しました。<br />
-    メールを確認し、本登録をお願いします。<br />
-    なお30分経ってもメールが到着しない場合は迷惑メールフォルダに入っているまたは
-    メールアドレスが誤っている恐れがございますので、再度登録をお願いします。
-    </p></div>
+    下記のメールアドレスに登録用URLを記載したメールを送信しました。
+    </p>
+    <p> <?php echo $user_input['email']; ?> </p>
+    <p>
+    登録用URLにアクセスして、店舗情報を登録してください。
+    ※回線の混雑状況によってはメールが届かない場合もございます。
+    ※メールが届かない場合は<a href="#">コチラ</a>
+    </p>
   </div>
+  <!-- /form -->
 </div>

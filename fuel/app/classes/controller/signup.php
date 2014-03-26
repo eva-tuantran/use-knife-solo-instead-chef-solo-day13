@@ -118,6 +118,7 @@ class Controller_Signup extends Controller_Base_Template
 
         $this->setMetaTag('signup/verify');
         $this->template->content = View::forge('signup/verify');
+        $this->template->content->set('user_input', $user_data);
     }
 
     /**
@@ -181,7 +182,6 @@ class Controller_Signup extends Controller_Base_Template
             $fieldset->field('device')->set_type(false);
             $fieldset->field('tel')->set_type(false);
             $fieldset->field('mobile_email')->set_type(false);
-            $fieldset->add('submit', '確認', array('type' => 'submit','value' => '確認'));
         }
 
         return $fieldset;

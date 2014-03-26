@@ -133,7 +133,11 @@ class Model_Fleamarket extends \Orm\Model
         'deleted_at',
     );
 
-
+    /**
+     * オブサーバ設定
+     *
+     * @var array $_observers
+     */
     protected static $_observers = array(
         'Orm\\Observer_CreatedAt' => array(
             'events'          => array('before_insert'),
@@ -183,9 +187,32 @@ class Model_Fleamarket extends \Orm\Model
      */
     public static function findByEventDate($year, $month)
     {
-        $query = self::find("all")
-            ->where('event_date', 'between', array($date.'000000', $date.'235959'))
-            ->get();
+        $placeholders = array(
+            ':display_flag' => self::DISPLAY_FLAG_ON,
+            ':ym' => $year . '/' . $month,
+        );
+
+        $table_name = self::$_table_name;
+        $query = <<<"QUERY"
+SELECT
+    DATE_FORMAT(f.event_date, '%Y-%m-%d') AS event_date
+FROM
+    {$table_name} AS f
+WHERE
+    display_flag = :display_flag
+    AND DATE_FORMAT(f.event_date, '%Y/%c') = :ym
+    AND f.deleted_at IS NULL
+QUERY;
+
+        $statement = \DB::query($query)->parameters($placeholders);
+        $result = $statement->execute();
+
+        $rows = null;
+        if (! empty($result)) {
+            $rows = $result->as_array('event_date');
+        }
+
+        return $rows;
     }
 
     /**
@@ -207,7 +234,7 @@ class Model_Fleamarket extends \Orm\Model
 
         $limit = '';
         if (is_numeric($page) && is_numeric($row_count)) {
-            $offset = ($page * $row_count) - 1;
+            $offset = ($page - 1) * $row_count;
             $limit = ' LIMIT ' . $offset . ', ' . $row_count;
         }
 
@@ -251,6 +278,7 @@ LEFT JOIN
     fleamarket_entry_styles AS fes ON f.fleamarket_id = fes.fleamarket_id
 WHERE
     f.display_flag = :display_flag
+    AND f.deleted_at IS NULL
     {$where}
 GROUP BY
 	f.fleamarket_id,
@@ -288,7 +316,7 @@ QUERY;
 
         $statement = \DB::query($query)->parameters($placeholders);
         $result = $statement->execute();
-
+// var_dump(\DB::last_query());
         $rows = null;
         if (! empty($result)) {
             $rows = $result->as_array();
@@ -326,6 +354,7 @@ LEFT JOIN
     fleamarket_entry_styles AS fes ON f.fleamarket_id = fes.fleamarket_id
 WHERE
     f.display_flag = :display_flag
+    AND f.deleted_at IS NULL
     {$where}
 QUERY;
 
@@ -364,8 +393,8 @@ SELECT
     f.name,
     f.promoter_name,
     DATE_FORMAT(f.event_date, '%Y年%m月%d日') AS event_date,
-    DATE_FORMAT(f.event_time_start, '%k時%i分') AS event_time_start,
-    DATE_FORMAT(f.event_time_end, '%k時%i分') AS event_time_end,
+    DATE_FORMAT(f.event_time_start, '%k:%i') AS event_time_start,
+    DATE_FORMAT(f.event_time_end, '%k:%i') AS event_time_end,
     f.event_status,
     f.description,
     f.reservation_start,
@@ -391,6 +420,7 @@ LEFT JOIN
     locations AS l ON f.location_id = l.location_id
 WHERE
     f.display_flag = :display_flag
+    AND f.deleted_at IS NULL
     AND f.fleamarket_id = :fleamarket_id
 QUERY;
 
@@ -413,7 +443,7 @@ QUERY;
      * @return array 検索条件
      * @author void
      */
-    public static function createConditionList($data)
+    public static function createSearchConditionList($data)
     {
         $conditions = array();
 
@@ -488,6 +518,12 @@ QUERY;
             }
             $conditions[] = array(
                 'fes.entry_style_id', $operator, $data['entry_style']
+            );
+        }
+
+        if (isset($data['date']) && $data['date']) {
+            $conditions[] = array(
+                'f.event_date', '=', $data['date']
             );
         }
 

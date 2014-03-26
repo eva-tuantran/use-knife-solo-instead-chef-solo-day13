@@ -13,7 +13,7 @@ class Controller_Search extends Controller_Base_Template
      *
      * @var int
      */
-    private $search_result_per_page = 1;
+    private $search_result_per_page = 20;
 
     /**
      * 事前処理
@@ -36,28 +36,26 @@ class Controller_Search extends Controller_Base_Template
      * @return void
      * @author ida
      */
-    public function post_index($page = null)
+    public function action_index($page = null)
     {
-        Asset::js('jquery.js', array(), 'add_js');
-
         if (! $page) {
             $page = 1;
         }
 
-        $search_result_per_page = Input::post('search_result_per_page');
-        if (! $search_result_per_page) {
-            $search_result_per_page = $this->search_result_per_page;
-        }
-
         $base_conditions = Input::post('conditions', array());
-        $filters = Input::post('filters', array());
-        $conditions = array_merge($base_conditions, $filters);
+        $date = Input::get('d');
+        if ($date) {
+            $base_conditions = array('date' => $date,);
+        }
+        $add_conditions = Input::post('add_conditions', array());
+
+        $conditions = array_merge($base_conditions, $add_conditions);
 
         // 検索条件から表示するフリーマーケット情報の取得
-        $condition_list = Model_Fleamarket::createConditionList($conditions);
-        $total_count = Model_Fleamarket::findBySearchCount($condition_list);
-        $fleamarket_list = Model_Fleamarket::findBySearch(
-            $condition_list, $page, $search_result_per_page
+        $condition_list = \Model_Fleamarket::createSearchConditionList($conditions);
+        $total_count = \Model_Fleamarket::findBySearchCount($condition_list);
+        $fleamarket_list = \Model_Fleamarket::findBySearch(
+            $condition_list, $page, $this->search_result_per_page
         );
         $fleamarket_list = $this->getFleamarketRelatedData($fleamarket_list);
 
@@ -70,7 +68,7 @@ class Controller_Search extends Controller_Base_Template
 
         $view_model = ViewModel::forge('search/index');
         $view_model->set('base_conditions', $base_conditions, false);
-        $view_model->set('filters', $filters, false);
+        $view_model->set('add_conditions', $add_conditions, false);
         $view_model->set('pagination', $pagination, false);
         $view_model->set('fleamarket_list', $fleamarket_list, false);
         $view_model->set('entry_styles', $entry_styles, false);
@@ -93,18 +91,16 @@ class Controller_Search extends Controller_Base_Template
             Response::redirect('errors/notfound');
         }
 
-        Asset::js('jquery.js', array(), 'add_js');
-
-        $fleamarket = Model_Fleamarket::findByDetail($fleamarket_id);
-        $fleamarket_abouts = Model_Fleamarket_About::findByFleamarketId(
+        $fleamarket = \Model_Fleamarket::findByDetail($fleamarket_id);
+        $fleamarket_abouts = \Model_Fleamarket_About::findByFleamarketId(
             $fleamarket_id
         );
 
-        $entry_styles = Model_Fleamarket_Entry_Style::findByFleamarketId(
+        $entry_styles = \Model_Fleamarket_Entry_Style::findByFleamarketId(
             $fleamarket_id
         );
 
-        $entries = Model_Entry::getTotalEntryByFlearmarketId(
+        $entries = \Model_Entry::getTotalEntryByFlearmarketId(
             $fleamarket_id
         );
         $fleamarket['entries'] = $entries;
@@ -141,12 +137,12 @@ class Controller_Search extends Controller_Base_Template
             )
         );
         foreach ($fleamarket_list as &$fleamarket) {
-            $entry_styles = Model_Fleamarket_Entry_Style::findByFleamarketId(
+            $entry_styles = \Model_Fleamarket_Entry_Style::findByFleamarketId(
                 $fleamarket['fleamarket_id'], $entry_style_fields
             );
             $fleamarket['entry_styles'] = $entry_styles;
 
-            $entries = Model_Entry::getTotalEntryByFlearmarketId(
+            $entries = \Model_Entry::getTotalEntryByFlearmarketId(
                 $fleamarket['fleamarket_id']
             );
             $fleamarket['entries'] = $entries;
@@ -165,15 +161,16 @@ class Controller_Search extends Controller_Base_Template
      */
     private function getPaginationConfig($count)
     {
-        if (! $search_result_per_page = Input::post('search_result_per_page')) {
-            $search_result_per_page = $this->search_result_per_page;
+        $search_result_per_page = Input::post('search_result_per_page');
+        if ($search_result_per_page) {
+            $this->search_result_per_page = $search_result_per_page;
         }
 
         return array(
             'pagination_url' => 'search',
             'uri_segment' => 2,
             'num_links' => 5,
-            'per_page' => $search_result_per_page,
+            'per_page' => $this->search_result_per_page,
             'total_items' => $count,
         );
     }
