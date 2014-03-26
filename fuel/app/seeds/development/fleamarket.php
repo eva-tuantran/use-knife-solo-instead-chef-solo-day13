@@ -1,8 +1,8 @@
 <?php
 
 use \Model_Fleamarket;
-use \Model_About;
-use \Model_Entry_Style;
+use \Model_Fleamarket_About;
+use \Model_Fleamarket_Entry_Style;
 use \Model_Location;
 use \Model_Entry;
 
@@ -94,10 +94,23 @@ $prefectures = array(
 
 $cities = array('葛飾区' , '大田区', '品川区', '調布市', '多摩市', '西東京市', '杉並区', );
 
+$entry_styles = array(
+    '1' => '手持ち出店',
+    '2' => '手持ち出店（プロ）',
+    '3' => '車出店',
+    '4' => '車出店（プロ）',
+);
+
+$booth_fee_list = array(
+    0, 500, 1000, 1500, 2000, 2500, 3000
+);
+
+$about_titles = \Model_Fleamarket_About::getAboutTitles();
+
 $event_numbers = array();
 
 for ($i = 1; $i <= 100; $i++) {
-    $rand = mt_rand(1, 10);
+    $rand = mt_rand(1, 30);
     $group_code = array_rand($group_codes);
     $group_code_name = $group_codes[$group_code];
 
@@ -107,7 +120,6 @@ for ($i = 1; $i <= 100; $i++) {
     // 開催地情報
     $prefecture_id = 13; // array_rand($prefectures);
     $city = array_rand($event_end_list);
-
 
     $location_line = array(
         'branch_id'     => null,
@@ -127,7 +139,7 @@ for ($i = 1; $i <= 100; $i++) {
     $location->save();
     $location_id = $location->location_id;
 
-    // 開催地情報
+    // フリマ情報
     if (isset($event_numbers[$group_code])) {
         $event_number = ++$event_numbers[$group_code];
     } else {
@@ -194,4 +206,57 @@ for ($i = 1; $i <= 100; $i++) {
     );
     $fleamarket = \Model_Fleamarket::forge($fleamarket_line);
     $fleamarket->save();
+    $fleamarket_id = $fleamarket->fleamarket_id;
+
+    // フリマ出店形態情報
+    $entry_style_rand = mt_rand(0, 2);
+    if ($entry_style_rand > 0) {
+        $entry_style_list = array_rand($entry_styles, $entry_style_rand);
+        if (! is_array($entry_style_list)) {
+            $entry_style_list = (array) $entry_style_list;
+        }
+
+        foreach ($entry_style_list as $entry_style_id) {
+            $booth_fee = array_rand($booth_fee_list);
+            $max_booth = mt_rand(20, 100);
+            $reservation_booth_limit = mt_rand(1, 10);
+            $entry_style_line = array(
+                'fleamarket_id' => $fleamarket_id,
+                'entry_style_id' => $entry_style_id,
+                'booth_fee' => $booth_fee,
+                'max_booth' => $max_booth,
+                'reservation_booth_limit' => $reservation_booth_limit,
+                'created_user' => 0,
+                'updated_user' => null,
+                'created_at' => \Date::forge()->format('mysql'),
+                // 'updated_at',
+                // 'deleted_at',
+            );
+            \Model_Fleamarket_Entry_Style::forge($entry_style_line)->save();
+        }
+    }
+
+    // フリマ出店形態情報
+    $about_rand = mt_rand(0, 7);
+    if ($about_rand > 0) {
+        $about_list = array_rand($about_titles, $about_rand);
+        if (! is_array($about_list)) {
+            $about_list = (array) $about_list;
+        }
+
+        foreach ($about_list as $about_id) {
+            $about_line = array(
+                'fleamarket_id' => $fleamarket_id,
+                'about_id' => $about_id,
+                'title' => $about_titles[$about_id],
+                'description' => str_repeat('テスト', $rand),
+                'created_user' => 0,
+                'updated_user' => null,
+                'created_at' => \Date::forge()->format('mysql'),
+                // 'updated_at',
+                // 'deleted_at',
+            );
+            \Model_Fleamarket_About::forge($about_line)->save();
+        }
+    }
 }
