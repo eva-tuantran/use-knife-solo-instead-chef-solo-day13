@@ -73,7 +73,7 @@ Map.prototype = {
       </div>
       <ul class="rightbutton">
         <?php if ($is_admin_fleamarket):?>
-        <li class="button makeReservation"><a href="/reservation/index/<?php echo e($fleamarket_id);?>/"><i></i>出店予約をする</a></li>
+        <li class="button makeReservation"><a href="/reservation?fleamarket_id=<?php echo e($fleamarket_id);?>"><i></i>出店予約をする</a></li>
         <?php endif;?>
         <li class="button print hidden-xs"><a href="#"><i></i>ページの印刷をする</a></li>
       </ul>
@@ -208,7 +208,7 @@ Map.prototype = {
       </ul>
       <ul class="rightbutton">
         <?php if ($is_admin_fleamarket):?>
-        <li class="button makeReservation"><a id="do_reservation" href="/reservation/index/<?php echo e($fleamarket_id);?>/"><i></i>出店予約をする</a></li>
+        <li class="button makeReservation"><a id="do_reservation" href="/reservation?fleamarket_id=<?php echo e($fleamarket_id);?>"><i></i>出店予約をする</a></li>
         <?php endif;?>
       </ul>
     </div>
