@@ -160,6 +160,7 @@ class View_Search_Detail extends ViewModel
         if (! $entries) {
             $booth_string = $style_name . ':' . $entry_style['max_booth'];
         } else {
+            $entry_style_id = $entry_style['entry_style_id'];
             foreach ($entries as $entry) {
                 if ($entry_style_id !== $entry['fleamarket_entry_style_id']) {
                     continue;
