@@ -9,8 +9,8 @@
   <p class="case"><?php echo e($event_statuses[$fleamarket['event_status']])?></p>
   <div class="marketPhoto"><a href="/detail/<?php echo e($fleamarket_id);?>"><img src="http://dummyimage.com/180x110/ccc/fff.jpg" class="img-rounded"></a></div>
   <p class="date"><?php echo e($fleamarket['event_date']);?></p>
-  <p class="booth">残り<strong><?php echo e($fleamarket['remaining_booth']);?></strong>ブース</p>
-  <h3><a href="#"><?php echo e($fleamarket['name']);?></a></h3>
+  <p class="booth"><?php if ($fleamarket['remaining_booth'] > 0):?>残り<strong><?php echo e($fleamarket['remaining_booth']);?></strong>ブース<?php endif;?></p>
+  <h3><a href="/detail/<?php echo e($fleamarket_id);?>"><?php echo e($fleamarket['name']);?></a></h3>
   <p class="place"><?php echo e($fleamarket['location_name']);?></p>
 </div>
 <!-- /market -->

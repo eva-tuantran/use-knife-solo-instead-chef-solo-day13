@@ -253,6 +253,7 @@ FROM
 WHERE
     fleamarket_id = :flearmarket_id
     AND entry_status = :entry_status
+    AND deleted_at IS NULL
 {$groupby}
 QUERY;
         $statement = \DB::query($query)->parameters($placeholders);

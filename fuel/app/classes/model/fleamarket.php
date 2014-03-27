@@ -433,9 +433,7 @@ QUERY;
     }
 
     /**
-     * 指定された条件でフリーマーケット情報リストを取得する
-     *
-     * 最新のフリマ取得
+     * 最新のフリーマーケット情報を取得する
      *
      * @access public
      * @param array $condition_list 検索条件
@@ -443,7 +441,7 @@ QUERY;
      * @return array フリーマーケット情報
      * @author ida
      */
-    public static function findByLatest($row_count = 10)
+    public static function findLatest($row_count = 10)
     {
         $placeholders = array(
             ':event_status' => self::EVENT_STATUS_RESERVATION_RECEIPT,
@@ -463,7 +461,7 @@ SELECT
     f.fleamarket_id,
     f.name,
     f.event_status,
-    DATE_FORMAT(f.event_date, '%Y年%m月%d日') AS event_date,
+    DATE_FORMAT(f.event_date, '%m月%d日') AS event_date,
     l.name AS location_name,
     l.prefecture_id AS prefecture_id
 FROM
@@ -477,6 +475,65 @@ WHERE
     AND f.deleted_at IS NULL
 ORDER BY
     f.event_date DESC
+{$limit}
+QUERY;
+
+        $statement = \DB::query($query)->parameters($placeholders);
+        $result = $statement->execute();
+
+        $rows = null;
+        if (! empty($result)) {
+            $rows = $result->as_array();
+        }
+
+        return $rows;
+    }
+
+    /**
+     * 近日開催予定のフリーマーケット情報を取得する
+     *
+     * @access public
+     * @param array $condition_list 検索条件
+     * @param mixed $row_count 取得行数
+     * @return array フリーマーケット情報
+     * @author ida
+     */
+    public static function findUpcoming($row_count = 10)
+    {
+        $placeholders = array(
+            ':event_status' => self::EVENT_STATUS_RECEIPT_END,
+            ':display_flag' => self::DISPLAY_FLAG_ON,
+            ':register_status' => self::REGISTER_TYPE_ADMIN,
+        );
+
+        $limit = '';
+        if (! is_int($row_count)) {
+            $row_count = 10;
+        }
+        $limit = ' LIMIT ' . $row_count;
+
+        $table_name = self::$_table_name;
+        $query = <<<"QUERY"
+SELECT
+    f.fleamarket_id,
+    f.name,
+    f.event_status,
+    f.headline,
+    DATE_FORMAT(f.event_date, '%Y年%m月%d日') AS event_date,
+    l.name AS location_name,
+    l.prefecture_id AS prefecture_id
+FROM
+    {$table_name} AS f
+LEFT JOIN
+    locations AS l ON f.location_id = l.location_id
+WHERE
+    f.display_flag = :display_flag
+    AND f.register_type = :register_status
+    AND f.event_status <= :event_status
+    AND f.deleted_at IS NULL
+    AND DATE_FORMAT(f.event_date, '%Y-%m-%d') >= CURDATE()
+ORDER BY
+    f.event_date
 {$limit}
 QUERY;
 
