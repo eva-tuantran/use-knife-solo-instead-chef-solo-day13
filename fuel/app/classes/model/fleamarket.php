@@ -226,9 +226,7 @@ QUERY;
     public static function findBySearch(
         $condition_list, $page = 0, $row_count = 0
     ) {
-        list($where, $placeholders) = self::createWhereBySearch(
-            $condition_list
-        );
+        list($where, $placeholders) = self::buildSearchWhere($condition_list);
 
         $limit = '';
         if (is_numeric($page) && is_numeric($row_count)) {
@@ -307,7 +305,7 @@ GROUP BY
 	about_access
 ORDER BY
     f.register_type,
-    f.event_date DESC
+    f.event_date
 {$limit}
 QUERY;
 
@@ -332,9 +330,7 @@ QUERY;
      */
     public static function getCountBySearch($condition_list)
     {
-        list($where, $placeholders) = self::createWhereBySearch(
-            $condition_list
-        );
+        list($where, $placeholders) = self::buildSearchWhere($condition_list);
 
         $table_name = self::$_table_name;
         $query = <<<"QUERY"
@@ -556,7 +552,7 @@ QUERY;
      * @return array 検索条件
      * @author void
      */
-    public static function createSearchConditionList($data)
+    public static function createSearchCondition($data)
     {
         $conditions = array();
 
@@ -640,6 +636,18 @@ QUERY;
             );
         }
 
+        if (isset($data['upcomming']) && $data['upcomming']) {
+            $conditions[] = array(
+                'DATE_FORMAT(f.event_date, \'%Y-%m-%d\') >= CURDATE()'
+            );
+        }
+
+        if (isset($data['reservation']) && $data['reservation']) {
+            $conditions[] = array(
+                'f.register_type', '=', \Model_Fleamarket::REGISTER_TYPE_ADMIN
+            );
+        }
+
         return $conditions;
     }
 
@@ -651,7 +659,7 @@ QUERY;
      * @return array
      * @author ida
      */
-    private static function createWhereBySearch($condition_list)
+    private static function buildSearchWhere($condition_list)
     {
         $where = '';
         $placeholders = array(
@@ -666,25 +674,31 @@ QUERY;
 
         $conditions = array();
         foreach ($condition_list as $condition) {
-            $field = $condition[0];
-            $operator = $condition[1];
-            if ($operator === 'IN') {
-                $placeholder = ':' . $field;
-                $values = $condition[2];
-                $placeholder_string = '';
-                foreach ($values as $key => $value) {
-                    $placeholder_in = $placeholder . $key;
-                    $placeholder_string .= $placeholder_string == '' ? '' : ',';
-                    $placeholder_string .= $placeholder_in;
-                    $placeholders[$placeholder_in] = $value;
-                }
-                $value = implode(',', $values);
-                $conditions[] = $field . ' ' . $operator . ' (' . $placeholder_string . ')';
+            if (count($condition) == 1) {
+                $conditions[] = $condition[0];
             } else {
-                $placeholder = ':' . $field;
-                $value = trim($condition[2]);
-                $conditions[] = $field . ' ' . $operator . ' ' . $placeholder;
-                $placeholders[$placeholder] = $value;
+                $field = $condition[0];
+                $operator = $condition[1];
+                if ($operator === 'IN') {
+                    $placeholder = ':' . $field;
+                    $values = $condition[2];
+                    $placeholder_strings = array();
+                    foreach ($values as $key => $value) {
+                        $placeholder_in = $placeholder . $key;
+                        $placeholder_strings[] = $placeholder_in;
+                        $placeholders[$placeholder_in] = $value;
+                    }
+                    $value = implode(',', $values);
+                    $placeholder_string = implode(',', $placeholder_strings);
+                    $conditions[] = $field . ' '
+                                  . $operator . ' '
+                                  . '(' . $placeholder_string . ')';
+                } else {
+                    $placeholder = ':' . $field;
+                    $value = trim($condition[2]);
+                    $conditions[] = $field . ' ' . $operator . ' ' . $placeholder;
+                    $placeholders[$placeholder] = $value;
+                }
             }
         }
 

@@ -16,7 +16,7 @@
         endif;
     ?>
     <ul>
-      <li><a href="/search/1/?d=upcomming">一覧</a></li>
+      <li><a href="/search/1/?upcomming=1">一覧</a></li>
     </ul>
   </div>
 </div>
