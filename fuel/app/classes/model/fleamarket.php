@@ -307,9 +307,8 @@ GROUP BY
 	googlemap_address,
 	about_access
 ORDER BY
-    f.register_type DESC,
-    f.event_date DESC,
-    f.event_time_start
+    f.register_type,
+    f.event_date DESC
 {$limit}
 QUERY;
 
