@@ -64,7 +64,7 @@
         </ul>
         <ul class="rightbutton">
           <?php if ($is_admin_fleamarket):?>
-          <li class="button makeReservation"><a href="/reservation/index/<?php echo e($fleamarket_id);?>/">出店予約をする</a></li>
+          <li class="button makeReservation"><a href="/reservation?fleamarket_id=<?php echo e($fleamarket_id);?>">出店予約をする</a></li>
           <?php endif;?>
           <li class="button addMylist"><a href="#">マイリストに追加</a></li>
         </ul>
