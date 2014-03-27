@@ -49,8 +49,17 @@ class Controller_Base_Template extends Controller_Template
 
 
     /**
-     * 事前処理
+     * メタタグの指定
+     * FuelPHPのmetaに準拠したarrayを設定します
+     * http://fuelphp.com/docs/classes/html.html#/method_meta
      *
+     * @var mixed
+     * @access protected
+     */
+    protected $_meta = array();
+
+    /**
+     * 事前処理
      * アクション実行前の共通処理
      *
      * @access public
@@ -91,6 +100,22 @@ class Controller_Base_Template extends Controller_Template
     }
 
     /**
+     * after
+     *
+     * @param mixed $response
+     * @access public
+     * @return void
+     * @author shimma
+     */
+    public function after($response)
+    {
+        $this->template->meta = $this->_meta;
+
+        return parent::after($response);
+    }
+
+
+    /**
      * http/httpsの引数で現状のURIを引き継いでリダイレクトします
      *
      * @access private
@@ -118,10 +143,13 @@ class Controller_Base_Template extends Controller_Template
      * @access protected
      * @return void
      * @author kobayasi
+     * @author shimma
      */
     protected function setMetaTag($path)
     {
         $meta = Lang::get($path);
+        $this->_meta[] = array('name' => 'keyword',     'content' => $meta['keyword']);
+        $this->_meta[] = array('name' => 'description', 'content' => $meta['description']);
         $this->template->title = $meta['title'];
     }
 
