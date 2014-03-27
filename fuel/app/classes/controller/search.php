@@ -56,7 +56,7 @@ class Controller_Search extends Controller_Base_Template
         }
 
         $reservation = Input::get('reservation');
-        if ($upcomming) {
+        if ($reservation) {
             $base_conditions = array('reservation' => $reservation,);
         }
 
