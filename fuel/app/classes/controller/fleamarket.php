@@ -1,16 +1,11 @@
 <?php
-use Fuel\Core\DB;
-use \Controller\Base;
-use \Model\Fleamarket;
-use \Model\Fleamarket_About;
-use \Model\Location;
 
 /**
  * Fleamarket Controller.
  *
  * @extends  Controller_Template
  */
-class Controller_Fleamarket extends Controller_Base
+class Controller_Fleamarket extends Controller_Base_Template
 {
     /**
      * 事前処理
@@ -40,7 +35,6 @@ class Controller_Fleamarket extends Controller_Base
 
         Asset::css('jquery-ui.min.css', array(), 'add_css');
         Asset::css('jquery-ui-timepicker.css', array(), 'add_css');
-        Asset::js('jquery.js', array(), 'add_js');
         Asset::js('jquery-ui.min.js', array(), 'add_js');
         Asset::js('jquery.ui.datepicker-ja.js', array(), 'add_js');
         Asset::js('jquery-ui-timepicker.js', array(), 'add_js');

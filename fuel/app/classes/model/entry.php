@@ -253,6 +253,7 @@ FROM
 WHERE
     fleamarket_id = :flearmarket_id
     AND entry_status = :entry_status
+    AND deleted_at IS NULL
 {$groupby}
 QUERY;
         $statement = \DB::query($query)->parameters($placeholders);
@@ -317,7 +318,8 @@ SELECT
     l.prefecture_id AS prefecture_id,
     l.address AS address,
     l.googlemap_address AS googlemap_address,
-    fa.description AS about_access
+    fa.description AS about_access,
+    fes.booth_fee AS booth_fee
 FROM
     entries AS e
 LEFT JOIN

@@ -154,10 +154,26 @@ class Controller_Reservation extends Controller_Base_Template
             $db = Database_Connection::instance();
             $db->start_transaction();
 
-            $entry = Model_Entry::forge();
-            $entry->set($data);
-            $entry->save();
-            
+            $condition = array(
+                'user_id'                   => $data['user_id'],
+                'fleamarket_id'             => $data['fleamarket_id'],
+                'fleamarket_entry_style_id' => $data['fleamarket_entry_style_id'],
+            );
+
+            $entry = Model_Entry::find('first',$condition);
+            if ($entry) {
+                $entry->set($data);
+                $entry->save();
+            } else {
+                $entry = Model_Entry::find_deleted('first',$condition);
+                if ($entry) {
+                    $entry->set($data);
+                    $entry->restore();
+                } else {
+                    $entry = Model_Entry::forge($data);
+                    $entry->save();
+                }
+            }
             if (! Input::post('cancel') && 
                 $entry->fleamarket_entry_style->isOverReservationLimit()) {
                 $db->rollback_transaction();

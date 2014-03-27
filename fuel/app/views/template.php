@@ -14,7 +14,7 @@
 <link rel="apple-touch-icon" href="http://www.rakuichi-rakuza.jp/assets/img/ogimage.png">
 <meta property="og:site_name" content="フリーマーケット楽市楽座">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<?php echo Html::meta($meta);?>
+<?php if (! empty($meta)) { echo Html::meta($meta); }; ?>
 <link href="/assets/css/bootstrap.min.css" rel="stylesheet">
 <link href="/assets/css/reset.css" rel="stylesheet">
 <link href="/assets/css/base.css" rel="stylesheet">
@@ -56,8 +56,8 @@
     <button class="navbar-toggle" data-toggle="collapse" data-target=".target"> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span> </button>
     <div class="collapse navbar-collapse target">
       <ul id="globalNav">
-        <li class="market"><a href="/search"><i></i>会場一覧</a></li>
-        <li class="reservation"><a href="/reservation"><i></i>出店予約</a></li>
+        <li class="market"><a href="/search"><i></i>フリマ会場一覧</a></li>
+        <li class="reservation"><a href="/search/1/?reservation=1"><i></i>出店予約</a></li>
         <li class="reservation"><a href="/fleamarket"><i></i>フリマ投稿</a></li>
         <li class="news"><a href="/news"><i></i>新着情報</a></li>
         <li class="blog"><a href="/blog"><i></i>ブログ</a></li>

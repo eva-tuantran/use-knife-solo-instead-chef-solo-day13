@@ -40,7 +40,7 @@ class Controller_Fleamarket_Latest extends Controller_Base_Template
      */
     public function get_index()
     {
-        $fleamarket_list = \Model_Fleamarket::findByLatest(
+        $fleamarket_list = \Model_Fleamarket::findLatest(
             $this->result_per_page
         );
 

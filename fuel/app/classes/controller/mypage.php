@@ -22,7 +22,6 @@ class Controller_Mypage extends Controller_Base_Template
         'save',
     );
 
-    protected $user;
 
     /**
      * before
@@ -37,8 +36,7 @@ class Controller_Mypage extends Controller_Base_Template
     {
         parent::before();
 
-        $this->user = Auth::get_user_instance();
-        if (! $this->user) {
+        if (! $this->login_user) {
             return \Response::redirect('/login');
         }
     }
@@ -54,7 +52,7 @@ class Controller_Mypage extends Controller_Base_Template
     {
         $view_model = ViewModel::forge('mypage/index');
         $view_model->set('prefectures', Config::get('master.prefectures'), false);
-        $view_model->set('entries', $this->user->getEntries());
+        $view_model->set('entries', $this->login_user->getEntries());
         $this->template->content = $view_model;
         $this->setMetaTag('mypage/index');
     }
@@ -76,27 +74,20 @@ class Controller_Mypage extends Controller_Base_Template
             return \Response::redirect('/mypage', 'refresh');
         }
 
-        if (! $this->user->cancelEntry($fleamarket_id)) {
+        if (! $this->login_user->cancelEntry($fleamarket_id)) {
             Session::set_flash('notice', \STATUS_FLEAMARKET_CANCEL_FAILED);
         } else {
             Session::set_flash('notice', \STATUS_FLEAMARKET_CANCEL_SUCCESS);
             $email_template_params = array(
-                'nick_name' => $this->user->nick_name,
+                'nick_name' => $this->login_user->nick_name,
             );
-            $this->user->sendmail('common/user_cancel_fleamarket', $email_template_params);
+            $this->login_user->sendmail('common/user_cancel_fleamarket', $email_template_params);
         };
 
         //処理ページを見せ1秒後にマイページにリダイレクトさせる
-        $this->_meta = array(
-            array(
-                'http-equiv' => 'refresh',
-                'content'    => '1; URL=/mypage',
-            ),
-        );
-
+        $this->setLazyRedirect('/mypage');
         $this->setMetaTag('login/index');
         $this->template->content = View::forge('mypage/cancel');
-        // \Response::redirect('/mypage', 'refresh', 200);
    }
 
     /**
@@ -109,7 +100,7 @@ class Controller_Mypage extends Controller_Base_Template
     public function action_password()
     {
         $fieldset = Fieldset::forge();
-        $fieldset->add_model('Model_User')->populate($this->user);
+        $fieldset->add_model('Model_User')->populate($this->login_user);
 
         $this->template->content = View::forge('mypage/index');
         $this->template->content->set('dump', $fieldset->build('test'), false);
@@ -129,7 +120,7 @@ class Controller_Mypage extends Controller_Base_Template
         $status_code = Session::get_flash('status_code');
         $data['info_message'] = $this->getStatusMessage($status_code);
 
-        $fieldset = Fieldset::forge()->add_model('Model_User')->populate($this->user);
+        $fieldset = Fieldset::forge()->add_model('Model_User')->populate($this->login_user);
         $fieldset->field('password')->set_type(false);
         $fieldset->add('submit', '', array('type' => 'submit','value' => '保存する'));
 
@@ -159,9 +150,9 @@ class Controller_Mypage extends Controller_Base_Template
             Session::set_flash('status_code', \STATUS_PROFILE_CHANGE_FAILED);
         } else {
             $update_data = array_filter($validation->validated(), 'strlen');
-            $update_data['updated_user'] = $this->user->user_id;
-            $this->user->set($update_data);
-            $this->user->save();
+            $update_data['updated_user'] = $this->login_user->user_id;
+            $this->login_user->set($update_data);
+            $this->login_user->save();
             Session::set_flash('status_code', \STATUS_PROFILE_CHANGE_SUCCESS);
         }
 

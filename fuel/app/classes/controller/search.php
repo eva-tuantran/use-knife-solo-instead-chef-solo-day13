@@ -44,10 +44,22 @@ class Controller_Search extends Controller_Base_Template
         }
 
         $base_conditions = Input::get('conditions', array());
+
         $date = Input::get('d');
         if ($date) {
             $base_conditions = array('date' => $date,);
         }
+
+        $upcomming = Input::get('upcomming');
+        if ($upcomming) {
+            $base_conditions = array('upcomming' => $upcomming,);
+        }
+
+        $reservation = Input::get('reservation');
+        if ($reservation) {
+            $base_conditions = array('reservation' => $reservation,);
+        }
+
         $add_conditions = Input::get('add_conditions', array());
         if (isset($base_conditions['shop_fee'])
             && $base_conditions['shop_fee'] == \Model_Fleamarket::SHOP_FEE_FLAG_FREE
@@ -59,7 +71,7 @@ class Controller_Search extends Controller_Base_Template
         $conditions = array_merge($base_conditions, $add_conditions);
 
         // 検索条件から表示するフリーマーケット情報の取得
-        $condition_list = \Model_Fleamarket::createSearchConditionList($conditions);
+        $condition_list = \Model_Fleamarket::createSearchCondition($conditions);
         $total_count = \Model_Fleamarket::getCountBySearch($condition_list);
         $fleamarket_list = \Model_Fleamarket::findBySearch(
             $condition_list, $page, $this->search_result_per_page

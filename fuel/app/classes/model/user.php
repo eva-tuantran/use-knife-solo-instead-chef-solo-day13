@@ -12,6 +12,12 @@ class Model_User extends Orm\Model_Soft
 
     protected static $_primary_key = array('user_id');
 
+    protected static $_has_many = array(
+        'favorites' => array(
+            'key_from' => 'user_id',
+        ),
+    );
+
     protected static $_properties = array(
         'user_id' => array(
             'label' => 'ユーザID',

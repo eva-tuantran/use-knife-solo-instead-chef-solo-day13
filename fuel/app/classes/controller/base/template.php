@@ -56,7 +56,18 @@ class Controller_Base_Template extends Controller_Template
      * @var mixed
      * @access protected
      */
-    protected $_meta = array();
+    protected $meta = array();
+
+
+    /**
+     * ログインしているユーザインスタンスです
+     *
+     * @var mixed
+     * @access protected
+     */
+    protected $login_user;
+
+
 
     /**
      * 事前処理
@@ -95,6 +106,7 @@ class Controller_Base_Template extends Controller_Template
 
         Asset::js('holder.js', array(), 'add_js');
         Lang::load('meta');
+        $this->login_user = Auth::get_user_instance();
 
         parent::before();
     }
@@ -109,7 +121,7 @@ class Controller_Base_Template extends Controller_Template
      */
     public function after($response)
     {
-        $this->template->meta = $this->_meta;
+        $this->template->meta = $this->meta;
 
         return parent::after($response);
     }
@@ -148,10 +160,28 @@ class Controller_Base_Template extends Controller_Template
     protected function setMetaTag($path)
     {
         $meta = Lang::get($path);
-        $this->_meta[] = array('name' => 'keyword',     'content' => $meta['keyword']);
-        $this->_meta[] = array('name' => 'description', 'content' => $meta['description']);
+        $this->meta[] = array('name' => 'keyword',     'content' => $meta['keyword']);
+        $this->meta[] = array('name' => 'description', 'content' => $meta['description']);
         $this->template->title = $meta['title'];
     }
+
+
+    /**
+     * 遅延リダイレクトを行います。
+     * Viewを表示後、timerで指定の秒数後にリダイレクト処理を行います。
+     *
+     * @access protected
+     * @return void
+     * @author shimma
+     */
+    protected function setLazyRedirect($url, $timer = 1)
+    {
+        if (! is_numeric($timer)) {
+            return false;
+        }
+        $this->meta[] = array('http-equiv' => 'refresh', 'content' => "${timer}; URL=${url}");
+    }
+
 
     /**
      * ステータス変更文字列を取得します。

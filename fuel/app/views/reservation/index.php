@@ -54,7 +54,14 @@
 	<div class="form-group">
 	  <label class="col-sm-2 control-label">ブース数</label>
 	  <div class="col-sm-10">
-            <input type="text" name="reserved_booth" value="<?php echo e($input['reserved_booth']); ?>">
+	    <select name="reserved_booth">
+	      <?php foreach (range(1,$fleamarket_entry_style->reservation_booth_limit) as $n) { ?>
+	      <option value="<?php echo $n; ?>"
+              <?php if ($input['reserved_booth'] == $n) { echo ' selected=selected'; } ?>>
+		<?php echo $n; ?>
+              </option>
+	      <?php } ?>
+	    </select>
 	    <?php if (isset($errors['reserved_booth'])) { ?>
 	    <?php echo $errors['reserved_booth']; ?>
 	    <?php } ?>
