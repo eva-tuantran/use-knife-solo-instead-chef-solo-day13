@@ -177,7 +177,7 @@ class Controller_Base_Template extends Controller_Template
     protected function setLazyRedirect($url, $timer = 1)
     {
         if (! is_numeric($timer)) {
-            $time = 1;
+            return false;
         }
         $this->meta[] = array('http-equiv' => 'refresh', 'content' => "${timer}; URL=${url}");
     }
