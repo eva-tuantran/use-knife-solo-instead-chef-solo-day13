@@ -401,8 +401,8 @@
                       <li><a href="/detail/<?php echo $entry['fleamarket_id'] ?>">詳細情報を見る<i></i></a></li>
                     </ul>
                     <ul class="rightbutton">
-                        <li class="button change makeReservation"><a href="#"><i></i>予約変更</a></li>
-                        <li class="button cancel"><a href="/mypage/cancel?fleamarket_id=<?php echo $entry['fleamarket_id'] ?>"><i></i>予約解除</a></li>
+                        <li class="button change makeReservation"><a href="/mypage/change?fleamarket_id=<?php echo $entry['fleamarket_id'] ?>"><i></i>予約変更</a></li>
+                        <li class="button cancel"><a href="/mypage/cancel?fleamarket_id=<?php echo $entry['fleamarket_id'] ?>" class="fleamarket_cancel"><i></i>予約解除</a></li>
                       </form>
                     </ul>
                   </div>
@@ -430,4 +430,11 @@ next:{button:"#next",key:"right"}
 });});
     $(window).resize();
     });
+
+
+$('.fleamarket_cancel').click(function() {
+    if (!confirm('フリーマーケットをキャンセルします\nよろしいですか？')) {
+        return false;
+    }
+});
 </script>

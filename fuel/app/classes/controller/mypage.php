@@ -66,31 +66,38 @@ class Controller_Mypage extends Controller_Base_Template
      * @access public
      * @return void
      * @author shimma
-     *
-     * @todo ajaxの呼び出し箇所とつなぎ込み
      */
     public function get_cancel()
     {
         $fleamarket_id = Input::get('fleamarket_id');
 
         if (! $fleamarket_id) {
-            return false;
+            Session::set_flash('notice', \STATUS_FLEAMARKET_CANCEL_FAILED);
+            return \Response::redirect('/mypage', 'refresh');
         }
 
         if (! $this->user->cancelEntry($fleamarket_id)) {
             Session::set_flash('notice', \STATUS_FLEAMARKET_CANCEL_FAILED);
-            return false;
         } else {
             Session::set_flash('notice', \STATUS_FLEAMARKET_CANCEL_SUCCESS);
-
             $email_template_params = array(
                 'nick_name' => $this->user->nick_name,
             );
             $this->user->sendmail('common/user_cancel_fleamarket', $email_template_params);
-
-            return true;
         };
-    }
+
+        //処理ページを見せ1秒後にマイページにリダイレクトさせる
+        $this->_meta = array(
+            array(
+                'http-equiv' => 'refresh',
+                'content'    => '1; URL=/mypage',
+            ),
+        );
+
+        $this->setMetaTag('login/index');
+        $this->template->content = View::forge('mypage/cancel');
+        // \Response::redirect('/mypage', 'refresh', 200);
+   }
 
     /**
      * パスワード変更ページ

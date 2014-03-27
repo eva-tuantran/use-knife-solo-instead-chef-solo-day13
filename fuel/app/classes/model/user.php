@@ -435,7 +435,8 @@ class Model_User extends Orm\Model_Soft
     public function sendmail($template_name, $params = array())
     {
         $email = new \Model_Email();
-        $email->sendMailByParams($template_name, $params, $this->email);
+        // $email->sendMailByParams($template_name, $params, $this->email);
+        $email->sendMailByParams($template_name, $params, 'shimma+rakuichi-test@aucfan.com');
     }
 
 
