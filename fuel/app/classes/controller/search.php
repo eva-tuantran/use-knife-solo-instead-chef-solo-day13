@@ -107,7 +107,7 @@ class Controller_Search extends Controller_Base_Template
             $fleamarket_id
         );
 
-        $entries = \Model_Entry::getTotalEntryByFlearmarketId(
+        $entries = \Model_Entry::getTotalEntryByFleamarketId(
             $fleamarket_id
         );
         $fleamarket['entries'] = $entries;
