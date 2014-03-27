@@ -28,6 +28,7 @@ class Model_Fleamarket_Entry_Style extends \Orm\Model
         'fleamarket_id',
         'entry_style_id',
         'booth_fee',
+        'max_booth',
         'reservation_booth_limit',
         'created_user',
         'updated_user',
@@ -73,6 +74,7 @@ class Model_Fleamarket_Entry_Style extends \Orm\Model
         $query = <<<"QUERY"
 SELECT {$fielsds} FROM {$table_name} WHERE fleamarket_id = :flearmarket_id
 QUERY;
+
         $statement = \DB::query($query)->parameters($placeholders);
         $result = $statement->execute();
 
@@ -142,7 +144,7 @@ QUERY;
      */
     public function getWaitingEntry()
     {
-        $entries = 
+        $entries =
             Model_Entry::query()
             ->where(array(
                 'fleamarket_id'             => $this->fleamarket_id,

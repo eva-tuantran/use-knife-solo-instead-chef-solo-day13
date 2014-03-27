@@ -13,10 +13,20 @@
     else:
         foreach ($fleamarket_list as $fleamarket):
             $fleamarket_id = $fleamarket['fleamarket_id'];
+
+            $is_admin_fleamarket = false;
+            if ($fleamarket['register_type'] == \Model_Fleamarket::REGISTER_TYPE_ADMIN):
+                $is_admin_fleamarket = true;
+            endif;
 ?>
     <div class="box result clearfix">
-      <h3><?php if ($fleamarket['register_type'] == \Model_Fleamarket::REGISTER_TYPE_ADMIN):?><strong>楽市楽座主催</strong>&nbsp;<?php endif;?><a href="#"><?php echo e($fleamarket['event_date']);?>&nbsp;<?php echo e($fleamarket['name']);?></a></h3>
-      <div class="resultPhoto"><a href="#"><img src="http://dummyimage.com/200x150/ccc/fff.jpg" class="img-rounded"></a></div>
+      <h3>
+          <?php if ($is_admin_fleamarket):?><strong>楽市楽座主催</strong>&nbsp;<?php endif;?>
+          <a href="/detail/<?php echo e($fleamarket['fleamarket_id']);?>/">
+              <?php echo e($fleamarket['event_date']);?>&nbsp;<?php echo e($fleamarket['name']);?>
+          </a>
+      </h3>
+      <div class="resultPhoto"><a href="/detail/<?php echo e($fleamarket_id);?>/"><img src="http://dummyimage.com/200x150/ccc/fff.jpg" class="img-rounded"></a></div>
       <div class="resultDetail">
         <dl class="col-md-3">
           <dt>出店数</dt>
@@ -50,10 +60,12 @@
           <li class="<?php echo $fleamarket['rainy_location_flag'] == \Model_Fleamarket::RAINY_LOCATION_FLAG_NONE ?: 'facility4';?>">雨天開催会場</li>
         </ul>
         <ul class="detailLink">
-          <li><a href="/detail/<?php echo $fleamarket['fleamarket_id'];?>">詳細情報を見る</a></li>
+          <li><a href="/detail/<?php echo e($fleamarket_id);?>/">詳細情報を見る</a></li>
         </ul>
         <ul class="rightbutton">
-          <li class="button makeReservation"><a href="#">出店予約をする</a></li>
+          <?php if ($is_admin_fleamarket):?>
+          <li class="button makeReservation"><a href="/reservation/index/<?php echo e($fleamarket_id);?>/">出店予約をする</a></li>
+          <?php endif;?>
           <li class="button addMylist"><a href="#">マイリストに追加</a></li>
         </ul>
       </div>
@@ -66,7 +78,7 @@
   </div>
   <!-- /searchResult -->
   <!-- searchSelecter -->
-  <form id="form_search" action="/search/index/1/" method="post">
+  <form id="form_search" action="/search/1/" method="get">
     <div id="searchSelecter" class="col-sm-3 col-sm-pull-9">
       <div class="box clearfix">
       <?php

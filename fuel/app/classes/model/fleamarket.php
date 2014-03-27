@@ -308,7 +308,7 @@ GROUP BY
 	googlemap_address,
 	about_access
 ORDER BY
-    f.register_type = :register_status,
+    f.register_type = :register_status DESC,
     f.event_date DESC,
     f.event_time_start
 {$limit}
@@ -316,7 +316,7 @@ QUERY;
 
         $statement = \DB::query($query)->parameters($placeholders);
         $result = $statement->execute();
-// var_dump(\DB::last_query());
+
         $rows = null;
         if (! empty($result)) {
             $rows = $result->as_array();
@@ -433,6 +433,66 @@ QUERY;
         }
 
         return $rows[0];
+    }
+
+    /**
+     * 指定された条件でフリーマーケット情報リストを取得する
+     *
+     * 最新のフリマ取得
+     *
+     * @access public
+     * @param array $condition_list 検索条件
+     * @param mixed $row_count 取得行数
+     * @return array フリーマーケット情報
+     * @author ida
+     */
+    public static function findByLatest($row_count = 10)
+    {
+
+        $limit = '';
+        if (! is_int($row_count)) {
+            $row_count = 10;
+        }
+        $limit = ' LIMIT ' . $row_count;
+
+        $table_name = self::$_table_name;
+        $query = <<<"QUERY"
+SELECT
+    f.fleamarket_id,
+    f.name,
+    DATE_FORMAT(f.event_date, '%Y年%m月%d日') AS event_date,
+    l.name AS location_name,
+    l.prefecture_id AS prefecture_id
+FROM
+    {$table_name} AS f
+LEFT JOIN
+    locations AS l ON f.location_id = l.location_id
+WHERE
+    f.display_flag = :display_flag
+    AND f.deleted_at IS NULL
+    {$where}
+GROUP BY
+	f.fleamarket_id,
+	f.name,
+	event_date,
+	location_name,
+	prefecture_id,
+ORDER BY
+    f.register_type = :register_status DESC,
+    f.event_date DESC,
+    f.event_time_start
+{$limit}
+QUERY;
+
+        $statement = \DB::query($query)->parameters($placeholders);
+        $result = $statement->execute();
+
+        $rows = null;
+        if (! empty($result)) {
+            $rows = $result->as_array();
+        }
+
+        return $rows;
     }
 
     /**

@@ -54,7 +54,7 @@ $(function() {
 <div id="search" class="container">
   <div class="box">
     <div class="row">
-      <form id="form_search_calendar" action="/search/1/" method="post">
+      <form id="form_search_calendar" action="/search/1/" method="get">
         <fieldset>
           <div id="searchTitle" class="col-md-2">
             <h2><i></i>条件で探す</h2>
@@ -74,7 +74,7 @@ $(function() {
                 <input id="form_rainy_location" type="checkbox" name="conditions[rainy_location]" value="<?php echo \Model_Fleamarket::RAINY_LOCATION_FLAG_EXIST;?>">雨天開催会場
               </label>
               <label for="form_pro_shop">
-                <input id="form_pro_shop" type="checkbox" name="conditions[form_pro_shop]" value="<?php echo \Model_Fleamarket::PRO_SHOP_FLAG_OK;?>">プロ出店可
+                <input id="form_pro_shop" type="checkbox" name="conditions[pro_shop]" value="<?php echo \Model_Fleamarket::PRO_SHOP_FLAG_OK;?>">プロ出店可
               </label>
               <label for="form_charge_parking">
                 <input id="form_charge_parking" type="checkbox" name="conditions[charge_parking]" value="<?php echo \Model_Fleamarket::CHARGE_PARKING_FLAG_EXIST;?>">有料駐車場あり
