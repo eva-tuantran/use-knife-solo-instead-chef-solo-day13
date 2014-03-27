@@ -56,5 +56,10 @@ return array(
         'description' => 'ログインページ description',
         'keyword'     => 'ログインページ キーワード',
     ),
+    'mypage/index' => array(
+        'title'       => 'マイページ',
+        'description' => 'マイページ description',
+        'keyword'     => 'マイページ キーワード',
+    ),
 );
 
