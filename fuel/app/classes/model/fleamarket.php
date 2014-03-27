@@ -72,7 +72,6 @@ class Model_Fleamarket extends \Orm\Model
     const PICKUP_FLAG_OFF = 0;
     const PICKUP_FLAG_ON = 1;
 
-
     /**
      * テーブル名
      *
@@ -171,7 +170,7 @@ class Model_Fleamarket extends \Orm\Model
      */
     public static function getEventStatuses()
     {
-        return $event_statuses;
+        return self::$event_statuses;
     }
 
     /**
@@ -308,9 +307,8 @@ GROUP BY
 	googlemap_address,
 	about_access
 ORDER BY
-    f.register_type = :register_status DESC,
-    f.event_date DESC,
-    f.event_time_start
+    f.register_type,
+    f.event_date DESC
 {$limit}
 QUERY;
 
@@ -333,7 +331,7 @@ QUERY;
      * @return array フリーマーケット情報
      * @author ida
      */
-    public static function findBySearchCount($condition_list)
+    public static function getCountBySearch($condition_list)
     {
         list($where, $placeholders) = self::createWhereBySearch(
             $condition_list
@@ -379,7 +377,7 @@ QUERY;
      * @return array フリーマーケット情報
      * @author ida
      */
-    public static function findByDetail($fleamarket_id)
+    public static function findDetail($fleamarket_id)
     {
         $placeholders = array(
             ':fleamarket_id' => $fleamarket_id,
@@ -448,6 +446,11 @@ QUERY;
      */
     public static function findByLatest($row_count = 10)
     {
+        $placeholders = array(
+            ':event_status' => self::EVENT_STATUS_RESERVATION_RECEIPT,
+            ':display_flag' => self::DISPLAY_FLAG_ON,
+            ':register_status' => self::REGISTER_TYPE_ADMIN,
+        );
 
         $limit = '';
         if (! is_int($row_count)) {
@@ -460,6 +463,7 @@ QUERY;
 SELECT
     f.fleamarket_id,
     f.name,
+    f.event_status,
     DATE_FORMAT(f.event_date, '%Y年%m月%d日') AS event_date,
     l.name AS location_name,
     l.prefecture_id AS prefecture_id
@@ -469,18 +473,11 @@ LEFT JOIN
     locations AS l ON f.location_id = l.location_id
 WHERE
     f.display_flag = :display_flag
+    AND f.register_type = :register_status
+    AND f.event_status <= :event_status
     AND f.deleted_at IS NULL
-    {$where}
-GROUP BY
-	f.fleamarket_id,
-	f.name,
-	event_date,
-	location_name,
-	prefecture_id,
 ORDER BY
-    f.register_type = :register_status DESC,
-    f.event_date DESC,
-    f.event_time_start
+    f.event_date DESC
 {$limit}
 QUERY;
 

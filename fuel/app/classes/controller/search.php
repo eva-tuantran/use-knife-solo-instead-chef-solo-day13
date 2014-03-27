@@ -60,7 +60,7 @@ class Controller_Search extends Controller_Base_Template
 
         // 検索条件から表示するフリーマーケット情報の取得
         $condition_list = \Model_Fleamarket::createSearchConditionList($conditions);
-        $total_count = \Model_Fleamarket::findBySearchCount($condition_list);
+        $total_count = \Model_Fleamarket::getCountBySearch($condition_list);
         $fleamarket_list = \Model_Fleamarket::findBySearch(
             $condition_list, $page, $this->search_result_per_page
         );
@@ -98,7 +98,7 @@ class Controller_Search extends Controller_Base_Template
             Response::redirect('errors/notfound');
         }
 
-        $fleamarket = \Model_Fleamarket::findByDetail($fleamarket_id);
+        $fleamarket = \Model_Fleamarket::findDetail($fleamarket_id);
         $fleamarket_abouts = \Model_Fleamarket_About::findByFleamarketId(
             $fleamarket_id
         );
@@ -107,7 +107,7 @@ class Controller_Search extends Controller_Base_Template
             $fleamarket_id
         );
 
-        $entries = \Model_Entry::getTotalEntryByFlearmarketId(
+        $entries = \Model_Entry::getTotalEntryByFleamarketId(
             $fleamarket_id
         );
         $fleamarket['entries'] = $entries;
@@ -152,7 +152,7 @@ class Controller_Search extends Controller_Base_Template
             );
             $fleamarket['entry_styles'] = $entry_styles;
 
-            $entries = \Model_Entry::getTotalEntryByFlearmarketId(
+            $entries = \Model_Entry::getTotalEntryByFleamarketId(
                 $fleamarket['fleamarket_id']
             );
             $fleamarket['entries'] = $entries;
