@@ -187,7 +187,19 @@
 <div class="ad"><img src="/assets/img/ad/test.jpg" alt="test" width="970" height="150" class="img-responsive"></div>
 <!-- /ad -->
 <!-- pagination -->
-<?php echo $pagination->render();?>
+<?php
+    if ('' != ($pagnation =  $pagination->render())):
+        echo $pagnation;
+    elseif ($fleamarket_list):
+?>
+<ul class="pagination">
+    <li class="disabled"><a href="javascript:void(0);" rel="prev">«</a></li>
+    <li class="active"><a href="javascript:void(0);">1<span class="sr-only"></span></a></li>
+    <li class="disabled"><a href="javascript:void(0);" rel="next">»</a></li>
+</ul>
+<?php
+    endif;
+?>
 <!-- /pagination -->
 <script type="text/javascript">
 $(function() {
