@@ -28,6 +28,7 @@ class Model_Fleamarket_Entry_Style extends \Orm\Model
         'fleamarket_id',
         'entry_style_id',
         'booth_fee',
+        'max_booth',
         'reservation_booth_limit',
         'created_user',
         'updated_user',
@@ -116,7 +117,7 @@ QUERY;
      */
     public function isOverReservationLimit()
     {
-        return $this->reservation_booth_limit < $this->sumReservedBooth();
+        return $this->max_booth < $this->sumReservedBooth();
     }
 
     /**
@@ -129,7 +130,7 @@ QUERY;
      */
     public function isNeedWaiting()
     {
-        return $this->reservation_booth_limit <= $this->sumReservedBooth();
+        return $this->max_booth <= $this->sumReservedBooth();
     }
 
     /**
