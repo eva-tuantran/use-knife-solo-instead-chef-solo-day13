@@ -72,7 +72,6 @@ class Model_Fleamarket extends \Orm\Model
     const PICKUP_FLAG_OFF = 0;
     const PICKUP_FLAG_ON = 1;
 
-
     /**
      * テーブル名
      *
@@ -332,7 +331,7 @@ QUERY;
      * @return array フリーマーケット情報
      * @author ida
      */
-    public static function findBySearchCount($condition_list)
+    public static function getCountBySearch($condition_list)
     {
         list($where, $placeholders) = self::createWhereBySearch(
             $condition_list
@@ -378,7 +377,7 @@ QUERY;
      * @return array フリーマーケット情報
      * @author ida
      */
-    public static function findByDetail($fleamarket_id)
+    public static function findDetail($fleamarket_id)
     {
         $placeholders = array(
             ':fleamarket_id' => $fleamarket_id,
