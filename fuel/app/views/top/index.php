@@ -2,13 +2,21 @@
 <!-- soon -->
 <div id="soon" class="container">
   <div class="box clearfix">
-    <h2>近日開催</h2>
-    <dl class="dl-horizontal">
-      <dt>2014年04月05日(水)</dt>
-      <dd><a href="#">テキストテキストテキストテキストテキストテキストテキストテキスト</a></dd>
+    <h2>近日開催のフリーマーケット</h2>
+    <dl>
+    <?php
+        if ($upcomming_fleamarket_list):
+            foreach ($upcomming_fleamarket_list as $fleamarket):
+    ?>
+      <dt><?php echo e($fleamarket['event_date']);?></dt>
+      <dd><a href="/detail/<?php echo e($fleamarket['fleamarket_id']);?>/"><?php echo e($fleamarket['headline']);?></a></dd>
     </dl>
+    <?php
+            endforeach;
+        endif;
+    ?>
     <ul>
-      <li><a href="#">一覧</a></li>
+      <li><a href="/search/1/?upcomming=1">一覧</a></li>
     </ul>
   </div>
 </div>
