@@ -69,7 +69,7 @@ class Model_Fleamarket_About extends \Orm\Model
      */
     public static function getAboutTitles()
     {
-        return self::about_titles;
+        return self::$about_titles;
     }
 
     /**
@@ -81,7 +81,7 @@ class Model_Fleamarket_About extends \Orm\Model
      */
     public static function getAboutNames()
     {
-        return self::about_names;
+        return self::$about_names;
     }
 
     /**

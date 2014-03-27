@@ -52,14 +52,9 @@ class Controller_Mypage extends Controller_Base_Template
      */
     public function action_index()
     {
-        $prefectures = Config::get('master.prefectures');
         $view_model = ViewModel::forge('mypage/index');
-        $entries = $this->user->getEntries();
-
-        $view_model->set('prefectures', $prefectures, false);
-        $view_model->set('entries', $entries, false);
-
-        // $this->template->content = ViewModel::forge('mypage/index')->set('entries', $entries);
+        $view_model->set('prefectures', Config::get('master.prefectures'), false);
+        $view_model->set('entries', $this->user->getEntries());
         $this->template->content = $view_model;
         $this->setMetaTag('mypage/index');
     }
@@ -74,20 +69,26 @@ class Controller_Mypage extends Controller_Base_Template
      *
      * @todo ajaxの呼び出し箇所とつなぎ込み
      */
-    public function post_cancel()
+    public function get_cancel()
     {
-        $fleamarket_id = Input::post('fleamarket_id');
+        $fleamarket_id = Input::get('fleamarket_id');
 
         if (! $fleamarket_id) {
             return false;
         }
 
-        if ($this->user->cancelEntry($fleamarket_id)) {
-            Session::set_flash('notice', \STATUS_FLEAMARKET_CANCEL_SUCCESS);
-            return true;
-        } else {
+        if (! $this->user->cancelEntry($fleamarket_id)) {
             Session::set_flash('notice', \STATUS_FLEAMARKET_CANCEL_FAILED);
             return false;
+        } else {
+            Session::set_flash('notice', \STATUS_FLEAMARKET_CANCEL_SUCCESS);
+
+            $email_template_params = array(
+                'nick_name' => $this->user->nick_name,
+            );
+            $this->user->sendmail('common/user_cancel_fleamarket', $email_template_params);
+
+            return true;
         };
     }
 
@@ -150,11 +151,10 @@ class Controller_Mypage extends Controller_Base_Template
             Session::set_flash('mypage.fieldset', $fieldset);
             Session::set_flash('status_code', \STATUS_PROFILE_CHANGE_FAILED);
         } else {
-            $user = Auth::get_user_instance();
             $update_data = array_filter($validation->validated(), 'strlen');
-            $update_data['updated_user'] = Auth::get_user_id();
-            $user->set($update_data);
-            $user->save();
+            $update_data['updated_user'] = $this->user->user_id;
+            $this->user->set($update_data);
+            $this->user->save();
             Session::set_flash('status_code', \STATUS_PROFILE_CHANGE_SUCCESS);
         }
 

@@ -25,60 +25,66 @@
         <div class="form-group">
           <label class="col-sm-2 control-label" for="inputName">お名前</label>
           <div class="col-sm-10">
-            <input type="text" class="form-control" id="inputName_last" placeholder="姓" name="last_name" />
-            <input type="text" class="form-control" id="inputName_first" placeholder="名" name="first_name" />
+            <input type="text" class="form-control" id="inputName_last" placeholder="姓を入力" name="last_name" style="width: 10em; float: left; margin-right: 10px;" />
+            <input type="text" class="form-control" id="inputName_first" placeholder="名を入力" name="first_name" style="width: 10em;" />
           </div>
         </div>
         <div class="form-group">
           <label class="col-sm-2 control-label" for="inputPhonetic">フリガナ</label>
           <div class="col-sm-10">
-            <input type="text" class="form-control" id="inputPhonetic_last" placeholder="セイ" name="last_name_kana" />
-            <input type="text" class="form-control" id="inputPhonetic_first" placeholder="メイ" name="first_name_kana" />
+            <input type="text" class="form-control" id="inputPhonetic_last" placeholder="セイを入力" name="last_name_kana" style="width: 10em; float: left; margin-right: 10px;"/>
+            <input type="text" class="form-control" id="inputPhonetic_first" placeholder="メイを入力" name="first_name_kana" style="width: 10em;" />
           </div>
         </div>
-        <div class="form-group">
+        <div class="form-group form-address">
           <label class="col-sm-2 control-label" for="inputAddress">ご住所</label>
           <div class="col-sm-10">
-            <input type="text" class="form-control" id="inputZip" placeholder="郵便番号" name="zip" />
-            <input type="text" class="form-control" id="inputAddress" placeholder="ご住所" name="address" />
+            <input type="text" class="form-control" id="inputZip" placeholder="例）123-4567" name="zip" /><button type="submit" class="btn btn-default">住所を検索</button>
+            <select class="form-control">
+                <option>都道府県</option>
+                  <?php foreach ($prefectures as $prefecture_id => $name): ?>
+                    <option value="<?php echo $prefecture_id; ?>"><?php echo $name; ?></option>
+                  <?php endforeach; ?>
+            </select>
+            <input type="text" class="form-control" id="inputAddress" placeholder="住所を入力" name="address" />
           </div>
         </div>
         <div class="form-group">
           <label class="col-sm-2 control-label" for="inputTel">電話番号</label>
           <div class="col-sm-10">
-            <input type="text" class="form-control" id="inputTel" placeholder="電話番号" name="tel" />
+            <input type="text" class="form-control" id="inputTel" placeholder="例）03-1234-5678　半角英数字で入力してください" name="tel" />
           </div>
         </div>
         <div class="form-group">
           <label class="col-sm-2 control-label" for="inputEmail">E-mailアドレス</label>
           <div class="col-sm-10">
-            <input type="email" class="form-control" id="inputEmail" placeholder="E-mailアドレス" name="email" />
+            <input type="email" class="form-control" id="inputEmail" placeholder="例）your@email.com　半角英数字で入力してください" name="email" />
           </div>
         </div>
         <div class="form-group">
           <label class="col-sm-2 control-label" for="inputEmail2">E-mailアドレス<br>
             （確認用）</label>
           <div class="col-sm-10">
-            <input type="email" class="form-control" id="inputEmail2" placeholder="E-mailアドレス（確認用）" name="email-confirm" />
+            <input type="email" class="form-control" id="inputEmail2" placeholder="確認のため、もう一度メールアドレスを入力してください" name="email-confirm" />
           </div>
         </div>
         <div class="form-group">
           <label class="col-sm-2 control-label" for="inputPassword">パスワード</label>
           <div class="col-sm-10">
-            <input type="password" class="form-control" id="inputPassword" placeholder="パスワード" name="password" />
+            <input type="password" class="form-control" id="inputPassword" placeholder="半角英数字6文字以上で入力してください" name="password" />
           </div>
         </div>
         <div class="form-group">
           <label class="col-sm-2 control-label" for="inputPassword2">パスワード<br>
             （確認用）</label>
           <div class="col-sm-10">
-            <input type="password" class="form-control" id="inputPassword2" placeholder="パスワード（確認用）" name="password-confirm" />
+            <input type="password" class="form-control" id="inputPassword2" placeholder="確認のため、もう一度パスワードを入力してください" name="password-confirm" />
           </div>
         </div>
         <div class="form-group">
           <label class="col-sm-2 control-label" for="inputNickname">ニックネーム</label>
           <div class="col-sm-10">
-            <input type="text" class="form-control" id="inputNickname" placeholder="ニックネーム" name="nick_name" />
+            <input type="text" class="form-control" id="inputNickname" placeholder="ニックネームを入力" name="nick_name" />
           </div>
         </div>
         <div class="form-group">

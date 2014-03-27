@@ -47,10 +47,9 @@ class Controller_Signup extends Controller_Base_Template
     public function action_index()
     {
         $fieldset = self::createFieldset();
-
         $this->setMetaTag('signup/index');
         $this->template->content = View::forge('signup/index');
-        $this->template->content->set('html_form', $fieldset->build('signup/confirm'), false);
+        $this->template->content->set('prefectures', Config::get('master.prefectures'));
         $this->template->content->set('errmsg', $fieldset->validation()->show_errors(), false);
     }
 
@@ -105,13 +104,11 @@ class Controller_Signup extends Controller_Base_Template
             $new_user->save();
 
             $new_token = Model_Token::generate($new_user->user_id);
-            $data = array(
+            $email_template_params = array(
                 'nick_name'    => $new_user->nick_name,
                 'activate_url' => Uri::base().'signup/activate?token='.$new_token->hash,
             );
-
-            $body = View::forge('email/signup/activate', $data)->render();
-            $new_user->sendmail('確認メール', $body);
+            $new_user->sendmail('signup/verify', $email_template_params);
         } catch (Orm\ValidationFailed $e) {
             return \Response::redirect('errors/timeout');
         }
@@ -135,7 +132,7 @@ class Controller_Signup extends Controller_Base_Template
     {
         $hash = Input::get('token');
         if (empty($hash)) {
-            return Response::redirect('/');
+            return \Response::redirect('/');
         }
 
         try {
@@ -144,9 +141,15 @@ class Controller_Signup extends Controller_Base_Template
             $user->register_status = \REGISTER_STATUS_ACTIVATED;
             $user->save();
             $valid_token->delete();
-            return Response::redirect('signup/thanks');
+
+            $email_template_params = array(
+                'nick_name'    => $user->nick_name,
+            );
+            $user->sendmail('signup/activate', $email_template_params);
+
+            return \Response::redirect('signup/thanks');
         } catch (Exception $e) {
-            return Response::redirect('error/503');
+            return \Response::redirect('error/503');
         }
     }
 

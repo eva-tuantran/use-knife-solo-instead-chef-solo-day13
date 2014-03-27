@@ -422,7 +422,8 @@ class Model_User extends Orm\Model_Soft
     }
 
     /**
-     * ユーザにメールを送信します
+     * ユーザにテンプレートのメールを送信します
+     * lang/ja/email配下のテンプレートを利用します。
      *
      * @param string $subject
      * @param string $body
@@ -430,24 +431,11 @@ class Model_User extends Orm\Model_Soft
      * @return bool
      * @author shimma
      *
-     * @todo エラーの箇所がfalseとなっているが、throwするように変更する
      */
-    public function sendmail($subject, $body)
+    public function sendmail($template_name, $params = array())
     {
-        $email = \Email::forge();
-        $email->from(\DEFAULT_EMAIL, \DEFAULT_EMAIL_NAME);
-        $email->to($this->email);
-        $email->subject($subject);
-        $email->body(mb_convert_encoding($body, 'jis'));
-        try {
-            $email->send();
-        } catch (\EmailValidationFailedException $e) {
-            return false;
-        } catch (\EmailSendingFailedException $e) {
-            return false;
-        }
-
-        return true;
+        $email = new \Model_Email();
+        $email->sendMailByParams($template_name, $params, $this->email);
     }
 
 

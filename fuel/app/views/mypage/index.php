@@ -28,7 +28,7 @@
     <!-- search -->
     <div id="search" class="box clearfix">
       <div class="row">
-        <form id="form_search" action="/search/1/" method="post">
+        <form id="form_search" action="/search/1/" method="get">
           <fieldset>
             <div id="searchInput" class="col-md-7">
               <div class="form-group">
@@ -363,6 +363,8 @@
             <?php if(empty($entries)): ?>
               <p>現在予約しているフリーマーケットがありません。</p>
             <?php else: ?>
+
+
               <?php foreach($entries as $entry): ?>
                 <!-- result -->
                 <div class="result clearfix">
@@ -399,10 +401,8 @@
                       <li><a href="/detail/<?php echo $entry['fleamarket_id'] ?>">詳細情報を見る<i></i></a></li>
                     </ul>
                     <ul class="rightbutton">
-                      <li class="button change makeReservation"><a href="#"><i></i>予約変更</a></li>
-                      <form action="/mypage/cancel" accept-charset="utf8" method="post">
-                        <input type="hidden" name="fleamarket_id" value="<?php echo $entry['fleamarket_id'] ?>" />
-                        <li class="button cancel"><input type="submit" name="submit"><a href="#"><i></i>予約解除</a></li>
+                        <li class="button change makeReservation"><a href="#"><i></i>予約変更</a></li>
+                        <li class="button cancel"><a href="/mypage/cancel?fleamarket_id=<?php echo $entry['fleamarket_id'] ?>"><i></i>予約解除</a></li>
                       </form>
                     </ul>
                   </div>

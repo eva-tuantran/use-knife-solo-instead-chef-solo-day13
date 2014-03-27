@@ -1,6 +1,21 @@
 <?php
 
 return array(
+    'top/index' => array(
+        'title'       => '楽市楽座',
+        'description' => '楽市楽座 description',
+        'keyword'     => '楽市楽座 キーワード',
+    ),
+    'search/index' => array(
+        'title'       => 'フリーマーケット一覧',
+        'description' => 'フリーマーケット一覧 description',
+        'keyword'     => 'フリーマーケット一覧 キーワード',
+    ),
+    'search/detail' => array(
+        'title'       => 'フリーマーケット詳細',
+        'description' => 'フリーマーケット詳細 description',
+        'keyword'     => 'フリーマーケット詳細 キーワード',
+    ),
     'inquiry/index' => array(
         'title'       => 'お問い合わせ',
         'description' => 'お問い合わせ description',

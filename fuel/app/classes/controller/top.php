@@ -35,7 +35,8 @@ class Controller_Top extends Controller_Base_Template
 
         $prefectures = Config::get('master.prefectures');
         $view_model->set('prefectures', $prefectures, false);
-        $this->template->title = 'フリーマーケット検索';
+
+        $this->setMetaTag('top/index');
         $this->template->content = $view_model;
     }
 
