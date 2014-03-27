@@ -54,7 +54,7 @@
         </ul>
         <ul class="rightbutton">
           <li class="button makeReservation"><a href="#">出店予約をする</a></li>
-          <li class="button addMylist"><a href="#">マイリストに追加</a></li>
+          <li class="button addMylist"><a id="fleamarket_id_<?php echo $fleamarket['fleamarket_id']; ?>" href="#">マイリストに追加</a></li>
         </ul>
       </div>
     </div>
@@ -191,14 +191,21 @@ $(function() {
   });
 
   $(".addMylist a").click(function(){
+      var id = $(this).attr('id');
+      id = id.match(/^fleamarket_id_(\d+)/)[1];
       $.ajax({
           type: "post",
           url: '/favorite/add',
-          dataType: "json"
+          dataType: "json",
+          data: {fleamarket_id: id}
       }).done(function(json, textStatus, jqXHR) {
-          alert(json);
+          if(json){
+              alert('登録しました');
+          }else{
+              alert('失敗しました');
+          }
       }).fail(function(jqXHR, textStatus, errorThrown) {
-      }).always(function() {
+          alert('失敗しました');
       });
   });
 });

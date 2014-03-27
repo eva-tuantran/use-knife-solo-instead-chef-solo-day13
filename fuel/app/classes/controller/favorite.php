@@ -8,22 +8,42 @@
 
 class Controller_Favorite  extends \Fuel\Core\Controller_Rest
 {
-    public function get_add()
+    public function post_add()
     {
-/*
         if (! Auth::check()) {
-            return $this->response(array(1 => 2), 200);
+            return $this->response('nologin');
         }
-*/
+        $fleamarket = Model::Fleamarket::find(Input::param('fleamarket_id'));
 
-        $favorite = Model_Favorite::forge();
-        $favorite->set(array(
-            'user_id'       => Auth::get_user_id(),
-            'fleamarket_id' => Input::param('fleamarket_id')
-        ));
-        $favorite->save();
+        if (! $fleamarket) {
+            return $this->response('nodata');
+        }            
 
-        $data = true;
-        return $this->response($data, 200);
+        $data = array(
+                'user_id'       => Auth::get_user_id(),
+                'fleamarket_id' => Input::param('fleamarket_id',1)
+        );
+
+        $favorite = Model_Favorite::query
+            ->where($data)
+            ->get_one();
+
+        if (! $favorite){
+            $favorite = Model_Favorite::find_deleted('first',$data);
+            if ($favorite) {
+                $favorite->restore();
+            }else{
+                $favorite = Model_Favorite::forge($data);
+                $favorite->save();
+            }
+        }
+
+        try {
+            $favorite->save();
+        } catch (Exception $e) {
+            return $this->response(false);
+        }
+        
+        return $this->response(true);
     }
 }
