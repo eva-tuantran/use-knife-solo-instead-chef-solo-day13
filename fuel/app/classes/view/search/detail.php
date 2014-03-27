@@ -1,0 +1,179 @@
+<?php
+
+/**
+ * View_Search_Detail ViewModel
+ *
+ * @author ida
+ */
+class View_Search_Detail extends ViewModel
+{
+    /**
+     * view method
+     *
+     * @access public
+     * @return void
+     * @author ida
+     */
+    public function view()
+    {
+        $this->setItemsForDisplay();
+    }
+
+    /**
+     * 表示用に加工する
+     *
+     * @access private
+     * @return void
+     * @author ida
+     */
+    private function setItemsForDisplay()
+    {
+        if (empty($this->fleamarket)) {
+            return;
+        }
+
+        // フリーマーケット説明情報をabout_idをキーに
+        $this->fleamarket['abouts'] = $this->createAbouts();
+
+        // 出店形態、出店料金、残りブース
+        $entry_style_strings = $this->createEntryStyleStrings();
+        list($style_list, $fee_list, $booth_list) = $entry_style_strings;
+        $this->fleamarket['style_string'] = implode('／' , $style_list);
+        $this->fleamarket['fee_string'] = implode('／' , $fee_list);
+        $this->fleamarket['booth_string'] = implode('／' , $booth_list);
+    }
+
+    /**
+     * フリーマーケット説明情報を説明IDをキーにした配列に置き換える
+     *
+     * @param array $fleamarket
+     * @return array
+     * @author ida
+     */
+    private function createAbouts()
+    {
+        $abouts = array();
+
+        if (count($this->fleamarket_abouts) > 0) {
+            $fleamarket_abouts = Config::get('master.fleamarket_abouts');
+
+            $abouts = array();
+            foreach ($this->fleamarket_abouts as &$about) {
+                if (! isset($about['about_id'])) {
+                    continue;
+                }
+
+                $abouts[$about['about_id']] = array(
+                    'title' => $about['title'],
+                    'description' => $about['description']
+                );
+            }
+        }
+
+        return $abouts;
+    }
+
+    /**
+     * 表示用の文字列を生成する
+     *
+     * 出店形態、出店料金、残りブース
+     *
+     * @access private
+     * @param array $fleamarket フリーマーケット情報
+     * @return array
+     * @author ida
+     */
+    private function createEntryStyleStrings()
+    {
+        $style_list = array();
+        $fee_list = array();
+        $booth_list = array();
+
+        if ($this->fleamarket_entry_styles) {
+            $entry_styles = Config::get('master.entry_styles');
+
+            foreach ($this->fleamarket_entry_styles as &$entry_style) {
+                if (! isset($entry_style['entry_style_id'])) {
+                    continue;
+                }
+
+                $entry_style_id = $entry_style['entry_style_id'];
+                $style_name = $entry_styles[$entry_style_id];
+
+                $style_list[] = $this->createStyleString($style_name);
+
+                $fee_list[] = $this->createFeeString(
+                    $style_name, $entry_style['booth_fee']
+                );
+
+                $booth_list[] = $this->createBoothString(
+                    $this->fleamarket['entries'],
+                    $entry_style,
+                    $style_name
+                );
+            }
+        }
+
+        return array($style_list, $fee_list, $booth_list);
+    }
+
+    /**
+     * 出店予約できる出店形態の文字列を生成する
+     *
+     * @access private
+     * @param string $style_name 出店形態名
+     * @author ida
+     */
+    private function createStyleString($style_name)
+    {
+        return $style_name;
+    }
+
+    /**
+     * 出店予約できる出店形態ごと出店料金の文字列を生成する
+     *
+     * @access private
+     * @param string $style_name 出店形態名
+     * @param int $booth_fee 出店料金
+     * @author ida
+     */
+    private function createFeeString($style_name, $booth_fee)
+    {
+        $fee_string = $style_name . ':';
+        $fee_string .= number_format($booth_fee) . '円';
+
+        return $fee_string;
+    }
+
+    /**
+     * 残りブース数の文字列を生成する
+     *
+     * @access private
+     * @param array $entries 出店予約情報
+     * @param array $entry_style 出店形態
+     * @param string $style_name 出店形態名
+     * @author ida
+     */
+    private function createBoothString($entries, $entry_style, $style_name)
+    {
+        $booth_string = '';
+        if (! $entries) {
+            $booth_string = $style_name . ':' . $entry_style['max_booth'];
+        } else {
+            $entry_style_id = $entry_style['entry_style_id'];
+            foreach ($entries as $entry) {
+                if ($entry_style_id !== $entry['fleamarket_entry_style_id']) {
+                    continue;
+                }
+
+                $max_booth = $entry_style['max_booth'];
+                $reserved_booth = $entry['reserved_booth'];
+                $booth_string = $style_name . ':';
+                $booth_number = $max_booth - $reserved_booth;
+                $booth_string .= '残り ' . $booth_number;
+            }
+        }
+
+        return $booth_string;
+    }
+}

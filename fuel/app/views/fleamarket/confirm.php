@@ -1,139 +1,118 @@
-<style type="text/css">
-    .small {
-        width: 50px;
-    }
-
-    .medium {
-        width: 100px;
-    }
-    .large {
-        width: 200px;
-    }
-
-    textarea {
-        width: 300px;
-        height: 100px;
-    }
-
-    table td {
-        padding: 5px;
-    }
-</style>
-<?php
-    echo $form->open('fleamarket');
-    echo $form->open('fleamarket/confirm');
-    echo Form::hidden(
-        Config::get('security.csrf_token_key'), Security::fetch_token()
-    );
-?>
-<?php
-echo Form::hidden( Config::get('security.csrf_token_key'), Security::fetch_token() );
-?>
 <table>
     <tbody>
         <tr>
             <td><?php
-                echo $form->field('sponsor_name')
+                echo $form->field('name')
                     ->set_template('{label}');
             ?></td>
             <td><?php
-                echo $form->field('sponsor_name')
-                    ->set_template('{field}')
-                    ->set_attribute(array('class' => 'large'));
-                echo $form->field('sponsor_name')
-                    ->set_template('<div>{error_msg}</div>');
+                if (isset($data['name'])):
+                    echo e($data['name']);
+                endif;
             ?></td>
         </tr>
         <tr>
             <td><?php
-                echo $form->field('sponsor_website')
+                echo $form->field('promoter_name')
                     ->set_template('{label}');
             ?></td>
             <td><?php
-                echo $form->field('sponsor_website')
-                    ->set_template('{field}')
-                    ->set_attribute(array('class' => 'large'));
-                echo $form->field('sponsor_website')
-                    ->set_template('<div>{error_msg}</div>');
+                if (isset($data['promoter_name'])):
+                    echo e($data['promoter_name']);
+                endif;
             ?></td>
         </tr>
         <tr>
             <td><?php
-                echo $form->field('sponser_tel1')
+                echo $form->field('website')
                     ->set_template('{label}');
             ?></td>
             <td><?php
-                echo $form->field('sponser_tel1')
-                    ->set_template('{field}')
-                    ->set_attribute(array('class' => 'small'));
-                echo ' - ';
-                echo $form->field('sponser_tel2')
-                    ->set_template('{field}')
-                    ->set_attribute(array('class' => 'small'));
-                echo ' - ';
-                echo $form->field('sponser_tel3')
-                    ->set_template('{field}')
-                    ->set_attribute(array('class' => 'small'));
+                if (isset($data['website'])):
+                    echo e($data['website']);
+                endif;
             ?></td>
         </tr>
         <tr>
             <td><?php
-                echo $form->field('sponser_email')
+                echo $form->field('reservation_tel')
                     ->set_template('{label}');
             ?></td>
             <td><?php
-                echo $form->field('sponser_email')
-                    ->set_template('{field}')
-                    ->set_attribute(array('class' => 'large'));
-                echo $form->field('sponser_email')
-                    ->set_template('<div>{error_msg}</div>');
+                if (isset($data['reservation_tel'])
+                    && $data['reservation_tel'] != ''
+                ):
+                    $tel1 = e($data['reservation_tel']);
+                endif;
             ?></td>
         </tr>
         <tr>
             <td><?php
-                echo $form->field('event_date')
+                echo $form->field('reservation_email')
                     ->set_template('{label}');
             ?></td>
             <td><?php
-                echo $form->field('event_date')
-                    ->set_template('{field}')
-                    ->set_attribute(array('class' => 'small'));
-                echo $form->field('event_time_hour')
-                    ->set_template('{label}');
-                echo $form->field('event_time_hour')
-                    ->set_template('{field}')
-                    ->set_attribute(array('class' => 'small'));
-                echo $form->field('event_time_minute')
-                    ->set_template('{field}')
-                    ->set_attribute(array('class' => 'small'));
+                if (isset($data['reservation_email'])):
+                    echo e($data['reservation_email']);
+                endif;
             ?></td>
         </tr>
         <tr>
             <td><?php
-                echo $form->field('fleamarket_name')
+                echo $form->field('event_datetime')
                     ->set_template('{label}');
             ?></td>
             <td><?php
-                echo $form->field('fleamarket_name')
-                    ->set_template('{field}')
-                    ->set_attribute(array('class' => 'large'));
-                echo $form->field('fleamarket_name')
-                    ->set_template('<div>{error_msg}</div>');
+                if (isset($data['event_date'])
+                    && $data['event_date'] != ''
+                ):
+                    echo e($data['event_date']);
+                endif;
+                echo '&nbsp;';
+                if (isset($data['event_time_start'])
+                    && $data['event_time_start'] != ''
+                ):
+                    echo e($data['event_time_start']);
+                endif;
+                echo ' ～ ';
+                if (isset($data['event_time_end'])
+                    && $data['event_time_end'] != ''
+                ):
+                    echo e($data['event_time_end']);
+                endif;
             ?></td>
         </tr>
         <tr>
-            <td>開催住所</td>
             <td><?php
-                echo $form->field('zip')
-                    ->set_template('<div>〒 {field}</div>')
-                    ->set_attribute(array('class' => 'small'));
-                echo $form->field('prefecture')
-                    ->set_template('{field}')
-                    ->set_attribute(array('class' => 'medium'));
-                echo $form->field('address')
-                    ->set_template('{field}')
-                    ->set_attribute(array('class' => 'large'));
+                echo $form->field('location_name')
+                    ->set_template('{label}');
             ?></td>
+            <td><?php
+                if (isset($data['location_name'])):
+                    echo e($data['location_name']);
+                endif;
+            ?></td>
+        </tr>
+        <tr>
+            <td><?php
+                echo $form->label('開催住所');
+            ?></td>
+            <td>
+                <div><?php
+                    if (isset($data['zip'])):
+                        echo '〒' . e($data['zip']);
+                    endif;
+                ?></div>
+                <?php
+                    if (isset($data['prefecture_id'])):
+                        $prefecture = $prefectures[$data['prefecture_id']];
+                        echo e($prefecture);
+                    endif;
+                    if (isset($data['address'])):
+                        echo e($data['address']);
+                    endif;
+                ?>
+            </td>
         </tr>
         <tr>
             <td><?php
@@ -141,104 +120,112 @@ echo Form::hidden( Config::get('security.csrf_token_key'), Security::fetch_token
                     ->set_template('{label}');
             ?></td>
             <td><?php
-                echo $form->field('description')
-                    ->set_template('{field}')
-                    ->set_attribute(array('class' => 'txt_half'));
-                echo $form->field('description')
-                    ->set_template('<div>{error_msg}</div>');
+                if (isset($data['description'])):
+                    echo e($data['description']);
+                endif;
             ?></td>
         </tr>
         <tr>
             <td><?php
-                echo $form->field('about_access')
+                echo $form->field('shop_fee_flag')
                     ->set_template('{label}');
             ?></td>
             <td><?php
-                echo $form->field('about_access')
-                    ->set_template('{field}')
-                    ->set_attribute(array('class' => 'txt_half'));
-                echo $form->field('description')
-                    ->set_template('<div>{error_msg}</div>');
+                if (isset($data['shop_fee_flag'])):
+                    echo e($data['shop_fee_flag']);
+                endif;
             ?></td>
         </tr>
         <tr>
             <td><?php
-                echo $form->field('about_event_time')
+                echo $form->field('car_shop_flag')
                     ->set_template('{label}');
             ?></td>
             <td><?php
-                echo $form->field('about_event_time')
-                    ->set_template('{field}')
-                    ->set_attribute(array('class' => 'txt_half'));
-                echo $form->field('about_event_time')
-                    ->set_template('<div>{error_msg}</div>');
+                if (isset($data['car_shop_flag'])):
+                    echo e($data['car_shop_flag']);
+                endif;
             ?></td>
         </tr>
         <tr>
             <td><?php
-                echo $form->field('about_booth')
+                echo $form->field('pro_shop_flag')
                     ->set_template('{label}');
             ?></td>
             <td><?php
-                echo $form->field('about_booth')
-                    ->set_template('{field}')
-                    ->set_attribute(array('class' => 'txt_half'));
-                echo $form->field('about_booth')
-                    ->set_template('<div>{error_msg}</div>');
+                if (isset($data['pro_shop_flag'])):
+                    echo e($data['pro_shop_flag']);
+                endif;
             ?></td>
         </tr>
         <tr>
             <td><?php
-                echo $form->field('about_shop_cautions')
+                echo $form->field('charge_parking_flag')
                     ->set_template('{label}');
             ?></td>
             <td><?php
-                echo $form->field('about_shop_cautions')
-                    ->set_template('{field}')
-                    ->set_attribute(array('class' => 'txt_half'));
-                echo $form->field('about_shop_cautions')
-                    ->set_template('<div>{error_msg}</div>');
+                if (isset($data['charge_parking_flag'])):
+                    echo e($data['charge_parking_flag']);
+                endif;
             ?></td>
         </tr>
         <tr>
             <td><?php
-                echo $form->field('about_shop_style')
+                echo $form->field('free_parking_flag')
                     ->set_template('{label}');
             ?></td>
             <td><?php
-                echo $form->field('about_shop_style')
-                    ->set_template('{field}')
-                    ->set_attribute(array('class' => 'txt_half'));
-                echo $form->field('about_shop_style')
-                    ->set_template('<div>{error_msg}</div>');
+                if (isset($data['free_parking_flag'])):
+                    echo e($data['free_parking_flag']);
+                endif;
             ?></td>
         </tr>
         <tr>
             <td><?php
-                echo $form->field('about_shop_fee')
+                echo $form->field('rainy_location_flag')
                     ->set_template('{label}');
             ?></td>
             <td><?php
-                echo $form->field('about_shop_fee')
-                    ->set_template('{field}')
-                    ->set_attribute(array('class' => 'txt_half'));
-                echo $form->field('about_shop_fee')
-                    ->set_template('<div>{error_msg}</div>');
+                if (isset($data['rainy_location_flag'])):
+                    echo e($data['rainy_location_flag']);
+                endif;
             ?></td>
         </tr>
+        <?php
+            if ($event_abouts):
+                foreach ($event_abouts as $event_about):
+        ?>
         <tr>
             <td><?php
-                echo $form->field('about_parking')
+                echo $form->field($event_about['name'])
                     ->set_template('{label}');
             ?></td>
             <td><?php
-                echo $form->field('about_parking')
-                    ->set_template('{field}')
-                    ->set_attribute(array('class' => 'txt_half'));
-                echo $form->field('about_parking')
-                    ->set_template('<div>{error_msg}</div>');
+                if (isset($data[$event_about['name']])):
+                    echo e($data[$event_about['name']]);
+                endif;
             ?></td>
         </tr>
+        <?php
+                endforeach;
+            endif;
+        ?>
     </tbody>
 </table>
-<?php echo $form->close();?>
+<?php
+    echo $form->open(
+        array('action' => 'fleamarket/thanks', 'method' => 'post', 'id' => 'form_confirm')
+    );
+    echo Form::hidden(
+        Config::get('security.csrf_token_key'), Security::fetch_token()
+    );
+?>
+<div class="action-section">
+<?php
+    echo Html::anchor('/fleamarket/index', '入力に戻る', array('id' => 'do_back', 'class' => ''));
+    echo Form::input('confirm', '登録する', array('type' => 'submit', 'id' => 'do_register'));
+?>
+</div>
+<?php
+    echo $form->close();
+?>
