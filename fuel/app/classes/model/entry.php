@@ -317,7 +317,8 @@ SELECT
     l.prefecture_id AS prefecture_id,
     l.address AS address,
     l.googlemap_address AS googlemap_address,
-    fa.description AS about_access
+    fa.description AS about_access,
+    fes.booth_fee AS booth_fee
 FROM
     entries AS e
 LEFT JOIN

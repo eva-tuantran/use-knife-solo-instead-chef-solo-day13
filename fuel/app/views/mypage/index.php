@@ -1,3 +1,14 @@
+<!-- デザイン適応後削除 -->
+<style>
+.facilitys li.invalid {
+    background-color: #f5f5f5;
+    border-color: #dcdcdc;
+    color: #dcdcdc;
+}
+</style>
+
+
+
 <div id="contentMypage" class="row">
   <!-- mypageProfile -->
   <div id="mypageProfile" class="col-sm-3">
@@ -385,7 +396,7 @@
                     </dl>
                     <dl class="col-md-3">
                       <dt>出店料金</dt>
-                      <dd><?php echo e(@$entry['fee_string']); ?></dd>
+                      <dd><?php echo e(@$entry['booth_fee_string']); ?></dd>
                     </dl>
                     <dl class="col-md-11">
                       <dt>交通</dt>
@@ -432,9 +443,45 @@ next:{button:"#next",key:"right"}
     });
 
 
+
 $('.fleamarket_cancel').click(function() {
     if (!confirm('フリーマーケットをキャンセルします\nよろしいですか？')) {
         return false;
     }
 });
+
+
+
+$(function() {
+  Carousel.get();
+});
+var Carousel = {
+  get: function() {
+    $.ajax({
+      type: "get",
+      url: "/fleamarket/latest/",
+      dataType: "html"
+    }).done(function(html, textStatus, jqXHR) {
+      $("#newMarket").empty();
+      $("#newMarket").html(html);
+      Carousel.start();
+    }).fail(function(jqXHR, textStatus, errorThrown) {
+    }).always(function() {
+    });
+  },
+  start: function () {
+    $("#newMarket").carouFredSel({
+      align: true,
+      scroll:{
+        items: 1,
+        duration: 300,
+        pauseDuration: 5000,
+        easing: 'linear',
+        pauseOnHover: 'immediate'
+      },
+      prev:{button: "#prev", key: "left"},
+      next:{button: "#next", key:"right"}
+    });
+  }
+};
 </script>

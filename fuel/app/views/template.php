@@ -14,7 +14,7 @@
 <link rel="apple-touch-icon" href="http://www.rakuichi-rakuza.jp/assets/img/ogimage.png">
 <meta property="og:site_name" content="フリーマーケット楽市楽座">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<?php echo Html::meta($meta);?>
+<?php if (! empty($meta)) { echo Html::meta($meta); }; ?>
 <link href="/assets/css/bootstrap.min.css" rel="stylesheet">
 <link href="/assets/css/reset.css" rel="stylesheet">
 <link href="/assets/css/base.css" rel="stylesheet">
