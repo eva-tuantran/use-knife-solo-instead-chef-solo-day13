@@ -1,25 +1,4 @@
 <div id="contentHome" class="row">
-<script>
-$(function() {
-  $(window).resize(function() {
-    $("#newMarket").carouFredSel({
-      align: true,
-      items:{start: "random"},
-      scroll:{
-        items: 1,
-        duration: 300,
-        pauseDuration: 5000,
-        easing: 'linear',
-        pauseOnHover: 'immediate'
-      },
-      prev:{button: "#prev", key: "left"},
-      next:{button: "#next", key:"right"}
-    });
-  });
-
-  $(window).resize();
-});
-</script>
 <!-- soon -->
 <div id="soon" class="container">
   <div class="box clearfix">
@@ -126,85 +105,7 @@ $(function() {
       <li id="prev">Prev</li>
       <li id="next">Next</li>
     </ul>
-    <div id="newMarket" class="container">
-      <!-- market -->
-      <div class="market clearfix">
-        <p class="state">○○○県</p>
-        <p class="case">出店簿集中!</p>
-        <div class="marketPhoto"><a href="#"><img src="http://dummyimage.com/180x110/ccc/fff.jpg"></a></div>
-        <p class="date">12月24日(土)</p>
-        <p class="booth">残り<strong>25</strong>ブース</p>
-        <h3><a href="#">○○フリーマーケット</a></h3>
-        <p class="place">大井競馬場</p>
-      </div>
-      <!-- /market -->
-      <!-- market -->
-      <div class="market clearfix">
-        <p class="state">○○○県</p>
-        <p class="case">出店簿集中!</p>
-        <div class="marketPhoto"><a href="#"><img src="http://dummyimage.com/180x110/ccc/fff.jpg"></a></div>
-        <p class="date">12月24日(土)</p>
-        <p class="booth">残り<strong>25</strong>ブース</p>
-        <h3><a href="#">○○フリーマーケット</a></h3>
-        <p class="place">大井競馬場</p>
-      </div>
-      <!-- /market -->
-      <!-- market -->
-      <div class="market clearfix">
-        <p class="state">○○○県</p>
-        <p class="case">出店簿集中!</p>
-        <div class="marketPhoto"><a href="#"><img src="http://dummyimage.com/180x110/ccc/fff.jpg"></a></div>
-        <p class="date">12月24日(土)</p>
-        <p class="booth">残り<strong>25</strong>ブース</p>
-        <h3><a href="#">○○フリーマーケット</a></h3>
-        <p class="place">大井競馬場</p>
-      </div>
-      <!-- /market -->
-      <!-- market -->
-      <div class="market clearfix">
-        <p class="state">○○○県</p>
-        <p class="case">出店簿集中!</p>
-        <div class="marketPhoto"><a href="#"><img src="http://dummyimage.com/180x110/ccc/fff.jpg"></a></div>
-        <p class="date">12月24日(土)</p>
-        <p class="booth">残り<strong>25</strong>ブース</p>
-        <h3><a href="#">○○フリーマーケット</a></h3>
-        <p class="place">大井競馬場</p>
-      </div>
-      <!-- /market -->
-      <!-- market -->
-      <div class="market clearfix">
-        <p class="state">○○○県</p>
-        <p class="case">出店簿集中!</p>
-        <div class="marketPhoto"><a href="#"><img src="http://dummyimage.com/180x110/ccc/fff.jpg"></a></div>
-        <p class="date">12月24日(土)</p>
-        <p class="booth">残り<strong>25</strong>ブース</p>
-        <h3><a href="#">○○フリーマーケット</a></h3>
-        <p class="place">大井競馬場</p>
-      </div>
-      <!-- /market -->
-      <!-- market -->
-      <div class="market clearfix">
-        <p class="state">○○○県</p>
-        <p class="case">出店簿集中!</p>
-        <div class="marketPhoto"><a href="#"><img src="http://dummyimage.com/180x110/ccc/fff.jpg"></a></div>
-        <p class="date">12月24日(土)</p>
-        <p class="booth">残り<strong>25</strong>ブース</p>
-        <h3><a href="#">○○フリーマーケット</a></h3>
-        <p class="place">大井競馬場</p>
-      </div>
-      <!-- /market -->
-      <!-- market -->
-      <div class="market clearfix">
-        <p class="state">○○○県</p>
-        <p class="case">出店簿集中!</p>
-        <div class="marketPhoto"><a href="#"><img src="http://dummyimage.com/180x110/ccc/fff.jpg"></a></div>
-        <p class="date">12月24日(土)</p>
-        <p class="booth">残り<strong>25</strong>ブース</p>
-        <h3><a href="#">○○フリーマーケット</a></h3>
-        <p class="place">大井競馬場</p>
-      </div>
-      <!-- /market -->
-    </div>
+    <div id="newMarket" class="container"></div>
   </div>
 </div>
 <!-- /new -->
@@ -342,8 +243,8 @@ $(function() {
 <hr>
 <script type="text/javascript">
 $(function() {
-  Calendar.init();
   Calendar.get();
+  Carousel.get();
 });
 
 var Calendar = {
@@ -359,18 +260,49 @@ var Calendar = {
   },
   get: function(url) {
     if (url == "" || typeof url === "undefined") {
-      url = "/calendar";
+      url = "/calendar/";
     }
 
     $.ajax({
-      type: "post",
+      type: "get",
       url: url,
       dataType: "html"
     }).done(function(html, textStatus, jqXHR) {
       $("#calendar-search").empty();
       $("#calendar-search").html(html);
+      Calendar.init();
     }).fail(function(jqXHR, textStatus, errorThrown) {
     }).always(function() {
+    });
+  }
+};
+
+var Carousel = {
+  get: function() {
+    $.ajax({
+      type: "get",
+      url: "/fleamarket/latest/",
+      dataType: "html"
+    }).done(function(html, textStatus, jqXHR) {
+      $("#newMarket").empty();
+      $("#newMarket").html(html);
+      Carousel.start();
+    }).fail(function(jqXHR, textStatus, errorThrown) {
+    }).always(function() {
+    });
+  },
+  start: function () {
+    $("#newMarket").carouFredSel({
+      align: true,
+      scroll:{
+        items: 1,
+        duration: 300,
+        pauseDuration: 5000,
+        easing: 'linear',
+        pauseOnHover: 'immediate'
+      },
+      prev:{button: "#prev", key: "left"},
+      next:{button: "#next", key:"right"}
     });
   }
 };
