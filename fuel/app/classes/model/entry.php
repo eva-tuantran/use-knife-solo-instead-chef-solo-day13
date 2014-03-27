@@ -10,6 +10,79 @@
 class Model_Entry extends \Orm\Model_Soft
 {
     /**
+     * エントリーステータス 1:エントリ,2:キャンセル待ち,3:キャンセル
+     */
+    const ENTRY_STATUS_RESERVED = 1;
+    const ENTRY_STATUS_WAITING  = 2;
+    const ENTRY_STATUS_CANCELED = 3;
+
+    /**
+     * 出品物種類 1:リサイクル品,2:手作り品
+     */
+    const ITEM_CATEGORY_RECYCLE  = 1;
+    const ITEM_CATEGORY_HANDMADE = 2;
+
+    /**
+     * 出品物種類の最大・最少ID
+     */
+    const ITEM_CATEGORY_MIN = 1;
+    const ITEM_CATEGORY_MAX = 2;
+
+    /**
+     * 出品物ジャンル
+     */
+    const ITEM_GENRES_COMPUTER = 1;
+    const ITEM_GENRES_AV       = 2;
+    const ITEM_GENRES_CAMERA   = 3;
+    const ITEM_GENRES_MUSIC    = 4;
+    const ITEM_GENRES_TOY      = 5;
+    const ITEM_GENRES_ANTIQUE  = 6;
+    const ITEM_GENRES_SPORTS   = 7;
+    const ITEM_GENRES_FASHION  = 8;
+    const ITEM_GENRES_JEWELRY  = 9;
+    const ITEM_GENRES_BEAUTY   = 10;
+    const ITEM_GENRES_INTERIOR = 11;
+    const ITEM_GENRES_OFFICE   = 12;
+    const ITEM_GENRES_BABY     = 13;
+    const ITEM_GENRES_GOODS    = 14;
+    const ITEM_GENRES_COMMIC   = 15;
+
+    /**
+     * 出品物ジャンルの最大・最少ID
+     */
+    const ITEM_GENRES_MIN = 1;
+    const ITEM_GENRES_MAX = 15;
+
+    /**
+     * 出品物種類リスト
+     */
+    private static $item_category_define = array(
+        self::ITEM_CATEGORY_RECYCLE  => 'リサイクル品',
+        self::ITEM_CATEGORY_HANDMADE => '手作り品',
+    );
+
+    /**
+     * 出品物ジャンルリスト
+     */
+    private static $item_genres_define = array(
+        self::ITEM_GENRES_COMPUTER => 'コンピュータ',
+        self::ITEM_GENRES_AV       => '家電、AV',
+        self::ITEM_GENRES_CAMERA   => 'カメラ',
+        self::ITEM_GENRES_MUSIC    => '音楽、CD',
+        self::ITEM_GENRES_TOY      => 'おもちゃ、ゲーム',
+        self::ITEM_GENRES_ANTIQUE  => 'アンティーク、一点もの',
+        self::ITEM_GENRES_SPORTS   => 'スポーツ、レジャー',
+        self::ITEM_GENRES_FASHION  => 'ファッション、ブランド',
+        self::ITEM_GENRES_JEWELRY  => 'アクセサリー、時計',
+        self::ITEM_GENRES_BEAUTY   => 'ビューティ、ヘルスケア',
+        self::ITEM_GENRES_INTERIOR => 'インテリア、DIY',
+        self::ITEM_GENRES_OFFICE   => '事務、店舗用品',
+        self::ITEM_GENRES_BABY     => 'ベビー用品',
+        self::ITEM_GENRES_GOODS    => 'タレントグッズ',
+        self::ITEM_GENRES_COMMIC   => 'コミック、アニメグッズ',
+    );
+
+    /**
      * テーブル名
      *
      * @var string $table_name
@@ -23,6 +96,11 @@ class Model_Entry extends \Orm\Model_Soft
      */
     protected static $_primary_key  = array('entry_id');
 
+    /**
+     * 外部結合設定
+     *
+     * @var array
+     */
     protected static $_belongs_to = array(
         'fleamarket' => array(
             'key_to' => 'fleamarket_id',
@@ -35,6 +113,11 @@ class Model_Entry extends \Orm\Model_Soft
         ),
     );
 
+    /**
+     * フィールド設定
+     *
+     * @var array
+     */
     protected static $_properties = array(
         'entry_id',
         'user_id',
@@ -80,12 +163,21 @@ class Model_Entry extends \Orm\Model_Soft
         'deleted_at',
     );
 
+    /**
+     * 論理削除設定
+     *
+     * @var array
+     */
     protected static $_soft_delete = array(
         'deleted_field'   => 'deleted_at',
         'mysql_timestamp' => true,
     );
 
-
+    /**
+     * オブサーバ設定
+     *
+     * @var array
+     */
     protected static $_observers = array(
         'Orm\\Observer_CreatedAt' => array(
             'events'          => array('before_insert'),
@@ -99,39 +191,69 @@ class Model_Entry extends \Orm\Model_Soft
         ),
     );
 
+    /**
+     * カテゴリの番号と名前の連想配列を返す
+     *
+     * @access public
+     * @return array
+     * @author kobayasi
+     */
+    public static function getItemCategoryDefine()
+    {
+        return self::$item_category_define;
+    }
 
-    const ENTRY_STATUS_RESERVED = 1;
-    const ENTRY_STATUS_WAITING  = 2;
-    const ENTRY_STATUS_CANCELED = 3;
-
+    /**
+     * ジャンルの番号と名前の連想配列を返す
+     *
+     * @access public
+     * @return array
+     * @author kobayasi
+     */
+    public static function getItemGenresDefine()
+    {
+        return self::$item_genres_define;
+    }
 
     /**
      * エントリスタイルごとの予約数を取得する
      *
      * @access public
      * @param int $fleamarket_id フリーマーケットID
+     * @param bool $is_entry_style_grouping 出店形態でグルーピング
      * @return array
      * @author ida
      */
-    public static function getTotalEntryByFlearmarketId($fleamarket_id)
-    {
+    public static function getTotalEntryByFleamarketId(
+        $fleamarket_id, $is_entry_style_grouping = true
+    ) {
         if (! $fleamarket_id) {
             return null;
         }
 
-        $placeholders = array('flearmarket_id' => $fleamarket_id);
+        $placeholders = array(
+            ':flearmarket_id' => $fleamarket_id,
+            ':entry_status' => Model_Entry::ENTRY_STATUS_RESERVED,
+        );
+
+        $field = '';
+        $groupby = '';
+        if ($is_entry_style_grouping) {
+            $field = "fleamarket_entry_style_id,";
+            $groupby = " GROUP BY fleamarket_entry_style_id";
+        }
         $table_name = self::$_table_name;
         $query = <<<"QUERY"
 SELECT
-    fleamarket_entry_style_id,
+    {$field}
     COUNT(user_id) AS entry_count,
     SUM(reserved_booth) AS reserved_booth
 FROM
     {$table_name}
 WHERE
     fleamarket_id = :flearmarket_id
-GROUP BY
-    fleamarket_entry_style_id
+    AND entry_status = :entry_status
+{$groupby}
 QUERY;
         $statement = \DB::query($query)->parameters($placeholders);
         $result = $statement->execute();
@@ -143,8 +265,6 @@ QUERY;
 
         return $rows;
     }
-
-
 
     /**
      * 特定のユーザのエントリーしたフリマ情報を取得します。
@@ -249,7 +369,6 @@ QUERY;
         return $count;
     }
 
-
     /**
      * 特定のユーザの予約済みのフリマの個数を取得します
      *
@@ -261,7 +380,7 @@ QUERY;
     public static function getUserReservedEntryCount($user_id)
     {
         $placeholders = array(
-            'user_id'         => $user_id,
+            'user_id' => $user_id,
         );
 
         $query = <<<QUERY
@@ -280,86 +399,10 @@ QUERY;
 
         $res = \DB::query($query)->parameters($placeholders)->execute()->as_array();
         if (! empty($res[0]['count'])) {
-
             return $res[0]['count'];
         }
 
         return 0;
-    }
-
-
-
-
-    const ITEM_CATEGORY_RECYCLE  = 1;
-    const ITEM_CATEGORY_HANDMADE = 2;
-
-    const ITEM_CATEGORY_MIN = 1;
-    const ITEM_CATEGORY_MAX = 2;
-
-    private static $item_category_define = array(
-        self::ITEM_CATEGORY_RECYCLE  => 'リサイクル品',
-        self::ITEM_CATEGORY_HANDMADE => '手作り品',
-    );
-
-    const ITEM_GENRES_COMPUTER = 1;
-    const ITEM_GENRES_AV       = 2;
-    const ITEM_GENRES_CAMERA   = 3;
-    const ITEM_GENRES_MUSIC    = 4;
-    const ITEM_GENRES_TOY      = 5;
-    const ITEM_GENRES_ANTIQUE  = 6;
-    const ITEM_GENRES_SPORTS   = 7;
-    const ITEM_GENRES_FASHION  = 8;
-    const ITEM_GENRES_JEWELRY  = 9;
-    const ITEM_GENRES_BEAUTY   = 10;
-    const ITEM_GENRES_INTERIOR = 11;
-    const ITEM_GENRES_OFFICE   = 12;
-    const ITEM_GENRES_BABY     = 13;
-    const ITEM_GENRES_GOODS    = 14;
-    const ITEM_GENRES_COMMIC   = 15;
-
-    const ITEM_GENRES_MIN = 1;
-    const ITEM_GENRES_MAX = 15;
-
-    private static $item_genres_define = array(
-        self::ITEM_GENRES_COMPUTER => 'コンピュータ',
-        self::ITEM_GENRES_AV       => '家電、AV',
-        self::ITEM_GENRES_CAMERA   => 'カメラ',
-        self::ITEM_GENRES_MUSIC    => '音楽、CD',
-        self::ITEM_GENRES_TOY      => 'おもちゃ、ゲーム',
-        self::ITEM_GENRES_ANTIQUE  => 'アンティーク、一点もの',
-        self::ITEM_GENRES_SPORTS   => 'スポーツ、レジャー',
-        self::ITEM_GENRES_FASHION  => 'ファッション、ブランド',
-        self::ITEM_GENRES_JEWELRY  => 'アクセサリー、時計',
-        self::ITEM_GENRES_BEAUTY   => 'ビューティ、ヘルスケア',
-        self::ITEM_GENRES_INTERIOR => 'インテリア、DIY',
-        self::ITEM_GENRES_OFFICE   => '事務、店舗用品',
-        self::ITEM_GENRES_BABY     => 'ベビー用品',
-        self::ITEM_GENRES_GOODS    => 'タレントグッズ',
-        self::ITEM_GENRES_COMMIC   => 'コミック、アニメグッズ',
-    );
-
-    /**
-     * カテゴリの番号と名前の連想配列を返す
-     *
-     * @access public
-     * @return array
-     * @author kobayasi
-     */
-    public static function getItemCategoryDefine()
-    {
-        return self::$item_category_define;
-    }
-
-    /**
-     * ジャンルの番号と名前の連想配列を返す
-     *
-     * @access public
-     * @return array
-     * @author kobayasi
-     */
-    public static function getItemGenresDefine()
-    {
-        return self::$item_genres_define;
     }
 
     /**
@@ -377,7 +420,7 @@ QUERY;
             return false;
         }
 
-        $count = Model_Fleamarket_Entry_Style::query()->where(array(
+        $count = \Model_Fleamarket_Entry_Style::query()->where(array(
             'fleamarket_id' => $this->fleamarket_id,
             'fleamarket_entry_style_id' => $fleamarket_entry_style_id,
         ))->count();

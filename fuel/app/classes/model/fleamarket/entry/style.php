@@ -23,6 +23,11 @@ class Model_Fleamarket_Entry_Style extends \Orm\Model
      */
     protected static $_primary_key  = array('fleamarket_entry_style_id');
 
+    /**
+     * フィールド設定
+     *
+     * @var array
+     */
     protected static $_properties = array(
         'fleamarket_entry_style_id',
         'fleamarket_id',
@@ -37,6 +42,11 @@ class Model_Fleamarket_Entry_Style extends \Orm\Model
         'deleted_at',
     );
 
+    /**
+     * オブサーバ設定
+     *
+     * @var array
+     */
     protected static $_observers = array(
         'Orm\Observer_CreatedAt' => array(
             'events' => array('before_insert'),
@@ -87,6 +97,53 @@ QUERY;
     }
 
     /**
+     * エントリスタイルごとの予約数を取得する
+     *
+     * @access public
+     * @param int $fleamarket_id フリーマーケットID
+     * @return array
+     * @author ida
+     */
+    public static function getMaxBoothByFleamarketId(
+        $fleamarket_id, $is_entry_style_grouping = true
+    ) {
+        if (! $fleamarket_id) {
+            return null;
+        }
+
+        $placeholders = array(
+            ':flearmarket_id' => $fleamarket_id,
+        );
+
+        $field = '';
+        $groupby = '';
+        if ($is_entry_style_grouping) {
+            $field = "entry_style_id,";
+            $groupby = " GROUP BY entry_style_id";
+        }
+        $table_name = self::$_table_name;
+        $query = <<<"QUERY"
+SELECT
+    {$field}
+    SUM(max_booth) AS max_booth
+FROM
+    {$table_name}
+WHERE
+    fleamarket_id = :flearmarket_id
+{$groupby}
+QUERY;
+        $statement = \DB::query($query)->parameters($placeholders);
+        $result = $statement->execute();
+
+        $rows = null;
+        if (! empty($result)) {
+            $rows = $result->as_array();
+        }
+
+        return $rows;
+    }
+
+    /**
      * 予約ブース数の総数を取得
      *
      * @access public
@@ -97,12 +154,12 @@ QUERY;
     public function sumReservedBooth()
     {
         $query = DB::select(DB::expr('SUM(reserved_booth) as sum_result'));
-        $query->from(Model_Entry::table());
+        $query->from(\Model_Entry::table());
 
         $query->where(array(
             'fleamarket_id'             => $this->fleamarket_id,
             'fleamarket_entry_style_id' => $this->fleamarket_entry_style_id,
-            'entry_status'              => Model_Entry::ENTRY_STATUS_RESERVED,
+            'entry_status'              => \Model_Entry::ENTRY_STATUS_RESERVED,
         ));
 
         return $query->execute()->get('sum_result');
@@ -145,7 +202,7 @@ QUERY;
     public function getWaitingEntry()
     {
         $entries =
-            Model_Entry::query()
+            \Model_Entry::query()
             ->where(array(
                 'fleamarket_id'             => $this->fleamarket_id,
                 'fleamarket_entry_style_id' => $this->fleamarket_entry_style_id,
