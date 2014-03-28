@@ -230,7 +230,6 @@ class Controller_Reservation extends Controller_Base_Template
     private function sendMailToUser($entry)
     {
         $params = array();
-        $email = new Model_Email();
         foreach (array_keys($entry->properties()) as $column) {
             $params[$column] = $entry->get($column);
         }
