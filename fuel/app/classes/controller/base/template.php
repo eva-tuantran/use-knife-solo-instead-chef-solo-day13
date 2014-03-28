@@ -3,7 +3,6 @@
 /**
  * Base Controller.
  *
- * @extends  Controller_Template
  * @author shimma
  */
 class Controller_Base_Template extends Controller_Template
@@ -55,6 +54,7 @@ class Controller_Base_Template extends Controller_Template
      *
      * @var mixed
      * @access protected
+     * @author shimma
      */
     protected $meta = array();
 
@@ -64,22 +64,11 @@ class Controller_Base_Template extends Controller_Template
      *
      * @var mixed
      * @access protected
+     * @author shimma
      */
     protected $login_user;
 
 
-
-    /**
-     * 事前処理
-     * アクション実行前の共通処理
-     *
-     * @access public
-     * @return void
-     * @author ida
-     * @author shimma
-     *
-     * @todo ログイン必須時のリダイレクトの挙動の確定
-     */
     public function before()
     {
         parent::before();
@@ -98,15 +87,13 @@ class Controller_Base_Template extends Controller_Template
         }
 
         if (in_array($this->request->action, $this->_login_actions) && !Auth::check()) {
-            // return \Response::redirect('/login?rurl='.\Uri::main());
-            return \Response::redirect('/login');
+            return \Response::redirect('/login?rurl='.$_SERVER['REQUEST_URI']);
         }
 
         if (in_array($this->request->action, $this->_nologin_actions) && Auth::check()) {
             return \Response::redirect('/mypage');
         }
 
-        Asset::js('holder.js', array(), 'add_js');
         Lang::load('meta');
         $this->login_user = Auth::get_user_instance();
 
@@ -117,14 +104,6 @@ class Controller_Base_Template extends Controller_Template
     }
 
 
-    /**
-     * after
-     *
-     * @param mixed $response
-     * @access public
-     * @return void
-     * @author shimma
-     */
     public function after($response)
     {
         $this->template->meta = $this->meta;
@@ -206,19 +185,5 @@ class Controller_Base_Template extends Controller_Template
         Lang::load('status');
         return Lang::get($i);
     }
-
-
-    /**
-     * var_dumpとexitを一気にやってくれるtest用関数
-     *
-     * @param mixed $data
-     */
-    public static function vd($data)
-    {
-        var_dump($data);
-        exit();
-    }
-
-
 
 }
