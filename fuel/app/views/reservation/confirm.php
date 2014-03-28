@@ -26,7 +26,7 @@
 	<div class="form-group">
 	  <label class="col-sm-2 control-label">出店方法</label>
 	  <div class="col-sm-10">
-	    <?php echo e($entry_styles[$input['fleamarket_entry_style_id']]); ?>
+      <?php echo e($entry_styles[$fleamarket_entry_style->entry_style_id]); ?>
 	  </div>
 	</div>
 	<div class="form-group">
