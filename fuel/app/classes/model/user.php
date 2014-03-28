@@ -515,20 +515,7 @@ class Model_User extends Orm\Model_Soft
      */
     public function cancelEntry($fleamarket_id)
     {
-        $entry = Model_Entry::find('last', array(
-            'where' => array(
-                array('user_id' => $this->user_id),
-                array('fleamarket_id' => $fleamarket_id),
-            )
-        ));
-
-        if (! $entry) {
-            return false;
-        } else {
-            $entry->delete();
-        }
-
-        return true;
+        return \Model_Entry::cancelUserEntry($this->user_id, $fleamarket_id);
     }
 
 }
