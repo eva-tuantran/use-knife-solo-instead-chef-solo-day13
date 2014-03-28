@@ -1,0 +1,2 @@
+# 
+0 8 * * * apache (cd /var/www/html ; /usr/bin/php oil refine send_mail_to_user_waiting_reservation)

@@ -82,6 +82,8 @@ class Controller_Base_Template extends Controller_Template
      */
     public function before()
     {
+        parent::before();
+
         $should_be_secure = in_array($this->request->action, $this->_secure_actions);
         $is_secure        = isset($_SERVER['HTTPS']);
         $use_ssl          = \Config::get('ssl_connection.use');
@@ -108,8 +110,10 @@ class Controller_Base_Template extends Controller_Template
         Lang::load('meta');
         $this->login_user = Auth::get_user_instance();
 
-        parent::before();
+        list($dir) = $this->request->uri->get_segments();
+        $this->setMetaTag("$dir/" . $this->request->action);
     }
+
 
     /**
      * after

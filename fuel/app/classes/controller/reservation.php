@@ -98,6 +98,7 @@ class Controller_Reservation extends Controller_Base_Template
 
         try {
             $entry = $this->registerEntry();
+            $this->sendMailToUser($entry);
         } catch (Exception $e) {
             $view->set('error', $e, false);
             throw $e;
@@ -217,5 +218,21 @@ class Controller_Reservation extends Controller_Base_Template
         }
 
         return $input;
+    }
+
+    /**
+     * ユーザーにメールを送信
+     *
+     * @para $entry
+     * @access private
+     * @return void
+     */
+    private function sendMailToUser($entry)
+    {
+        $params = array();
+        foreach (array_keys($entry->properties()) as $column) {
+            $params[$column] = $entry->get($column);
+        }
+        $this->login_user->sendmail("reservation" , $params);
     }
 }
