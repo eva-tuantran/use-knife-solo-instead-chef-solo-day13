@@ -234,6 +234,6 @@ class Controller_Reservation extends Controller_Base_Template
         foreach (array_keys($entry->properties()) as $column) {
             $params[$column] = $entry->get($column);
         }
-        $email->sendMailByParams("reservation" , $params, $this->login_user->email);
+        $this->login_user->sendmail("reservation" , $params);
     }
 }
