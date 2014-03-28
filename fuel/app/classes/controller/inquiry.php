@@ -157,8 +157,9 @@ class Controller_Inquiry extends Controller_Base_Template
         }
         $params['inquiry_type_label'] = $contact->inquiry_type_label();
 
-        $this->sendMailByParams("inquiry_user" , $params, array($contact->email));
-        $this->sendMailByParams("inquiry_admin", $params);
+        $email = new Model_Email();
+        $email->sendMailByParams("inquiry_user" , $params, array($contact->email));
+        $email->sendMailByParams("inquiry_admin", $params);
     }
 }
 
