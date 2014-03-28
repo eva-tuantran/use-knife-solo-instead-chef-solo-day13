@@ -17,7 +17,7 @@
         <?php echo \Form::csrf(); ?>
         <div class="form-group">
           <input type="text" class="form-control" id="mail" placeholder="メールアドレス(ログインID)" name="email">
-          <input type="text" class="form-control" id="password" placeholder="パスワード" name="password">
+          <input type="password" class="form-control" id="password" placeholder="パスワード" name="password">
           <button type="submit" class="btn btn-default">ログイン</button>
         </div>
       </form>
