@@ -489,18 +489,15 @@ class Model_User extends Orm\Model_Soft
 
 
     /**
-     * マイリスト数を取得します
+     * マイリスト(お気に入り)数を取得します
      *
      * @access public
      * @return int
      * @author shimma
-     *
-     * @todo ここの完成
      */
-    public function getMylistCount()
+    public function getFavoriteCount()
     {
-        // $count = self::
-        $count = 10;
+        $count = \Model_Favorite::getUserFavoriteCount($this->user_id);
 
         return $count;
     }
@@ -517,5 +514,22 @@ class Model_User extends Orm\Model_Soft
     {
         return \Model_Entry::cancelUserEntry($this->user_id, $fleamarket_id);
     }
+
+
+    /**
+     * ユーザのお気に入り情報を取得します
+     *
+     * @access public
+     * @return mixed
+     * @author shimma
+     */
+    public function getFavorites($page = 1, $row_count = 30)
+    {
+        $favorites = \Model_Favorite::getUserFavorites($this->user_id, $page, $row_count);
+
+        return $favorites;
+    }
+
+
 
 }

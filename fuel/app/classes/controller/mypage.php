@@ -50,6 +50,7 @@ class Controller_Mypage extends Controller_Base_Template
         $view_model = ViewModel::forge('mypage/index');
         $view_model->set('prefectures', Config::get('master.prefectures'), false);
         $view_model->set('entries', $this->login_user->getEntries());
+        $view_model->set('favorites', $this->login_user->getFavorites());
         $this->template->content = $view_model;
     }
 
