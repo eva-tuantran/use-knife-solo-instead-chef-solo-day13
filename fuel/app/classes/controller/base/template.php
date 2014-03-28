@@ -110,8 +110,10 @@ class Controller_Base_Template extends Controller_Template
         Lang::load('meta');
         $this->login_user = Auth::get_user_instance();
 
-        list($dir) = $this->request->uri->get_segments();
-        $this->setMetaTag("$dir/" . $this->request->action);
+        if ($this->request->uri->get_segments()) {
+            list($dir) = $this->request->uri->get_segments();
+            $this->setMetaTag("$dir/" . $this->request->action);
+        }
     }
 
 
