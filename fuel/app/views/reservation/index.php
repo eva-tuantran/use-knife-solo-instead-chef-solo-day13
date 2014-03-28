@@ -54,14 +54,18 @@
 	<div class="form-group">
 	  <label class="col-sm-2 control-label">ブース数</label>
 	  <div class="col-sm-10">
-	    <select name="reserved_booth">
-	      <?php foreach (range(1,10) as $n) { ?>
+	      <?php foreach ($fleamarket->fleamarket_entry_styles as $fleamarket_entry_style){ ?>
+	      <div class="reserved_booth_div" id="reserved_booth_<?php echo $fleamarket_entry_style->fleamarket_entry_style_id; ?>" style="display: none;">
+	      <select name="reserved_booth">
+  	      <?php foreach (range(1,$fleamarket_entry_style->reservation_booth_limit) as $n) { ?>
 	      <option value="<?php echo $n; ?>"
               <?php if ($input['reserved_booth'] == $n) { echo ' selected=selected'; } ?>>
 		<?php echo $n; ?>
               </option>
 	      <?php } ?>
-	    </select>
+	      </select>
+	      </div>
+	      <?php } ?>
 	    <?php if (isset($errors['reserved_booth'])) { ?>
 	    <?php echo $errors['reserved_booth']; ?>
 	    <?php } ?>
@@ -99,3 +103,15 @@
     </div>
   </div>
 </div>
+
+<script type="text/javascript">
+  $('input[name="fleamarket_entry_style_id"]').change(function(){
+    $('.reserved_booth_div').hide();
+    var id = $('input[name="fleamarket_entry_style_id"]:checked').val();
+    if(id){
+      $('#reserved_booth_' + id).show();
+    }
+  });
+
+  $('input[name="fleamarket_entry_style_id"]').trigger('change');
+</script>
