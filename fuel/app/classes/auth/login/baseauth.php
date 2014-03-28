@@ -275,7 +275,7 @@ QUERY;
      */
     public function getMylistCount()
     {
-        return $this->user->getMylistCount();
+        return $this->user->getFavoriteCount();
     }
 
 
