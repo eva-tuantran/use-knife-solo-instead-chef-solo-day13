@@ -38,7 +38,6 @@ class Controller_Login extends Controller_Base_Template
         $status = Session::get_flash('status');
         $data['info_message'] = $this->getStatusMessage($status);
 
-        $this->setMetaTag('login/index');
         $this->template->content = View::forge('login/index', $data);
     }
 

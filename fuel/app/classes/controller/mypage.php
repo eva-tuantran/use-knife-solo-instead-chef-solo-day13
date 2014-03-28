@@ -22,15 +22,12 @@ class Controller_Mypage extends Controller_Base_Template
         'save',
     );
 
-
     /**
      * before
      *
      * @access public
      * @return void
      * @author shimma
-     *
-     * @todo ログイン通過にも関わらずインスタンスが取れなかった時はエラーを吐いて表示させる実装に切り替える
      */
     public function before()
     {
@@ -54,7 +51,6 @@ class Controller_Mypage extends Controller_Base_Template
         $view_model->set('prefectures', Config::get('master.prefectures'), false);
         $view_model->set('entries', $this->login_user->getEntries());
         $this->template->content = $view_model;
-        $this->setMetaTag('mypage/index');
     }
 
 
@@ -86,7 +82,6 @@ class Controller_Mypage extends Controller_Base_Template
 
         //処理ページを見せ1秒後にマイページにリダイレクトさせる
         $this->setLazyRedirect('/mypage');
-        $this->setMetaTag('login/index');
         $this->template->content = View::forge('mypage/cancel');
    }
 
@@ -96,6 +91,8 @@ class Controller_Mypage extends Controller_Base_Template
      * @access public
      * @return void
      * @author shimma
+     *
+     * @todo 作りかけ
      */
     public function action_password()
     {
@@ -109,10 +106,11 @@ class Controller_Mypage extends Controller_Base_Template
     /**
      * ユーザのアカウント情報の変更ページ
      *
-     * @todo Model_Userでfieldsetを作成するのか、ここで作成するか検討
      * @access public
      * @return void
      * @author shimma
+     *
+     * @todo デザインがまとまりしだいfieldsetのbuildから切り替え
      */
     public function action_account()
     {
@@ -124,7 +122,6 @@ class Controller_Mypage extends Controller_Base_Template
         $fieldset->field('password')->set_type(false);
         $fieldset->add('submit', '', array('type' => 'submit','value' => '保存する'));
 
-        $this->setMetaTag('mypage/account');
         $this->template->content = View::forge('mypage/account', $data);
         $this->template->content->set('user_account_form', $fieldset->build('/mypage/save'), false);
     }
