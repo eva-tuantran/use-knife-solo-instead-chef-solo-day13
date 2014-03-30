@@ -38,6 +38,4 @@ class Controller_Top extends Controller_Base_Template
         $view_model->set('news_headlines', Model_News::getHeadlines());
         $this->template->content = $view_model;
     }
-
-
 }
