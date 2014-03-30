@@ -69,7 +69,7 @@
       <div id="globalNavBottom">
         <ul class="breadcrumb hidden-xs">
           <li><a href="#">ホーム</a></li>
-          <li class="active">◯◯◯◯◯◯</li>
+          <li class="active"><?php echo $title; ?></li>
         </ul>
         <form><input type="text" class="form-control hidden-xs" id="keywordInput"></form>
       </div>
