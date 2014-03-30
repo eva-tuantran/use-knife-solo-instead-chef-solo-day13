@@ -98,6 +98,7 @@ class Controller_Reservation extends Controller_Base_Template
 
         try {
             $entry = $this->registerEntry();
+            $this->sendMailToUser($entry);
         } catch (Exception $e) {
             $view->set('error', $e, false);
             throw $e;
@@ -154,10 +155,26 @@ class Controller_Reservation extends Controller_Base_Template
             $db = Database_Connection::instance();
             $db->start_transaction();
 
-            $entry = Model_Entry::forge();
-            $entry->set($data);
-            $entry->save();
-            
+            $condition = array(
+                'user_id'                   => $data['user_id'],
+                'fleamarket_id'             => $data['fleamarket_id'],
+                'fleamarket_entry_style_id' => $data['fleamarket_entry_style_id'],
+            );
+
+            $entry = Model_Entry::find('first',$condition);
+            if ($entry) {
+                $entry->set($data);
+                $entry->save();
+            } else {
+                $entry = Model_Entry::find_deleted('first',$condition);
+                if ($entry) {
+                    $entry->set($data);
+                    $entry->restore();
+                } else {
+                    $entry = Model_Entry::forge($data);
+                    $entry->save();
+                }
+            }
             if (! Input::post('cancel') && 
                 $entry->fleamarket_entry_style->isOverReservationLimit()) {
                 $db->rollback_transaction();
@@ -201,5 +218,21 @@ class Controller_Reservation extends Controller_Base_Template
         }
 
         return $input;
+    }
+
+    /**
+     * ユーザーにメールを送信
+     *
+     * @para $entry
+     * @access private
+     * @return void
+     */
+    private function sendMailToUser($entry)
+    {
+        $params = array();
+        foreach (array_keys($entry->properties()) as $column) {
+            $params[$column] = $entry->get($column);
+        }
+        $this->login_user->sendmail("reservation" , $params);
     }
 }

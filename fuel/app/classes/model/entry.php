@@ -282,6 +282,7 @@ QUERY;
             'about_access_id' => \Model_Fleamarket_About::ACCESS,
             'register_status' => \Model_Fleamarket::REGISTER_TYPE_ADMIN,
             'display_flag'    => \Model_Fleamarket::DISPLAY_FLAG_ON,
+            'entry_status'    => \Model_Entry::ENTRY_STATUS_RESERVED,
         );
 
         $limit = '';
@@ -318,7 +319,8 @@ SELECT
     l.prefecture_id AS prefecture_id,
     l.address AS address,
     l.googlemap_address AS googlemap_address,
-    fa.description AS about_access
+    fa.description AS about_access,
+    fes.booth_fee AS booth_fee
 FROM
     entries AS e
 LEFT JOIN
@@ -333,6 +335,7 @@ LEFT JOIN
     fleamarket_entry_styles AS fes ON f.fleamarket_id = fes.fleamarket_id
 WHERE
     e.user_id = :user_id AND
+    e.entry_status = :entry_status AND
     f.display_flag = :display_flag AND
     e.deleted_at IS NULL
 ORDER BY
@@ -361,13 +364,29 @@ QUERY;
      */
     public static function getUserFinishedEntryCount($user_id)
     {
-        $count = self::query()->where('user_id', $user_id)->count();
+        $placeholders = array(
+            'user_id'      => $user_id,
+            'entry_status' => self::ENTRY_STATUS_RESERVED,
+        );
 
-        if (! $count) {
-            return 0;
-        }
+        $query = <<<QUERY
+SELECT
+    COUNT(*) as count
+FROM
+    entries AS e
+LEFT JOIN
+    fleamarkets AS f ON
+    e.fleamarket_id = f.fleamarket_id
+WHERE
+    e.user_id = :user_id AND
+    f.event_date < NOW() AND
+    e.entry_status = :entry_status AND
+    e.deleted_at IS NULL
+QUERY;
 
-        return $count;
+        $finished_entry_count = \DB::query($query)->parameters($placeholders)->execute()->get('count');
+
+        return $finished_entry_count;
     }
 
     /**
@@ -381,7 +400,8 @@ QUERY;
     public static function getUserReservedEntryCount($user_id)
     {
         $placeholders = array(
-            'user_id' => $user_id,
+            'user_id'      => $user_id,
+            'entry_status' => self::ENTRY_STATUS_RESERVED,
         );
 
         $query = <<<QUERY
@@ -395,16 +415,46 @@ LEFT JOIN
 WHERE
     e.user_id = :user_id AND
     f.event_date > NOW() AND
+    e.entry_status = :entry_status AND
     e.deleted_at IS NULL
 QUERY;
 
-        $res = \DB::query($query)->parameters($placeholders)->execute()->as_array();
-        if (! empty($res[0]['count'])) {
-            return $res[0]['count'];
+        $reserved_entry_count = \DB::query($query)->parameters($placeholders)->execute()->get('count');
+
+        return $reserved_entry_count;
+    }
+
+
+
+    /**
+     * 特定のユーザのエントリーしたフリマをキャンセルします
+     *
+     * @access public
+     * @param int $user_id
+     * @param int $fleamarket_id
+     * @return bool
+     * @author shimma
+     */
+    public static function cancelUserEntry($user_id, $fleamarket_id)
+    {
+
+        try {
+            $entry = self::find('last', array(
+                'where' => array(
+                    array('user_id' => $user_id),
+                    array('fleamarket_id' => $fleamarket_id),
+                )
+            ));
+            $entry->entry_status = self::ENTRY_STATUS_CANCELED;
+            $entry->save();
+        } catch (Exception $e) {
+            return false;
         }
 
-        return 0;
+        return true;
     }
+
+
 
     /**
      * fleamarket_entry_style_id が fleamarket_entry_styles テーブルに

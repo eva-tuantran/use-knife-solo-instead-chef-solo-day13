@@ -12,6 +12,12 @@ class Model_User extends Orm\Model_Soft
 
     protected static $_primary_key = array('user_id');
 
+    protected static $_has_many = array(
+        'favorites' => array(
+            'key_from' => 'user_id',
+        ),
+    );
+
     protected static $_properties = array(
         'user_id' => array(
             'label' => 'ユーザID',
@@ -173,6 +179,7 @@ class Model_User extends Orm\Model_Soft
                 'trim',
                 'valid_email',
                 'max_length' => array(50),
+                'unique_email',
             ),
             'form'       => array(
                 'type'  => 'text',
@@ -280,19 +287,13 @@ class Model_User extends Orm\Model_Soft
         ),
         'register_status' => array(
             'label' => '会員登録状況',
+            'default' => self::REGISTER_STATUS_INACTIVATED,
             'validation' => array(
                 'numeric_min' => array(0),
                 'numeric_max' => array(5),
             ),
             'form' => array(
                 'type' => false,
-                // 'type' => 'select',
-                'options' => array(
-                    \REGISTER_STATUS_INACTIVATED => '仮登録',
-                    \REGISTER_STATUS_ACTIVATED   => '正規ユーザ',
-                    \REGISTER_STATUS_STOPPED     => '停止',
-                    \REGISTER_STATUS_BANNED      => '強制停止',
-                 ),
             ),
         ),
         'last_login' => array(
@@ -382,47 +383,43 @@ class Model_User extends Orm\Model_Soft
     /**
      * getBaseFieldset
      *
-     * @todo カスタムフィールドセット(メールアドレスの重複セット)が正常に動作するか確認
-     * @todo 現状未使用
      * @param \Fieldset $fieldset
      * @static
      * @access public
      * @return Fieldset fieldset
      * @author shimma
      */
-    public static function getBaseFieldset(\Fieldset $fieldset)
+    public static function createFieldset()
     {
+        $fieldset = Fieldset::forge();
         $fieldset->validation()->add_callable('Model_User');
         $fieldset->add_model('Model_User');
 
         return $fieldset;
     }
 
+
     /**
-     * ユーザ名がユニークか否かvalidationで判定します
+     * emailアドレスがユニークかどうか調査します
      *
-     * @todo 他所を参考にソースを引っ張ってきてまだ動作未確認および未使用
-     * @param string $username
-     * @param Model_User $user
-     * @static
      * @access public
+     * @param  int
      * @return bool
      * @author shimma
      */
-    public static function _validation_unique_username($username, Model_User $user)
+    public static function _validation_unique_email($email)
     {
-        if ( ! $user->is_new() and $user->username === $username) {
-            return true;
-        }
+        $count = self::query()->where(array(
+            'email' => $email,
+        ))->count();
 
-        $exists = DB::select(DB::expr('COUNT(*) as total_count'))->from($user->table())->where('username', '=', $username)->execute()->get('total_count');
-
-        return (bool) !$exists;
-
+        return empty($count);
     }
 
+
     /**
-     * ユーザにメールを送信します
+     * ユーザにテンプレートのメールを送信します
+     * lang/ja/email配下のテンプレートを利用します。
      *
      * @param string $subject
      * @param string $body
@@ -430,24 +427,11 @@ class Model_User extends Orm\Model_Soft
      * @return bool
      * @author shimma
      *
-     * @todo エラーの箇所がfalseとなっているが、throwするように変更する
      */
-    public function sendmail($subject, $body)
+    public function sendmail($template_name, $params = array())
     {
-        $email = \Email::forge();
-        $email->from(\DEFAULT_EMAIL, \DEFAULT_EMAIL_NAME);
-        $email->to($this->email);
-        $email->subject($subject);
-        $email->body(mb_convert_encoding($body, 'jis'));
-        try {
-            $email->send();
-        } catch (\EmailValidationFailedException $e) {
-            return false;
-        } catch (\EmailSendingFailedException $e) {
-            return false;
-        }
-
-        return true;
+        $email = new \Model_Email();
+        $email->sendMailByParams($template_name, $params, $this->email);
     }
 
 
@@ -460,9 +444,7 @@ class Model_User extends Orm\Model_Soft
      */
     public function getEntries($page = 1, $row_count = 30)
     {
-        $entries = \Model_Entry::getUserEntries($this->user_id, $page, $row_count);
-
-        return $entries;
+        return \Model_Entry::getUserEntries($this->user_id, $page, $row_count);
     }
 
     /**
@@ -474,9 +456,7 @@ class Model_User extends Orm\Model_Soft
      */
     public function getFinishedEntryCount()
     {
-        $count = \Model_Entry::getUserFinishedEntryCount($this->user_id);
-
-        return $count;
+        return \Model_Entry::getUserFinishedEntryCount($this->user_id);
     }
 
     /**
@@ -488,27 +468,20 @@ class Model_User extends Orm\Model_Soft
      */
     public function getReservedEntryCount()
     {
-        $count = \Model_Entry::getUserReservedEntryCount($this->user_id);
-
-        return $count;
+        return \Model_Entry::getUserReservedEntryCount($this->user_id);
     }
 
 
     /**
-     * マイリスト数を取得します
+     * マイリスト(お気に入り)数を取得します
      *
      * @access public
      * @return int
      * @author shimma
-     *
-     * @todo ここの完成
      */
-    public function getMylistCount()
+    public function getFavoriteCount()
     {
-        // $count = self::
-        $count = 10;
-
-        return $count;
+        return \Model_Favorite::getUserFavoriteCount($this->user_id);
     }
 
     /**
@@ -521,20 +494,37 @@ class Model_User extends Orm\Model_Soft
      */
     public function cancelEntry($fleamarket_id)
     {
-        $entry = Model_Entry::find('last', array(
-            'where' => array(
-                array('user_id' => $this->user_id),
-                array('fleamarket_id' => $fleamarket_id),
-            )
-        ));
-
-        if (! $entry) {
-            return false;
-        } else {
-            $entry->delete();
-        }
-
-        return true;
+        return \Model_Entry::cancelUserEntry($this->user_id, $fleamarket_id);
     }
+
+
+    /**
+     * ユーザのお気に入り情報を取得します
+     *
+     * @access public
+     * @return mixed $favorites
+     * @author shimma
+     */
+    public function getFavorites($page = 1, $row_count = 30)
+    {
+        return \Model_Favorite::getUserFavorites($this->user_id, $page, $row_count);
+    }
+
+
+    /**
+     * 現在のユーザをアクティベートさせ正規に利用できるユーザにします
+     *
+     * @access public
+     * @return void
+     * @author shimma
+     */
+    public function activate()
+    {
+        $this->register_status = self::REGISTER_STATUS_ACTIVATED;
+        $this->save();
+    }
+
+
+
 
 }

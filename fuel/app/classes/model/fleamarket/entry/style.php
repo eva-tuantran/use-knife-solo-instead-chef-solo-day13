@@ -175,7 +175,7 @@ QUERY;
      */
     public function isOverReservationLimit()
     {
-        return $this->reservation_booth_limit < $this->sumReservedBooth();
+        return $this->max_booth < $this->sumReservedBooth();
     }
 
     /**
@@ -188,7 +188,7 @@ QUERY;
      */
     public function isNeedWaiting()
     {
-        return $this->reservation_booth_limit <= $this->sumReservedBooth();
+        return $this->max_booth <= $this->sumReservedBooth();
     }
 
     /**

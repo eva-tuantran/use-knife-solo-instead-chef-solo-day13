@@ -64,9 +64,9 @@
         </ul>
         <ul class="rightbutton">
           <?php if ($is_admin_fleamarket):?>
-          <li class="button makeReservation"><a href="/reservation/index/<?php echo e($fleamarket_id);?>/">出店予約をする</a></li>
+          <li class="button makeReservation"><a href="/reservation?fleamarket_id=<?php echo e($fleamarket_id);?>">出店予約をする</a></li>
           <?php endif;?>
-          <li class="button addMylist"><a href="#">マイリストに追加</a></li>
+          <li class="button addMylist"><a id="fleamarket_id_<?php echo $fleamarket['fleamarket_id']; ?>" href="#">マイリストに追加</a></li>
         </ul>
       </div>
     </div>
@@ -212,6 +212,25 @@ $(function() {
   $("#do_search").on("click", function(evt) {
       evt.preventDefault();
       $("#form_search").submit();
+  });
+
+  $(".addMylist a").click(function(){
+      var id = $(this).attr('id');
+      id = id.match(/^fleamarket_id_(\d+)/)[1];
+      $.ajax({
+          type: "post",
+          url: '/favorite/add',
+          dataType: "json",
+          data: {fleamarket_id: id}
+      }).done(function(json, textStatus, jqXHR) {
+          if(json){
+              alert('登録しました');
+          }else{
+              alert('失敗しました');
+          }
+      }).fail(function(jqXHR, textStatus, errorThrown) {
+          alert('失敗しました');
+      });
   });
 });
 </script>

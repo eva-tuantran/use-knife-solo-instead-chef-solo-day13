@@ -14,12 +14,12 @@
 <link rel="apple-touch-icon" href="http://www.rakuichi-rakuza.jp/assets/img/ogimage.png">
 <meta property="og:site_name" content="フリーマーケット楽市楽座">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<?php if (! empty($meta)) { echo Html::meta($meta); }; ?>
 <link href="/assets/css/bootstrap.min.css" rel="stylesheet">
 <link href="/assets/css/reset.css" rel="stylesheet">
 <link href="/assets/css/base.css" rel="stylesheet">
 <script src="/assets/js/jquery.min.js"></script>
 <script src="/assets/js/bootstrap.min.js"></script>
-<script src="/assets/js/jquery.carouFredSel.js"></script>
 <?php echo Asset::render('add_css');?>
 <?php echo Asset::render('add_js');?>
 </head>
@@ -55,7 +55,7 @@
     <button class="navbar-toggle" data-toggle="collapse" data-target=".target"> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span> </button>
     <div class="collapse navbar-collapse target">
       <ul id="globalNav">
-        <li class="market"><a href="/search"><i></i>会場一覧</a></li>
+        <li class="market"><a href="/search"><i></i>フリマ会場一覧</a></li>
         <li class="reservation"><a href="/search/1/?reservation=1"><i></i>出店予約</a></li>
         <li class="reservation"><a href="/fleamarket"><i></i>フリマ投稿</a></li>
         <li class="news"><a href="/news"><i></i>新着情報</a></li>
@@ -68,7 +68,7 @@
       <div id="globalNavBottom">
         <ul class="breadcrumb hidden-xs">
           <li><a href="#">ホーム</a></li>
-          <li class="active">◯◯◯◯◯◯</li>
+          <li class="active"><?php echo $title; ?></li>
         </ul>
         <form><input type="text" class="form-control hidden-xs" id="keywordInput"></form>
       </div>

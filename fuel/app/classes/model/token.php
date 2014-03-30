@@ -137,4 +137,22 @@ class Model_Token extends Orm\Model_Soft
 
         return $token;
     }
+
+
+    /**
+     * ユーザを本登録させるためのURLを取得します
+     * 
+     * @access public
+     * @return void
+     */
+    public function getActivationUrl()
+    {
+        if (! $this->hash) {
+            return false;
+        }
+
+        return Uri::base().'signup/activate?token='.$this->hash;
+    }
+
+
 }

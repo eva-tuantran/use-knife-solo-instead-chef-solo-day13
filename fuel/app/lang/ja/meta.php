@@ -1,6 +1,11 @@
 <?php
 
 return array(
+    'default' => array(
+        'title'       => '楽市楽座',
+        'description' => '楽市楽座',
+        'keyword'     => '楽市楽座 デフォルトページ',
+    ),
     'top/index' => array(
         'title'       => '楽市楽座',
         'description' => '楽市楽座 description',
@@ -70,6 +75,11 @@ return array(
         'title'       => 'ログインページ',
         'description' => 'ログインページ description',
         'keyword'     => 'ログインページ キーワード',
+    ),
+    'mypage/index' => array(
+        'title'       => 'マイページ',
+        'description' => 'マイページ description',
+        'keyword'     => 'マイページ キーワード',
     ),
 );
 

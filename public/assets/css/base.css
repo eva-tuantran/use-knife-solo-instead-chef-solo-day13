@@ -82,6 +82,10 @@ label {
 input[type=checkbox] {
 	margin-right: 3px;
 }
+.pagination {
+  padding: 0 0 30px 0;
+  margin: 0;
+}
 .pagination>li>a {
 	color: #78bd36;
 	border-color: #b2e366;
@@ -141,6 +145,11 @@ li.facility4 {
 	border-color: #75cbd6;
 	color: #5bc6d3;
 }
+li.off {
+  border-color: #ccc;
+  color: #ccc;
+}
+
 ul.detailLink li i {
 	background-position: -65px -15px;
 	margin-left: 3px;
@@ -178,6 +187,17 @@ h2 i {
 }
 .nav-tabs>li.active>a {
 	color: #78bd36;
+}
+.more {
+  float: right;
+  padding: 15px 0 5px 0;
+  clear: both;
+  display:block;
+}
+.more li a {
+  background: url(../img/icon_links.png) right center no-repeat;
+  display: block;
+  padding-right: 17px;
 }
 /* button */
 .button a {
@@ -223,6 +243,7 @@ h2 i {
 	float: left;
 	margin-right: 10px;
 }
+
 .makeReservation a {
 	font-size: 116%;
 	background-color: #78bd36;
@@ -372,6 +393,9 @@ li.blog i,
 li.mypage i {
 	background-position: -60px 0;
 }
+li.post i {
+	background-position: -120px 0;
+}
 li.login i {
 	background-position: 0 -15px;
 }
@@ -475,7 +499,7 @@ li.inquiry i {
 
 #contentHome #soon,
 #contentHome #map,
-#contentHome #calendar,
+#calendar,
 #contentHome #search,
 #contentHome #new,
 #ranking,
@@ -490,6 +514,7 @@ li.inquiry i {
 	font-size: 15px;
 	text-align: left;
 	font-weight: bold;
+	padding: 5px 0;
 }
 /* soon */
 #contentHome #soon .box {
@@ -498,11 +523,15 @@ li.inquiry i {
 #contentHome #soon h2,
 #contentHome #soon dl {
 	text-align: left;
-	float: left;
+}
+#contentHome #soon dl {
+  padding: 10px 0;
+  float: left;
 }
 #contentHome #soon dt {
 	font-weight: normal;
 	color: #999;
+	padding-bottom: 5px;
 }
 #contentHome #soon dd {
 	width: 550px;
@@ -525,18 +554,22 @@ li.inquiry i {
 	width: auto;
 }
 /* calendar */
-#contentHome #calendar table {
+#calendar h2 {
+  padding: 0;
+}
+#calendar table {
 	width: 100%;
 	height: 250px;
 	clear: both;
 }
-#contentHome #calendar td {
+#calendar td {
 	font-size: 14px;
 	font-family:Arial, Helvetica, sans-serif;
 	width: 14%;
 	height: 14%;
+	padding: 1px;
 }
-#contentHome #calendar td a {
+#calendar td a {
 	background-color: #78bd36;
 	color: #fff;
 	padding: 4px;
@@ -547,32 +580,45 @@ li.inquiry i {
 	-moz-border-radius: 3px;
 	margin: 0 auto;
 }
-#contentHome #calendar td a:hover {
+#calendar td a:hover {
 	background-color: #b7d316;
 }
-#contentHome #calendar th,
-#contentHome #calendar h3 {
+#calendar th,
+#calendar h3 {
 	color: #999;
 }
-#contentHome #calendar th,
-#contentHome #calendar td {
+#calendar th,
+#calendar td {
 	text-align: center;
 }
-#contentHome #calendar h2,
-#contentHome #calendar h3,
-#contentHome #calendar ul {
+#calendar h2,
+#calendar h3,
+#calendar ul {
 	float: left;
 	margin-bottom: 15px;
 }
-#contentHome #calendar h3 {
+#calendar h3 {
 	margin-left: 10px;
 }
-#contentHome #calendar ul {
+#calendar ul {
 	float: right;
 }
-#contentHome #calendar ul li a {
-	padding: 0 17px 0 0;
-	background: url(../img/icon_links.png) right center no-repeat;
+#calendar ul li {
+	float: left;
+}
+#calendar ul li i {
+	width: 13px;
+	height: 13px;
+	background: url(../img/icon.png) right center no-repeat;
+}
+#calendar ul li.prev {
+  margin-right: 10px;
+}
+#calendar ul li.prev i {
+  background-position:-78px -15px;
+}
+#calendar ul li.next i {
+  background-position:-52px -15px;
 }
 /* search */
 #contentHome #search h2 {
@@ -594,22 +640,22 @@ li.inquiry i {
 #contentHome #new .box {
 	padding-bottom: 80px;
 }
+#newMarket .market {
+	width: 180px;
+	float: left;
+	display:block;
+  height: 230px;
+	margin: 0 15px;
+}
 #contentHome #newMarket {
 	width: 500px;
+  height: 230px;
 	overflow:hidden;
-	height: 230px;
 	position: absolute;
 	top:60px;
 	left: 60px;
 	margin: 0;
 	padding: 0;
-}
-#newMarket .market {
-	width: 180px;
-	float: left;
-	display:block;
-	height: 230px;
-	margin: 0 15px;
 }
 #newMarket .market .state {
 	float: left;
@@ -670,7 +716,7 @@ li.inquiry i {
 	line-height: 1.4;
 }
 #ranking dl {
-	margin-bottom: 5px;
+	margin-bottom: 10px;
 }
 #ranking dt {
 	color: #999;
@@ -800,6 +846,11 @@ li.inquiry i {
 	clear: none;
 	float: right;
 }
+#contentDetail #table .noneReservation {
+	margin: 0 auto;
+	float: right;
+}
+
 /* --------------------contentSearch-------------------- */
 #contentSearch .box {
 	margin-bottom: 20px;
@@ -849,9 +900,29 @@ li.inquiry i {
 	text-align: left;
 	padding-bottom: 15px;
 }
+#contentWrap .ad {
+  padding:10px 0 30px 0;
+}
+.result {
+  background-position: right top;
+  background-repeat: no-repeat;
+}
+.status1 {
+  background-image: url(../img/status_1.png);
+}
+.status2 {
+  background-image: url(../img/status_2.png);
+}
+.status3 {
+  background-image: url(../img/status_3.png);
+}
+.status4 {
+  background-image: url(../img/status_4.png);
+}
 /* --------------------result-------------------- */
 .result h3 {
-	line-height: 1.5;
+	line-height: 1.6;
+	width: 90%;
 }
 .result .resultPhoto {
 	float: left;
@@ -867,10 +938,10 @@ li.inquiry i {
 	margin-left: 0.5em;
 	padding-bottom: 5px;
 }
-.result .resultPush {
+.resultPush {
 	background-color: #fffcd8;
 }
-.result .resultPush strong {
+.resultPush strong {
 	background-color: #b7d316;
 	color: #fff;
 	font-size: 85%;
@@ -964,6 +1035,10 @@ li.inquiry i {
   margin-bottom: 5px;
 }
 /* --------------------contentMypage-------------------- */
+
+#contentMypage .more {
+  padding-top:0;
+}
 #contentMypage .box {
 	margin-bottom: 20px;
 }
@@ -1011,21 +1086,28 @@ li.inquiry i {
 #contentMypage #latest {
 	position: relative;
 }
-#contentMypage #latest {
-	position: relative;
-}
 #contentMypage #latest #newMarket {
-	width: 600px;
-	overflow:hidden;
-	height: 200px;
 	position: absolute;
 	top:10px;
 	left:30px;
 	margin: 0;
 	padding: 0;
 }
+#contentMypage #latest {
+	height: 230px;
+}
 #contentMypage #latest #newMarket .market {
 	margin: 0 10px;
+}
+#contentMypage #calendar h3 {
+  margin: 0;
+  font-size: 12px;
+}
+#contentMypage #calendar table {
+	height: 150px;
+}
+#contentMypage #calendar td {
+  font-size: 12px;
 }
 
 /* --------------------contentError-------------------- */
@@ -1158,8 +1240,14 @@ li.inquiry i {
 #contentHome #newMarket .market {
 	margin: 0 5px;
 }
+#calendar h3 {
+	padding: 0;
+}
 #contentHome #soon dd {
 	width: inherit;
+}
+#contentHome #soon h2 {
+  padding: 0;
 }
 #contentHome #soon h2,
 #contentHome #soon dl {
@@ -1168,6 +1256,7 @@ li.inquiry i {
 }
 #contentHome #soon dl {
 	margin: 10px 0;
+	padding: 0;
 }
 #contentHome #search .btn {
 	height: 3em;
@@ -1190,7 +1279,8 @@ li.inquiry i {
 /* --------------------contentDetail-------------------- */
 
 #contentDetail .mylist,
-#contentDetail .rightbutton {
+#contentDetail .rightbutton,
+#contentDetail #table .noneReservation {
 	float: none;
 	clear: both;
 	text-align: center;
@@ -1217,6 +1307,7 @@ li.inquiry i {
 #contentDetail #map {
 	padding-top:20px;
 }
+
 /* --------------------contentSearch-------------------- */
 .result .resultPhoto {
 	text-align: center;

@@ -3,7 +3,6 @@
 /**
  * Base Controller.
  *
- * @extends  Controller_Template
  * @author shimma
  */
 class Controller_Base_Template extends Controller_Template
@@ -49,17 +48,31 @@ class Controller_Base_Template extends Controller_Template
 
 
     /**
-     * 事前処理
+     * メタタグの指定
+     * FuelPHPのmetaに準拠したarrayを設定します
+     * http://fuelphp.com/docs/classes/html.html#/method_meta
      *
-     * アクション実行前の共通処理
-     *
-     * @access public
-     * @return void
-     * @author ida
+     * @var mixed
+     * @access protected
      * @author shimma
      */
+    protected $meta = array();
+
+
+    /**
+     * ログインしているユーザインスタンスです
+     *
+     * @var mixed
+     * @access protected
+     * @author shimma
+     */
+    protected $login_user;
+
+
     public function before()
     {
+        parent::before();
+
         $should_be_secure = in_array($this->request->action, $this->_secure_actions);
         $is_secure        = isset($_SERVER['HTTPS']);
         $use_ssl          = \Config::get('ssl_connection.use');
@@ -74,19 +87,32 @@ class Controller_Base_Template extends Controller_Template
         }
 
         if (in_array($this->request->action, $this->_login_actions) && !Auth::check()) {
-            $referrer = \Input::referrer();
-            return \Response::redirect('/login?rurl='.$referrer);
+            return \Response::redirect('/login?rurl='.$_SERVER['REQUEST_URI']);
         }
 
         if (in_array($this->request->action, $this->_nologin_actions) && Auth::check()) {
             return \Response::redirect('/mypage');
         }
 
-        Asset::js('holder.js', array(), 'add_js');
         Lang::load('meta');
+        $this->login_user = Auth::get_user_instance();
 
-        parent::before();
+        if ($this->request->uri->get_segments()) {
+            list($dir) = $this->request->uri->get_segments();
+            $this->setMetaTag("$dir/" . $this->request->action);
+        } else {
+            $this->setMetaTag('default');
+        }
     }
+
+
+    public function after($response)
+    {
+        $this->template->meta = $this->meta;
+
+        return parent::after($response);
+    }
+
 
     /**
      * http/httpsの引数で現状のURIを引き継いでリダイレクトします
@@ -116,52 +142,31 @@ class Controller_Base_Template extends Controller_Template
      * @access protected
      * @return void
      * @author kobayasi
+     * @author shimma
      */
     protected function setMetaTag($path)
     {
         $meta = Lang::get($path);
+        $this->meta[] = array('name' => 'keyword',     'content' => $meta['keyword']);
+        $this->meta[] = array('name' => 'description', 'content' => $meta['description']);
         $this->template->title = $meta['title'];
     }
 
+
     /**
-     * ユーザーにメールを送信
+     * 遅延リダイレクトを行います。
+     * Viewを表示後、timerで指定の秒数後にリダイレクト処理を行います。
      *
-     * @para $name メールの識別子 $params 差し込むデータ $to 送り先(指定しなければ langの値を使用)
      * @access protected
      * @return void
-     * @author kobayasi
+     * @author shimma
      */
-    protected function sendMailByParams($name,$params = array(), $to = null)
+    protected function setLazyRedirect($url, $timer = 1)
     {
-        Lang::load("email/{$name}");
-
-        $email = Email::forge();
-        $email->from(Lang::get('from'),Lang::get('from_name'));
-        $email->subject(Lang::get('subject'));
-        $email->body($this->createMailBody(Lang::get('body'),$params));
-
-        if (! $to) {
-            $to = Lang::get('email');
+        if (! is_numeric($timer)) {
+            return false;
         }
-
-        $email->to($to);
-        $email->send();
-    }
-
-    /**
-     * メール本文の作成
-     *
-     * @para $contact Model_Contact
-     * @access protected
-     * @return string
-     * @author kobayasi
-     */
-    private function createMailBody($body,$params)
-    {
-        foreach ( $params as $key => $value ) {
-            $body = str_replace("##{$key}##",$value,$body);
-        }
-        return mb_convert_encoding($body,'jis');
+        $this->meta[] = array('http-equiv' => 'refresh', 'content' => "${timer}; URL=${url}");
     }
 
 
@@ -182,19 +187,5 @@ class Controller_Base_Template extends Controller_Template
         Lang::load('status');
         return Lang::get($i);
     }
-
-
-    /**
-     * var_dumpとexitを一気にやってくれるtest用関数
-     *
-     * @param mixed $data
-     */
-    public static function vd($data)
-    {
-        var_dump($data);
-        exit();
-    }
-
-
 
 }
