@@ -59,8 +59,8 @@
         <li class="market"><a href="/search"><i></i>フリマ会場一覧</a></li>
         <li class="reservation"><a href="/search/1/?reservation=1"><i></i>出店予約</a></li>
         <li class="reservation"><a href="/fleamarket"><i></i>フリマ投稿</a></li>
-        <li class="news"><a href="/news"><i></i>新着情報</a></li>
-        <li class="blog"><a href="/blog"><i></i>ブログ</a></li>
+        <!-- <li class="news"><a href="/news"><i></i>新着情報</a></li> -->
+        <li class="blog"><a href="http://aucfan.com/article/" target="_blank"><i></i>新着ブログ(仮)</a></li>
         <li class="mypage"><a href="/mypage"><i></i>マイページ</a></li>
         <li class="guide visible-xs"><a href="/guide">初めての方へ</a></li>
         <li class="inquiry visible-xs"><a href="/inquiry">お問い合せ</a></li>
@@ -68,7 +68,7 @@
       <!-- globalNavBottom -->
       <div id="globalNavBottom">
         <ul class="breadcrumb hidden-xs">
-          <li><a href="#">ホーム</a></li>
+          <li><a href="/">ホーム</a></li>
           <li class="active"><?php echo $title; ?></li>
         </ul>
         <form><input type="text" class="form-control hidden-xs" id="keywordInput"></form>

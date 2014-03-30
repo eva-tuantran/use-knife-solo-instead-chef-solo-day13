@@ -46,6 +46,7 @@ class Controller_Signup extends Controller_Base_Template
      */
     public function action_index()
     {
+        Asset::js('http://ajaxzip3.googlecode.com/svn/trunk/ajaxzip3/ajaxzip3.js', array(), 'add_js');
         $fieldset = self::createFieldset();
         $this->template->content = View::forge('signup/index');
         $this->template->content->set('prefectures', Config::get('master.prefectures'));
