@@ -8,10 +8,10 @@
       <div class="box clearfix"><span class="step">STEP2.</span>内容確認</div>
     </div>
     <div class="steps col-sm-3">
-      <div class="box active clearfix"><span class="step">STEP3.</span>仮登録メール送信</div>
+      <div class="box clearfix"><span class="step">STEP3.</span>仮登録メール送信</div>
     </div>
     <div class="steps col-sm-3">
-      <div class="box clearfix"><span class="step">STEP4.</span>登録完了</div>
+      <div class="box active clearfix"><span class="step">STEP4.</span>登録完了</div>
     </div>
   </div>
   <!-- /flow -->
