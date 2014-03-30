@@ -51,6 +51,7 @@ class Controller_Mypage extends Controller_Base_Template
         $view_model->set('prefectures', Config::get('master.prefectures'), false);
         $view_model->set('entries', $this->login_user->getEntries());
         $view_model->set('mylists', $this->login_user->getFavorites());
+        $view_model->set('news_headlines', Model_News::getHeadlines());
         $this->template->content = $view_model;
     }
 

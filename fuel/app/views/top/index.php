@@ -216,16 +216,10 @@
   <div class="box">
     <h2><a href="#" target="_blank"><i></i>楽市楽座ブログ</a></h2>
     <dl class="dl-horizontal">
-      <dt>2014年04月05日(水)</dt>
-      <dd><a href="#">テキストテキストテキストテキストテキスト</a></dd>
-      <dt>2014年04月05日(水)</dt>
-      <dd><a href="#">テキストテキストテキストテキストテキストテキストテキストテキストテキストテキスト</a></dd>
-      <dt>2014年04月05日(水)</dt>
-      <dd><a href="#">テキストテキストテキストテキストテキスト</a></dd>
-      <dt>2014年04月05日(水)</dt>
-      <dd><a href="#">テキストテキストテキストテキストテキスト</a></dd>
-      <dt>2014年04月05日(水)</dt>
-      <dd><a href="#">テキストテキストテキストテキストテキスト</a></dd>
+    <?php foreach ($news_headlines as $headline): ?>
+        <dt><?php echo $headline['date'] ?></dt>
+        <dd><a href="<?php echo $headline['url'] ?>"><?php echo $headline['title'] ?></a></dd>
+    <?php endforeach; ?>
     </dl>
   </div>
 </div>

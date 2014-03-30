@@ -100,6 +100,8 @@ class Controller_Base_Template extends Controller_Template
         if ($this->request->uri->get_segments()) {
             list($dir) = $this->request->uri->get_segments();
             $this->setMetaTag("$dir/" . $this->request->action);
+        } else {
+            $this->setMetaTag('default');
         }
     }
 
