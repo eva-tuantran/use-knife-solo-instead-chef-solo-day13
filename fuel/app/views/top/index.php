@@ -9,7 +9,31 @@
             foreach ($upcomming_fleamarket_list as $fleamarket):
     ?>
       <dt><?php echo e($fleamarket['event_date']);?></dt>
-      <dd><a href="/detail/<?php echo e($fleamarket['fleamarket_id']);?>/"><?php echo e($fleamarket['headline']);?></a></dd>
+      <dd>
+          <a href="/detail/<?php echo e($fleamarket['fleamarket_id']);?>/">
+              <?php
+                if ($fleamarket['register_type'] === \Model_Fleamarket::REGISTER_TYPE_ADMIN):
+                    echo '楽市楽座主催&nbsp;';
+                endif;
+                echo e($fleamarket['name']) . '&nbsp;';
+                echo $prefectures[$fleamarket['prefecture_id']];
+                switch ($fleamarket['event_status']):
+                    case \Model_Fleamarket::EVENT_STATUS_SCHEDULE:
+                        echo '開催予定';
+                        break;
+                    case \Model_Fleamarket::EVENT_STATUS_RESERVATION_RECEIPT:
+                        echo '予約受付中';
+                        break;
+                    case \Model_Fleamarket::EVENT_STATUS_RECEIPT_END:
+                        echo '受付終了';
+                        break;
+                    default:
+                        echo '';
+                        break;
+                endswitch;
+              ?>
+          </a>
+      </dd>
     </dl>
     <?php
             endforeach;
@@ -25,7 +49,20 @@
 <div id="map" class="col-sm-7">
   <div class="box">
     <h2>地図から探す</h2>
-    <div class="map"> <img src="assets/img/map.jpg" alt="地図" width="397" height="255" border="0" class="img-responsive"> </div>
+    <div class="map">
+      <img src="assets/img/map.jpg" alt="地図" width="397" height="255" border="0" usemap="#mapSearch">
+      <map name="mapSearch">
+        <area shape="rect" coords="299,1,397,65" href="#">
+        <area shape="poly" coords="375,76,299,76,299,124,322,124,322,169,375,168" href="#">
+        <area shape="poly" coords="376,175,298,175,298,200,314,200,315,238,356,239,357,251,376,251" href="#">
+        <area shape="poly" coords="316,131,300,131,300,139,219,139,220,169,240,170,241,211,219,211,218,250,240,250,241,239,308,239,307,208,292,206,292,170,316,169" href="#">
+        <area shape="poly" coords="212,139,160,139,160,195,175,195,175,251,212,251,213,205,236,204,236,176,211,176" href="#">
+        <area shape="rect" coords="81,138,155,195" href="#">
+        <area shape="rect" coords="82,205,166,253" href="#">
+        <area shape="poly" coords="71,139,2,139,2,195,19,195,19,251,71,252" href="#">
+        <area shape="rect" coords="46,60,102,92" href="#">
+      </map>
+    </div>
   </div>
 </div>
 <!-- /map -->
@@ -38,7 +75,7 @@
 </div>
 <!-- /calendar -->
 <!-- search -->
-<div id="search" class="container">
+<div id="search" class="col-sm-12 container">
   <div class="box">
     <div class="row">
       <form id="form_search_calendar" action="/search/1/" method="get">
@@ -106,7 +143,7 @@
 </div>
 <!-- /search -->
 <!-- new -->
-<div id="new" class="container">
+<div id="new" class="col-sm-12 container">
   <div class="box clearfix">
     <h2><i></i>最新のフリマ</h2>
     <ul id="scrollControl">
@@ -118,101 +155,15 @@
 </div>
 <!-- /new -->
 <!-- ranking -->
-<div id="ranking" class="container">
+<div id="ranking" class="col-sm-12 container">
   <div class="box clearfix">
     <h2><i></i>人気開催ランキング</h2>
-    <!-- rank1 -->
-    <div class="rank1 clearfix"><i class="rankicon"></i>
-      <div class="rankPhoto"><a href="#"><img src="http://dummyimage.com/150x110/ccc/fff.jpg"></a></div>
-      <h3><a href="#">タイトルタイトルタイトルタイトルタイトルタイトル</a></h3>
-      <dl class="col-md-2">
-        <dt>開催日</dt>
-        <dd>12月24日(土)</dd>
-      </dl>
-      <dl class="col-md-2">
-        <dt>出店形態</dt>
-        <dd>車出店</dd>
-      </dl>
-      <dl class="col-md-2">
-        <dt>開催時間</dt>
-        <dd>9時〜14時</dd>
-      </dl>
-      <dl class="col-md-2">
-        <dt>出店料金</dt>
-        <dd>無料</dd>
-      </dl>
-      <dl class="col-md-9">
-        <dt>交通</dt>
-        <dd>国分寺駅から京王バス（府中駅行き）藤塚バス停下車</dd>
-      </dl>
-      <ul>
-        <li><a href="#">詳細情報を見る<i></i></a></li>
-      </ul>
-    </div>
-    <!-- /rank1 -->
-    <!-- rank2 -->
-    <div class="rank2 clearfix"><i class="rankicon"></i>
-      <div class="rankPhoto"><a href="#"><img src="http://dummyimage.com/150x110/ccc/fff.jpg"></a></div>
-      <h3><a href="#">タイトルタイトルタイトルタイトルタイトルタイトル</a></h3>
-      <dl class="col-md-2">
-        <dt>開催日</dt>
-        <dd>12月24日(土)</dd>
-      </dl>
-      <dl class="col-md-2">
-        <dt>出店形態</dt>
-        <dd>車出店</dd>
-      </dl>
-      <dl class="col-md-2">
-        <dt>開催時間</dt>
-        <dd>9時〜14時</dd>
-      </dl>
-      <dl class="col-md-2">
-        <dt>出店料金</dt>
-        <dd>無料</dd>
-      </dl>
-      <dl class="col-md-9">
-        <dt>交通</dt>
-        <dd>国分寺駅から京王バス（府中駅行き）藤塚バス停下車</dd>
-      </dl>
-      <ul>
-        <li><a href="#">詳細情報を見る<i></i></a></li>
-      </ul>
-    </div>
-    <!-- /rank2 -->
-    <!-- rank3 -->
-    <div class="rank3 clearfix"><i class="rankicon"></i>
-      <div class="rankPhoto"><a href="#"><img src="http://dummyimage.com/150x110/ccc/fff.jpg"></a></div>
-      <h3><a href="#">タイトルタイトルタイトルタイトルタイトルタイトル</a></h3>
-      <dl class="col-md-2">
-        <dt>開催日</dt>
-        <dd>12月24日(土)</dd>
-      </dl>
-      <dl class="col-md-2">
-        <dt>出店形態</dt>
-        <dd>車出店</dd>
-      </dl>
-      <dl class="col-md-2">
-        <dt>開催時間</dt>
-        <dd>9時〜14時</dd>
-      </dl>
-      <dl class="col-md-2">
-        <dt>出店料金</dt>
-        <dd>無料</dd>
-      </dl>
-      <dl class="col-md-9">
-        <dt>交通</dt>
-        <dd>国分寺駅から京王バス（府中駅行き）藤塚バス停下車</dd>
-      </dl>
-      <ul>
-        <li><a href="#">詳細情報を見る<i></i></a></li>
-      </ul>
-    </div>
-    <!-- /rank3 -->
+    <?php echo $popular_ranking;?>
   </div>
 </div>
 <!-- /ranking -->
 <!-- blog -->
-<div id="blog" class="container">
+<div id="blog" class="col-sm-12 container">
   <div class="box">
     <h2><a href="#" target="_blank"><i></i>楽市楽座ブログ</a></h2>
     <dl class="dl-horizontal">
@@ -245,6 +196,7 @@
 <hr>
 <script type="text/javascript">
 $(function() {
+  $('img[usemap]').rwdImageMaps();
   Calendar.get();
   Carousel.get();
 });

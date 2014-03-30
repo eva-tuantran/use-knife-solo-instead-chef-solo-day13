@@ -20,7 +20,6 @@
 <link href="/assets/css/base.css" rel="stylesheet">
 <script src="/assets/js/jquery.min.js"></script>
 <script src="/assets/js/bootstrap.min.js"></script>
-<script src="/assets/js/jquery.carouFredSel.js"></script>
 <?php echo Asset::render('add_css');?>
 <?php echo Asset::render('add_js');?>
 </head>

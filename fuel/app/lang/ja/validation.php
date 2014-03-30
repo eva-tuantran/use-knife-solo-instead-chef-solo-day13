@@ -13,4 +13,5 @@ return array(
     'reserved_booth'    => ':label が予約できる数を超えました',
     'unique_email'      => ':label は既に登録されています',
     'valid_time'        => ':label は正しくありません',
+    'unique_email'      => ':label は既に登録されています',
 );

@@ -76,12 +76,6 @@ class Model_Fleamarket extends \Orm\Model
 
     protected static $_primary_key = array('fleamarket_id');
 
-    protected static $_has_many = array(
-        'fleamarket_entry_styles' => array(
-            'key_from' => 'fleamarket_id',
-        )
-    );
-
     protected static $_properties = array(
         'fleamarket_id' => array(
             'form'  => array('type' => false)
@@ -252,6 +246,12 @@ class Model_Fleamarket extends \Orm\Model
             'mysql_timestamp' => true,
             'property'        => 'updated_at',
         ),
+    );
+
+    protected static $_has_many = array(
+        'fleamarket_entry_styles' => array(
+            'key_from' => 'fleamarket_id',
+        )
     );
 
     /**
@@ -618,6 +618,67 @@ SELECT
     f.fleamarket_id,
     f.name,
     f.event_status,
+    f.register_type,
+    DATE_FORMAT(f.event_date, '%Y年%m月%d日') AS event_date,
+    l.prefecture_id AS prefecture_id
+FROM
+    {$table_name} AS f
+LEFT JOIN
+    locations AS l ON f.location_id = l.location_id
+WHERE
+    f.display_flag = :display_flag
+    AND f.register_type = :register_status
+    AND f.event_status <= :event_status
+    AND f.deleted_at IS NULL
+    AND DATE_FORMAT(f.event_date, '%Y-%m-%d') >= CURDATE()
+ORDER BY
+    f.event_date
+{$limit}
+QUERY;
+
+        $statement = \DB::query($query)->parameters($placeholders);
+        $result = $statement->execute();
+
+        $rows = null;
+        if (! empty($result)) {
+            $rows = $result->as_array();
+        }
+
+        return $rows;
+    }
+
+    /**
+     * 人気のフリーマーケット情報を取得する
+     *
+     * @access public
+     * @param array $condition_list 検索条件
+     * @param mixed $row_count 取得行数
+     * @return array フリーマーケット情報
+     * @author ida
+     */
+    public static function findPopular($row_count = 3)
+    {
+        $placeholders = array(
+            ':event_status' => self::EVENT_STATUS_RECEIPT_END,
+            ':display_flag' => self::DISPLAY_FLAG_ON,
+            ':register_status' => self::REGISTER_TYPE_ADMIN,
+        );
+
+        $limit = '';
+        if (! is_int($row_count)) {
+            $row_count = 10;
+        }
+        $limit = ' LIMIT ' . $row_count;
+
+        $table_name = self::$_table_name;
+        $query = <<<"QUERY"
+SELECT
+    f.fleamarket_id,
+    f.name,
+    f.event_status,
+    f.event_date,
+    f.event_time_start,
+    f.event_time_end,
     f.headline,
     DATE_FORMAT(f.event_date, '%Y年%m月%d日') AS event_date,
     l.name AS location_name,
