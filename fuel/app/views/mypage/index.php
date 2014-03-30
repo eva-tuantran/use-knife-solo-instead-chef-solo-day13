@@ -421,10 +421,10 @@
 
           <!-- mylist -->
           <div class="tab-pane" id="mylist">
-            <?php if(empty($favorites)): ?>
+            <?php if(empty($mylists)): ?>
             <p>マイリストはありません</p>
             <?php else: ?>
-            <?php foreach($favorites as $favorite): ?>
+            <?php foreach($mylists as $mylist): ?>
             <!-- result -->
             <div class="result clearfix">
               <h3><a href="/detail/<?php echo $entry['fleamarket_id'] ?>"><?php echo $entry['name'] ?></a></h3>

@@ -16,7 +16,7 @@ class seed
             'user',
             'entry',
             'fleamarket',
-            'favorite',
+            'mylist',
         );
         foreach ($models as $model) {
             include (APPPATH . 'seeds/' . \Fuel::$env . '/' . $model. '.php');

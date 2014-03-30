@@ -408,19 +408,18 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `rakuichi-rakuza`.`favorites`
+-- Table `rakuichi-rakuza`.`mylists`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `rakuichi-rakuza`.`favorites` ;
+DROP TABLE IF EXISTS `rakuichi-rakuza`.`mylists` ;
 
-CREATE TABLE IF NOT EXISTS `rakuichi-rakuza`.`favorites` (
-  `favorite_id` INT NOT NULL AUTO_INCREMENT,
+CREATE TABLE IF NOT EXISTS `rakuichi-rakuza`.`mylists` (
+  `mylist_id` INT NOT NULL AUTO_INCREMENT,
   `user_id` INT NOT NULL,
   `fleamarket_id` INT NOT NULL,
   `created_at` DATETIME NOT NULL,
   `updated_at` DATETIME NULL,
   `deleted_at` DATETIME NULL,
-  PRIMARY KEY (`favorite_id`),
-  UNIQUE INDEX `idx_user_id_fleamarket_id` (`user_id` ASC, `fleamarket_id` ASC))
+  PRIMARY KEY (`mylist_id`))
 ENGINE = InnoDB;
 
 

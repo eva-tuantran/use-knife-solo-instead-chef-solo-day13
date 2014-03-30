@@ -13,7 +13,7 @@ class Model_User extends Orm\Model_Soft
     protected static $_primary_key = array('user_id');
 
     protected static $_has_many = array(
-        'favorites' => array(
+        'mylists' => array(
             'key_from' => 'user_id',
         ),
     );
@@ -495,9 +495,9 @@ class Model_User extends Orm\Model_Soft
      * @return int
      * @author shimma
      */
-    public function getFavoriteCount()
+    public function getMylistCount()
     {
-        $count = \Model_Favorite::getUserFavoriteCount($this->user_id);
+        $count = \Model_Mylist::getUserMylistCount($this->user_id);
 
         return $count;
     }
@@ -523,11 +523,11 @@ class Model_User extends Orm\Model_Soft
      * @return mixed
      * @author shimma
      */
-    public function getFavorites($page = 1, $row_count = 30)
+    public function getMylists($page = 1, $row_count = 30)
     {
-        $favorites = \Model_Favorite::getUserFavorites($this->user_id, $page, $row_count);
+        $mylists = \Model_Mylist::getUserMylists($this->user_id, $page, $row_count);
 
-        return $favorites;
+        return $mylists;
     }
 
 

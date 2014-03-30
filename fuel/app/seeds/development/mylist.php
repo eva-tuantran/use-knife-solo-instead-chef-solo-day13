@@ -1,6 +1,6 @@
 <?php
 
-use \Model_Favorite;
+use \Model_Mylist;
 
 for ($i=1; $i<100; $i++) {
 
@@ -13,6 +13,6 @@ for ($i=1; $i<100; $i++) {
         'fleamarket_id' => $fleamarket_id,
     );
 
-    $model = Model_Favorite::forge($seed);
+    $model = Model_Mylist::forge($seed);
     $model->save();
 }
