@@ -1,14 +1,3 @@
-<!-- デザイン適応後削除 -->
-<style>
-.facilitys li.invalid {
-  background-color: #f5f5f5;
-  border-color: #dcdcdc;
-  color: #dcdcdc;
-}
-</style>
-
-
-
 <div id="contentMypage" class="row">
   <!-- mypageProfile -->
   <div id="mypageProfile" class="col-sm-3">
@@ -33,7 +22,7 @@
     <ul class="nav nav-pills">
       <li><a href="#">これまで参加したフリマ <span class="badge"><?php echo e(Auth::getFinishedEntryCount()); ?>件</span></a></li>
       <li><a href="#">出店予約中のフリマ <span class="badge"><?php echo e(Auth::getReservedEntryCount()); ?>件</span></a></li>
-      <li><a href="#">マイリスト <span class="badge"><?php echo e(Auth::getMylistCount()); ?>件</span></a></li>
+      <li><a href="#">マイリスト <span class="badge"><?php echo e(Auth::getFavoriteCount()); ?>件</span></a></li>
     </ul>
     <!-- /pills -->
     <!-- search -->
@@ -400,10 +389,10 @@
                   <dd><?php echo e($entry['about_access']);?></dd>
                 </dl>
                 <ul class="facilitys">
-                  <li class="facility1 <?php echo $entry['car_shop_flag'] == \Model_Fleamarket::CAR_SHOP_FLAG_NG ? 'invalid': '';?>">車出店可能</li>
-                  <li class="facility2 <?php echo $entry['charge_parking_flag'] == \Model_Fleamarket::CHARGE_PARKING_FLAG_NONE ? 'invalid': '';?>">有料駐車場</li>
-                  <li class="facility3 <?php echo $entry['free_parking_flag'] == \Model_Fleamarket::FREE_PARKING_FLAG_NONE ? 'invalid': '';?>">無料駐車場</li>
-                  <li class="facility4 <?php echo $entry['rainy_location_flag'] == \Model_Fleamarket::RAINY_LOCATION_FLAG_NONE ? 'invalid': '';?>">雨天開催会場</li>
+                  <li class="facility1 <?php echo $entry['car_shop_flag'] == \Model_Fleamarket::CAR_SHOP_FLAG_NG ? 'off': '';?>">車出店可能</li>
+                  <li class="facility2 <?php echo $entry['charge_parking_flag'] == \Model_Fleamarket::CHARGE_PARKING_FLAG_NONE ? 'off': '';?>">有料駐車場</li>
+                  <li class="facility3 <?php echo $entry['free_parking_flag'] == \Model_Fleamarket::FREE_PARKING_FLAG_NONE ? 'off': '';?>">無料駐車場</li>
+                  <li class="facility4 <?php echo $entry['rainy_location_flag'] == \Model_Fleamarket::RAINY_LOCATION_FLAG_NONE ? 'off': '';?>">雨天開催会場</li>
                 </ul>
                 <ul class="detailLink">
                   <li><a href="/detail/<?php echo $entry['fleamarket_id'] ?>">詳細情報を見る<i></i></a></li>
@@ -427,40 +416,40 @@
             <?php foreach($mylists as $mylist): ?>
             <!-- result -->
             <div class="result clearfix">
-              <h3><a href="/detail/<?php echo $entry['fleamarket_id'] ?>"><?php echo $entry['name'] ?></a></h3>
+              <h3><a href="/detail/<?php echo $mylist['fleamarket_id'] ?>"><?php echo $mylist['name'] ?></a></h3>
               <div class="resultPhoto"><a href="#"><img src="http://dummyimage.com/200x150/ccc/fff.jpg" class="img-rounded"></a></div>
               <div class="resultDetail">
                 <dl class="col-md-3">
                   <dt>出店数</dt>
-                  <dd><?php echo e(@$entry['booth_string']);?></dd>
+                  <dd><?php echo e(@$mylist['booth_string']);?></dd>
                 </dl>
                 <dl class="col-md-3">
                   <dt>開催時間</dt>
-                  <dd><?php echo e($entry['event_date']); ?></dd>
+                  <dd><?php echo e($mylist['event_date']); ?></dd>
                 </dl>
                 <dl class="col-md-3">
                   <dt>出店形態</dt>
-                  <dd><?php echo e($entry['fleamarket_entry_style_name']); ?></dd>
+                  <dd><?php echo e($mylist['fleamarket_entry_style_name']); ?></dd>
                 </dl>
                 <dl class="col-md-3">
                   <dt>出店料金</dt>
-                  <dd><?php echo e(@$entry['booth_fee_string']); ?></dd>
+                  <dd><?php echo e(@$mylist['booth_fee_string']); ?></dd>
                 </dl>
                 <dl class="col-md-11">
                   <dt>交通</dt>
-                  <dd><?php echo e($entry['about_access']);?></dd>
+                  <dd><?php echo e($mylist['about_access']);?></dd>
                 </dl>
                 <ul class="facilitys">
-                  <li class="facility1 <?php echo $entry['car_shop_flag'] == \Model_Fleamarket::CAR_SHOP_FLAG_NG ? 'invalid': '';?>">車出店可能</li>
-                  <li class="facility2 <?php echo $entry['charge_parking_flag'] == \Model_Fleamarket::CHARGE_PARKING_FLAG_NONE ? 'invalid': '';?>">有料駐車場</li>
-                  <li class="facility3 <?php echo $entry['free_parking_flag'] == \Model_Fleamarket::FREE_PARKING_FLAG_NONE ? 'invalid': '';?>">無料駐車場</li>
-                  <li class="facility4 <?php echo $entry['rainy_location_flag'] == \Model_Fleamarket::RAINY_LOCATION_FLAG_NONE ? 'invalid': '';?>">雨天開催会場</li>
+                  <li class="facility1 <?php echo $mylist['car_shop_flag'] == \Model_Fleamarket::CAR_SHOP_FLAG_NG ? 'off': '';?>">車出店可能</li>
+                  <li class="facility2 <?php echo $mylist['charge_parking_flag'] == \Model_Fleamarket::CHARGE_PARKING_FLAG_NONE ? 'off': '';?>">有料駐車場</li>
+                  <li class="facility3 <?php echo $mylist['free_parking_flag'] == \Model_Fleamarket::FREE_PARKING_FLAG_NONE ? 'off': '';?>">無料駐車場</li>
+                  <li class="facility4 <?php echo $mylist['rainy_location_flag'] == \Model_Fleamarket::RAINY_LOCATION_FLAG_NONE ? 'off': '';?>">雨天開催会場</li>
                 </ul>
                 <ul class="detailLink">
-                  <li><a href="/detail/<?php echo $entry['fleamarket_id'] ?>">詳細情報を見る<i></i></a></li>
+                  <li><a href="/detail/<?php echo $mylist['fleamarket_id'] ?>">詳細情報を見る<i></i></a></li>
                 </ul>
                 <ul class="rightbutton">
-                  <li class="button makeReservation"><a href="/reservation?fleamarket_id=<?php echo $entry['fleamarket_id'] ?>">出店予約をする</a></li>
+                  <li class="button makeReservation"><a href="/reservation?fleamarket_id=<?php echo $mylist['fleamarket_id'] ?>">出店予約をする</a></li>
                   <li class="button cancel"><a href="#" class="fleamarket_cancel"><i></i>マイリスト解除(未実装)</a></li>
                 </form>
               </ul>

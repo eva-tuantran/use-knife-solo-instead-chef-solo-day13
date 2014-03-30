@@ -11,4 +11,5 @@ return array(
     'valid_datetime'    => ':label は正しくありません',
     'match_field'       => ':label と :param:1 が一致しません',
     'reserved_booth'    => ':label が予約できる数を超えました',
+    'unique_email'      => ':label は既に登録されています',
 );

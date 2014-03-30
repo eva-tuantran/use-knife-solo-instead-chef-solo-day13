@@ -408,21 +408,22 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `rakuichi-rakuza`.`mylists`
+-- Table `rakuichi-rakuza`.`favorites`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `rakuichi-rakuza`.`mylists` ;
+DROP TABLE IF EXISTS `rakuichi-rakuza`.`favorites` ;
 
-CREATE TABLE IF NOT EXISTS `rakuichi-rakuza`.`mylists` (
-  `mylist_id` INT NOT NULL AUTO_INCREMENT,
+CREATE TABLE IF NOT EXISTS `rakuichi-rakuza`.`favorites` (
+  `favorite_id` INT NOT NULL AUTO_INCREMENT,
   `user_id` INT NOT NULL,
   `fleamarket_id` INT NOT NULL,
   `created_at` DATETIME NOT NULL,
   `updated_at` DATETIME NULL,
   `deleted_at` DATETIME NULL,
-  PRIMARY KEY (`mylist_id`))
+  PRIMARY KEY (`favorite_id`))
 ENGINE = InnoDB;
 
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
+
