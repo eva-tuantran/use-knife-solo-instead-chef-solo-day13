@@ -24,34 +24,34 @@
         <div class="form-group">
           <label class="col-sm-2 control-label" for="inputName">お名前</label>
           <div class="col-sm-10">
-            <?php echo $user_input["last_name"]; ?>
-            <?php echo $user_input["first_name"]; ?>
+            <?php echo $input["last_name"]; ?>
+            <?php echo $input["first_name"]; ?>
           </div>
         </div>
         <div class="form-group">
           <label class="col-sm-2 control-label" for="inputPhonetic">フリガナ</label>
           <div class="col-sm-10">
-            <?php echo $user_input["last_name_kana"]; ?>
-            <?php echo $user_input["first_name_kana"]; ?>
+            <?php echo $input["last_name_kana"]; ?>
+            <?php echo $input["first_name_kana"]; ?>
           </div>
         </div>
         <div class="form-group">
           <label class="col-sm-2 control-label" for="inputAddress">ご住所</label>
           <div class="col-sm-10">
-            <?php echo $user_input["zip"]; ?>
-            <?php echo $user_input["address"]; ?>
+            <?php echo $input["zip"]; ?>
+            <?php echo $input["address"]; ?>
           </div>
         </div>
         <div class="form-group">
           <label class="col-sm-2 control-label" for="inputTel">電話番号</label>
           <div class="col-sm-10">
-            <?php echo $user_input["tel"]; ?>
+            <?php echo $input["tel"]; ?>
           </div>
         </div>
         <div class="form-group">
           <label class="col-sm-2 control-label" for="inputEmail">E-mailアドレス</label>
           <div class="col-sm-10">
-            <?php echo $user_input["email"]; ?>
+            <?php echo $input["email"]; ?>
           </div>
         </div>
         <div class="form-group">
@@ -63,7 +63,7 @@
         <div class="form-group">
           <label class="col-sm-2 control-label" for="inputNickname">ニックネーム</label>
           <div class="col-sm-10">
-            <?php echo $user_input["nick_name"]; ?>
+            <?php echo $input["nick_name"]; ?>
           </div>
         </div>
         <div class="form-group">
