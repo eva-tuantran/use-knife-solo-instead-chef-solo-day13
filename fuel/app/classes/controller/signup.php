@@ -47,7 +47,6 @@ class Controller_Signup extends Controller_Base_Template
     public function action_index()
     {
         $fieldset = self::createFieldset();
-        $this->setMetaTag('signup/index');
         $this->template->content = View::forge('signup/index');
         $this->template->content->set('prefectures', Config::get('master.prefectures'));
         $this->template->content->set('errmsg', $fieldset->validation()->show_errors(), false);
@@ -65,8 +64,6 @@ class Controller_Signup extends Controller_Base_Template
         $fieldset = self::createFieldset();
         $fieldset->repopulate();
         $validation = $fieldset->validation();
-
-        $this->setMetaTag('signup/confirm');
 
         Session::set_flash('signup.fieldset', $fieldset);
         if (! $validation->run()) {
@@ -113,7 +110,6 @@ class Controller_Signup extends Controller_Base_Template
             return \Response::redirect('errors/timeout');
         }
 
-        $this->setMetaTag('signup/verify');
         $this->template->content = View::forge('signup/verify');
         $this->template->content->set('user_input', $user_data);
     }
@@ -162,7 +158,6 @@ class Controller_Signup extends Controller_Base_Template
      */
     public function action_thanks()
     {
-        $this->setMetaTag('signup/thanks');
         $this->template->content = View::forge('signup/thanks');
     }
 

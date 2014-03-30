@@ -33,27 +33,46 @@ class Controller_Search extends Controller_Base_Template
      * フリーマーケット検索結果画面
      *
      * @access public
+     * @param mixed $page ページ番号
      * @return void
      * @author ida
      */
-    public function action_index($page = null)
+    public function get_index($page = null)
     {
         if (! $page) {
             $page = 1;
         }
 
-        $base_conditions = Input::post('conditions', array());
+        $base_conditions = Input::get('conditions', array());
+
         $date = Input::get('d');
         if ($date) {
             $base_conditions = array('date' => $date,);
         }
-        $add_conditions = Input::post('add_conditions', array());
+
+        $upcomming = Input::get('upcomming');
+        if ($upcomming) {
+            $base_conditions = array('upcomming' => $upcomming,);
+        }
+
+        $reservation = Input::get('reservation');
+        if ($reservation) {
+            $base_conditions = array('reservation' => $reservation,);
+        }
+
+        $add_conditions = Input::get('add_conditions', array());
+        if (isset($base_conditions['shop_fee'])
+            && $base_conditions['shop_fee'] == \Model_Fleamarket::SHOP_FEE_FLAG_FREE
+        ) {
+            $add_conditions['shop_fee'][] = \Model_Fleamarket::SHOP_FEE_FLAG_FREE;
+            unset($base_conditions['shop_fee']);
+        }
 
         $conditions = array_merge($base_conditions, $add_conditions);
 
         // 検索条件から表示するフリーマーケット情報の取得
-        $condition_list = \Model_Fleamarket::createSearchConditionList($conditions);
-        $total_count = \Model_Fleamarket::findBySearchCount($condition_list);
+        $condition_list = \Model_Fleamarket::createSearchCondition($conditions);
+        $total_count = \Model_Fleamarket::getCountBySearch($condition_list);
         $fleamarket_list = \Model_Fleamarket::findBySearch(
             $condition_list, $page, $this->search_result_per_page
         );
@@ -73,7 +92,7 @@ class Controller_Search extends Controller_Base_Template
         $view_model->set('fleamarket_list', $fleamarket_list, false);
         $view_model->set('entry_styles', $entry_styles, false);
 
-        $this->template->title = 'フリーマーケット検索結果';
+        $this->setMetaTag('search/index');
         $this->template->content = $view_model;
     }
 
@@ -91,7 +110,7 @@ class Controller_Search extends Controller_Base_Template
             Response::redirect('errors/notfound');
         }
 
-        $fleamarket = \Model_Fleamarket::findByDetail($fleamarket_id);
+        $fleamarket = \Model_Fleamarket::findDetail($fleamarket_id);
         $fleamarket_abouts = \Model_Fleamarket_About::findByFleamarketId(
             $fleamarket_id
         );
@@ -100,7 +119,7 @@ class Controller_Search extends Controller_Base_Template
             $fleamarket_id
         );
 
-        $entries = \Model_Entry::getTotalEntryByFlearmarketId(
+        $entries = \Model_Entry::getTotalEntryByFleamarketId(
             $fleamarket_id
         );
         $fleamarket['entries'] = $entries;
@@ -113,7 +132,7 @@ class Controller_Search extends Controller_Base_Template
         );
         $view_model->set('entries', $entries, false);
 
-        $this->template->title = 'フリーマーケット詳細情報';
+        $this->setMetaTag('search/detail');
         $this->template->content = $view_model;
     }
 
@@ -133,7 +152,10 @@ class Controller_Search extends Controller_Base_Template
 
         $entry_style_fields = array(
             'field' => array(
-                'entry_style_id', 'booth_fee', 'reservation_booth_limit'
+                'entry_style_id',
+                'booth_fee',
+                'max_booth',
+                'reservation_booth_limit',
             )
         );
         foreach ($fleamarket_list as &$fleamarket) {
@@ -142,7 +164,7 @@ class Controller_Search extends Controller_Base_Template
             );
             $fleamarket['entry_styles'] = $entry_styles;
 
-            $entries = \Model_Entry::getTotalEntryByFlearmarketId(
+            $entries = \Model_Entry::getTotalEntryByFleamarketId(
                 $fleamarket['fleamarket_id']
             );
             $fleamarket['entries'] = $entries;

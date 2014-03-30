@@ -16,7 +16,6 @@ class View_Search_Detail extends ViewModel
      */
     public function view()
     {
-        $this->title = '開催情報概要';
         $this->setItemsForDisplay();
     }
 
@@ -109,9 +108,8 @@ class View_Search_Detail extends ViewModel
 
                 $booth_list[] = $this->createBoothString(
                     $this->fleamarket['entries'],
-                    $entry_style_id,
-                    $style_name,
-                    $entry_style['reservation_booth_limit']
+                    $entry_style,
+                    $style_name
                 );
             }
         }
@@ -126,7 +124,8 @@ class View_Search_Detail extends ViewModel
      * @param string $style_name 出店形態名
      * @author ida
      */
-    private function createStyleString($style_name) {
+    private function createStyleString($style_name)
+    {
         return $style_name;
     }
 
@@ -138,7 +137,8 @@ class View_Search_Detail extends ViewModel
      * @param int $booth_fee 出店料金
      * @author ida
      */
-    private function createFeeString($style_name, $booth_fee) {
+    private function createFeeString($style_name, $booth_fee)
+    {
         $fee_string = $style_name . ':';
         $fee_string .= number_format($booth_fee) . '円';
 
@@ -150,27 +150,28 @@ class View_Search_Detail extends ViewModel
      *
      * @access private
      * @param array $entries 出店予約情報
-     * @param string $entry_style_id 出店形態ID
+     * @param array $entry_style 出店形態
      * @param string $style_name 出店形態名
-     * @param int $booth_limit 出店形態別ブース数
-     * @return string
      * @author ida
      */
-    private function createBoothString(
-        &$entries, $entry_style_id, $style_name, $booth_limit
-    ) {
-        if (count($entries) == 0) {
-            return;
-        }
+    private function createBoothString($entries, $entry_style, $style_name)
+    {
+        $booth_string = '';
+        if (! $entries) {
+            $booth_string = $style_name . ':' . $entry_style['max_booth'];
+        } else {
+            $entry_style_id = $entry_style['entry_style_id'];
+            foreach ($entries as $entry) {
+                if ($entry_style_id !== $entry['fleamarket_entry_style_id']) {
+                    continue;
+                }
 
-        foreach ($entries as $entry) {
-            if ($entry_style_id != $entry['fleamarket_entry_style_id']) {
-                continue;
+                $max_booth = $entry_style['max_booth'];
+                $reserved_booth = $entry['reserved_booth'];
+                $booth_string = $style_name . ':';
+                $booth_number = $max_booth - $reserved_booth;
+                $booth_string .= '残り ' . $booth_number;
             }
-
-            $booth_string = $style_name . ':';
-            $booth_number = ($booth_limit - $entry['reserved_booth']);
-            $booth_string .= '残り ' . $booth_number . 'ブース';
         }
 
         return $booth_string;

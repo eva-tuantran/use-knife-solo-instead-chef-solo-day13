@@ -1,35 +1,22 @@
 <div id="contentHome" class="row">
-<script>
-$(function() {
-  $(window).resize(function() {
-    $("#newMarket").carouFredSel({
-      align: true,
-      items:{start: "random"},
-      scroll:{
-        items: 1,
-        duration: 300,
-        pauseDuration: 5000,
-        easing: 'linear',
-        pauseOnHover: 'immediate'
-      },
-      prev:{button: "#prev", key: "left"},
-      next:{button: "#next", key:"right"}
-    });
-  });
-
-  $(window).resize();
-});
-</script>
 <!-- soon -->
 <div id="soon" class="container">
   <div class="box clearfix">
-    <h2>近日開催</h2>
-    <dl class="dl-horizontal">
-      <dt>2014年04月05日(水)</dt>
-      <dd><a href="#">テキストテキストテキストテキストテキストテキストテキストテキスト</a></dd>
+    <h2>近日開催のフリーマーケット</h2>
+    <dl>
+    <?php
+        if ($upcomming_fleamarket_list):
+            foreach ($upcomming_fleamarket_list as $fleamarket):
+    ?>
+      <dt><?php echo e($fleamarket['event_date']);?></dt>
+      <dd><a href="/detail/<?php echo e($fleamarket['fleamarket_id']);?>/"><?php echo e($fleamarket['headline']);?></a></dd>
     </dl>
+    <?php
+            endforeach;
+        endif;
+    ?>
     <ul>
-      <li><a href="#">一覧</a></li>
+      <li><a href="/search/1/?upcomming=1">一覧</a></li>
     </ul>
   </div>
 </div>
@@ -54,7 +41,7 @@ $(function() {
 <div id="search" class="container">
   <div class="box">
     <div class="row">
-      <form id="form_search_calendar" action="/search/1/" method="post">
+      <form id="form_search_calendar" action="/search/1/" method="get">
         <fieldset>
           <div id="searchTitle" class="col-md-2">
             <h2><i></i>条件で探す</h2>
@@ -74,7 +61,7 @@ $(function() {
                 <input id="form_rainy_location" type="checkbox" name="conditions[rainy_location]" value="<?php echo \Model_Fleamarket::RAINY_LOCATION_FLAG_EXIST;?>">雨天開催会場
               </label>
               <label for="form_pro_shop">
-                <input id="form_pro_shop" type="checkbox" name="conditions[form_pro_shop]" value="<?php echo \Model_Fleamarket::PRO_SHOP_FLAG_OK;?>">プロ出店可
+                <input id="form_pro_shop" type="checkbox" name="conditions[pro_shop]" value="<?php echo \Model_Fleamarket::PRO_SHOP_FLAG_OK;?>">プロ出店可
               </label>
               <label for="form_charge_parking">
                 <input id="form_charge_parking" type="checkbox" name="conditions[charge_parking]" value="<?php echo \Model_Fleamarket::CHARGE_PARKING_FLAG_EXIST;?>">有料駐車場あり
@@ -126,85 +113,7 @@ $(function() {
       <li id="prev">Prev</li>
       <li id="next">Next</li>
     </ul>
-    <div id="newMarket" class="container">
-      <!-- market -->
-      <div class="market clearfix">
-        <p class="state">○○○県</p>
-        <p class="case">出店簿集中!</p>
-        <div class="marketPhoto"><a href="#"><img src="http://dummyimage.com/180x110/ccc/fff.jpg"></a></div>
-        <p class="date">12月24日(土)</p>
-        <p class="booth">残り<strong>25</strong>ブース</p>
-        <h3><a href="#">○○フリーマーケット</a></h3>
-        <p class="place">大井競馬場</p>
-      </div>
-      <!-- /market -->
-      <!-- market -->
-      <div class="market clearfix">
-        <p class="state">○○○県</p>
-        <p class="case">出店簿集中!</p>
-        <div class="marketPhoto"><a href="#"><img src="http://dummyimage.com/180x110/ccc/fff.jpg"></a></div>
-        <p class="date">12月24日(土)</p>
-        <p class="booth">残り<strong>25</strong>ブース</p>
-        <h3><a href="#">○○フリーマーケット</a></h3>
-        <p class="place">大井競馬場</p>
-      </div>
-      <!-- /market -->
-      <!-- market -->
-      <div class="market clearfix">
-        <p class="state">○○○県</p>
-        <p class="case">出店簿集中!</p>
-        <div class="marketPhoto"><a href="#"><img src="http://dummyimage.com/180x110/ccc/fff.jpg"></a></div>
-        <p class="date">12月24日(土)</p>
-        <p class="booth">残り<strong>25</strong>ブース</p>
-        <h3><a href="#">○○フリーマーケット</a></h3>
-        <p class="place">大井競馬場</p>
-      </div>
-      <!-- /market -->
-      <!-- market -->
-      <div class="market clearfix">
-        <p class="state">○○○県</p>
-        <p class="case">出店簿集中!</p>
-        <div class="marketPhoto"><a href="#"><img src="http://dummyimage.com/180x110/ccc/fff.jpg"></a></div>
-        <p class="date">12月24日(土)</p>
-        <p class="booth">残り<strong>25</strong>ブース</p>
-        <h3><a href="#">○○フリーマーケット</a></h3>
-        <p class="place">大井競馬場</p>
-      </div>
-      <!-- /market -->
-      <!-- market -->
-      <div class="market clearfix">
-        <p class="state">○○○県</p>
-        <p class="case">出店簿集中!</p>
-        <div class="marketPhoto"><a href="#"><img src="http://dummyimage.com/180x110/ccc/fff.jpg"></a></div>
-        <p class="date">12月24日(土)</p>
-        <p class="booth">残り<strong>25</strong>ブース</p>
-        <h3><a href="#">○○フリーマーケット</a></h3>
-        <p class="place">大井競馬場</p>
-      </div>
-      <!-- /market -->
-      <!-- market -->
-      <div class="market clearfix">
-        <p class="state">○○○県</p>
-        <p class="case">出店簿集中!</p>
-        <div class="marketPhoto"><a href="#"><img src="http://dummyimage.com/180x110/ccc/fff.jpg"></a></div>
-        <p class="date">12月24日(土)</p>
-        <p class="booth">残り<strong>25</strong>ブース</p>
-        <h3><a href="#">○○フリーマーケット</a></h3>
-        <p class="place">大井競馬場</p>
-      </div>
-      <!-- /market -->
-      <!-- market -->
-      <div class="market clearfix">
-        <p class="state">○○○県</p>
-        <p class="case">出店簿集中!</p>
-        <div class="marketPhoto"><a href="#"><img src="http://dummyimage.com/180x110/ccc/fff.jpg"></a></div>
-        <p class="date">12月24日(土)</p>
-        <p class="booth">残り<strong>25</strong>ブース</p>
-        <h3><a href="#">○○フリーマーケット</a></h3>
-        <p class="place">大井競馬場</p>
-      </div>
-      <!-- /market -->
-    </div>
+    <div id="newMarket" class="container"></div>
   </div>
 </div>
 <!-- /new -->
@@ -342,8 +251,8 @@ $(function() {
 <hr>
 <script type="text/javascript">
 $(function() {
-  Calendar.init();
   Calendar.get();
+  Carousel.get();
 });
 
 var Calendar = {
@@ -359,18 +268,49 @@ var Calendar = {
   },
   get: function(url) {
     if (url == "" || typeof url === "undefined") {
-      url = "/calendar";
+      url = "/calendar/";
     }
 
     $.ajax({
-      type: "post",
+      type: "get",
       url: url,
       dataType: "html"
     }).done(function(html, textStatus, jqXHR) {
       $("#calendar-search").empty();
       $("#calendar-search").html(html);
+      Calendar.init();
     }).fail(function(jqXHR, textStatus, errorThrown) {
     }).always(function() {
+    });
+  }
+};
+
+var Carousel = {
+  get: function() {
+    $.ajax({
+      type: "get",
+      url: "/fleamarket/latest/",
+      dataType: "html"
+    }).done(function(html, textStatus, jqXHR) {
+      $("#newMarket").empty();
+      $("#newMarket").html(html);
+      Carousel.start();
+    }).fail(function(jqXHR, textStatus, errorThrown) {
+    }).always(function() {
+    });
+  },
+  start: function () {
+    $("#newMarket").carouFredSel({
+      align: true,
+      scroll:{
+        items: 1,
+        duration: 300,
+        pauseDuration: 5000,
+        easing: 'linear',
+        pauseOnHover: 'immediate'
+      },
+      prev:{button: "#prev", key: "left"},
+      next:{button: "#next", key:"right"}
     });
   }
 };

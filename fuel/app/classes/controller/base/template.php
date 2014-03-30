@@ -3,7 +3,6 @@
 /**
  * Base Controller.
  *
- * @extends  Controller_Template
  * @author shimma
  */
 class Controller_Base_Template extends Controller_Template
@@ -49,19 +48,31 @@ class Controller_Base_Template extends Controller_Template
 
 
     /**
-     * 事前処理
+     * メタタグの指定
+     * FuelPHPのmetaに準拠したarrayを設定します
+     * http://fuelphp.com/docs/classes/html.html#/method_meta
      *
-     * アクション実行前の共通処理
-     *
-     * @access public
-     * @return void
-     * @author ida
+     * @var mixed
+     * @access protected
      * @author shimma
-     *
-     * @todo ログイン必須時のリダイレクトの挙動の確定
      */
+    protected $meta = array();
+
+
+    /**
+     * ログインしているユーザインスタンスです
+     *
+     * @var mixed
+     * @access protected
+     * @author shimma
+     */
+    protected $login_user;
+
+
     public function before()
     {
+        parent::before();
+
         $should_be_secure = in_array($this->request->action, $this->_secure_actions);
         $is_secure        = isset($_SERVER['HTTPS']);
         $use_ssl          = \Config::get('ssl_connection.use');
@@ -76,19 +87,30 @@ class Controller_Base_Template extends Controller_Template
         }
 
         if (in_array($this->request->action, $this->_login_actions) && !Auth::check()) {
-            // return \Response::redirect('/login?rurl='.\Uri::main());
-            return \Response::redirect('/login');
+            return \Response::redirect('/login?rurl='.$_SERVER['REQUEST_URI']);
         }
 
         if (in_array($this->request->action, $this->_nologin_actions) && Auth::check()) {
             return \Response::redirect('/mypage');
         }
 
-        Asset::js('holder.js', array(), 'add_js');
         Lang::load('meta');
+        $this->login_user = Auth::get_user_instance();
 
-        parent::before();
+        if ($this->request->uri->get_segments()) {
+            list($dir) = $this->request->uri->get_segments();
+            $this->setMetaTag("$dir/" . $this->request->action);
+        }
     }
+
+
+    public function after($response)
+    {
+        $this->template->meta = $this->meta;
+
+        return parent::after($response);
+    }
+
 
     /**
      * http/httpsの引数で現状のURIを引き継いでリダイレクトします
@@ -118,12 +140,33 @@ class Controller_Base_Template extends Controller_Template
      * @access protected
      * @return void
      * @author kobayasi
+     * @author shimma
      */
     protected function setMetaTag($path)
     {
         $meta = Lang::get($path);
+        $this->meta[] = array('name' => 'keyword',     'content' => $meta['keyword']);
+        $this->meta[] = array('name' => 'description', 'content' => $meta['description']);
         $this->template->title = $meta['title'];
     }
+
+
+    /**
+     * 遅延リダイレクトを行います。
+     * Viewを表示後、timerで指定の秒数後にリダイレクト処理を行います。
+     *
+     * @access protected
+     * @return void
+     * @author shimma
+     */
+    protected function setLazyRedirect($url, $timer = 1)
+    {
+        if (! is_numeric($timer)) {
+            return false;
+        }
+        $this->meta[] = array('http-equiv' => 'refresh', 'content' => "${timer}; URL=${url}");
+    }
+
 
     /**
      * ステータス変更文字列を取得します。
@@ -142,19 +185,5 @@ class Controller_Base_Template extends Controller_Template
         Lang::load('status');
         return Lang::get($i);
     }
-
-
-    /**
-     * var_dumpとexitを一気にやってくれるtest用関数
-     *
-     * @param mixed $data
-     */
-    public static function vd($data)
-    {
-        var_dump($data);
-        exit();
-    }
-
-
 
 }

@@ -16,6 +16,5 @@ class View_Top_Index extends ViewModel
      */
     public function view()
     {
-        $this->title = '楽市楽座';
     }
 }

@@ -72,7 +72,6 @@ class Model_Fleamarket extends \Orm\Model
     const PICKUP_FLAG_OFF = 0;
     const PICKUP_FLAG_ON = 1;
 
-
     /**
      * テーブル名
      *
@@ -171,7 +170,7 @@ class Model_Fleamarket extends \Orm\Model
      */
     public static function getEventStatuses()
     {
-        return $event_statuses;
+        return self::$event_statuses;
     }
 
     /**
@@ -228,9 +227,7 @@ QUERY;
     public static function findBySearch(
         $condition_list, $page = 0, $row_count = 0
     ) {
-        list($where, $placeholders) = self::createWhereBySearch(
-            $condition_list
-        );
+        list($where, $placeholders) = self::buildSearchWhere($condition_list);
 
         $limit = '';
         if (is_numeric($page) && is_numeric($row_count)) {
@@ -308,15 +305,14 @@ GROUP BY
 	googlemap_address,
 	about_access
 ORDER BY
-    f.register_type = :register_status,
-    f.event_date DESC,
-    f.event_time_start
+    f.register_type,
+    f.event_date
 {$limit}
 QUERY;
 
         $statement = \DB::query($query)->parameters($placeholders);
         $result = $statement->execute();
-// var_dump(\DB::last_query());
+
         $rows = null;
         if (! empty($result)) {
             $rows = $result->as_array();
@@ -333,11 +329,9 @@ QUERY;
      * @return array フリーマーケット情報
      * @author ida
      */
-    public static function findBySearchCount($condition_list)
+    public static function getCountBySearch($condition_list)
     {
-        list($where, $placeholders) = self::createWhereBySearch(
-            $condition_list
-        );
+        list($where, $placeholders) = self::buildSearchWhere($condition_list);
 
         $table_name = self::$_table_name;
         $query = <<<"QUERY"
@@ -379,7 +373,7 @@ QUERY;
      * @return array フリーマーケット情報
      * @author ida
      */
-    public static function findByDetail($fleamarket_id)
+    public static function findDetail($fleamarket_id)
     {
         $placeholders = array(
             ':fleamarket_id' => $fleamarket_id,
@@ -436,6 +430,122 @@ QUERY;
     }
 
     /**
+     * 最新のフリーマーケット情報を取得する
+     *
+     * @access public
+     * @param array $condition_list 検索条件
+     * @param mixed $row_count 取得行数
+     * @return array フリーマーケット情報
+     * @author ida
+     */
+    public static function findLatest($row_count = 10)
+    {
+        $placeholders = array(
+            ':event_status' => self::EVENT_STATUS_RESERVATION_RECEIPT,
+            ':display_flag' => self::DISPLAY_FLAG_ON,
+            ':register_status' => self::REGISTER_TYPE_ADMIN,
+        );
+
+        $limit = '';
+        if (! is_int($row_count)) {
+            $row_count = 10;
+        }
+        $limit = ' LIMIT ' . $row_count;
+
+        $table_name = self::$_table_name;
+        $query = <<<"QUERY"
+SELECT
+    f.fleamarket_id,
+    f.name,
+    f.event_status,
+    DATE_FORMAT(f.event_date, '%m月%d日') AS event_date,
+    l.name AS location_name,
+    l.prefecture_id AS prefecture_id
+FROM
+    {$table_name} AS f
+LEFT JOIN
+    locations AS l ON f.location_id = l.location_id
+WHERE
+    f.display_flag = :display_flag
+    AND f.register_type = :register_status
+    AND f.event_status <= :event_status
+    AND f.deleted_at IS NULL
+ORDER BY
+    f.event_date DESC
+{$limit}
+QUERY;
+
+        $statement = \DB::query($query)->parameters($placeholders);
+        $result = $statement->execute();
+
+        $rows = null;
+        if (! empty($result)) {
+            $rows = $result->as_array();
+        }
+
+        return $rows;
+    }
+
+    /**
+     * 近日開催予定のフリーマーケット情報を取得する
+     *
+     * @access public
+     * @param array $condition_list 検索条件
+     * @param mixed $row_count 取得行数
+     * @return array フリーマーケット情報
+     * @author ida
+     */
+    public static function findUpcoming($row_count = 10)
+    {
+        $placeholders = array(
+            ':event_status' => self::EVENT_STATUS_RECEIPT_END,
+            ':display_flag' => self::DISPLAY_FLAG_ON,
+            ':register_status' => self::REGISTER_TYPE_ADMIN,
+        );
+
+        $limit = '';
+        if (! is_int($row_count)) {
+            $row_count = 10;
+        }
+        $limit = ' LIMIT ' . $row_count;
+
+        $table_name = self::$_table_name;
+        $query = <<<"QUERY"
+SELECT
+    f.fleamarket_id,
+    f.name,
+    f.event_status,
+    f.headline,
+    DATE_FORMAT(f.event_date, '%Y年%m月%d日') AS event_date,
+    l.name AS location_name,
+    l.prefecture_id AS prefecture_id
+FROM
+    {$table_name} AS f
+LEFT JOIN
+    locations AS l ON f.location_id = l.location_id
+WHERE
+    f.display_flag = :display_flag
+    AND f.register_type = :register_status
+    AND f.event_status <= :event_status
+    AND f.deleted_at IS NULL
+    AND DATE_FORMAT(f.event_date, '%Y-%m-%d') >= CURDATE()
+ORDER BY
+    f.event_date
+{$limit}
+QUERY;
+
+        $statement = \DB::query($query)->parameters($placeholders);
+        $result = $statement->execute();
+
+        $rows = null;
+        if (! empty($result)) {
+            $rows = $result->as_array();
+        }
+
+        return $rows;
+    }
+
+    /**
      * 検索条件を取得する
      *
      * @access private
@@ -443,7 +553,7 @@ QUERY;
      * @return array 検索条件
      * @author void
      */
-    public static function createSearchConditionList($data)
+    public static function createSearchCondition($data)
     {
         $conditions = array();
 
@@ -527,6 +637,18 @@ QUERY;
             );
         }
 
+        if (isset($data['upcomming']) && $data['upcomming']) {
+            $conditions[] = array(
+                'DATE_FORMAT(f.event_date, \'%Y-%m-%d\') >= CURDATE()'
+            );
+        }
+
+        if (isset($data['reservation']) && $data['reservation']) {
+            $conditions[] = array(
+                'f.register_type', '=', \Model_Fleamarket::REGISTER_TYPE_ADMIN
+            );
+        }
+
         return $conditions;
     }
 
@@ -538,7 +660,7 @@ QUERY;
      * @return array
      * @author ida
      */
-    private static function createWhereBySearch($condition_list)
+    private static function buildSearchWhere($condition_list)
     {
         $where = '';
         $placeholders = array(
@@ -553,25 +675,31 @@ QUERY;
 
         $conditions = array();
         foreach ($condition_list as $condition) {
-            $field = $condition[0];
-            $operator = $condition[1];
-            if ($operator === 'IN') {
-                $placeholder = ':' . $field;
-                $values = $condition[2];
-                $placeholder_string = '';
-                foreach ($values as $key => $value) {
-                    $placeholder_in = $placeholder . $key;
-                    $placeholder_string .= $placeholder_string == '' ? '' : ',';
-                    $placeholder_string .= $placeholder_in;
-                    $placeholders[$placeholder_in] = $value;
-                }
-                $value = implode(',', $values);
-                $conditions[] = $field . ' ' . $operator . ' (' . $placeholder_string . ')';
+            if (count($condition) == 1) {
+                $conditions[] = $condition[0];
             } else {
-                $placeholder = ':' . $field;
-                $value = trim($condition[2]);
-                $conditions[] = $field . ' ' . $operator . ' ' . $placeholder;
-                $placeholders[$placeholder] = $value;
+                $field = $condition[0];
+                $operator = $condition[1];
+                if ($operator === 'IN') {
+                    $placeholder = ':' . $field;
+                    $values = $condition[2];
+                    $placeholder_strings = array();
+                    foreach ($values as $key => $value) {
+                        $placeholder_in = $placeholder . $key;
+                        $placeholder_strings[] = $placeholder_in;
+                        $placeholders[$placeholder_in] = $value;
+                    }
+                    $value = implode(',', $values);
+                    $placeholder_string = implode(',', $placeholder_strings);
+                    $conditions[] = $field . ' '
+                                  . $operator . ' '
+                                  . '(' . $placeholder_string . ')';
+                } else {
+                    $placeholder = ':' . $field;
+                    $value = trim($condition[2]);
+                    $conditions[] = $field . ' ' . $operator . ' ' . $placeholder;
+                    $placeholders[$placeholder] = $value;
+                }
             }
         }
 
