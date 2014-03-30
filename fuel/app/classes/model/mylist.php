@@ -113,10 +113,10 @@ SELECT
     fa.description AS about_access,
     fes.booth_fee AS booth_fee
 FROM
-    mylists AS fav
+    mylists AS m
 LEFT JOIN
     fleamarkets AS f ON
-    fav.fleamarket_id = f.fleamarket_id
+    m.fleamarket_id = f.fleamarket_id
 LEFT JOIN
     locations AS l ON f.location_id = l.location_id
 LEFT JOIN
@@ -125,9 +125,9 @@ LEFT JOIN
 LEFT JOIN
     fleamarket_entry_styles AS fes ON f.fleamarket_id = fes.fleamarket_id
 WHERE
-    fav.user_id = :user_id AND
+    m.user_id = :user_id AND
     f.display_flag = :display_flag AND
-    fav.deleted_at IS NULL
+    m.deleted_at IS NULL
 ORDER BY
     f.event_date DESC,
     f.event_time_start
@@ -164,10 +164,10 @@ QUERY;
 SELECT
     COUNT(*) as count
 FROM
-    mylists AS f
+    mylists AS m
 WHERE
-    f.user_id = :user_id AND
-    f.deleted_at IS NULL
+    m.user_id = :user_id AND
+    m.deleted_at IS NULL
 QUERY;
 
         $mylist_count = \DB::query($query)->parameters($placeholders)->execute()->get('count');

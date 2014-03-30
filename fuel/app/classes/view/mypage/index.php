@@ -21,6 +21,12 @@ class View_Mypage_Index extends ViewModel
             $this->addDisplayStrings($entry);
         }
         unset($entry);
+
+
+        foreach ($this->mylists as &$mylist) {
+            $this->addDisplayStrings($mylist);
+        }
+        unset($mylist);
     }
 
     /**
@@ -50,7 +56,7 @@ class View_Mypage_Index extends ViewModel
          *  エントリー費用
          *  現在の所、車出店など横に出している
          */
-        if (isset($entry['booth_fee'])) {
+        if (isset($entry['booth_fee']) && isset($entry['fleamarket_entry_style_name'])) {
             $entry['booth_fee_string'] = $this->createFeeString($entry['fleamarket_entry_style_name'], $entry['booth_fee']);
         } else {
             $entry['booth_fee_string'] = '未設定';

@@ -13,7 +13,7 @@ class Model_User extends Orm\Model_Soft
     protected static $_primary_key = array('user_id');
 
     protected static $_has_many = array(
-        'favorites' => array(
+        'mylists' => array(
             'key_from' => 'user_id',
         ),
     );
@@ -489,18 +489,15 @@ class Model_User extends Orm\Model_Soft
 
 
     /**
-     * マイリスト数を取得します
+     * マイリスト(お気に入り)数を取得します
      *
      * @access public
      * @return int
      * @author shimma
-     *
-     * @todo ここの完成
      */
     public function getMylistCount()
     {
-        // $count = self::
-        $count = 10;
+        $count = \Model_Mylist::getUserMylistCount($this->user_id);
 
         return $count;
     }
@@ -515,20 +512,24 @@ class Model_User extends Orm\Model_Soft
      */
     public function cancelEntry($fleamarket_id)
     {
-        $entry = Model_Entry::find('last', array(
-            'where' => array(
-                array('user_id' => $this->user_id),
-                array('fleamarket_id' => $fleamarket_id),
-            )
-        ));
-
-        if (! $entry) {
-            return false;
-        } else {
-            $entry->delete();
-        }
-
-        return true;
+        return \Model_Entry::cancelUserEntry($this->user_id, $fleamarket_id);
     }
+
+
+    /**
+     * ユーザのお気に入り情報を取得します
+     *
+     * @access public
+     * @return mixed
+     * @author shimma
+     */
+    public function getMylists($page = 1, $row_count = 30)
+    {
+        $mylists = \Model_Mylist::getUserMylists($this->user_id, $page, $row_count);
+
+        return $mylists;
+    }
+
+
 
 }
