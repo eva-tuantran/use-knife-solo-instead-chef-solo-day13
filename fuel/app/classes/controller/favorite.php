@@ -39,11 +39,11 @@ class Controller_Favorite  extends \Fuel\Core\Controller_Rest
         }
 
         try {
-            $favorite->save();
+            $mylist->save();
         } catch (Exception $e) {
             return $this->response(false);
         }
-        
+
         return $this->response(true);
     }
 }

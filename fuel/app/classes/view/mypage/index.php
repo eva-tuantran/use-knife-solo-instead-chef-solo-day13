@@ -23,10 +23,10 @@ class View_Mypage_Index extends ViewModel
         unset($entry);
 
 
-        foreach ($this->favorites as &$favorite) {
-            $this->addDisplayStrings($favorite);
+        foreach ($this->mylists as &$mylist) {
+            $this->addDisplayStrings($mylist);
         }
-        unset($favorite);
+        unset($mylist);
     }
 
     /**

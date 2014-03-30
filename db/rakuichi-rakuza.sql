@@ -419,11 +419,11 @@ CREATE TABLE IF NOT EXISTS `rakuichi-rakuza`.`favorites` (
   `created_at` DATETIME NOT NULL,
   `updated_at` DATETIME NULL,
   `deleted_at` DATETIME NULL,
-  PRIMARY KEY (`favorite_id`),
-  UNIQUE INDEX `idx_user_id_fleamarket_id` (`user_id` ASC, `fleamarket_id` ASC))
+  PRIMARY KEY (`favorite_id`))
 ENGINE = InnoDB;
 
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
+

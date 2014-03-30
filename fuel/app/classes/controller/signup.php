@@ -49,7 +49,8 @@ class Controller_Signup extends Controller_Base_Template
         $fieldset = self::createFieldset();
         $this->template->content = View::forge('signup/index');
         $this->template->content->set('prefectures', Config::get('master.prefectures'));
-        $this->template->content->set('errmsg', $fieldset->validation()->show_errors(), false);
+        $this->template->content->set('input', $fieldset->input());
+        $this->template->content->set('error', $fieldset->validation()->error_message());
     }
 
     /**
@@ -62,7 +63,6 @@ class Controller_Signup extends Controller_Base_Template
     public function post_confirm()
     {
         $fieldset = self::createFieldset();
-        $fieldset->repopulate();
         $validation = $fieldset->validation();
 
         Session::set_flash('signup.fieldset', $fieldset);
@@ -70,7 +70,7 @@ class Controller_Signup extends Controller_Base_Template
             return \Response::redirect('signup');
         } else {
             $this->template->content = View::forge('signup/confirm');
-            $this->template->content->set('user_input', $validation->validated());
+            $this->template->content->set('input', $fieldset->input());
         };
     }
 
@@ -81,6 +81,8 @@ class Controller_Signup extends Controller_Base_Template
      *
      * @todo エラーメッセージのview側への組み込み
      * @todo 検討: emailにunique制約が入っており、ここで中途半端にページを閉じると同じIDで登録できない
+     * @todo confirmでリロードした後にこの画面に遷移すると、passwordがとれずユーザが発行されない
+     * @todo ユーザの作成からトークン発行までをtransaction処理にする
      * @author shimma
      * @access public
      * @return void
@@ -92,18 +94,17 @@ class Controller_Signup extends Controller_Base_Template
         }
 
         $fieldset = self::createFieldset();
-        $user_data = $fieldset->validation()->validated();
-        $user_data['password']        = \Auth::hash_password($user_data['password']);
-        $user_data['register_status'] = \REGISTER_STATUS_INACTIVATED;
+        $user_data = array_filter($fieldset->validation()->validated(), 'strlen');
 
         try {
             $new_user = Model_User::forge($user_data);
+            $new_user->setPassword($user_data['password']);
             $new_user->save();
 
             $new_token = Model_Token::generate($new_user->user_id);
             $email_template_params = array(
                 'nick_name'    => $new_user->nick_name,
-                'activate_url' => Uri::base().'signup/activate?token='.$new_token->hash,
+                'activate_url' => $new_token->getActivationUrl(),
             );
             $new_user->sendmail('signup/verify', $email_template_params);
         } catch (Orm\ValidationFailed $e) {
@@ -134,12 +135,11 @@ class Controller_Signup extends Controller_Base_Template
         try {
             $valid_token = Model_Token::findByHash($hash);
             $user = Model_User::find($valid_token->user_id);
-            $user->register_status = \REGISTER_STATUS_ACTIVATED;
-            $user->save();
+            $user->activate();
             $valid_token->delete();
 
             $email_template_params = array(
-                'nick_name'    => $user->nick_name,
+                'nick_name' => $user->nick_name,
             );
             $user->sendmail('signup/activate', $email_template_params);
 
@@ -159,6 +159,7 @@ class Controller_Signup extends Controller_Base_Template
     public function action_thanks()
     {
         $this->template->content = View::forge('signup/thanks');
+        $this->setLazyRedirect('/');
     }
 
     /**
@@ -174,14 +175,25 @@ class Controller_Signup extends Controller_Base_Template
         $fieldset = Session::get_flash('signup.fieldset');
 
         if (! $fieldset) {
-            $fieldset = Fieldset::forge('signup');
-            $fieldset = Model_User::getBaseFieldset($fieldset);
+            $fieldset = Model_User::createFieldset();
+
+            $fieldset->add('email2', 'メールアドレス確認用')
+                ->add_rule('required')
+                ->add_rule('match_field', 'email');
+
+            $fieldset->add('password2', 'パスワード確認用')
+                ->add_rule('required')
+                ->add_rule('match_field', 'password');
+
+            $fieldset->add('terms', '利用規約')
+                ->add_rule('required');
 
             $fieldset->field('device')->set_type(false);
             $fieldset->field('tel')->set_type(false);
             $fieldset->field('mobile_email')->set_type(false);
         }
 
+        $fieldset->repopulate();
         return $fieldset;
     }
 

@@ -273,7 +273,7 @@ QUERY;
      * @access public
      * @return int
      */
-    public function getMylistCount()
+    public function getFavoriteCount()
     {
         return $this->user->getFavoriteCount();
     }
