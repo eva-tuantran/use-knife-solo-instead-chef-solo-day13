@@ -16,8 +16,8 @@ class View_Fleamarket_Index extends ViewModel
      */
     public function view()
     {
-        $this->title = 'フリーマーケット情報の入力';
+        $this->fleamarket_about_titles = \Model_Fleamarket_About::getAboutTitles();
+        $this->fleamarket_about_names = \Model_Fleamarket_About::getAboutNames();
         $this->prefectures = Config::get('master.prefectures');
-        $this->event_abouts = Config::get('master.event_abouts');
     }
 }

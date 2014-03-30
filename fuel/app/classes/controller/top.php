@@ -50,6 +50,4 @@ class Controller_Top extends Controller_Base_Template
         $this->setMetaTag('top/index');
         $this->template->content = $view_model;
     }
-
-
 }

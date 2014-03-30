@@ -46,19 +46,61 @@ class Model_Fleamarket_About extends \Orm\Model
         self::PARKING       => 'about_parking',
     );
 
-    /**
-     * テーブル名
-     *
-     * @var string $table_name
-     */
     protected static $_table_name = 'fleamarket_abouts';
 
-    /**
-     * プライマリーキー
-     *
-     * @var string $_primary_key
-     */
     protected static $_primary_key  = array('fleamarket_about_id');
+
+    protected static $_properties = array(
+        'fleamarket_about_id' => array(
+            'form'  => array('type' => false)
+        ),
+        'fleamarket_id' => array(
+            'form'  => array('type' => false)
+        ),
+        'about_id' => array(
+            'form'  => array('type' => false)
+        ),
+        'title' =>  array(
+            'label' => 'タイトル',
+            'validation' => array(
+                'max_length' => array(50)
+            )
+        ),
+        'description' => array(
+            'label' => '内容',
+            'validation' => array(
+                'max_length' => array(500)
+            )
+        ),
+        'created_user' => array(
+            'form'  => array('type' => false)
+        ),
+        'updated_user' => array(
+            'form'  => array('type' => false)
+        ),
+        'created_at' => array(
+            'form'  => array('type' => false)
+        ),
+        'updated_at' => array(
+            'form'  => array('type' => false)
+        ),
+        'deleted_at' => array(
+            'form'  => array('type' => false)
+        ),
+    );
+
+    protected static $_observers = array(
+        'Orm\\Observer_CreatedAt' => array(
+            'events'          => array('before_insert'),
+            'mysql_timestamp' => true,
+            'property'        => 'created_at',
+        ),
+        'Orm\\Observer_UpdatedAt' => array(
+            'events'          => array('before_update'),
+            'mysql_timestamp' => true,
+            'property'        => 'updated_at',
+        ),
+    );
 
     /**
      * 説明区分表示名リストを取得する
@@ -146,5 +188,22 @@ QUERY;
         }
 
         return $res;
+    }
+
+    /*
+     * Fieldsetオブジェクトの生成
+     *
+     * @access public
+     * @param
+     * @return array
+     * @author ida
+     */
+    public static function createFieldset()
+    {
+        $about = self::forge();
+        $fieldset = \Fieldset::forge('fleamarket_about');
+        $fieldset->add_model($about);
+
+        return $fieldset;
     }
 }
