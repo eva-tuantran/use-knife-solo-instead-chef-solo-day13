@@ -7,21 +7,21 @@
  *
  * @author kobayasi
  */
-class Model_Mylist extends \Orm\Model_Soft
+class Model_Favorite extends \Orm\Model_Soft
 {
     /**
      * テーブル名
      *
      * @var string $table_name
      */
-    protected static $_table_name = 'mylists';
+    protected static $_table_name = 'favorites';
 
     /**
      * プライマリーキー
      *
      * @var string $_primary_key
      */
-    protected static $_primary_key  = array('mylist_id');
+    protected static $_primary_key  = array('favorite_id');
 
     protected static $_belongs_to = array(
         'user' => array(
@@ -33,7 +33,7 @@ class Model_Mylist extends \Orm\Model_Soft
     );
 
     protected static $_properties = array(
-        'mylist_id',
+        'favorite_id',
         'user_id',
         'fleamarket_id',
         'created_at',
@@ -69,7 +69,7 @@ class Model_Mylist extends \Orm\Model_Soft
      * @return bool
      * @author shimma
      */
-    public static function getUserMylists($user_id, $page = 0, $row_count = 0)
+    public static function getUserfavorites($user_id, $page = 0, $row_count = 0)
     {
         $placeholders = array(
             'user_id' => $user_id,
@@ -88,6 +88,7 @@ SELECT
     f.fleamarket_id,
     f.name,
     f.promoter_name,
+    e.fleamarket_entry_style_id,
     DATE_FORMAT(f.event_date, '%Y年%m月%d日') AS event_date,
     DATE_FORMAT(f.event_time_start, '%k時%i分') AS event_time_start,
     DATE_FORMAT(f.event_time_end, '%k時%i分') AS event_time_end,
@@ -113,7 +114,10 @@ SELECT
     fa.description AS about_access,
     fes.booth_fee AS booth_fee
 FROM
-    mylists AS fav
+    favorites AS fav
+LEFT JOIN
+    entries AS e ON
+    fav.fleamarket_id = e.fleamarket_id
 LEFT JOIN
     fleamarkets AS f ON
     fav.fleamarket_id = f.fleamarket_id
@@ -154,7 +158,7 @@ QUERY;
      *
      * @todo ormのcountでも良いかも
      */
-    public static function getUserMylistCount($user_id)
+    public static function getUserfavoriteCount($user_id)
     {
         $placeholders = array(
             'user_id' => $user_id,
@@ -164,15 +168,15 @@ QUERY;
 SELECT
     COUNT(*) as count
 FROM
-    mylists AS f
+    favorites AS f
 WHERE
     f.user_id = :user_id AND
     f.deleted_at IS NULL
 QUERY;
 
-        $mylist_count = \DB::query($query)->parameters($placeholders)->execute()->get('count');
+        $favorite_count = \DB::query($query)->parameters($placeholders)->execute()->get('count');
 
-        return $mylist_count;
+        return $favorite_count;
     }
 
 

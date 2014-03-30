@@ -13,7 +13,7 @@ class Model_User extends Orm\Model_Soft
     protected static $_primary_key = array('user_id');
 
     protected static $_has_many = array(
-        'mylists' => array(
+        'favorites' => array(
             'key_from' => 'user_id',
         ),
     );
@@ -479,9 +479,9 @@ class Model_User extends Orm\Model_Soft
      * @return int
      * @author shimma
      */
-    public function getMylistCount()
+    public function getFavoriteCount()
     {
-        return \Model_Mylist::getUserMylistCount($this->user_id);
+        return \Model_Favorite::getUserFavoriteCount($this->user_id);
     }
 
     /**
@@ -502,12 +502,12 @@ class Model_User extends Orm\Model_Soft
      * ユーザのお気に入り情報を取得します
      *
      * @access public
-     * @return mixed $mylists
+     * @return mixed $favorites
      * @author shimma
      */
-    public function getMylists($page = 1, $row_count = 30)
+    public function getFavorites($page = 1, $row_count = 30)
     {
-        return \Model_Mylist::getUserMylists($this->user_id, $page, $row_count);
+        return \Model_Favorite::getUserFavorites($this->user_id, $page, $row_count);
     }
 
 

@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS `rakuichi-rakuza`.`users` (
   `last_name_kana` VARCHAR(50) NOT NULL COMMENT '姓カナ',
   `first_name_kana` VARCHAR(50) NOT NULL COMMENT '名カナ',
   `birthday` DATE NULL COMMENT '誕生日',
-  `gender` TINYINT NULL COMMENT '性別 1:男性,2:女性',
+  `gender` TINYINT NOT NULL COMMENT '性別 1:男性,2:女性',
   `zip` CHAR(7) NOT NULL COMMENT '郵便番号',
   `prefecture_id` TINYINT NOT NULL COMMENT '都道府県',
   `address` VARCHAR(255) NOT NULL COMMENT '都道府県以外の住所',
@@ -29,14 +29,14 @@ CREATE TABLE IF NOT EXISTS `rakuichi-rakuza`.`users` (
   `mobile_email` VARCHAR(255) NULL COMMENT '携帯メールアドレス',
   `device` TINYINT NULL COMMENT '1:sp,2:fp,3:pc,4:phone',
   `mm_flag` TINYINT NULL DEFAULT 0 COMMENT 'メールマガジン 0:不要,1:必要',
-  `mm_device` TINYINT NULL DEFAULT 1 COMMENT 'メールマガジン送信先 1:pc,2:mobile',
+  `mm_device` TINYINT NULL DEFAULT 0 COMMENT 'メールマガジン送信先 1:pc,2:mobile',
   `mm_error_flag` TINYINT NULL DEFAULT 0 COMMENT 'メールマガジン送信エラー 0:エラーなし,1:鰓ーあり:',
   `mobile_carrier` TINYINT NULL COMMENT '携帯キャリア 1:docomo,2:au,3:softbank,4:その他',
   `mobile_uid` VARCHAR(20) NULL,
   `password` CHAR(50) NULL COMMENT 'fuelのauthを利用して「hash_pbkdf2 + base64」で暗号化します。基本的には44文字で収まると思いますが、余裕持たせて50にしてあります。',
   `admin_memo` TEXT NULL COMMENT '管理者メモ',
   `organization_flag` TINYINT NULL DEFAULT 0 COMMENT '企業・団体 0:個人,1:企業・団体',
-  `register_status` TINYINT DEFAULT 0 COMMENT '登録ステータス 0:仮登録,1:本登録.2:退会,3:強制退会',
+  `register_status` TINYINT UNSIGNED NOT NULL DEFAULT 0 COMMENT '登録ステータス 0:仮登録,1:本登録.2:退会,3:強制退会',
   `last_login` DATETIME NULL COMMENT '最終ログイン時刻',
   `created_user` INT NULL COMMENT '作成したユーザID、一般ユーザ:10000000以上,管理者：10000000未満',
   `updated_user` INT NULL COMMENT '更新したユーザID、一般ユーザ:10000000以上,管理者：10000000未満',
@@ -44,7 +44,7 @@ CREATE TABLE IF NOT EXISTS `rakuichi-rakuza`.`users` (
   `updated_at` DATETIME NULL COMMENT '更新日時',
   `deleted_at` DATETIME NULL COMMENT '削除日時',
   PRIMARY KEY (`user_id`),
-  INDEX `idx_password` (`password` ASC))
+  UNIQUE INDEX `email_UNIQUE` (`email` ASC))
 ENGINE = InnoDB;
 
 
@@ -408,18 +408,18 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `rakuichi-rakuza`.`mylists`
+-- Table `rakuichi-rakuza`.`favorites`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `rakuichi-rakuza`.`mylists` ;
+DROP TABLE IF EXISTS `rakuichi-rakuza`.`favorites` ;
 
-CREATE TABLE IF NOT EXISTS `rakuichi-rakuza`.`mylists` (
-  `mylist_id` INT NOT NULL AUTO_INCREMENT,
+CREATE TABLE IF NOT EXISTS `rakuichi-rakuza`.`favorites` (
+  `favorite_id` INT NOT NULL AUTO_INCREMENT,
   `user_id` INT NOT NULL,
   `fleamarket_id` INT NOT NULL,
   `created_at` DATETIME NOT NULL,
   `updated_at` DATETIME NULL,
   `deleted_at` DATETIME NULL,
-  PRIMARY KEY (`mylist_id`))
+  PRIMARY KEY (`favorite_id`))
 ENGINE = InnoDB;
 
 
