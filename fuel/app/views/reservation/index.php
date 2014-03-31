@@ -21,9 +21,6 @@
       <div class="box clearfix"><span class="step">STEP2.</span>内容確認</div>
     </div>
     <div class="steps col-sm-3">
-      <div class="box clearfix"><span class="step">STEP3.</span>仮登録メール送信</div>
-    </div>
-    <div class="steps col-sm-3">
       <div class="box clearfix"><span class="step">STEP3.</span>登録完了</div>
     </div>
   </div>
@@ -32,6 +29,9 @@
   <div id="form" class="container">
     <div class="box clearfix">
       <h3>フリマ登録情報入力欄</h3>
+      <?php if (count($fleamarket->fleamarket_entry_styles) == 0){ ?>
+      現在予約することが出来ません
+      <?php }else{ ?>
       <form action="/reservation/confirm" method="POST" class="form-horizontal">
 	<div class="form-group">
 	  <label class="col-sm-2 control-label">出店方法</label>
@@ -100,6 +100,7 @@
           <button type="submit" class="btn btn-default">内容を確認する</button>
         </div>
       </form>
+      <?php } ?>
     </div>
   </div>
 </div>
