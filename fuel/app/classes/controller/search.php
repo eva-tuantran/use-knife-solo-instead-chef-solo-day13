@@ -76,21 +76,18 @@ class Controller_Search extends Controller_Base_Template
         $fleamarket_list = \Model_Fleamarket::findBySearch(
             $condition_list, $page, $this->search_result_per_page
         );
-        $fleamarket_list = $this->getFleamarketRelatedData($fleamarket_list);
 
         // ページネーション設定
         $pagination = Pagination::forge(
             'fleamarket_pagination',
             $this->getPaginationConfig($total_count)
         );
-        $entry_styles = Config::get('master.entry_styles');
 
         $view_model = ViewModel::forge('search/index');
         $view_model->set('base_conditions', $base_conditions, false);
         $view_model->set('add_conditions', $add_conditions, false);
         $view_model->set('pagination', $pagination, false);
         $view_model->set('fleamarket_list', $fleamarket_list, false);
-        $view_model->set('entry_styles', $entry_styles, false);
 
         $this->setMetaTag('search/index');
         $this->template->content = $view_model;
@@ -134,43 +131,6 @@ class Controller_Search extends Controller_Base_Template
 
         $this->setMetaTag('search/detail');
         $this->template->content = $view_model;
-    }
-
-    /**
-     * フリーマーケット情報に紐づくフリーマーケット出店形態情報を取得する
-     *
-     * @access private
-     * @param array $fleamarket_list フリーマーケット情報
-     * @return array
-     * @author ida
-     */
-    private function getFleamarketRelatedData($fleamarket_list = array())
-    {
-        if (! $fleamarket_list) {
-            return false;
-        }
-
-        $entry_style_fields = array(
-            'field' => array(
-                'entry_style_id',
-                'booth_fee',
-                'max_booth',
-                'reservation_booth_limit',
-            )
-        );
-        foreach ($fleamarket_list as &$fleamarket) {
-            $entry_styles = \Model_Fleamarket_Entry_Style::findByFleamarketId(
-                $fleamarket['fleamarket_id'], $entry_style_fields
-            );
-            $fleamarket['entry_styles'] = $entry_styles;
-
-            $entries = \Model_Entry::getTotalEntryByFleamarketId(
-                $fleamarket['fleamarket_id']
-            );
-            $fleamarket['entries'] = $entries;
-        }
-
-        return $fleamarket_list;
     }
 
     /**

@@ -8,7 +8,7 @@
         if ($upcomming_fleamarket_list):
             foreach ($upcomming_fleamarket_list as $fleamarket):
     ?>
-      <dt><?php echo e($fleamarket['event_date']);?></dt>
+      <dt><?php echo e(date('Y年n月j日', strtotime($fleamarket['event_date'])));?></dt>
       <dd>
           <a href="/detail/<?php echo e($fleamarket['fleamarket_id']);?>/">
               <?php
@@ -70,12 +70,12 @@
 <div id="calendar" class="col-sm-5">
   <div class="box">
     <h2>カレンダーで探す</h2>
-    <div id="calendar-search"></div>
+    <div id="calendar-search"><?php echo $calendar;?></div>
   </div>
 </div>
 <!-- /calendar -->
 <!-- search -->
-<div id="search" class="col-sm-12 container">
+<div id="search" class="container">
   <div class="box">
     <div class="row">
       <form id="form_search_calendar" action="/search/1/" method="get">
@@ -110,6 +110,17 @@
           </div>
           <div id="searchSelect" class="col-md-3">
             <div class="form-group">
+              <select class="form-control">
+                <option>エリア</option>
+                <option label="北海道・東北" value="1">北海道・東北</option>
+                <option label="関東" value="2">関東</option>
+                <option label="中部" value="3">中部</option>
+                <option label="近畿" value="4">近畿</option>
+                <option label="中国・四国" value="5">中国・四国</option>
+                <option label="九州・沖縄" value="6">九州・沖縄</option>
+              </select>
+            </div>
+            <div class="form-group">
               <select class="form-control" name="conditions[prefecture]">
                 <option value="">都道府県</option>
                 <?php
@@ -119,17 +130,6 @@
                 <?php
                   endforeach;
                 ?>
-              </select>
-            </div>
-            <div class="form-group">
-              <select class="form-control">
-                <option>エリア</option>
-                <option label="北海道・東北" value="1">北海道・東北</option>
-                <option label="関東" value="2">関東</option>
-                <option label="中部" value="3">中部</option>
-                <option label="近畿" value="4">近畿</option>
-                <option label="中国・四国" value="5">中国・四国</option>
-                <option label="九州・沖縄" value="6">九州・沖縄</option>
               </select>
             </div>
           </div>
@@ -143,19 +143,21 @@
 </div>
 <!-- /search -->
 <!-- new -->
-<div id="new" class="col-sm-12 container">
+<div id="new" class="container">
   <div class="box clearfix">
     <h2><i></i>最新のフリマ</h2>
     <ul id="scrollControl">
       <li id="prev">Prev</li>
       <li id="next">Next</li>
     </ul>
-    <div id="newMarket" class="container"></div>
+    <div id="newMarket" class="container">
+      <?php echo $fleamarket_latest;?>
+    </div>
   </div>
 </div>
 <!-- /new -->
 <!-- ranking -->
-<div id="ranking" class="col-sm-12 container">
+<div id="ranking" class="container">
   <div class="box clearfix">
     <h2><i></i>人気開催ランキング</h2>
     <?php echo $popular_ranking;?>
@@ -163,7 +165,7 @@
 </div>
 <!-- /ranking -->
 <!-- blog -->
-<div id="blog" class="col-sm-12 container">
+<div id="blog" class="container">
   <div class="box">
     <h2><a href="#" target="_blank"><i></i>楽市楽座ブログ</a></h2>
     <dl class="dl-horizontal">
@@ -197,8 +199,8 @@
 <script type="text/javascript">
 $(function() {
   $('img[usemap]').rwdImageMaps();
-  Calendar.get();
-  Carousel.get();
+  Calendar.init();
+  Carousel.start();
 });
 
 var Calendar = {
@@ -224,7 +226,6 @@ var Calendar = {
     }).done(function(html, textStatus, jqXHR) {
       $("#calendar-search").empty();
       $("#calendar-search").html(html);
-      Calendar.init();
     }).fail(function(jqXHR, textStatus, errorThrown) {
     }).always(function() {
     });
@@ -232,32 +233,22 @@ var Calendar = {
 };
 
 var Carousel = {
-  get: function() {
-    $.ajax({
-      type: "get",
-      url: "/fleamarket/latest/",
-      dataType: "html"
-    }).done(function(html, textStatus, jqXHR) {
-      $("#newMarket").empty();
-      $("#newMarket").html(html);
-      Carousel.start();
-    }).fail(function(jqXHR, textStatus, errorThrown) {
-    }).always(function() {
-    });
-  },
   start: function () {
-    $("#newMarket").carouFredSel({
-      align: true,
-      scroll:{
-        items: 1,
-        duration: 300,
-        pauseDuration: 5000,
-        easing: 'linear',
-        pauseOnHover: 'immediate'
-      },
-      prev:{button: "#prev", key: "left"},
-      next:{button: "#next", key:"right"}
+    $(window).resize(function() {
+      $("#newMarket").carouFredSel({
+        align: true,
+        scroll:{
+          items: 1,
+          duration: 300,
+          pauseDuration: 5000,
+          easing: "linear",
+          pauseOnHover: "immediate"
+        },
+        prev:{button: "#prev", key: "left"},
+        next:{button: "#next", key: "right"}
+      });
     });
+    $(window).resize();
   }
 };
 </script>

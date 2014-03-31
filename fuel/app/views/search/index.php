@@ -18,49 +18,84 @@
             if ($fleamarket['register_type'] == \Model_Fleamarket::REGISTER_TYPE_ADMIN):
                 $is_admin_fleamarket = true;
             endif;
+
+            $status_class = '';
+            $resultPush = '';
+            if ($is_admin_fleamarket):
+                $status_class = 'status' . $fleamarket['event_status'];
+                $resultPush = 'resultPush';
+            endif;
+
+            $total_booth = 0;
+            $entry_style_string = '';
+            $shop_fee_string = '';
+            if ($fleamarket['entry_styles']):
+                foreach ($fleamarket['entry_styles'] as $entry_style):
+                    $entry_type_id = $entry_style['entry_style_id'];
+
+                    $total_booth += $entry_style['max_booth'];
+
+                    $entry_style_string .= $entry_style_string != '' ? '/' : '';
+                    $entry_style_string .= $entry_styles[$entry_type_id];
+
+                    $shop_fee_string .= $shop_fee_string != '' ? '/' : '';
+                    $shop_fee_string .= $entry_styles[$entry_type_id];
+                    $booth_fee = $entry_style['booth_fee'];
+                    if ($booth_fee > 0):
+                        $booth_fee = number_format($booth_fee) . '円';
+                    else:
+                        $booth_fee = '無料';
+                    endif;
+                    $shop_fee_string .= '：' . $booth_fee;
+                endforeach;
+            endif;
 ?>
-    <div class="box result clearfix">
+    <div class="box result <?php echo $status_class;?> <?php echo $resultPush;?> clearfix">
       <h3>
           <?php if ($is_admin_fleamarket):?><strong>楽市楽座主催</strong>&nbsp;<?php endif;?>
           <a href="/detail/<?php echo e($fleamarket['fleamarket_id']);?>/">
-              <?php echo e($fleamarket['event_date']);?>&nbsp;<?php echo e($fleamarket['name']);?>
+              <?php echo e(date('Y年n月j日', strtotime($fleamarket['event_date'])));?>(<?php echo $week_list[date('w', strtotime($fleamarket['event_date']))];?>)&nbsp;
+              <?php echo e($fleamarket['name']);?>
           </a>
       </h3>
-      <div class="resultPhoto"><a href="/detail/<?php echo e($fleamarket_id);?>/"><img src="http://dummyimage.com/200x150/ccc/fff.jpg" class="img-rounded"></a></div>
+      <div class="resultPhoto"><a href="/detail/<?php echo e($fleamarket_id);?>/"><img src="../assets/img/noimage.jpg" class="img-rounded"></a></div>
       <div class="resultDetail">
-        <dl class="col-md-3">
+        <dl class="col-md-6">
           <dt>出店数</dt>
-          <dd><?php echo e($fleamarket['booth_string']);?></dd>
+          <dd><?php if ($total_booth > 0):
+              echo e($total_booth . '店');
+          endif;
+        ?></dd>
         </dl>
-        <dl class="col-md-3">
+        <dl class="col-md-6">
           <dt>開催時間</dt>
           <dd><?php
-            echo e($fleamarket['event_time_start']);
+            echo e(date('G:i', strtotime($fleamarket['event_time_start'])));
             if ($fleamarket['event_time_end'] != ''):
-                echo '～' . $fleamarket['event_time_end'];
+                echo '～' . e(date('G:i', strtotime($fleamarket['event_time_end'])));
             endif;
           ?></dd>
         </dl>
-        <dl class="col-md-3">
+        <dl class="col-md-6">
           <dt>出店形態</dt>
-          <dd><?php echo e($fleamarket['style_string']);?></dd>
+          <dd><?php echo e($entry_style_string);?></dd>
         </dl>
-        <dl class="col-md-3">
+        <dl class="col-md-6">
           <dt>出店料金</dt>
-          <dd><?php echo e($fleamarket['fee_string']); ?></dd>
+          <dd><?php echo e($shop_fee_string); ?></dd>
         </dl>
         <dl class="col-md-11">
           <dt>交通</dt>
           <dd><?php echo e(@$fleamarket['about_access']);?></dd>
         </dl>
         <ul class="facilitys">
-          <li class="<?php echo $fleamarket['car_shop_flag'] == \Model_Fleamarket::CAR_SHOP_FLAG_NG ?: 'facility1';?>">車出店可能</li>
-          <li class="<?php echo $fleamarket['charge_parking_flag'] == \Model_Fleamarket::CHARGE_PARKING_FLAG_NONE ?: 'facility2';?>">有料駐車場</li>
-          <li class="<?php echo $fleamarket['free_parking_flag'] == \Model_Fleamarket::FREE_PARKING_FLAG_NONE ?: 'facility3';?>">無料駐車場</li>
-          <li class="<?php echo $fleamarket['rainy_location_flag'] == \Model_Fleamarket::RAINY_LOCATION_FLAG_NONE ?: 'facility4';?>">雨天開催会場</li>
+          <li class="facility1 <?php echo $fleamarket['car_shop_flag'] == \Model_Fleamarket::CAR_SHOP_FLAG_NG ?: 'off';?>">車出店可能</li>
+          <li class="facility2 <?php echo $fleamarket['charge_parking_flag'] == \Model_Fleamarket::CHARGE_PARKING_FLAG_NONE ?: 'off';?>">有料駐車場</li>
+          <li class="facility3 <?php echo $fleamarket['free_parking_flag'] == \Model_Fleamarket::FREE_PARKING_FLAG_NONE ?: 'off';?>">無料駐車場</li>
+          <li class="facility4 <?php echo $fleamarket['rainy_location_flag'] == \Model_Fleamarket::RAINY_LOCATION_FLAG_NONE ?: 'off';?>">雨天開催会場</li>
         </ul>
         <ul class="detailLink">
-          <li><a href="/detail/<?php echo e($fleamarket_id);?>/">詳細情報を見る</a></li>
+          <li><a href="/detail/<?php echo e($fleamarket_id);?>/">詳細情報を見る<i></i></a></li>
         </ul>
         <ul class="rightbutton">
           <?php if ($is_admin_fleamarket):?>
