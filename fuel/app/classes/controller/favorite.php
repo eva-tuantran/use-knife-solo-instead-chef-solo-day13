@@ -6,38 +6,61 @@
  * @author Hiroyuki Kobayashi
  */
 
-class Controller_Favorite  extends \Fuel\Core\Controller_Rest
+class Controller_Favorite  extends Controller_Base_Template
 {
-    public function post_add()
+    protected $fleamarket = null;
+    protected $input = array();
+
+    public function before()
     {
+        parent::before();
+
         if (! Auth::check()) {
-            return $this->response('nologin');
+            return $this->response_json('nologin', true);
         }
-        $fleamarket = Model_Fleamarket::find(Input::param('fleamarket_id'));
-
-        if (! $fleamarket) {
-            return $this->response('nodata');
+        $this->fleamarket = Model_Fleamarket::find(Input::param('fleamarket_id'));
+        
+        if (! $this->fleamarket) {
+            return $this->response_json('nodata', true);
         }            
-
-        $data = array(
+        
+        $this->input = array(
             'user_id'       => Auth::get_user_id(),
             'fleamarket_id' => Input::param('fleamarket_id',1)
         );
         
-        $favorite = Model_Favorite::query()
-            ->where($data)
+        $this->favorite = Model_Favorite::query()
+            ->where($this->input)
             ->get_one();
-        
-        if (! $favorite) {
-            $favorite = Model_Favorite::forge($data);
+    }
+
+    public function post_add()
+    {
+        if (! $this->favorite) {
+            $this->favorite = Model_Favorite::forge($this->input);
             try {
-                $favorite->save();
+                $this->favorite->save();
             } catch (\Exception $e) {
                 throw $e;
-                return $this->response(false);
+                return $this->response_json(false);
             }
         }
 
-        return $this->response(true);
+        return $this->response_json(true);
     }
+
+    public function post_delete()
+    {
+        if ($this->favorite) {
+            try {
+                $this->favorite->delete();
+            } catch (\Exception $e) {
+                throw $e;
+                return $this->response_json(false);
+            }
+        }
+
+        return $this->response_json(true);
+    }
+
 }
