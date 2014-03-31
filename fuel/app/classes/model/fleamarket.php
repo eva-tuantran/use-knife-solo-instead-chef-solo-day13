@@ -76,6 +76,12 @@ class Model_Fleamarket extends \Orm\Model
 
     protected static $_primary_key = array('fleamarket_id');
 
+    protected static $_has_many = array(
+        'fleamarket_entry_styles' => array(
+            'key_from' => 'fleamarket_id',
+        )
+    );
+
     protected static $_properties = array(
         'fleamarket_id' => array(
             'form'  => array('type' => false)
@@ -246,12 +252,6 @@ class Model_Fleamarket extends \Orm\Model
             'mysql_timestamp' => true,
             'property'        => 'updated_at',
         ),
-    );
-
-    protected static $_has_many = array(
-        'fleamarket_entry_styles' => array(
-            'key_from' => 'fleamarket_id',
-        )
     );
 
     /**
