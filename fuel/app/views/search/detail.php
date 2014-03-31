@@ -2,6 +2,19 @@
 <script type="text/javascript">
 $(function() {
   var map = new Map("access_map", "<?php echo $fleamarket['googlemap_address'];?>");
+
+  var mainimage = $(".mainPhoto img").attr("src");
+  $(".thumbnailPhoto img").on("click", function(evt) {
+    var thumbimage = $(this).attr("src");
+    $(".mainPhoto img").fadeOut("fast", function() {
+      $(this).attr('src', thumbimage).fadeIn();
+    });
+  });
+
+  $("#do_print").on("click", function(evt) {
+    evt.preventDefault();
+    window.print();
+  });
 });
 
 function Map() {
@@ -52,6 +65,30 @@ Map.prototype = {
     if ($fleamarket['register_type'] == \Model_Fleamarket::REGISTER_TYPE_ADMIN):
         $is_admin_fleamarket = true;
     endif;
+
+    $total_booth = 0;
+    $entry_style_string = '';
+    $shop_fee_string = '';
+    if ($fleamarket['entry_styles']):
+        foreach ($fleamarket['entry_styles'] as $entry_style):
+            $entry_type_id = $entry_style['entry_style_id'];
+
+            $total_booth += $entry_style['max_booth'];
+
+            $entry_style_string .= $entry_style_string != '' ? '/' : '';
+            $entry_style_string .= $entry_styles[$entry_type_id];
+
+            $shop_fee_string .= $shop_fee_string != '' ? '/' : '';
+            $shop_fee_string .= $entry_styles[$entry_type_id];
+            $booth_fee = $entry_style['booth_fee'];
+            if ($booth_fee > 0):
+                $booth_fee = number_format($booth_fee) . '円';
+            else:
+                $booth_fee = '無料';
+            endif;
+            $shop_fee_string .= '：' . $booth_fee;
+        endforeach;
+    endif;
 ?>
 <div id="contentDetail" class="row">
   <!-- title -->
@@ -60,22 +97,24 @@ Map.prototype = {
       <div class="titleLeft">
         <h2><?php if ($is_admin_fleamarket):?><strong>楽市楽座主催</strong>&nbsp;<?php endif;?><?php echo e($fleamarket['name']);?></h2>
         <p class="date"><?php
-            echo e($fleamarket['event_date']);
-            echo e($fleamarket['event_time_start']);
+            echo e(date('Y年n月j日', strtotime($fleamarket['event_date'])));
+            echo '(' . $week_list[date('w', strtotime($fleamarket['event_date']))] . ')';
+            echo '&nbsp;';
+            echo e(date('G:i', strtotime($fleamarket['event_time_start'])));
             if ($fleamarket['event_time_end']):
-                echo '～' . $fleamarket['event_time_end'];
+                echo '～' . e(date('G:i', strtotime($fleamarket['event_time_end'])));
             endif;
         ?></p>
         <ul class="mylist">
           <li class="button addMylist"><a href="#"><i></i>マイリストに追加</a></li>
-          <li class="button gotoMylist"><a href="#"><i></i>マイリストを見る</a></li>
+          <li class="button gotoMylist"><a href="/mypage#mylist"><i></i>マイリストを見る</a></li>
         </ul>
       </div>
       <ul class="rightbutton">
         <?php if ($is_admin_fleamarket):?>
         <li class="button makeReservation"><a href="/reservation/?fleamarket_id=<?php echo e($fleamarket_id);?>/"><i></i>出店予約をする</a></li>
         <?php endif;?>
-        <li class="button print hidden-xs"><a href="#"><i></i>ページの印刷をする</a></li>
+        <li id="do_print" class="button print hidden-xs"><a href="#"><i></i>ページの印刷をする</a></li>
       </ul>
     </div>
   </div>
@@ -85,7 +124,7 @@ Map.prototype = {
     <h3>開催イメージ</h3>
     <div class="mainPhoto"><img src="http://dummyimage.com/460x300/00bfff/fff.jpg" alt="" width="460px" height="300px" class="img-responsive"></div>
     <ul class="thumbnailPhoto">
-      <li><img src="http://dummyimage.com/100x65/ff0000/fff.jpg" alt="" width="100"></li>
+      <li><img src="http://dummyimage.com/100x65/00bfff/fff.jpg" alt="" width="100"></li>
       <li><img src="http://dummyimage.com/100x65/32cd32/fff.jpg" alt="" width="100"></li>
       <li><img src="http://dummyimage.com/100x65/ffd700/fff.jpg" alt="" width="100"></li>
       <li><img src="http://dummyimage.com/100x65/4b0082/fff.jpg" alt="" width="100"></li>
@@ -121,7 +160,8 @@ Map.prototype = {
         <dt>開催日程</dt>
         <dd><?php
             if ($fleamarket['event_date']):
-                echo e($fleamarket['event_date']);
+                echo e(date('Y年n月j日', strtotime($fleamarket['event_date'])));
+                echo '(' . $week_list[date('w', strtotime($fleamarket['event_date']))] . ')';
             else:
                 echo '-';
             endif;
@@ -129,12 +169,12 @@ Map.prototype = {
         <dt>開催時間</dt>
         <dd><?php
             if ($fleamarket['event_time_start']):
-                echo e($fleamarket['event_time_start']);
+                echo e(date('G:i', strtotime($fleamarket['event_time_start'])));
             else:
                 echo '-';
             endif;
             if ($fleamarket['event_time_end']):
-                echo '～' . $fleamarket['event_time_end'];
+                echo '～' . e(date('G:i', strtotime($fleamarket['event_time_end'])));
             endif;
         ?></dd>
         <dt>会場名</dt>
@@ -164,24 +204,24 @@ Map.prototype = {
         ?></dd>
         <dt>出店形態</dt>
         <dd><?php
-            if ($fleamarket['style_string']):
-                echo e($fleamarket['style_string']);
+            if ($entry_style_string):
+                echo e($entry_style_string);
             else:
                 echo '-';
             endif;
         ?></dd>
         <dt>出店料金</dt>
         <dd><?php
-            if ($fleamarket['fee_string']):
-                echo e($fleamarket['fee_string']);
+            if ($shop_fee_string):
+                echo e($shop_fee_string);
             else:
                 echo '-';
             endif;
         ?></dd>
         <dt>募集ブース</dt>
         <dd><?php
-            if ($fleamarket['booth_string']):
-                echo e($fleamarket['booth_string']);
+            if ($total_booth > 0):
+                echo e($total_booth . '店');
             else:
                 echo '-';
             endif;
@@ -202,9 +242,9 @@ Map.prototype = {
             endif;
         ?>
       </dl>
-      <ul class="mylist">
+      <ul class="mylist <?php if (! $is_admin_fleamarket):?>noneReservation<?php endif;?>">
         <li class="button addMylist"><a href="#"><i></i>マイリストに追加</a></li>
-        <li class="button gotoMylist"><a href="#"><i></i>マイリストを見る</a></li>
+        <li class="button gotoMylist"><a href="/mypage#mylist"><i></i>マイリストを見る</a></li>
       </ul>
       <ul class="rightbutton">
         <?php if ($is_admin_fleamarket):?>

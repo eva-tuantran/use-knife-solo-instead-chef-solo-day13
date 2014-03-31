@@ -344,9 +344,9 @@ SELECT
     f.fleamarket_id,
     f.name,
     f.promoter_name,
-    DATE_FORMAT(f.event_date, '%Y年%m月%d日') AS event_date,
-    DATE_FORMAT(f.event_time_start, '%k時%i分') AS event_time_start,
-    DATE_FORMAT(f.event_time_end, '%k時%i分') AS event_time_end,
+    f.event_date,
+    f.event_time_start,
+    f.event_time_end,
     f.event_status,
     f.description,
     f.reservation_start,
@@ -489,9 +489,9 @@ SELECT
     f.fleamarket_id,
     f.name,
     f.promoter_name,
-    DATE_FORMAT(f.event_date, '%Y年%m月%d日') AS event_date,
-    DATE_FORMAT(f.event_time_start, '%k:%i') AS event_time_start,
-    DATE_FORMAT(f.event_time_end, '%k:%i') AS event_time_end,
+    f.event_date,
+    f.event_time_start,
+    f.event_time_end,
     f.event_status,
     f.description,
     f.reservation_start,
@@ -561,18 +561,28 @@ SELECT
     f.fleamarket_id,
     f.name,
     f.event_status,
-    DATE_FORMAT(f.event_date, '%m月%d日') AS event_date,
+    f.event_date,
     l.name AS location_name,
-    l.prefecture_id AS prefecture_id
+    l.prefecture_id,
+    SUM(fes.max_booth) AS max_booth
 FROM
     {$table_name} AS f
 LEFT JOIN
     locations AS l ON f.location_id = l.location_id
+LEFT JOIN
+    fleamarket_entry_styles AS fes ON f.fleamarket_id = fes.fleamarket_id
 WHERE
     f.display_flag = :display_flag
     AND f.register_type = :register_status
     AND f.event_status <= :event_status
     AND f.deleted_at IS NULL
+GROUP BY
+    f.fleamarket_id,
+    f.name,
+    f.event_status,
+    f.event_date,
+    l.name,
+    l.prefecture_id
 ORDER BY
     f.event_date DESC
 {$limit}
@@ -619,7 +629,7 @@ SELECT
     f.name,
     f.event_status,
     f.register_type,
-    DATE_FORMAT(f.event_date, '%Y年%m月%d日') AS event_date,
+    f.event_date,
     l.prefecture_id AS prefecture_id
 FROM
     {$table_name} AS f
@@ -680,7 +690,7 @@ SELECT
     f.event_time_start,
     f.event_time_end,
     f.headline,
-    DATE_FORMAT(f.event_date, '%Y年%m月%d日') AS event_date,
+    f.event_date,
     l.name AS location_name,
     l.prefecture_id AS prefecture_id
 FROM
@@ -691,8 +701,8 @@ WHERE
     f.display_flag = :display_flag
     AND f.register_type = :register_status
     AND f.event_status <= :event_status
-    AND f.deleted_at IS NULL
     AND DATE_FORMAT(f.event_date, '%Y-%m-%d') >= CURDATE()
+    AND f.deleted_at IS NULL
 ORDER BY
     f.event_date
 {$limit}
