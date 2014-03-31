@@ -223,7 +223,9 @@ $(function() {
           dataType: "json",
           data: {fleamarket_id: id}
       }).done(function(json, textStatus, jqXHR) {
-          if(json){
+          if(json == 'nologin' || json == 'nodata'){
+              alert(json);
+          }else if(json){
               alert('登録しました');
           }else{
               alert('失敗しました');
