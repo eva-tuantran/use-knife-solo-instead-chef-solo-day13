@@ -27,6 +27,12 @@ class View_Mypage_Index extends ViewModel
             $this->addDisplayStrings($mylist);
         }
         unset($mylist);
+
+
+        foreach ($this->myfleamarkets as &$myfleamarket) {
+            $this->addDisplayStrings($myfleamarket);
+        }
+        unset($myfleamarket);
     }
 
     /**

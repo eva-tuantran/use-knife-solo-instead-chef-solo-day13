@@ -58,7 +58,7 @@
               <?php echo e($fleamarket['name']);?>
           </a>
       </h3>
-      <div class="resultPhoto"><a href="/detail/<?php echo e($fleamarket_id);?>/"><img src="../assets/img/noimage.jpg" class="img-rounded"></a></div>
+      <div class="resultPhoto"><a href="/detail/<?php echo e($fleamarket_id);?>/"><img src="/assets/img/noimage.jpg" class="img-rounded"></a></div>
       <div class="resultDetail">
         <dl class="col-md-6">
           <dt>出店数</dt>

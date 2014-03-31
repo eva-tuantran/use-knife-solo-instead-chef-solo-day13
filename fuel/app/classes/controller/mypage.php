@@ -50,9 +50,15 @@ class Controller_Mypage extends Controller_Base_Template
         Asset::js('jquery.carouFredSel.js', array(), 'add_js');
         $view_model = ViewModel::forge('mypage/index');
         $view_model->set('prefectures', Config::get('master.prefectures'), false);
+
         $view_model->set('entries', $this->login_user->getEntries(1, 3));
         $view_model->set('mylists', $this->login_user->getFavorites(1, 3));
+        $view_model->set('myfleamarkets', $this->login_user->getMyFleamarkets(1, 3));
+
         $view_model->set('news_headlines', Model_News::getHeadlines());
+        $view_model->set('calendar', ViewModel::forge('component/calendar'), false);
+        $view_model->set('popular_ranking', ViewModel::forge('component/popular'), false);
+        $view_model->set('fleamarket_latest', ViewModel::forge('component/latest'), false);
         $this->template->content = $view_model;
     }
 

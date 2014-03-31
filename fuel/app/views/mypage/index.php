@@ -3,71 +3,7 @@
   <!-- mypageProfile -->
   <div id="calendar" class="col-sm-3">
     <div class="box clearfix">
-      <h3>2014年3月</h3>
-      <ul>
-        <li class="prev"><i></i><a href="#">前月</a></li>
-        <li class="next"><a href="#">翌月</a><i></i></li>
-      </ul>
-      <table>
-        <thead>
-          <tr>
-            <th>月</th>
-            <th>火</th>
-            <th>水</th>
-            <th>木</th>
-            <th>金</th>
-            <th>土</th>
-            <th>日</th>
-          </tr>
-        </thead>
-        <tbody>
-        <tr>
-          <td>&nbsp;</td>
-          <td>&nbsp;</td>
-          <td>&nbsp;</td>
-          <td>&nbsp;</td>
-          <td></td>
-          <td>1</td>
-          <td>2</td>
-        </tr>
-        <tr>
-          <td><a href="#">3</a></td>
-          <td>4</td>
-          <td>5</td>
-          <td>6</td>
-          <td>7</td>
-          <td>8</td>
-          <td><a href="#">9</a></td>
-        </tr>
-        <tr>
-          <td>10</td>
-          <td><a href="#">11</a></td>
-          <td><a href="#">12</a></td>
-          <td>13</td>
-          <td>14</td>
-          <td>15</td>
-          <td>16</td>
-        </tr>
-        <tr>
-          <td>17</td>
-          <td>18</td>
-          <td>19</td>
-          <td>20</td>
-          <td>21</td>
-          <td>22</td>
-          <td><a href="#">23</a></td>
-        </tr>
-        <tr>
-          <td>24</td>
-          <td>25</td>
-          <td>26</td>
-          <td>27</td>
-          <td>28</td>
-          <td>&nbsp;</td>
-          <td>&nbsp;</td>
-        </tr>
-        </tbody>
-      </table>
+    <?php echo $calendar; ?>
     </div>
 
     <!-- <div class="box clearfix"> -->
@@ -126,15 +62,6 @@
             </div>
             <div id="searchSelect" class="col-md-3">
               <div class="form-group">
-                <select class="form-control" name="conditions[prefecture]">
-                  <option value="">都道府県</option>
-                  <?php foreach ($prefectures as $prefecture_id => $name): ?>
-                  <option value="<?php echo $prefecture_id;?>"><?php echo $name;?></option>
-                  <?php endforeach; ?>
-                </select>
-
-              </div>
-              <div class="form-group">
                 <select class="form-control">
                   <option>エリア</option>
                   <option label="北海道・東北" value="1">北海道・東北</option>
@@ -143,6 +70,14 @@
                   <option label="近畿" value="4">近畿</option>
                   <option label="中国・四国" value="5">中国・四国</option>
                   <option label="九州・沖縄" value="6">九州・沖縄</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <select class="form-control" name="conditions[prefecture]">
+                  <option value="">都道府県</option>
+                  <?php foreach ($prefectures as $prefecture_id => $name): ?>
+                  <option value="<?php echo $prefecture_id;?>"><?php echo $name;?></option>
+                  <?php endforeach; ?>
                 </select>
               </div>
             </div>
@@ -188,177 +123,19 @@
               <li id="next">Next</li>
             </ul>
             <div id="newMarket">
-              <!-- market -->
-              <div class="market clearfix">
-                <div class="marketPhoto"><a href="#"><img src="http://dummyimage.com/180x110/ccc/fff.jpg" class="img-rounded"></a></div>
-                <p class="date">12月24日(土)</p>
-                <h3><a href="#">○○フリーマーケット</a></h3>
-                <p class="place">大井競馬場</p>
-              </div>
-              <!-- /market -->
-              <div class="market clearfix">
-                <div class="marketPhoto"><a href="#"><img src="http://dummyimage.com/180x110/ccc/fff.jpg" class="img-rounded"></a></div>
-                <p class="date">12月24日(土)</p>
-                <h3><a href="#">○○フリーマーケット</a></h3>
-                <p class="place">大井競馬場</p>
-              </div>
-              <!-- /market -->
-              <div class="market clearfix">
-                <div class="marketPhoto"><a href="#"><img src="http://dummyimage.com/180x110/ccc/fff.jpg" class="img-rounded"></a></div>
-                <p class="date">12月24日(土)</p>
-                <h3><a href="#">○○フリーマーケット</a></h3>
-                <p class="place">大井競馬場</p>
-              </div>
-              <!-- /market -->
-              <div class="market clearfix">
-                <div class="marketPhoto"><a href="#"><img src="http://dummyimage.com/180x110/ccc/fff.jpg" class="img-rounded"></a></div>
-                <p class="date">12月24日(土)</p>
-                <h3><a href="#">○○フリーマーケット</a></h3>
-                <p class="place">大井競馬場</p>
-              </div>
-              <!-- /market -->
-              <div class="market clearfix">
-                <div class="marketPhoto"><a href="#"><img src="http://dummyimage.com/180x110/ccc/fff.jpg" class="img-rounded"></a></div>
-                <p class="date">12月24日(土)</p>
-                <h3><a href="#">○○フリーマーケット</a></h3>
-                <p class="place">大井競馬場</p>
-              </div>
-              <!-- /market -->
+              <?php echo $fleamarket_latest; ?>
             </div>
           </div>
           <!-- /latest -->
           <!-- ranking -->
-          <div class="tab-pane" id="ranking"> <!-- rank1 -->
-            <div class="rank1 clearfix"><i class="rankicon"></i>
-              <div class="rankPhoto"><a href="#"><img src="http://dummyimage.com/150x110/ccc/fff.jpg" class="img-rounded"></a></div>
-              <h3><a href="#">タイトルタイトルタイトルタイトルタイトルタイトル</a></h3>
-              <dl class="col-md-2">
-                <dt>開催日</dt>
-                <dd>12月24日(土)</dd>
-              </dl>
-              <dl class="col-md-2">
-                <dt>出店形態</dt>
-                <dd>車出店</dd>
-              </dl>
-              <dl class="col-md-2">
-                <dt>開催時間</dt>
-                <dd>9時〜14時</dd>
-              </dl>
-              <dl class="col-md-2">
-                <dt>出店料金</dt>
-                <dd>無料</dd>
-              </dl>
-              <dl class="col-md-9">
-                <dt>交通</dt>
-                <dd>国分寺駅から京王バス（府中駅行き）藤塚バス停下車</dd>
-              </dl>
-              <ul>
-                <li><a href="#">詳細情報を見る<i></i></a></li>
-              </ul>
-            </div>
-            <!-- /rank1 -->
-            <!-- rank2 -->
-            <div class="rank2 clearfix"><i class="rankicon"></i>
-              <div class="rankPhoto"><a href="#"><img src="http://dummyimage.com/150x110/ccc/fff.jpg" class="img-rounded"></a></div>
-              <h3><a href="#">タイトルタイトルタイトルタイトルタイトルタイトル</a></h3>
-              <dl class="col-md-2">
-                <dt>開催日</dt>
-                <dd>12月24日(土)</dd>
-              </dl>
-              <dl class="col-md-2">
-                <dt>出店形態</dt>
-                <dd>車出店</dd>
-              </dl>
-              <dl class="col-md-2">
-                <dt>開催時間</dt>
-                <dd>9時〜14時</dd>
-              </dl>
-              <dl class="col-md-2">
-                <dt>出店料金</dt>
-                <dd>無料</dd>
-              </dl>
-              <dl class="col-md-9">
-                <dt>交通</dt>
-                <dd>国分寺駅から京王バス（府中駅行き）藤塚バス停下車</dd>
-              </dl>
-              <ul>
-                <li><a href="#">詳細情報を見る<i></i></a></li>
-              </ul>
-            </div>
-            <!-- /rank2 -->
-            <!-- rank3 -->
-            <div class="rank3 clearfix"><i class="rankicon"></i>
-              <div class="rankPhoto"><a href="#"><img src="http://dummyimage.com/150x110/ccc/fff.jpg" class="img-rounded"></a></div>
-              <h3><a href="#">タイトルタイトルタイトルタイトルタイトルタイトル</a></h3>
-              <dl class="col-md-2">
-                <dt>開催日</dt>
-                <dd>12月24日(土)</dd>
-              </dl>
-              <dl class="col-md-2">
-                <dt>出店形態</dt>
-                <dd>車出店</dd>
-              </dl>
-              <dl class="col-md-2">
-                <dt>開催時間</dt>
-                <dd>9時〜14時</dd>
-              </dl>
-              <dl class="col-md-2">
-                <dt>出店料金</dt>
-                <dd>無料</dd>
-              </dl>
-              <dl class="col-md-9">
-                <dt>交通</dt>
-                <dd>国分寺駅から京王バス（府中駅行き）藤塚バス停下車</dd>
-              </dl>
-              <ul>
-                <li><a href="#">詳細情報を見る<i></i></a></li>
-              </ul>
-            </div>
-            <!-- /rank3 -->
+          <div class="tab-pane" id="ranking">
+            <?php echo $popular_ranking; ?>
           </div>
           <!-- /ranking -->
+
+
           <!-- check -->
           <div class="tab-pane" id="check">
-            <!-- result -->
-            <div class="result clearfix">
-              <h3><a href="#">2014年3年8日(土)　東京都　★無料フリマ★チャリティフリーマーケットin太田</a></h3>
-              <div class="resultPhoto"><a href="#"><img src="http://dummyimage.com/200x150/ccc/fff.jpg" class="img-rounded"></a></div>
-              <div class="resultDetail">
-                <dl class="col-md-3">
-                  <dt>出店数</dt>
-                  <dd>60店</dd>
-                </dl>
-                <dl class="col-md-3">
-                  <dt>開催時間</dt>
-                  <dd>9時〜14時</dd>
-                </dl>
-                <dl class="col-md-3">
-                  <dt>出店形態</dt>
-                  <dd>車出店</dd>
-                </dl>
-                <dl class="col-md-3">
-                  <dt>出店料金</dt>
-                  <dd>無料</dd>
-                </dl>
-                <dl class="col-md-11">
-                  <dt>交通</dt>
-                  <dd>国分寺駅から京王バス（府中駅行き）藤塚バス停下車</dd>
-                </dl>
-                <ul class="facilitys">
-                  <li class="facility1">車出店可能</li>
-                  <li class="facility2">有料駐車場</li>
-                  <li class="facility3">無料駐車場</li>
-                  <li class="facility4">雨天開催会場</li>
-                </ul>
-                <ul class="detailLink">
-                  <li><a href="#">詳細情報を見る<i></i></a></li>
-                </ul>
-                <ul class="rightbutton">
-                  <li class="button makeReservation"><a href="#"><i></i>出店予約をする</a></li>
-                </ul>
-              </div>
-            </div>
-            <!-- /result -->
             <!-- result -->
             <div class="result clearfix">
               <h3><a href="#">2014年3年8日(土)　東京都　★無料フリマ★チャリティフリーマーケットin太田</a></h3>
@@ -533,91 +310,60 @@
 
   <div id="contribution" class="box clearfix">
     <h3>開催投稿したフリマ</h3>
+
+    <?php if(empty($myfleamarkets)): ?>
+    <p>開催投稿したフリマはありません</p>
+    <?php else: ?>
+    <?php foreach($myfleamarkets as $myfleamarket): ?>
+
     <!-- result -->
     <div class="result clearfix">
-      <h3><a href="#">2014年3年8日(土)　東京都　★無料フリマ★チャリティフリーマーケットin太田</a></h3>
+      <h3><a href="/detail/<?php echo $myfleamarket['fleamarket_id'] ?>"><?php echo $myfleamarket['name'] ?></a></h3>
       <div class="resultPhoto"><a href="#"><img src="http://dummyimage.com/200x150/ccc/fff.jpg" class="img-rounded"></a></div>
-      <div class="resultDetail">
-        <dl class="col-md-3">
-          <dt>出店数</dt>
-          <dd>60店</dd>
-        </dl>
-        <dl class="col-md-3">
-          <dt>開催時間</dt>
-          <dd>9時〜14時</dd>
-        </dl>
-        <dl class="col-md-3">
-          <dt>出店形態</dt>
-          <dd>車出店</dd>
-        </dl>
-        <dl class="col-md-3">
-          <dt>出店料金</dt>
-          <dd>無料</dd>
-        </dl>
-        <dl class="col-md-11">
-          <dt>交通</dt>
-          <dd>国分寺駅から京王バス（府中駅行き）藤塚バス停下車</dd>
-        </dl>
-        <ul class="facilitys">
-          <li class="facility1">車出店可能</li>
-          <li class="facility2">有料駐車場</li>
-          <li class="facility3">無料駐車場</li>
-          <li class="facility4">雨天開催会場</li>
-        </ul>
-        <ul class="detailLink">
-          <li><a href="#">詳細情報を見る<i></i></a></li>
-        </ul>
+        <div class="resultDetail">
+          <dl class="col-md-3">
+            <dt>出店数</dt>
+            <dd><?php echo e(@$myfleamarket['booth_string']);?></dd>
+          </dl>
+          <dl class="col-md-3">
+            <dt>開催時間</dt>
+            <dd><?php echo e($myfleamarket['event_date']); ?></dd>
+          </dl>
+          <dl class="col-md-3">
+            <dt>出店形態</dt>
+            <dd><?php echo e($myfleamarket['fleamarket_entry_style_name']); ?></dd>
+          </dl>
+          <dl class="col-md-3">
+            <dt>出店料金</dt>
+            <dd><?php echo e(@$myfleamarket['booth_fee_string']); ?></dd>
+          </dl>
+          <dl class="col-md-11">
+            <dt>交通</dt>
+            <dd><?php echo e($myfleamarket['about_access']);?></dd>
+          </dl>
+          <ul class="facilitys">
+            <li class="facility1 <?php echo $myfleamarket['car_shop_flag'] == \Model_Fleamarket::CAR_SHOP_FLAG_NG ? 'off': '';?>">車出店可能</li>
+            <li class="facility2 <?php echo $myfleamarket['charge_parking_flag'] == \Model_Fleamarket::CHARGE_PARKING_FLAG_NONE ? 'off': '';?>">有料駐車場</li>
+            <li class="facility3 <?php echo $myfleamarket['free_parking_flag'] == \Model_Fleamarket::FREE_PARKING_FLAG_NONE ? 'off': '';?>">無料駐車場</li>
+            <li class="facility4 <?php echo $myfleamarket['rainy_location_flag'] == \Model_Fleamarket::RAINY_LOCATION_FLAG_NONE ? 'off': '';?>">雨天開催会場</li>
+          </ul>
+          <ul class="detailLink">
+            <li><a href="/detail/<?php echo $myfleamarket['fleamarket_id'] ?>">詳細情報を見る<i></i></a></li>
+          </ul>
         <ul class="rightbutton">
-          <li class="button makeReservation change"><a href="#"><i></i>内容変更</a></li>
-        </ul>
-      </div>
-    </div>
-    <!-- /result --> 
-    <!-- result -->
-    <div class="result clearfix">
-      <h3><a href="#">2014年3年8日(土)　東京都　★無料フリマ★チャリティフリーマーケットin太田</a></h3>
-      <div class="resultPhoto"><a href="#"><img src="http://dummyimage.com/200x150/ccc/fff.jpg" class="img-rounded"></a></div>
-      <div class="resultDetail">
-        <dl class="col-md-3">
-          <dt>出店数</dt>
-          <dd>60店</dd>
-        </dl>
-        <dl class="col-md-3">
-          <dt>開催時間</dt>
-          <dd>9時〜14時</dd>
-        </dl>
-        <dl class="col-md-3">
-          <dt>出店形態</dt>
-          <dd>車出店</dd>
-        </dl>
-        <dl class="col-md-3">
-          <dt>出店料金</dt>
-          <dd>無料</dd>
-        </dl>
-        <dl class="col-md-11">
-          <dt>交通</dt>
-          <dd>国分寺駅から京王バス（府中駅行き）藤塚バス停下車</dd>
-        </dl>
-        <ul class="facilitys">
-          <li class="facility1">車出店可能</li>
-          <li class="facility2">有料駐車場</li>
-          <li class="facility3">無料駐車場</li>
-          <li class="facility4">雨天開催会場</li>
-        </ul>
-        <ul class="detailLink">
-          <li><a href="#">詳細情報を見る<i></i></a></li>
-        </ul>
-        <ul class="rightbutton">
-          <li class="button makeReservation change"><a href="#"><i></i>内容変更</a></li>
+          <li class="button makeReservation change"><a href="/fleamarket/<?php echo $myfleamarket['fleamarket_id'] ?>"><i></i>内容変更</a></li>
         </ul>
       </div>
     </div>
     <!-- /result -->
+
+    <?php endforeach; ?>
+    <?php endif ?>
+
     <ul class="more">
       <li><a href="#">続きを見る</a></li>
     </ul>
   </div>
-
 
 
 
@@ -634,56 +380,67 @@
 
 
 <script>
-$(function() {
-    $(window).resize(function() {
-      $("#newMarket").carouFredSel({
-prev:{button:"#prev",key:"left"},
-next:{button:"#next",key:"right"}
-});});
-    $(window).resize();
-    });
-
-
 
 $('.fleamarket_cancel').click(function() {
     if (!confirm('フリーマーケットをキャンセルします\nよろしいですか？')) {
     return false;
     }
-    });
-
+});
 
 
 $(function() {
-    Carousel.get();
-    });
-var Carousel = {
-get: function() {
-       $.ajax({
-type: "get",
-url: "/fleamarket/latest/",
-dataType: "html"
-}).done(function(html, textStatus, jqXHR) {
-  $("#newMarket").empty();
-  $("#newMarket").html(html);
+  Calendar.init();
   Carousel.start();
-  }).fail(function(jqXHR, textStatus, errorThrown) {
-    }).always(function() {
-      });
-},
-start: function () {
-         $("#newMarket").carouFredSel({
-align: true,
-scroll:{
-items: 1,
-duration: 300,
-pauseDuration: 5000,
-easing: 'linear',
-pauseOnHover: 'immediate'
-},
-prev:{button: "#prev", key: "left"},
-next:{button: "#next", key:"right"}
 });
-}
+
+var Calendar = {
+  init: function() {
+    $(document).on("click", ".calendar_nav a", function(evt) {
+      evt.preventDefault();
+
+      var url = $(this).attr("href");
+      Calendar.get(url);
+
+      return false;
+    });
+  },
+  get: function(url) {
+    if (url == "" || typeof url === "undefined") {
+      url = "/calendar/";
+    }
+
+    $.ajax({
+      type: "get",
+      url: url,
+      dataType: "html"
+    }).done(function(html, textStatus, jqXHR) {
+      $("#calendar").empty();
+      $("#calendar").html(html);
+      //$("#calendar-search").empty();
+      //$("#calendar-search").html(html);
+    }).fail(function(jqXHR, textStatus, errorThrown) {
+    }).always(function() {
+    });
+  }
+};
+
+var Carousel = {
+  start: function () {
+    $(window).resize(function() {
+      $("#newMarket").carouFredSel({
+        align: true,
+        scroll:{
+          items: 1,
+          duration: 300,
+          pauseDuration: 5000,
+          easing: "linear",
+          pauseOnHover: "immediate"
+        },
+        prev:{button: "#prev", key: "left"},
+        next:{button: "#next", key: "right"}
+      });
+    });
+    $(window).resize();
+  }
 };
 </script>
-
