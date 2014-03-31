@@ -1,21 +1,88 @@
 <div id="contentMypage" class="row">
+
   <!-- mypageProfile -->
-  <div id="mypageProfile" class="col-sm-3">
+  <div id="calendar" class="col-sm-3">
     <div class="box clearfix">
       <h3>2014年3月</h3>
-      <img src="http://dummyimage.com/170x170/ccc/fff.jpg" class="img-responsive">
-      <?php echo Auth::get_screen_name(); ?> さん
       <ul>
-        <li>フリマ登録情報</li>
-        <li><a href="/mypage/account">アカウント設定</a></li>
-        <li><a href="/login/out">ログアウト</a></li>
+        <li class="prev"><i></i><a href="#">前月</a></li>
+        <li class="next"><a href="#">翌月</a><i></i></li>
       </ul>
+      <table>
+        <thead>
+          <tr>
+            <th>月</th>
+            <th>火</th>
+            <th>水</th>
+            <th>木</th>
+            <th>金</th>
+            <th>土</th>
+            <th>日</th>
+          </tr>
+        </thead>
+        <tbody>
+        <tr>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+          <td></td>
+          <td>1</td>
+          <td>2</td>
+        </tr>
+        <tr>
+          <td><a href="#">3</a></td>
+          <td>4</td>
+          <td>5</td>
+          <td>6</td>
+          <td>7</td>
+          <td>8</td>
+          <td><a href="#">9</a></td>
+        </tr>
+        <tr>
+          <td>10</td>
+          <td><a href="#">11</a></td>
+          <td><a href="#">12</a></td>
+          <td>13</td>
+          <td>14</td>
+          <td>15</td>
+          <td>16</td>
+        </tr>
+        <tr>
+          <td>17</td>
+          <td>18</td>
+          <td>19</td>
+          <td>20</td>
+          <td>21</td>
+          <td>22</td>
+          <td><a href="#">23</a></td>
+        </tr>
+        <tr>
+          <td>24</td>
+          <td>25</td>
+          <td>26</td>
+          <td>27</td>
+          <td>28</td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+        </tr>
+        </tbody>
+      </table>
     </div>
+
+    <!-- <div class="box clearfix"> -->
+    <!-- <li><a href="/mypage/account">アカウント設定</a></li> -->
+    <!-- </ul> -->
+    <!-- </div> -->
+
     <!-- ad -->
     <div class="ad clearfix"> <a href="#"><img src="http://dummyimage.com/220x150/ccc/fff.jpg" class="img-responsive"></a></div>
     <!-- /ad -->
   </div>
   <!-- /mypageProfile -->
+
+
+
   <!-- searchResult -->
   <div id="searchResult" class="col-sm-9">
     <!-- pills -->
@@ -92,8 +159,8 @@
       <h3>新着情報</h3>
       <dl class="dl-horizontal">
         <?php foreach ($news_headlines as $headline): ?>
-            <dt><?php echo $headline['date'] ?></dt>
-            <dd><a href="<?php echo $headline['url'] ?>"><?php echo $headline['title'] ?></a></dd>
+        <dt><?php echo $headline['date'] ?></dt>
+        <dd><a href="<?php echo $headline['url'] ?>"><?php echo $headline['title'] ?></a></dd>
         <?php endforeach; ?>
       </dl>
     </div>
@@ -400,67 +467,168 @@
           </div>
           <?php endforeach; ?>
           <?php endif ?>
+        <ul class="more">
+          <li><a href="#">続きを見る</a></li>
+        </ul>
         </div>
 
-          <!-- mylist -->
-          <div class="tab-pane" id="mylist">
-            <?php if(empty($mylists)): ?>
-            <p>マイリストはありません</p>
-            <?php else: ?>
-            <?php foreach($mylists as $mylist): ?>
-            <!-- result -->
-            <div class="result clearfix">
-              <h3><a href="/detail/<?php echo $mylist['fleamarket_id'] ?>"><?php echo $mylist['name'] ?></a></h3>
-              <div class="resultPhoto"><a href="#"><img src="http://dummyimage.com/200x150/ccc/fff.jpg" class="img-rounded"></a></div>
-              <div class="resultDetail">
-                <dl class="col-md-3">
-                  <dt>出店数</dt>
-                  <dd><?php echo e(@$mylist['booth_string']);?></dd>
-                </dl>
-                <dl class="col-md-3">
-                  <dt>開催時間</dt>
-                  <dd><?php echo e($mylist['event_date']); ?></dd>
-                </dl>
-                <dl class="col-md-3">
-                  <dt>出店形態</dt>
-                  <dd><?php echo e($mylist['fleamarket_entry_style_name']); ?></dd>
-                </dl>
-                <dl class="col-md-3">
-                  <dt>出店料金</dt>
-                  <dd><?php echo e(@$mylist['booth_fee_string']); ?></dd>
-                </dl>
-                <dl class="col-md-11">
-                  <dt>交通</dt>
-                  <dd><?php echo e($mylist['about_access']);?></dd>
-                </dl>
-                <ul class="facilitys">
-                  <li class="facility1 <?php echo $mylist['car_shop_flag'] == \Model_Fleamarket::CAR_SHOP_FLAG_NG ? 'off': '';?>">車出店可能</li>
-                  <li class="facility2 <?php echo $mylist['charge_parking_flag'] == \Model_Fleamarket::CHARGE_PARKING_FLAG_NONE ? 'off': '';?>">有料駐車場</li>
-                  <li class="facility3 <?php echo $mylist['free_parking_flag'] == \Model_Fleamarket::FREE_PARKING_FLAG_NONE ? 'off': '';?>">無料駐車場</li>
-                  <li class="facility4 <?php echo $mylist['rainy_location_flag'] == \Model_Fleamarket::RAINY_LOCATION_FLAG_NONE ? 'off': '';?>">雨天開催会場</li>
-                </ul>
-                <ul class="detailLink">
-                  <li><a href="/detail/<?php echo $mylist['fleamarket_id'] ?>">詳細情報を見る<i></i></a></li>
-                </ul>
-                <ul class="rightbutton">
-                  <li class="button makeReservation"><a href="/reservation?fleamarket_id=<?php echo $mylist['fleamarket_id'] ?>">出店予約をする</a></li>
-                  <li class="button cancel"><a href="#" class="fleamarket_cancel"><i></i>マイリスト解除(未実装)</a></li>
-                </form>
+        <!-- mylist -->
+        <div class="tab-pane" id="mylist">
+          <?php if(empty($mylists)): ?>
+          <p>マイリストはありません</p>
+          <?php else: ?>
+          <?php foreach($mylists as $mylist): ?>
+          <!-- result -->
+          <div class="result clearfix">
+            <h3><a href="/detail/<?php echo $mylist['fleamarket_id'] ?>"><?php echo $mylist['name'] ?></a></h3>
+            <div class="resultPhoto"><a href="#"><img src="http://dummyimage.com/200x150/ccc/fff.jpg" class="img-rounded"></a></div>
+            <div class="resultDetail">
+              <dl class="col-md-3">
+                <dt>出店数</dt>
+                <dd><?php echo e(@$mylist['booth_string']);?></dd>
+              </dl>
+              <dl class="col-md-3">
+                <dt>開催時間</dt>
+                <dd><?php echo e($mylist['event_date']); ?></dd>
+              </dl>
+              <dl class="col-md-3">
+                <dt>出店形態</dt>
+                <dd><?php echo e($mylist['fleamarket_entry_style_name']); ?></dd>
+              </dl>
+              <dl class="col-md-3">
+                <dt>出店料金</dt>
+                <dd><?php echo e(@$mylist['booth_fee_string']); ?></dd>
+              </dl>
+              <dl class="col-md-11">
+                <dt>交通</dt>
+                <dd><?php echo e($mylist['about_access']);?></dd>
+              </dl>
+              <ul class="facilitys">
+                <li class="facility1 <?php echo $mylist['car_shop_flag'] == \Model_Fleamarket::CAR_SHOP_FLAG_NG ? 'off': '';?>">車出店可能</li>
+                <li class="facility2 <?php echo $mylist['charge_parking_flag'] == \Model_Fleamarket::CHARGE_PARKING_FLAG_NONE ? 'off': '';?>">有料駐車場</li>
+                <li class="facility3 <?php echo $mylist['free_parking_flag'] == \Model_Fleamarket::FREE_PARKING_FLAG_NONE ? 'off': '';?>">無料駐車場</li>
+                <li class="facility4 <?php echo $mylist['rainy_location_flag'] == \Model_Fleamarket::RAINY_LOCATION_FLAG_NONE ? 'off': '';?>">雨天開催会場</li>
               </ul>
-            </div>
+              <ul class="detailLink">
+                <li><a href="/detail/<?php echo $mylist['fleamarket_id'] ?>">詳細情報を見る<i></i></a></li>
+              </ul>
+              <ul class="rightbutton">
+                <li class="button makeReservation"><a href="/reservation?fleamarket_id=<?php echo $mylist['fleamarket_id'] ?>">出店予約をする</a></li>
+                <li class="button cancel"><a href="#" class="fleamarket_cancel"><i></i>マイリスト解除(未実装)</a></li>
+              </form>
+            </ul>
           </div>
-          <?php endforeach; ?>
-          <?php endif ?>
         </div>
-
-
-          <!-- /result -->
-
-        <!-- /contribution -->
+        <?php endforeach; ?>
+        <?php endif ?>
+      <!-- /result -->
+      <ul class="more">
+        <li><a href="#">続きを見る</a></li>
+      </ul>
       </div>
-      <!-- /searchResult -->
+
+
     </div>
   </div>
+
+  <div id="contribution" class="box clearfix">
+    <h3>開催投稿したフリマ</h3>
+    <!-- result -->
+    <div class="result clearfix">
+      <h3><a href="#">2014年3年8日(土)　東京都　★無料フリマ★チャリティフリーマーケットin太田</a></h3>
+      <div class="resultPhoto"><a href="#"><img src="http://dummyimage.com/200x150/ccc/fff.jpg" class="img-rounded"></a></div>
+      <div class="resultDetail">
+        <dl class="col-md-3">
+          <dt>出店数</dt>
+          <dd>60店</dd>
+        </dl>
+        <dl class="col-md-3">
+          <dt>開催時間</dt>
+          <dd>9時〜14時</dd>
+        </dl>
+        <dl class="col-md-3">
+          <dt>出店形態</dt>
+          <dd>車出店</dd>
+        </dl>
+        <dl class="col-md-3">
+          <dt>出店料金</dt>
+          <dd>無料</dd>
+        </dl>
+        <dl class="col-md-11">
+          <dt>交通</dt>
+          <dd>国分寺駅から京王バス（府中駅行き）藤塚バス停下車</dd>
+        </dl>
+        <ul class="facilitys">
+          <li class="facility1">車出店可能</li>
+          <li class="facility2">有料駐車場</li>
+          <li class="facility3">無料駐車場</li>
+          <li class="facility4">雨天開催会場</li>
+        </ul>
+        <ul class="detailLink">
+          <li><a href="#">詳細情報を見る<i></i></a></li>
+        </ul>
+        <ul class="rightbutton">
+          <li class="button makeReservation change"><a href="#"><i></i>内容変更</a></li>
+        </ul>
+      </div>
+    </div>
+    <!-- /result --> 
+    <!-- result -->
+    <div class="result clearfix">
+      <h3><a href="#">2014年3年8日(土)　東京都　★無料フリマ★チャリティフリーマーケットin太田</a></h3>
+      <div class="resultPhoto"><a href="#"><img src="http://dummyimage.com/200x150/ccc/fff.jpg" class="img-rounded"></a></div>
+      <div class="resultDetail">
+        <dl class="col-md-3">
+          <dt>出店数</dt>
+          <dd>60店</dd>
+        </dl>
+        <dl class="col-md-3">
+          <dt>開催時間</dt>
+          <dd>9時〜14時</dd>
+        </dl>
+        <dl class="col-md-3">
+          <dt>出店形態</dt>
+          <dd>車出店</dd>
+        </dl>
+        <dl class="col-md-3">
+          <dt>出店料金</dt>
+          <dd>無料</dd>
+        </dl>
+        <dl class="col-md-11">
+          <dt>交通</dt>
+          <dd>国分寺駅から京王バス（府中駅行き）藤塚バス停下車</dd>
+        </dl>
+        <ul class="facilitys">
+          <li class="facility1">車出店可能</li>
+          <li class="facility2">有料駐車場</li>
+          <li class="facility3">無料駐車場</li>
+          <li class="facility4">雨天開催会場</li>
+        </ul>
+        <ul class="detailLink">
+          <li><a href="#">詳細情報を見る<i></i></a></li>
+        </ul>
+        <ul class="rightbutton">
+          <li class="button makeReservation change"><a href="#"><i></i>内容変更</a></li>
+        </ul>
+      </div>
+    </div>
+    <!-- /result -->
+    <ul class="more">
+      <li><a href="#">続きを見る</a></li>
+    </ul>
+  </div>
+
+
+
+
+
+  <!-- /result -->
+
+  <!-- /contribution -->
+</div>
+<!-- /searchResult -->
+  </div>
+</div>
 </div>
 </div>
 
