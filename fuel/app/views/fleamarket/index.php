@@ -191,7 +191,7 @@ $(function() {
         <div class="form-group form-address">
           <label class="col-sm-2 control-label" for="inputZip">ご住所</label>
           <div class="col-sm-10">
-            <input id="inputZip" type="text" class="form-control" name="l[zip]" placeholder="例）1234567" value="<?php echo $location_input['zip'];?>">
+            <input id="inputZip" type="text" class="form-control" name="l[zip]" placeholder="例）1234567" value="<?php echo $location['zip'];?>">
             <button type="submit" class="btn btn-default" onclick="AjaxZip3.zip2addr('l[zip]','','l[address]','l[address]'); return false;">住所を検索</button>
             <select class="form-control" name="l[prefecture_id]">
               <option value="">都道府県</option>
