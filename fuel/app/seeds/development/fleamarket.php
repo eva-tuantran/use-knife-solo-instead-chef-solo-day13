@@ -11,6 +11,7 @@ $group_codes = array(
     'Neo', 'Morpheus', 'Trinity', 'Cypher', 'Tank', 'Matrix',
     'Luke', 'Leia', 'Han', 'Darth', 'R2D2', 'C3PO', 'Starwars'
 );
+$event_statuses = \Model_Fleamarket::getEventStatuses();
 
 $event_months = array('03', '04', '05', '06');
 $event_days = array('01', '02', '08', '09', '15', '16', '22', '23', '30');
@@ -37,6 +38,11 @@ $lead_to_list = array(
     '12' => '楽市ブログ',
     '13' => 'Facebook',
     '14' => 'mixi',
+);
+
+$pickup_list = array(
+    \Model_Fleamarket::PICKUP_FLAG_OFF,
+    \Model_Fleamarket::PICKUP_FLAG_ON,
 );
 
 $shop_fee_list = array(
@@ -74,23 +80,7 @@ $register_types = array(
     \Model_Fleamarket::REGISTER_TYPE_USER,
 );
 
-$prefectures = array(
-    '1' => '北海道',
-    '2' => '青森県', '3' => '岩手県', '4' => '宮城県',
-    '5' => '秋田県', '6' => '山形県', '7' => '福島県',
-    '8' => '茨城県', '9' => '栃木県', '10' => '群馬県',
-    '11' => '埼玉県', '12' => '千葉県', '13' => '東京都', '14' => '神奈川県',
-    '15' => '新潟県', '16' => '富山県', '17' => '石川県', '18' => '福井県',
-    '19' => '山梨県', '20' => '長野県',
-    '21' => '岐阜県', '22' => '静岡県', '23' => '愛知県',
-    '24' => '三重県', '25' => '滋賀県', '26' => '京都府',
-    '27' => '大阪府', '28' => '兵庫県', '29' => '奈良県', '30' => '和歌山県',
-    '31' => '鳥取県', '32' => '島根県',
-    '33' => '岡山県', '34' => '広島県', '35' => '山口県',
-    '36' => '徳島県', '37' => '香川県', '38' => '愛媛県', '39' => '高知県',
-    '40' => '福岡県', '41' => '佐賀県', '42' => '長崎県', '43' => '熊本県',
-    '44' => '大分県', '45' => '宮崎県', '46' => '鹿児島県', '47' => '沖縄県',
-);
+$prefectures = \Config::get('master.prefectures');
 
 $cities = array('葛飾区' , '大田区', '品川区', '調布市', '多摩市', '西東京市', '杉並区', );
 
@@ -146,6 +136,7 @@ for ($i = 1; $i <= 100; $i++) {
         $event_number = $event_numbers[$group_code] = 1;
     }
 
+    $event_status = array_rand($event_statuses);
     $event_month = array_rand($event_months);
     $event_day = array_rand($event_days);
     $event_date = '2014-' . $event_months[$event_month] . '-' . $event_days[$event_day];
@@ -159,6 +150,7 @@ for ($i = 1; $i <= 100; $i++) {
     $reservation_start = date('Y-m-d H:i:s', strtotime($tmp_start_datetime . ' -30 day'));
     $reservation_end = date('Y-m-d H:i:s', strtotime($tmp_end_datetime . ' -7 day'));
 
+    $pickup = array_rand($pickup_list);
     $shop_fee = array_rand($shop_fee_list);
     $car_shop = array_rand($car_shop_list);
     $pro_shop = array_rand($pro_shop_list);
@@ -175,7 +167,7 @@ for ($i = 1; $i <= 100; $i++) {
         'event_date'          => $event_date,
         'event_time_start'    => $event_start_list[$event_start],
         'event_time_end'      => $event_end_list[$event_end],
-        'event_status'        => \Model_fleamarket::EVENT_STATUS_RESERVATION_RECEIPT,
+        'event_status'        => $event_status,
         'headline'            => 'headline!' . str_repeat('テスト', $rand),
         'information'         => 'information!' . str_repeat('テスト', $rand),
         'description'         => 'description!' . str_repeat('テスト', $rand),
@@ -183,11 +175,12 @@ for ($i = 1; $i <= 100; $i++) {
         'reservation_start'   => $reservation_start,
         'reservation_end'     => $reservation_end,
         'reservation_tel'     => '03-1222-2222',
-        'reservation_email'   => 'sample@aucfan.com',
+        'reservation_email'   => 'sample' . $i . '@aucfan.com',
         'website'             => 'http://www.yahoo.co.jp',
         'item_categories'     => implode(',', $item_categories),
         'link_from_list'      => implode(',', $lead_to_list),
         'pickup_flag'         => \Model_fleamarket::PICKUP_FLAG_ON,
+        'pickup_flag'         => $pickup_list[$pickup],
         'shop_fee_flag'       => $shop_fee_list[$shop_fee],
         'car_shop_flag'       => $car_shop_list[$car_shop],
         'pro_shop_flag'       => $pro_shop_list[$pro_shop],
@@ -210,6 +203,13 @@ for ($i = 1; $i <= 100; $i++) {
 
     // フリマ出店形態情報
     $entry_style_rand = mt_rand(0, 2);
+    if ($entry_style_rand == 0
+        && $register_types[$register_type] == \Model_Fleamarket::REGISTER_TYPE_ADMIN
+    ) {
+        $entry_style_rand = 1;
+    } elseif ($register_types[$register_type] == \Model_Fleamarket::REGISTER_TYPE_USER) {
+        $entry_style_rand = 0;
+    }
     if ($entry_style_rand > 0) {
         $entry_style_list = array_rand($entry_styles, $entry_style_rand);
         if (! is_array($entry_style_list)) {
