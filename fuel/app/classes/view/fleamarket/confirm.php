@@ -16,8 +16,6 @@ class View_Fleamarket_Confirm extends ViewModel
      */
     public function view()
     {
-        $this->title = 'フリーマーケット情報の確認';
         $this->prefectures = Config::get('master.prefectures');
-        $this->event_abouts = Config::get('master.event_abouts');
     }
 }

@@ -1,10 +1,9 @@
 <?php
-use \Controller\Base_Template;
 
 /**
- * Search Controller.
+ * トップページ
  *
- * @extends  Controller_Base_Template
+ * @ida
  */
 class Controller_Top extends Controller_Base_Template
 {
@@ -12,44 +11,35 @@ class Controller_Top extends Controller_Base_Template
      * 近日開催のフリーマーケット件数
      */
     private $upcomming_number = 1;
-    /**
-     * 事前処理
-     *
-     * アクション実行前の共通処理
-     *
-     * @access public
-     * @return void
-     * @author ida
-     */
+
     public function before()
     {
         parent::before();
     }
 
     /**
-     * フリーマーケット検索画面
+     * トップページ
      *
      * @access public
      * @return void
      * @author ida
+     * @author shimma
      */
     public function action_index()
     {
+        Asset::js('jquery.carouFredSel.js', array(), 'add_js');
+        Asset::js('jquery.rwdImageMaps.min.js', array(), 'add_js');
+
         $view_model = ViewModel::forge('top/index');
 
         $upcomming_fleamarket_list = \Model_Fleamarket::findUpcoming(
             $this->upcomming_number
         );
-        $prefectures = Config::get('master.prefectures');
 
-        $view_model->set(
-            'upcomming_fleamarket_list', $upcomming_fleamarket_list, false
-        );
-        $view_model->set('prefectures', $prefectures, false);
-
-        $this->setMetaTag('top/index');
+        $view_model->set('upcomming_fleamarket_list', $upcomming_fleamarket_list, false);
+        $view_model->set('prefectures', Config::get('master.prefectures'), false);
+        $view_model->set('news_headlines', \Model_News::getHeadlines());
+        $view_model->set('popular_ranking', ViewModel::forge('component/popular'), false);
         $this->template->content = $view_model;
     }
-
-
 }

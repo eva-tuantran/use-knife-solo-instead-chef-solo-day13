@@ -16,6 +16,5 @@ class View_Fleamarket_Thanks extends ViewModel
      */
     public function view()
     {
-        $this->title = 'フリーマーケット情報の登録完了';
     }
 }

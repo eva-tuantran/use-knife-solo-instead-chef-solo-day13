@@ -17,15 +17,6 @@ class Controller_Fleamarket_Latest extends Controller_Base_Template
      */
     private $result_per_page = 10;
 
-    /**
-     * 事前処理
-     *
-     * アクション実行前の共通処理
-     *
-     * @access public
-     * @return void
-     * @author ida
-     */
     public function before()
     {
         parent::before();
@@ -45,7 +36,7 @@ class Controller_Fleamarket_Latest extends Controller_Base_Template
         );
 
         if ($fleamarket_list) {
-            $this->setRemainingBooth($fleamarket_list);
+            $fleamarket_list = $this->setRemainingBooth($fleamarket_list);
         }
 
         $data = array(
@@ -62,31 +53,28 @@ class Controller_Fleamarket_Latest extends Controller_Base_Template
      *
      * @access private
      * @param array $fleamarket_list フリーマーケット情報
-     * @return void
+     * @return array
      * @author ida
      */
-    private function setRemainingBooth(&$fleamarket_list)
+    private function setRemainingBooth($fleamarket_list)
     {
-        foreach ($fleamarket_list as &$fleamarket) {
+        $result = array();
+        foreach ($fleamarket_list as $fleamarket) {
             $fleamarket_id = $fleamarket['fleamarket_id'];
-            $entries = \Model_Entry::getTotalEntryByFleamarketId(
-                $fleamarket_id, false
-            );
-            $entry_styles = \Model_Fleamarket_Entry_Style::getMaxBoothByFleamarketId(
-                $fleamarket_id, false
-            );
-
-            $reserved_booth = 0;
-            if (isset($entries[0]['reserved_booth'])) {
-                $reserved_booth = $entries[0]['reserved_booth'];
-            }
+            $entry_styles =
+                \Model_Fleamarket_Entry_Style::getMaxBoothByFleamarketId(
+                    $fleamarket_id, false
+                );
 
             $max_booth = 0;
             if (isset($entry_styles[0]['max_booth'])) {
                 $max_booth = $entry_styles[0]['max_booth'];
             }
 
-            $fleamarket['remaining_booth'] = ($max_booth - $reserved_booth);
+            $fleamarket['max_booth'] = $max_booth;
+            $result[] = $fleamarket;
         }
+
+        return $result;
     }
 }

@@ -72,71 +72,169 @@ class Model_Fleamarket extends \Orm\Model
     const PICKUP_FLAG_OFF = 0;
     const PICKUP_FLAG_ON = 1;
 
-    /**
-     * テーブル名
-     *
-     * @var string $_table_name
-     */
     protected static $_table_name = 'fleamarkets';
 
-    /**
-     * プライマリーキー
-     *
-     * @var string $_primary_key
-     */
     protected static $_primary_key = array('fleamarket_id');
 
-    protected static $_has_many = array(
-        'fleamarket_entry_styles' => array(
-            'key_from' => 'fleamarket_id',
-        )
-    );
-
     protected static $_properties = array(
-        'fleamarket_id',
-        'location_id',
-        'group_code',
-        'name',
-        'promoter_name',
-        'event_number',
-        'event_date',
-        'event_time_start',
-        'event_time_end',
-        'event_status',
-        'headline',
-        'information',
-        'description',
-        'reservation_serial',
-        'reservation_start',
-        'reservation_end',
-        'reservation_tel',
-        'reservation_email',
-        'website',
-        'item_categories',
-        'link_from_list',
-        'pickup_flag',
-        'shop_fee_flag',
-        'car_shop_flag',
-        'pro_shop_flag',
-        'charge_parking_flag',
-        'free_parking_flag',
-        'rainy_location_flag',
-        'donation_fee',
-        'donation_point',
-        'register_type',
-        'display_flag',
-        'created_user',
-        'updated_user',
-        'created_at',
-        'updated_at',
-        'deleted_at',
+        'fleamarket_id' => array(
+            'form'  => array('type' => false)
+        ),
+        'location_id' => array(
+            'form'  => array('type' => false)
+        ),
+        'group_code' => array(
+            'form'  => array('type' => false)
+        ),
+        'name' => array(
+            'label' => 'フリマ名',
+            'validation' => array(
+                'required',
+                'max_length' => array(100)
+            )
+        ),
+        'promoter_name' => array(
+            'label' => '主催者名',
+            'validation' => array(
+                'required',
+                'max_length' => array(100)
+            )
+        ),
+        'event_number' => array(
+            'form'  => array('type' => false)
+        ),
+        'event_date' => array(
+            'label' => '開催日',
+            'validation' => array('required', 'valid_date')
+        ),
+        'event_time_start' => array(
+            'label' => '開始時間',
+            'validation' => array('valid_time')
+        ),
+        'event_time_end' => array(
+            'label' => '終了時間',
+            'validation' => array('valid_time')
+        ),
+        'event_status' => array(
+            'form'  => array('type' => false)
+        ),
+        'headline' => array(
+            'validation' => array(
+                'max_length' => array(100)
+            )
+        ),
+        'information' => array(
+            'validation' => array(
+                'max_length' => array(200)
+            )
+        ),
+        'description' => array(
+            'label' => '内容',
+            'validation' => array(
+                'required', 'max_length' => array(5000)
+            )
+        ),
+        'reservation_serial' => array(
+            'form'  => array('type' => false)
+        ),
+        'reservation_start' => array(
+            'label' => '予約受付開始日',
+            'validation' => array('valid_date')
+        ),
+        'reservation_end' => array(
+            'label' => '予約受付終了日',
+            'validation' => array('valid_date')
+        ),
+        'reservation_tel' => array(
+            'label' => '予約受付電話番号',
+            'validation' => array('valid_tel')
+        ),
+        'reservation_email' => array(
+            'label' => '予約受付E-mailアドレス',
+            'validation' => array(
+                'max_length' => array(250)
+            )
+        ),
+        'website' => array(
+            'label' => '主催者ホームページ',
+            'validation' => array(
+                'max_length' => array(250)
+            )
+        ),
+        'item_categories' => array(
+            'label' => '出品物の種類',
+            'form'  => array('type' => false)
+        ),
+        'link_from_list' => array(
+            'label' => '出品物の種類',
+            'form'  => array('type' => false)
+        ),
+        'pickup_flag' => array(
+            'validation' => array(
+                'numeric_between' => array(0, 1)
+            )
+        ),
+        'shop_fee_flag' => array(
+            'validation' => array(
+                'numeric_between' => array(0, 1)
+            )
+        ),
+        'car_shop_flag' => array(
+            'validation' => array(
+                'numeric_between' => array(0, 1)
+            )
+        ),
+        'pro_shop_flag' => array(
+            'validation' => array(
+                'numeric_between' => array(0, 1)
+            )
+        ),
+        'rainy_location_flag' => array(
+            'validation' => array(
+                'numeric_between' => array(0, 1)
+            )
+        ),
+        'charge_parking_flag' => array(
+            'validation' => array(
+                'numeric_between' => array(0, 1)
+            )
+        ),
+        'free_parking_flag' => array(
+            'validation' => array(
+                'numeric_between' => array(0, 1)
+            )
+        ),
+        'donation_fee' => array(
+            'label' => '寄付金',
+            'form'  => array('type' => false)
+        ),
+        'donation_point' => array(
+            'label' => '寄付先',
+            'form'  => array('type' => false)
+        ),
+        'register_type' => array(
+            'form'  => array('type' => false)
+        ),
+        'display_flag' => array(
+            'form'  => array('type' => false)
+        ),
+        'created_user' => array(
+            'form'  => array('type' => false)
+        ),
+        'updated_user' => array(
+            'form'  => array('type' => false)
+        ),
+        'created_at' => array(
+            'form'  => array('type' => false)
+        ),
+        'updated_at' => array(
+            'form'  => array('type' => false)
+        ),
+        'deleted_at' => array(
+            'form'  => array('type' => false)
+        ),
     );
 
-    /**
-     * オブサーバ設定
-     *
-     * @var array $_observers
-     */
     protected static $_observers = array(
         'Orm\\Observer_CreatedAt' => array(
             'events'          => array('before_insert'),
@@ -148,6 +246,12 @@ class Model_Fleamarket extends \Orm\Model
             'mysql_timestamp' => true,
             'property'        => 'updated_at',
         ),
+    );
+
+    protected static $_has_many = array(
+        'fleamarket_entry_styles' => array(
+            'key_from' => 'fleamarket_id',
+        )
     );
 
     /**
@@ -165,6 +269,7 @@ class Model_Fleamarket extends \Orm\Model
      * 開催状況リストを取得する
      *
      * @access public
+     * @param
      * @return array
      * @author ida
      */
@@ -181,8 +286,6 @@ class Model_Fleamarket extends \Orm\Model
      * @param mixed $month 対象月
      * @return array フリーマーケット情報
      * @author ida
-     *
-     * @TODO: 実装途中
      */
     public static function findByEventDate($year, $month)
     {
@@ -515,6 +618,67 @@ SELECT
     f.fleamarket_id,
     f.name,
     f.event_status,
+    f.register_type,
+    DATE_FORMAT(f.event_date, '%Y年%m月%d日') AS event_date,
+    l.prefecture_id AS prefecture_id
+FROM
+    {$table_name} AS f
+LEFT JOIN
+    locations AS l ON f.location_id = l.location_id
+WHERE
+    f.display_flag = :display_flag
+    AND f.register_type = :register_status
+    AND f.event_status <= :event_status
+    AND f.deleted_at IS NULL
+    AND DATE_FORMAT(f.event_date, '%Y-%m-%d') >= CURDATE()
+ORDER BY
+    f.event_date
+{$limit}
+QUERY;
+
+        $statement = \DB::query($query)->parameters($placeholders);
+        $result = $statement->execute();
+
+        $rows = null;
+        if (! empty($result)) {
+            $rows = $result->as_array();
+        }
+
+        return $rows;
+    }
+
+    /**
+     * 人気のフリーマーケット情報を取得する
+     *
+     * @access public
+     * @param array $condition_list 検索条件
+     * @param mixed $row_count 取得行数
+     * @return array フリーマーケット情報
+     * @author ida
+     */
+    public static function findPopular($row_count = 3)
+    {
+        $placeholders = array(
+            ':event_status' => self::EVENT_STATUS_RECEIPT_END,
+            ':display_flag' => self::DISPLAY_FLAG_ON,
+            ':register_status' => self::REGISTER_TYPE_ADMIN,
+        );
+
+        $limit = '';
+        if (! is_int($row_count)) {
+            $row_count = 10;
+        }
+        $limit = ' LIMIT ' . $row_count;
+
+        $table_name = self::$_table_name;
+        $query = <<<"QUERY"
+SELECT
+    f.fleamarket_id,
+    f.name,
+    f.event_status,
+    f.event_date,
+    f.event_time_start,
+    f.event_time_end,
     f.headline,
     DATE_FORMAT(f.event_date, '%Y年%m月%d日') AS event_date,
     l.name AS location_name,
@@ -707,5 +871,24 @@ QUERY;
         $where .= implode(' AND ', $conditions);
 
         return array($where, $placeholders);
+    }
+
+    /*
+     * Fieldsetオブジェクトの生成
+     *
+     * @access public
+     * @param
+     * @return array
+     * @author ida
+     */
+    public static function createFieldset()
+    {
+        $fleamarket = self::forge();
+        $fieldset = \Fieldset::forge('fleamarket');
+        $fieldset->add_model($fleamarket);
+        $fieldset->add('reservation_email_confirm')
+            ->add_rule('match_field', 'reservation_email');
+
+        return $fieldset;
     }
 }
