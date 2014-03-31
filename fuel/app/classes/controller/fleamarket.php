@@ -23,7 +23,7 @@ class Controller_Fleamarket extends Controller_Base_Template
      * @return void
      * @author ida
      */
-    public function action_index()
+    public function action_index($fleamarket_id = null)
     {
         Asset::css('jquery-ui.min.css', array(), 'add_css');
         Asset::css('jquery-ui-timepicker.css', array(), 'add_css');
@@ -34,9 +34,21 @@ class Controller_Fleamarket extends Controller_Base_Template
 
         $view_model = ViewModel::forge('fleamarket/index');
 
+        if ($fleamarket_id) {
+            $fleamarket = \Model_Fleamarket::find($fleamarket_id);
+            $view_model->set('fleamarket', $fleamarket);
+            $fleamarket_about = \Model_Fleamarket_About::find($fleamarket_id);
+            $view_model->set('fleamarket_about', $fleamarket_about);
+            $location = \Model_Location::find($fleamarket['location_id']);
+            $view_model->set('location', $location);
+            $view_model->set('fleamarket_id', $fleamarket_id);
+        }
+
         $fleamarket_fieldset = $this->getFleamarketFieldset();
         $fleamarket_about_fieldset = $this->getFleamarketAboutFieldset();
         $location_fieldset = $this->getLocationFieldset();
+
+
         $view_model->set('fleamarket_fieldset', $fleamarket_fieldset, false);
         $view_model->set(
             'fleamarket_about_fieldset', $fleamarket_about_fieldset, false
