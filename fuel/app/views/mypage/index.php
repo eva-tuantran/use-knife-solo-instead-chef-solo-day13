@@ -256,7 +256,7 @@
           <?php else: ?>
           <?php foreach($mylists as $mylist): ?>
           <!-- result -->
-          <div class="result clearfix">
+          <div class="result clearfix" id="mylist_<?php echo $mylist['fleamarket_id']; ?>">
             <h3><a href="/detail/<?php echo $mylist['fleamarket_id'] ?>"><?php echo $mylist['name'] ?></a></h3>
             <div class="resultPhoto"><a href="#"><img src="http://dummyimage.com/200x150/ccc/fff.jpg" class="img-rounded"></a></div>
             <div class="resultDetail">
@@ -291,7 +291,7 @@
               </ul>
               <ul class="rightbutton">
                 <li class="button makeReservation"><a href="/reservation?fleamarket_id=<?php echo $mylist['fleamarket_id'] ?>">出店予約をする</a></li>
-                <li class="button cancel"><a href="#" class="fleamarket_cancel"><i></i>マイリスト解除(未実装)</a></li>
+                <li class="button cancel"><a href="#" class="mylist_remove" id="fleamarket_id_<?php echo $mylist['fleamarket_id']; ?>"><i></i>マイリスト解除</a></li>
               </form>
             </ul>
           </div>
@@ -443,4 +443,31 @@ var Carousel = {
     $(window).resize();
   }
 };
+
+$(function () {
+  $(".mylist_remove").click(function(){
+      var id = $(this).attr('id');
+      id = id.match(/^fleamarket_id_(\d+)/)[1];
+      $.ajax({
+          type: "post",
+          url: '/favorite/delete',
+          dataType: "json",
+          data: {fleamarket_id: id}
+      }).done(function(json, textStatus, jqXHR) {
+          if(json == 'nologin' || json == 'nodata'){
+              alert(json);
+          }else if(json){
+              alert('削除しました' + id);
+              $('#mylist_' + id).remove();
+              if ($('#mylist').children('div').length == 0) {
+                  $('#mylist').append('<p>マイリストはありません</p>');
+              }
+          }else{
+              alert('失敗しました');
+          }
+      }).fail(function(jqXHR, textStatus, errorThrown) {
+          alert('失敗しました');
+      });
+  });
+});
 </script>
