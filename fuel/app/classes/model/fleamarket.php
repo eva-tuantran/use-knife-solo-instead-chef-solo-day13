@@ -83,15 +83,9 @@ class Model_Fleamarket extends \Orm\Model
     );
 
     protected static $_properties = array(
-        'fleamarket_id' => array(
-            'form'  => array('type' => false)
-        ),
-        'location_id' => array(
-            'form'  => array('type' => false)
-        ),
-        'group_code' => array(
-            'form'  => array('type' => false)
-        ),
+        'fleamarket_id',
+        'location_id',
+        'group_code',
         'name' => array(
             'label' => 'フリマ名',
             'validation' => array(
@@ -276,6 +270,31 @@ class Model_Fleamarket extends \Orm\Model
     public static function getEventStatuses()
     {
         return self::$event_statuses;
+    }
+
+    /**
+     * 指定されたユーザのフリーマーケット情報を取得する
+     *
+     * @access public
+     * @param mixed $user_id ユーザID
+     * @return array
+     * @author ida
+     */
+    public static function findByUserId($fleamarket_id, $user_id)
+    {
+        if (! $fleamarket_id || ! $user_id) {
+            return false;
+        }
+
+        $result =  self::find('first', array(
+            'where' => array(
+                'fleamarket_id' => $fleamarket_id,
+                'created_user' => $user_id,
+                'register_type' => self::REGISTER_TYPE_USER,
+            )
+        ));
+
+        return $result;
     }
 
     /**
@@ -893,9 +912,8 @@ QUERY;
      */
     public static function createFieldset()
     {
-        $fleamarket = self::forge();
         $fieldset = \Fieldset::forge('fleamarket');
-        $fieldset->add_model($fleamarket);
+        $fieldset->add_model('Model_Fleamarket');
         $fieldset->add('reservation_email_confirm')
             ->add_rule('match_field', 'reservation_email');
 
