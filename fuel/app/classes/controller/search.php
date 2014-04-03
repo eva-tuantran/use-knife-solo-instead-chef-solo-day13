@@ -47,17 +47,17 @@ class Controller_Search extends Controller_Base_Template
 
         $date = Input::get('d');
         if ($date) {
-            $base_conditions = array('date' => $date,);
+            $base_conditions = array('date' => $date);
         }
 
         $upcomming = Input::get('upcomming');
         if ($upcomming) {
-            $base_conditions = array('upcomming' => $upcomming,);
+            $base_conditions = array('upcomming' => $upcomming);
         }
 
         $reservation = Input::get('reservation');
-        if ($upcomming) {
-            $base_conditions = array('reservation' => $reservation,);
+        if ($reservation) {
+            $base_conditions = array('reservation' => $reservation);
         }
 
         $add_conditions = Input::get('add_conditions', array());
@@ -131,6 +131,38 @@ class Controller_Search extends Controller_Base_Template
 
         $this->setMetaTag('search/detail');
         $this->template->content = $view_model;
+    }
+
+    /**
+     * 都道府県一覧を取得する
+     *
+     * jsonで返す
+     *
+     * @access public
+     * @param
+     * @return void
+     * author ida
+     */
+    public function get_prefecture()
+    {
+        $region_id = Input::get('region_id');
+
+        $region_prefectures = \Config::get('master.region_prefectures');
+        $prefectures = \Config::get('master.prefectures');
+
+        $result = array();
+        if ($region_id) {
+            $region_prefecture = $region_prefectures[$region_id];
+            foreach ($region_prefecture as $prefecture_id) {
+                $result[$prefecture_id] = $prefectures[$prefecture_id];
+            }
+        }
+
+        if (! $result) {
+            $result = $prefectures;
+        }
+
+        $this->response_json($result, true);
     }
 
     /**

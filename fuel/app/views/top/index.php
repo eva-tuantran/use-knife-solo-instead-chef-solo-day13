@@ -3,45 +3,7 @@
 <div id="soon" class="container">
   <div class="box clearfix">
     <h2>近日開催のフリーマーケット</h2>
-    <dl>
-    <?php
-        if ($upcomming_fleamarket_list):
-            foreach ($upcomming_fleamarket_list as $fleamarket):
-    ?>
-      <dt><?php echo e(date('Y年n月j日', strtotime($fleamarket['event_date'])));?></dt>
-      <dd>
-          <a href="/detail/<?php echo e($fleamarket['fleamarket_id']);?>/">
-              <?php
-                if ($fleamarket['register_type'] === \Model_Fleamarket::REGISTER_TYPE_ADMIN):
-                    echo '楽市楽座主催&nbsp;';
-                endif;
-                echo e($fleamarket['name']) . '&nbsp;';
-                echo $prefectures[$fleamarket['prefecture_id']];
-                switch ($fleamarket['event_status']):
-                    case \Model_Fleamarket::EVENT_STATUS_SCHEDULE:
-                        echo '開催予定';
-                        break;
-                    case \Model_Fleamarket::EVENT_STATUS_RESERVATION_RECEIPT:
-                        echo '予約受付中';
-                        break;
-                    case \Model_Fleamarket::EVENT_STATUS_RECEIPT_END:
-                        echo '受付終了';
-                        break;
-                    default:
-                        echo '';
-                        break;
-                endswitch;
-              ?>
-          </a>
-      </dd>
-    </dl>
-    <?php
-            endforeach;
-        endif;
-    ?>
-    <ul>
-      <li><a href="/search/1/?upcomming=1">一覧</a></li>
-    </ul>
+    <?php echo $upcomming;?>
   </div>
 </div>
 <!-- /soon -->
@@ -110,18 +72,19 @@
           </div>
           <div id="searchSelect" class="col-md-3">
             <div class="form-group">
-              <select class="form-control">
-                <option>エリア</option>
-                <option label="北海道・東北" value="1">北海道・東北</option>
-                <option label="関東" value="2">関東</option>
-                <option label="中部" value="3">中部</option>
-                <option label="近畿" value="4">近畿</option>
-                <option label="中国・四国" value="5">中国・四国</option>
-                <option label="九州・沖縄" value="6">九州・沖縄</option>
+              <select id="select_region" class="form-control" name="conditions[region]">
+                <option value="">エリア</option>
+                <?php
+                  foreach ($regions as $region_id => $name):
+                ?>
+                  <option value="<?php echo $region_id;?>"><?php echo $name;?></option>
+                <?php
+                  endforeach;
+                ?>
               </select>
             </div>
             <div class="form-group">
-              <select class="form-control" name="conditions[prefecture]">
+              <select id="select_prefecture" class="form-control" name="conditions[prefecture]">
                 <option value="">都道府県</option>
                 <?php
                   foreach ($prefectures as $prefecture_id => $name):
@@ -151,7 +114,7 @@
       <li id="next">Next</li>
     </ul>
     <div id="newMarket" class="container">
-      <?php echo $fleamarket_latest;?>
+      <?php echo $latest;?>
     </div>
   </div>
 </div>
@@ -201,6 +164,7 @@ $(function() {
   $('img[usemap]').rwdImageMaps();
   Calendar.init();
   Carousel.start();
+  Search.init();
 });
 
 var Calendar = {
@@ -249,6 +213,33 @@ var Carousel = {
       });
     });
     $(window).resize();
+  }
+};
+
+var Search = {
+  init: function() {
+    $("#select_region").on("change", function(evt) {
+      Search.changeRegion();
+    });
+  },
+  changeRegion: function() {
+    $("#select_prefecture").prop("selectedIndex", 0);
+    var region_id = $("#select_region").val();
+    $.ajax({
+      type: "get",
+      url: '/search/prefecture',
+      dataType: "json",
+      data: {region_id: region_id}
+    }).done(function(json, textStatus, jqXHR) {
+      if (json) {
+        $("#select_prefecture").empty();
+        $("#select_prefecture").append('<option value="">都道府県</option>');
+        $.each(json, function(key, value) {
+          $("#select_prefecture").append('<option value="' + key + '">' + value + '</option>');
+        });
+      }
+    }).fail(function(jqXHR, textStatus, errorThrown) {
+    });
   }
 };
 </script>

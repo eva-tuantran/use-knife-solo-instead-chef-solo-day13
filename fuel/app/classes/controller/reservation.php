@@ -175,6 +175,9 @@ class Controller_Reservation extends Controller_Base_Template
                     $entry->save();
                 }
             }
+
+            $entry->fleamarket->updateEventReservationStatus();
+
             if (! Input::post('cancel') && 
                 $entry->fleamarket_entry_style->isOverReservationLimit()) {
                 $db->rollback_transaction();
