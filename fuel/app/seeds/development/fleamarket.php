@@ -13,6 +13,13 @@ $group_codes = array(
 );
 $event_statuses = \Model_Fleamarket::getEventStatuses();
 
+
+$event_reservation_statuses = array(
+    \Model_Fleamarket::EVENT_RESERVATION_STATUS_ENOUGH,
+    \Model_Fleamarket::EVENT_RESERVATION_STATUS_FEW,
+    \Model_Fleamarket::EVENT_RESERVATION_STATUS_FULL,
+);
+
 $event_months = array('03', '04', '05', '06');
 $event_days = array('01', '02', '08', '09', '15', '16', '22', '23', '30');
 $event_start_list = array('09:00:00', '09:15:00', '09:30:00', '10:00:00', '10:30:00');
@@ -137,6 +144,7 @@ for ($i = 1; $i <= 100; $i++) {
     }
 
     $event_status = array_rand($event_statuses);
+    $event_reservation_status = array_rand($event_reservation_statuses);
     $event_month = array_rand($event_months);
     $event_day = array_rand($event_days);
     $event_date = '2014-' . $event_months[$event_month] . '-' . $event_days[$event_day];
@@ -159,41 +167,42 @@ for ($i = 1; $i <= 100; $i++) {
     $rainy_location = array_rand($rainy_location_list);
 
     $fleamarket_line = array(
-        'location_id'         => $location_id,
-        'group_code'          => $group_code_name,
-        'name'                => $group_code_name . 'フリーマーケット',
-        'promoter_name'       => '株式会社オークファン',
-        'event_number'        => $event_number,
-        'event_date'          => $event_date,
-        'event_time_start'    => $event_start_list[$event_start],
-        'event_time_end'      => $event_end_list[$event_end],
-        'event_status'        => $event_status,
-        'headline'            => 'headline!' . str_repeat('テスト', $rand),
-        'information'         => 'information!' . str_repeat('テスト', $rand),
-        'description'         => 'description!' . str_repeat('テスト', $rand),
-        'reservation_serial'  => 1,
-        'reservation_start'   => $reservation_start,
-        'reservation_end'     => $reservation_end,
-        'reservation_tel'     => '03-1222-2222',
-        'reservation_email'   => 'sample' . $i . '@aucfan.com',
-        'website'             => 'http://www.yahoo.co.jp',
-        'item_categories'     => implode(',', $item_categories),
-        'link_from_list'      => implode(',', $lead_to_list),
-        'pickup_flag'         => \Model_fleamarket::PICKUP_FLAG_ON,
-        'pickup_flag'         => $pickup_list[$pickup],
-        'shop_fee_flag'       => $shop_fee_list[$shop_fee],
-        'car_shop_flag'       => $car_shop_list[$car_shop],
-        'pro_shop_flag'       => $pro_shop_list[$pro_shop],
-        'charge_parking_flag' => $charge_parking_list[$charge_parking],
-        'free_parking_flag'   => $free_parking_list[$free_parking],
-        'rainy_location_flag' => $rainy_location_list[$rainy_location],
-        'donation_fee'        => 0,
-        'donation_point'      => null,
-        'register_type'       => $register_types[$register_type],
-        'display_flag'        => \Model_fleamarket::DISPLAY_FLAG_ON,
-        'created_user'        => 0,
-        'updated_user'        => null,
-        'created_at'          => \Date::forge()->format('mysql'),
+        'location_id'              => $location_id,
+        'group_code'               => $group_code_name,
+        'name'                     => $group_code_name . 'フリーマーケット',
+        'promoter_name'            => '株式会社オークファン',
+        'event_number'             => $event_number,
+        'event_date'               => $event_date,
+        'event_time_start'         => $event_start_list[$event_start],
+        'event_time_end'           => $event_end_list[$event_end],
+        'event_status'             => $event_status,
+        'event_reservation_status' => $event_reservation_status,
+        'headline'                 => 'headline!' . str_repeat('テスト', $rand),
+        'information'              => 'information!' . str_repeat('テスト', $rand),
+        'description'              => 'description!' . str_repeat('テスト', $rand),
+        'reservation_serial'       => 1,
+        'reservation_start'        => $reservation_start,
+        'reservation_end'          => $reservation_end,
+        'reservation_tel'          => '03-1222-2222',
+        'reservation_email'        => 'sample' . $i . '@aucfan.com',
+        'website'                  => 'http://www.yahoo.co.jp',
+        'item_categories'          => implode(',', $item_categories),
+        'link_from_list'           => implode(',', $lead_to_list),
+        'pickup_flag'              => \Model_fleamarket::PICKUP_FLAG_ON,
+        'pickup_flag'              => $pickup_list[$pickup],
+        'shop_fee_flag'            => $shop_fee_list[$shop_fee],
+        'car_shop_flag'            => $car_shop_list[$car_shop],
+        'pro_shop_flag'            => $pro_shop_list[$pro_shop],
+        'charge_parking_flag'      => $charge_parking_list[$charge_parking],
+        'free_parking_flag'        => $free_parking_list[$free_parking],
+        'rainy_location_flag'      => $rainy_location_list[$rainy_location],
+        'donation_fee'             => 0,
+        'donation_point'           => null,
+        'register_type'            => $register_types[$register_type],
+        'display_flag'             => \Model_fleamarket::DISPLAY_FLAG_ON,
+        'created_user'             => 0,
+        'updated_user'             => null,
+        'created_at'               => \Date::forge()->format('mysql'),
         // 'updated_at',
         // 'deleted_at',
     );
