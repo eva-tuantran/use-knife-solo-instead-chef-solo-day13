@@ -3,16 +3,18 @@
 /**
  * View_Component_Latest ViewModel
  *
+ * 最新のフリーマーケット一覧
+ *
  * @author ida
  */
 class View_Component_Latest extends ViewModel
 {
     /**
-     * 検索結果1ページあたりの行数
+     * 取得する件数
      *
      * @var int
      */
-    private $result_per_page = 10;
+    private $result_number = 7;
 
     /**
      * 最新のフリマ画面
@@ -23,8 +25,12 @@ class View_Component_Latest extends ViewModel
      */
     public function view()
     {
+        if (isset($this->number) && is_int($this->number)) {
+            $this->result_number = $this->number;
+        }
+
         $fleamarket_list = \Model_Fleamarket::findLatest(
-            $this->result_per_page
+            $this->result_number
         );
 
         $this->fleamarket_list = $fleamarket_list;

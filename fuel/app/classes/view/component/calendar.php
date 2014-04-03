@@ -3,6 +3,8 @@
 /**
  * View_Component_Calendar ViewModel
  *
+ * 開催カレンダー
+ *
  * @author ida
  */
 class View_Component_Calendar extends ViewModel

@@ -3,16 +3,18 @@
 /**
  * View_Component_Popular ViewModel
  *
+ * 人気のフリーマーケットランキング
+ *
  * @author ida
  */
 class View_Component_Popular extends ViewModel
 {
     /**
-     * 1ページあたりの行数
+     * 取得する件数
      *
      * @var int
      */
-    private $result_per_page = 3;
+    private $result_number = 3;
 
     /**
      * view method
@@ -23,11 +25,15 @@ class View_Component_Popular extends ViewModel
      */
     public function view()
     {
-        $fleamarket_list = \Model_Fleamarket::findPopular(
-            $this->result_per_page
-        );
+        if (isset($this->number) && is_int($this->number)) {
+            $this->result_number = $this->number;
+        }
 
+        $fleamarket_list = \Model_Fleamarket::findPopular(
+            $this->result_number
+        );
         $fleamarket_list = $this->getFleamarketEntryStyle($fleamarket_list);
+
         $this->fleamarket_list = $fleamarket_list;
         $this->week_list = \Config::get('master.week');
         $this->entry_styles = \Config::get('master.entry_styles');
