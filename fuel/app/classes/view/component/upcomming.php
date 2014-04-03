@@ -1,23 +1,23 @@
 <?php
 
 /**
- * View_Component_Latest ViewModel
+ * View_Component_Upcomming ViewModel
  *
- * 最新のフリーマーケット一覧
+ * 近日開催のフリーマーケット一覧
  *
  * @author ida
  */
-class View_Component_Latest extends ViewModel
+class View_Component_Upcomming extends ViewModel
 {
     /**
      * 取得する件数
      *
      * @var int
      */
-    private $result_number = 7;
+    private $result_number = 1;
 
     /**
-     * 最新のフリマ画面
+     * 近日開催のフリマ画面
      *
      * @access public
      * @return void
@@ -29,7 +29,7 @@ class View_Component_Latest extends ViewModel
             $this->result_number = $this->number;
         }
 
-        $fleamarket_list = \Model_Fleamarket::findLatest(
+        $fleamarket_list =  \Model_Fleamarket::findUpcoming(
             $this->result_number
         );
 

@@ -65,6 +65,12 @@ Map.prototype = {
     if ($fleamarket['register_type'] == \Model_Fleamarket::REGISTER_TYPE_ADMIN):
         $is_admin_fleamarket = true;
     endif;
+    if ($is_admin_fleamarket):
+        $reservation_button = '出店予約をする';
+        if ($fleamarket['event_status'] == \Model_Fleamarket::EVENT_STATUS_RECEIPT_END):
+            $reservation_button = 'キャンセル待ちをする';
+        endif;
+    endif;
 
     $total_booth = 0;
     $entry_style_string = '';
@@ -112,7 +118,7 @@ Map.prototype = {
       </div>
       <ul class="rightbutton">
         <?php if ($is_admin_fleamarket):?>
-        <li class="button makeReservation"><a href="/reservation/?fleamarket_id=<?php echo e($fleamarket_id);?>/"><i></i>出店予約をする</a></li>
+        <li class="button makeReservation"><a href="/reservation/?fleamarket_id=<?php echo e($fleamarket_id);?>/"><i></i><?php echo $reservation_button;?></a></li>
         <?php endif;?>
         <li id="do_print" class="button print hidden-xs"><a href="#"><i></i>ページの印刷をする</a></li>
       </ul>
@@ -249,7 +255,7 @@ Map.prototype = {
       </ul>
       <ul class="rightbutton">
         <?php if ($is_admin_fleamarket):?>
-        <li class="button makeReservation"><a id="do_reservation" href="/reservation/?fleamarket_id=<?php echo e($fleamarket_id);?>/"><i></i>出店予約をする</a></li>
+        <li class="button makeReservation"><a id="do_reservation" href="/reservation/?fleamarket_id=<?php echo e($fleamarket_id);?>/"><i></i><?php echo $reservation_button;?></a></li>
         <?php endif;?>
       </ul>
     </div>

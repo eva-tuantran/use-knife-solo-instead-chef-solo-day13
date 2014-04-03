@@ -98,9 +98,17 @@
           <li><a href="/detail/<?php echo e($fleamarket_id);?>/">詳細情報を見る<i></i></a></li>
         </ul>
         <ul class="rightbutton">
-          <?php if ($is_admin_fleamarket):?>
-          <li class="button makeReservation"><a href="/reservation?fleamarket_id=<?php echo e($fleamarket_id);?>">出店予約をする</a></li>
-          <?php endif;?>
+          <?php
+            if ($is_admin_fleamarket):
+                $reservation_button = '出店予約をする';
+                if ($fleamarket['event_status'] == \Model_Fleamarket::EVENT_STATUS_RECEIPT_END):
+                    $reservation_button = 'キャンセル待ちをする';
+                endif;
+          ?>
+          <li class="button makeReservation"><a href="/reservation?fleamarket_id=<?php echo e($fleamarket_id);?>"><?php echo $reservation_button;?></a></li>
+          <?php
+            endif;
+          ?>
           <li class="button addMylist"><a id="fleamarket_id_<?php echo $fleamarket['fleamarket_id']; ?>" href="#">マイリストに追加</a></li>
         </ul>
       </div>
