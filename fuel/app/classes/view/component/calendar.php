@@ -37,7 +37,7 @@ class View_Component_Calendar extends ViewModel
      */
     public function view()
     {
-        if (is_null($this->year) || !is_int($this->year)) {
+        if (empty($this->year) || !is_int($this->year)) {
             $this->year = date('Y');
         }
         if (strlen($this->year) < 4 and $this->year) {
@@ -47,7 +47,7 @@ class View_Component_Calendar extends ViewModel
             $this->year = (int) substr($this->year, 0, 4);
         }
 
-        if (is_null($this->month) || !is_int($this->month)) {
+        if (empty($this->month) || !is_int($this->month)) {
             $this->month = date('n');
         }
         $this->month > 12 and $this->month = 12;

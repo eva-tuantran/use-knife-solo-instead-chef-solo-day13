@@ -1,7 +1,3 @@
-<pre>
-<?php var_dump(@$input); ?>
-<?php echo var_dump(@$error); ?>
-</pre>
 <div id="contentForm" class="row">
   <!-- flow -->
   <div id="flow" class="row hidden-xs">
@@ -42,7 +38,8 @@
         <div class="form-group form-address">
           <label class="col-sm-2 control-label" for="inputAddress">ご住所</label>
           <div class="col-sm-10">
-            <input type="text" class="form-control" id="inputZip" placeholder="例）123-4567" name="zip" /><button type="submit" class="btn btn-default">住所を検索</button>
+            <input type="text" class="form-control" id="inputZip" placeholder="例）123-4567" name="zip" />
+            <button type="submit" class="btn btn-default" onclick="AjaxZip3.zip2addr('zip','','address','address'); return false;">住所を検索</button>
             <select class="form-control" name="prefecture_id">
                 <option>都道府県</option>
                   <?php foreach ($prefectures as $prefecture_id => $name): ?>

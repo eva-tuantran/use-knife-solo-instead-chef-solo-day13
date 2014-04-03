@@ -58,7 +58,7 @@
               <?php echo e($fleamarket['name']);?>
           </a>
       </h3>
-      <div class="resultPhoto"><a href="/detail/<?php echo e($fleamarket_id);?>/"><img src="../assets/img/noimage.jpg" class="img-rounded"></a></div>
+      <div class="resultPhoto"><a href="/detail/<?php echo e($fleamarket_id);?>/"><img src="/assets/img/noimage.jpg" class="img-rounded"></a></div>
       <div class="resultDetail">
         <dl class="col-md-6">
           <dt>出店数</dt>
@@ -258,7 +258,9 @@ $(function() {
           dataType: "json",
           data: {fleamarket_id: id}
       }).done(function(json, textStatus, jqXHR) {
-          if(json){
+          if(json == 'nologin' || json == 'nodata'){
+              alert(json);
+          }else if(json){
               alert('登録しました');
           }else{
               alert('失敗しました');

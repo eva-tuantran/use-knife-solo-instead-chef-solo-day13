@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS `rakuichi-rakuza`.`users` (
   `last_name_kana` VARCHAR(50) NOT NULL COMMENT '姓カナ',
   `first_name_kana` VARCHAR(50) NOT NULL COMMENT '名カナ',
   `birthday` DATE NULL COMMENT '誕生日',
-  `gender` TINYINT NOT NULL COMMENT '性別 1:男性,2:女性',
+  `gender` TINYINT NULL COMMENT '性別 1:男性,2:女性',
   `zip` CHAR(7) NOT NULL COMMENT '郵便番号',
   `prefecture_id` TINYINT NOT NULL COMMENT '都道府県',
   `address` VARCHAR(255) NOT NULL COMMENT '都道府県以外の住所',

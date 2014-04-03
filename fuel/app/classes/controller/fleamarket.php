@@ -47,6 +47,7 @@ class Controller_Fleamarket extends Controller_Base_Template
         Asset::js('jquery.ui.datepicker-ja.js', array(), 'add_js');
         Asset::js('jquery-ui-timepicker.js', array(), 'add_js');
         Asset::js('jquery-ui-timepicker-ja.js', array(), 'add_js');
+        Asset::js('http://ajaxzip3.googlecode.com/svn/trunk/ajaxzip3/ajaxzip3.js', array(), 'add_js');
 
         $view_model = \ViewModel::forge('fleamarket/index');
         $view_model->set('fleamarket_id', $fleamarket_id, false);

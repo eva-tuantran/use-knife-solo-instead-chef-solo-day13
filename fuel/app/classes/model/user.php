@@ -512,6 +512,19 @@ class Model_User extends Orm\Model_Soft
 
 
     /**
+     * ユーザの投稿したフリマの詳細情報を取得します
+     *
+     * @access public
+     * @return mixed $favorites
+     * @author shimma
+     */
+    public function getMyFleamarkets($page = 1, $row_count = 30)
+    {
+        return \Model_Fleamarket::getUserFleamarkets($this->user_id, $page, $row_count);
+    }
+
+
+    /**
      * 現在のユーザをアクティベートさせ正規に利用できるユーザにします
      *
      * @access public
