@@ -126,6 +126,17 @@ class Model_Fleamarket_About extends \Orm\Model
         return self::$about_names;
     }
 
+    public static function findFirstBy($conditions = array())
+    {
+        if (! $conditions) {
+            return false;
+        }
+
+        $result =  self::find('first', array('where' => $conditions));
+
+        return $result;
+    }
+
     /**
      * 指定されたフリーマーケットIDでフリーマーケット説明情報を取得する
      *
@@ -200,9 +211,8 @@ QUERY;
      */
     public static function createFieldset()
     {
-        $about = self::forge();
         $fieldset = \Fieldset::forge('fleamarket_about');
-        $fieldset->add_model($about);
+        $fieldset->add_model('Model_Fleamarket_About');
 
         return $fieldset;
     }

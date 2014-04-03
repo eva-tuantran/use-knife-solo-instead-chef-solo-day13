@@ -140,7 +140,7 @@ Map.prototype = {
   <!-- text -->
   <div id="text" class="col-sm-12">
 <!--  <div id="text" class="container"> -->
-    <div class="box clearfix"><?php echo e($fleamarket['description']);?></div>
+    <div class="box clearfix"><?php echo nl2br(e($fleamarket['description']));?></div>
   </div>
   <!-- /text -->
   <!-- table -->
@@ -197,7 +197,8 @@ Map.prototype = {
         <dt>交通・アクセス</dt>
         <dd><?php
             if (isset($fleamarket['abouts'][\Model_Fleamarket_About::ACCESS])):
-                echo e($fleamarket['abouts'][\Model_Fleamarket_About::ACCESS]['description']);
+                $about_access = $fleamarket['abouts'][\Model_Fleamarket_About::ACCESS];
+                echo nl2br(e($about_access['description']));
             else:
                 echo '-';
             endif;
@@ -235,7 +236,7 @@ Map.prototype = {
                     endif;
         ?>
         <dt><?php echo e($about['title']);?></dt>
-        <dd><?php echo e($about['description']);?></dd>
+        <dd><?php echo nl2br(e($about['description']));?></dd>
         <?php
                     $about_count++;
                 endforeach;
