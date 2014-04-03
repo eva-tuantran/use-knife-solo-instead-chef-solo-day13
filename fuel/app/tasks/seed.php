@@ -10,16 +10,24 @@ namespace Fuel\Tasks;
  */
 class seed
 {
-    public function run()
+    public function run($model = null)
     {
-        $models = array(
-            'user',
-            'entry',
-            'fleamarket',
-            'favorite',
-        );
-        foreach ($models as $model) {
-            include (APPPATH . 'seeds/' . \Fuel::$env . '/' . $model. '.php');
+        if (null == $model || $model == 'all') {
+            $model = array(
+                'user',
+                'entry',
+                'fleamarket',
+                'favorite',
+            );
+        }
+
+        if (! empty($model)) {
+            if (! is_array($model)) {
+                $model = (array) $model;
+            }
+            foreach ($model as $m) {
+                include (APPPATH . 'seeds/' . \Fuel::$env . '/' . $m . '.php');
+            }
         }
     }
 
