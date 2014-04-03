@@ -72,6 +72,13 @@ class Model_Fleamarket extends \Orm\Model
     const PICKUP_FLAG_OFF = 0;
     const PICKUP_FLAG_ON = 1;
 
+    /**
+     * 予約状況  1. まだまだあります 2. 残り僅か！ 3. 満員
+     */
+    const EVENT_RESERVATION_STATUS_ENOUGH = 1;
+    const EVENT_RESERVATION_STATUS_FEW    = 2;
+    const EVENT_RESERVATION_STATUS_FULL   = 3;
+
     protected static $_table_name = 'fleamarkets';
 
     protected static $_primary_key = array('fleamarket_id');
@@ -215,6 +222,9 @@ class Model_Fleamarket extends \Orm\Model
             'form'  => array('type' => false)
         ),
         'display_flag' => array(
+            'form'  => array('type' => false)
+        ),
+        'event_reservation_status' => array(
             'form'  => array('type' => false)
         ),
         'created_user' => array(
@@ -1012,5 +1022,28 @@ QUERY;
             ->add_rule('match_field', 'reservation_email');
 
         return $fieldset;
+    }
+
+    /*
+     * event_reservation_status の更新
+     *
+     * @access public
+     * @param
+     * @return
+     * @author kobayasi
+     */
+    public function updateEventReservationStatus()
+    {
+        $is_full = true;
+        foreach ($this->fleamarket_entry_styles as $fleamarket_entry_style) {
+            if (! $fleamarket_entry_style->isNeedWaiting()) {
+                $is_full = false;
+                break;
+            }
+        }
+        if ($is_full) {
+            $this->event_reservation_status = self::EVENT_RESERVATION_STATUS_FULL;
+            $this->save();
+        }
     }
 }
