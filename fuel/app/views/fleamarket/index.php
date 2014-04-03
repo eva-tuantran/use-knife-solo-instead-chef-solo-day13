@@ -14,24 +14,6 @@ $(function() {
   });
 });
 </script>
-<?php
-    if (isset($fleamarket_id)):
-        $fleamarket = $fleamarket;
-        $fleamarket_abouts = $fleamarket_about;
-        $location = $location;
-    else:
-        $fleamarket = $fleamarket_fieldset->input();
-        $fleamarket_errors = $fleamarket_fieldset->validation()->error_message();
-
-        $fleamarket_abouts = $fleamarket_about_fieldset->input();
-        $fleamarket_about_errors =
-            $fleamarket_about_fieldset->validation()->error_message();
-
-        $location = $location_fieldset->input();
-        $location_errors =
-            $location_fieldset->validation()->error_message();
-    endif;
-?>
 <div id="contentForm" class="row">
   <!-- flow -->
   <div id="flow" class="row hidden-xs">
@@ -50,17 +32,37 @@ $(function() {
   <div id="form" class="container">
     <div class="box clearfix">
       <h3>開催情報の入力</h3>
-      <form class="form-horizontal" action="/fleamarket/confirm" method="post">
+      <form class="form-horizontal" action="/fleamarket/confirm/" method="post">
         <?php
-            if (isset($fleamarket_id)):
+          if (isset($fleamarket['fleamarket_id'])
+              && ! empty($fleamarket['fleamarket_id'])
+          ):
         ?>
-        <input type="hidden" name="f[fleamarket_id]" value="<?php echo e($fleamarket_id);?>">
+            <input type="hidden" name="fleamarket_id" value="<?php echo e($fleamarket['fleamarket_id']);?>">
         <?php
-            endif;
+          endif;
+        ?>
+        <?php
+          if (isset($fleamarket_about['fleamarket_about_id'])
+              && ! empty($fleamarket_about['fleamarket_about_id'])
+          ):
+        ?>
+            <input type="hidden" name="fleamarket_about_id" value="<?php echo e($fleamarket_about['fleamarket_about_id']);?>">
+        <?php
+          endif;
+        ?>
+        <?php
+          if (isset($location['location_id'])
+              && ! empty($location['location_id'])
+          ):
+        ?>
+            <input type="hidden" name="location_id" value="<?php echo e($location['location_id']);?>">
+        <?php
+          endif;
         ?>
         <div class="form-group">
             <label class="col-sm-2 control-label" for="inputPromoterName">主催者名</label>
-          <div class="col-sm-10">
+            <div class="col-sm-10">
               <input id="inputPromoterName" type="text" class="form-control" name="f[promoter_name]" placeholder="主催者名を入力" value="<?php echo e($fleamarket['promoter_name']);?>">
             <?php
               if (isset($fleamarket_errors['promoter_name'])):
@@ -126,7 +128,13 @@ $(function() {
         <div class="form-group">
           <label class="col-sm-2 control-label" for="inputEventDate">開催日</label>
           <div class="col-sm-10">
-            <input id="inputEventDate" type="text" class="form-control" name="f[event_date]" placeholder="例）2014/01/25" value="<?php echo e($fleamarket['event_date']);?>">
+            <?php
+                $event_date = '';
+                if (isset($fleamarket['event_date']) && $fleamarket['event_date']):
+                    $event_date = date('Y/m/d', strtotime($fleamarket['event_date']));
+                endif;
+            ?>
+            <input id="inputEventDate" type="text" class="form-control" name="f[event_date]" placeholder="例）2014/01/25" value="<?php echo e($event_date);?>">
             <?php
               if (isset($fleamarket_errors['event_date'])):
             ?>
@@ -139,7 +147,13 @@ $(function() {
         <div class="form-group">
           <label class="col-sm-2 control-label" for="inputEventTimeStart">開始時間</label>
           <div class="col-sm-10">
-            <input id="inputEventTimeStart" type="text" class="form-control" name="f[event_time_start]" placeholder="例）09:00" value="<?php echo e(date('G:i', strtotime($fleamarket['event_time_start'])));?>">
+            <?php
+                $event_time_start = '';
+                if (isset($fleamarket['event_time_start']) && $fleamarket['event_time_start']):
+                    $event_time_start = date('H:i', strtotime($fleamarket['event_time_start']));
+                endif;
+            ?>
+            <input id="inputEventTimeStart" type="text" class="form-control" name="f[event_time_start]" placeholder="例）09:00" value="<?php echo e($event_time_start);?>">
             <?php
               if (isset($fleamarket_errors['event_time_start'])):
             ?>
@@ -152,7 +166,13 @@ $(function() {
         <div class="form-group">
           <label class="col-sm-2 control-label" for="inputEventTimeEnd">終了時間</label>
           <div class="col-sm-10">
-            <input id="inputEventTimeEnd" type="text" class="form-control" name="f[event_time_end]" placeholder="例）16:00" value="<?php echo e(date('G:i', strtotime($fleamarket['event_time_end'])));?>">
+            <?php
+                $event_time_end = '';
+                if (isset($fleamarket['event_time_end']) && $fleamarket['event_time_end']):
+                    $event_time_end = date('H:i', strtotime($fleamarket['event_time_end']));
+                endif;
+            ?>
+            <input id="inputEventTimeEnd" type="text" class="form-control" name="f[event_time_end]" placeholder="例）16:00" value="<?php echo e($event_time_end);?>">
             <?php
               if (isset($fleamarket_errors['event_time_end'])):
             ?>
@@ -231,7 +251,7 @@ $(function() {
         <div class="form-group">
           <label class="col-sm-2 control-label" for="inputAboutAccess">最寄り駅または<br>交通アクセス</label>
           <div class="col-sm-10">
-            <input id="inputAboutAccess" type="text" class="form-control" name="fa[description]" placeholder="例）JR山手線、JR埼京線「渋谷駅」より 徒歩5分" value="<?php echo e($fleamarket_abouts['description']);?>">
+            <input id="inputAboutAccess" type="text" class="form-control" name="fa[description]" placeholder="例）JR山手線、JR埼京線「渋谷駅」より 徒歩5分" value="<?php echo e($fleamarket_about['description']);?>">
             <?php
               if (isset($fleamarket_about_errors['description'])):
             ?>
