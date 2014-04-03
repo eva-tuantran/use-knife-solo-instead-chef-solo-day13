@@ -13,6 +13,8 @@ $group_codes = array(
 );
 $event_statuses = \Model_Fleamarket::getEventStatuses();
 
+$event_reservation_statuses = array(1, 2, 3);
+
 $event_months = array('03', '04', '05', '06');
 $event_days = array('01', '02', '08', '09', '15', '16', '22', '23', '30');
 $event_start_list = array('09:00:00', '09:15:00', '09:30:00', '10:00:00', '10:30:00');
@@ -104,7 +106,6 @@ for ($i = 1; $i <= 100; $i++) {
     $group_code = array_rand($group_codes);
     $group_code_name = $group_codes[$group_code];
 
-    // 共通のためフリマを使用
     $register_type = array_rand($register_types);
 
     // 開催地情報
@@ -137,6 +138,7 @@ for ($i = 1; $i <= 100; $i++) {
     }
 
     $event_status = array_rand($event_statuses);
+    $event_reservation_statuse = array_rand($event_reservation_statuses);
     $event_month = array_rand($event_months);
     $event_day = array_rand($event_days);
     $event_date = '2014-' . $event_months[$event_month] . '-' . $event_days[$event_day];
@@ -158,6 +160,9 @@ for ($i = 1; $i <= 100; $i++) {
     $free_parking = array_rand($free_parking_list);
     $rainy_location = array_rand($rainy_location_list);
 
+    if ($register_types[$register_type] == \Model_Fleamarket::REGISTER_TYPE_USER) {
+        $event_status = \Model_Fleamarket::EVENT_STATUS_SCHEDULE;
+    }
     $fleamarket_line = array(
         'location_id'         => $location_id,
         'group_code'          => $group_code_name,
