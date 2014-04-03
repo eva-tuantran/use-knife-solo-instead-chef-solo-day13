@@ -858,6 +858,12 @@ QUERY;
             );
         }
 
+        if (isset($data['region']) && $data['region'] !== '') {
+            $region_prefectures = \Config::get('master.region_prefectures');
+            $prefecture = $region_prefectures[$data['region']];
+            $conditions[] = array('prefecture_id', 'IN', $prefecture);
+        }
+
         if (isset($data['prefecture']) && $data['prefecture'] !== '') {
             $conditions[] = array('prefecture_id', '=', $data['prefecture']);
         }
@@ -926,7 +932,7 @@ QUERY;
 
         if (isset($data['upcomming']) && $data['upcomming']) {
             $conditions[] = array(
-                'DATE_FORMAT(f.event_date, \'%Y-%m-%d\') >= CURDATE()'
+                'f.event_date >= CURDATE()'
             );
         }
 

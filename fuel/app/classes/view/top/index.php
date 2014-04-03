@@ -16,6 +16,8 @@ class View_Top_Index extends ViewModel
      */
     public function view()
     {
+        $this->regions = \Config::get('master.regions');
+        $this->region_prefectures = \Config::get('master.region_prefectures');
         $this->prefectures = \Config::get('master.prefectures');
     }
 }
