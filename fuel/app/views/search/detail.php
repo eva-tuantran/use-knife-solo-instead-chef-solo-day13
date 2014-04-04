@@ -112,7 +112,7 @@ Map.prototype = {
             endif;
         ?></p>
         <ul class="mylist">
-          <li class="button addMylist"><a href="#"><i></i>マイリストに追加</a></li>
+          <li class="button addMylist"><a href="#" id="fleamarket_id_<?php echo $fleamarket['fleamarket_id']; ?>"><i></i>マイリストに追加</a></li>
           <li class="button gotoMylist"><a href="/mypage#mylist"><i></i>マイリストを見る</a></li>
         </ul>
       </div>
@@ -262,3 +262,27 @@ Map.prototype = {
   </div>
 </div>
 <!-- /table -->
+<script type="text/javascript">
+$(function() {
+  $(".addMylist a").click(function(){
+      var id = $(this).attr('id');
+      id = id.match(/^fleamarket_id_(\d+)/)[1];
+      $.ajax({
+          type: "post",
+          url: '/favorite/add',
+          dataType: "json",
+          data: {fleamarket_id: id}
+      }).done(function(json, textStatus, jqXHR) {
+          if(json == 'nologin' || json == 'nodata'){
+              alert(json);
+          }else if(json){
+              alert('登録しました');
+          }else{
+              alert('失敗しました');
+          }
+      }).fail(function(jqXHR, textStatus, errorThrown) {
+          alert('失敗しました');
+      });
+  });
+});
+</script>

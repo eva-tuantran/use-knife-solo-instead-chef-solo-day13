@@ -140,10 +140,11 @@ class Model_Token extends Orm\Model_Soft
 
 
     /**
-     * ユーザを本登録させるためのURLを取得します
-     * 
+     * 各種認証用のURLを取得します
+     *
      * @access public
      * @return void
+     * @todo getVelificationUrlと統合
      */
     public function getActivationUrl()
     {
@@ -152,6 +153,35 @@ class Model_Token extends Orm\Model_Soft
         }
 
         return Uri::base().'signup/activate?token='.$this->hash;
+    }
+
+
+    /**
+     * 各種認証用のURLを取得します
+     *
+     * @access public
+     * @return void
+     */
+    public function getVelificationUrl($type)
+    {
+        if (! $this->hash) {
+            return false;
+        }
+
+        switch ($type) {
+            case 'signup':
+                $activation_url = Uri::base().'signup/activate?token='.$this->hash;
+                break;
+            case 'reset_password':
+                $activation_url = Uri::base().'reminder/change?token='.$this->hash;
+                break;
+            default:
+                $activation_url = Uri::base().'signup/activate?token='.$this->hash;
+                break;
+        }
+
+
+        return $activation_url;
     }
 
 

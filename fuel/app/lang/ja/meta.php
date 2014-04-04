@@ -81,5 +81,16 @@ return array(
         'description' => 'マイページ description',
         'keyword'     => 'マイページ キーワード',
     ),
+    'reminder/index' => array(
+        'title'       => 'パスワード忘れた方',
+        'description' => 'パスワード忘れた方 description',
+        'keyword'     => 'パスワード忘れた方 キーワード',
+    ),
+    'reminder/submit' => array(
+        'title'       => 'パスワード忘れた方',
+        'description' => 'パスワード忘れた方 description',
+        'keyword'     => 'パスワード忘れた方 キーワード',
+    ),
 );
+
 
