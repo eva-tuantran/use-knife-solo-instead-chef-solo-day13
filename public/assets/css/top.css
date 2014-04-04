@@ -1,0 +1,76 @@
+@charset "UTF-8";
+
+#regions h2 {
+  border-left: 5px solid #0070c0;
+  border-bottom: 1px solid #0070c0;
+  padding: 3px 0 5px 5px;
+  margin: 30px 0 20px 0;
+  line-height: 1;
+  clear: left;
+  font-size: 1em;
+}
+
+#regions ul {
+  margin: 0 0 5px 10px;
+  display: block;
+  min-height: 1px;
+  _height: 1px;/* IE6ハック */
+}
+
+#regions ul:after {
+  content: '';
+  display: block;
+  clear: both;
+  height: 0;
+  visibility: hidden;
+}
+
+#regions ul li {
+  float: left;
+  margin: 0 5px 5px 0;
+  min-width: 83px;
+  _width: 83px;/* IE6ハック */
+  white-space: nowrap;
+  text-align: center;
+  line-height: 1;
+  background: #eee;
+  border: 1px solid #e8e8e8;
+  border-radius: 2px;
+}
+
+#regions ul.hokkaido li {
+  min-width: 100px;
+  _width: 100px;/* IE6ハック */
+}
+
+#regions ul li a {
+  padding: 5px;
+  color: #333;
+  display: block;
+}
+
+#regions ul li a:hover {
+  color: #fff;
+  background: #b7d316;
+}
+
+.region {
+  display: none;
+  position: absolute;
+  top: -20px;
+  left: 175px;
+  z-index: 10000;
+}
+
+.region .inner {
+  width: 214px;
+  height: auto;
+  padding: 10px;
+  border: 2px solid #999;
+  border-radius: 5px;
+  background: #FFFFFF;
+}
+
+.region h2 {
+  margin-top: 0 !important;
+}
