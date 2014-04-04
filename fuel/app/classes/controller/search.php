@@ -15,15 +15,6 @@ class Controller_Search extends Controller_Base_Template
      */
     private $search_result_per_page = 20;
 
-    /**
-     * 事前処理
-     *
-     * アクション実行前の共通処理
-     *
-     * @access public
-     * @return void
-     * @author ida
-     */
     public function before()
     {
         parent::before();
@@ -33,17 +24,24 @@ class Controller_Search extends Controller_Base_Template
      * フリーマーケット検索結果画面
      *
      * @access public
-     * @param mixed $page ページ番号
+     * @param int $page ページ番号
+     * @param string $prefecture 都道府県
      * @return void
      * @author ida
      */
-    public function get_index($page = null)
+    public function get_index($page = null, $prefecure = null)
     {
         if (! $page) {
             $page = 1;
         }
 
         $base_conditions = Input::get('conditions', array());
+
+        if (null != $prefecure) {
+            $alphabet_prefectures = \Config::get('master.alphabet_prefectures');
+            $prefecture_id = array_search($prefecure, $alphabet_prefectures);
+            $base_conditions = array('prefecture' => $prefecture_id);
+        }
 
         $date = Input::get('d');
         if ($date) {
