@@ -1016,17 +1016,20 @@ QUERY;
      * Fieldsetオブジェクトの生成
      *
      * @access public
-     * @param
+     * @param is_admin: 管理画面かどうか
      * @return array
      * @author ida
+     * @author kobayasi
      */
-    public static function createFieldset()
+    public static function createFieldset($is_admin = false)
     {
         $fieldset = \Fieldset::forge('fleamarket');
         $fieldset->add_model('Model_Fleamarket');
-        $fieldset->add('reservation_email_confirm')
-            ->add_rule('match_field', 'reservation_email');
 
+        if (! $is_admin) {
+            $fieldset->add('reservation_email_confirm')
+                ->add_rule('match_field', 'reservation_email');
+        }
         return $fieldset;
     }
 
