@@ -15,12 +15,15 @@ class Controller_Errors extends Controller_Template
      * @return void
      * @author ida
      */
-    public function action_index()
+    public function action_index($error_code, $error_message)
     {
-        $this->template->title = 'エラーが発生しました';
+        $this->template->title = $error_code;
         $this->template->content = View::forge(
-            'errors/content',
-            array('message' => 'エラーが発生しました')
+            'errors/index',
+            array(
+                'error_code' => $error_code,
+                'error_message' => $error_message
+            )
         );
     }
 
