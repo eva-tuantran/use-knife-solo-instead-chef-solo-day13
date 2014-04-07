@@ -52,6 +52,8 @@ class Model_User extends Orm\Model_Soft
             'validation' => array(
                 'trim',
                 'max_length' => array(10),
+                'required',
+                'valid_kana',
             ),
             'form' => array(
                 'type' => 'text'
@@ -62,6 +64,8 @@ class Model_User extends Orm\Model_Soft
             'validation' => array(
                 'trim',
                 'max_length' => array(10),
+                'required',
+                'valid_kana',
             ),
             'form' => array(
                 'type' => 'text'

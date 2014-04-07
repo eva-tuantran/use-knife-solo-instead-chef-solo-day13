@@ -52,7 +52,7 @@ class Custom_Validation
      * @access public
      * @param mixed $val 入力値
      * @return bool チェック結果
-     * @author ida
+     * @author shimma
      */
     public static function _validation_valid_zip($val)
     {
@@ -60,6 +60,26 @@ class Custom_Validation
 
         mb_regex_encoding('UTF-8');
         $pattern = '/^[0-9]{3}-?[0-9]{4}$/';
+        $is_valid = (bool) preg_match($pattern, $val);
+
+        return $is_valid;
+    }
+
+
+    /**
+     * カタカナチェック
+     *
+     * @access public
+     * @param mixed $val 入力値
+     * @return bool チェック結果
+     * @author shimma
+     */
+    public static function _validation_valid_kana($val)
+    {
+        $is_valid = true;
+
+        mb_regex_encoding('UTF-8');
+        $pattern = '/^[ァ-ヶー]+$/u';
         $is_valid = (bool) preg_match($pattern, $val);
 
         return $is_valid;
