@@ -2,10 +2,8 @@
 <?php $errors = $fieldset->validation()->error_message(); ?>
 <?php $fields = $fieldset->field(); ?>
 
-<?php var_dump($errors); ?>
-
-<h3></h3>
-<form action="/admin/fleamarket/confirm" method="POST" class="form-horizontal">
+<h3>フリマ登録</h3>
+<form action="/admin/fleamarket/confirm" method="POST" class="form-horizontal" enctype="multipart/form-data">
   <table>
     <tr>
       <td>フリマ名</td>
@@ -365,6 +363,41 @@
              echo e($fleamarket->deleted_at);
          }
       ?> 
+      </td>
+    </tr>
+    <?php if ($fleamarket) { ?>
+    <?php foreach ($fleamarket->fleamarket_images as $fleamarket_image) { ?>
+    <tr>
+      <td>ファイル</td>
+      <td>
+	<img src="<?php echo $fleamarket_image->Url(); ?>">
+	<input type="checkbox" name=""fleamarket_image_id value="1<?php echo $fleamarket_image->fleamarket_image_id; ?>">削除する
+      </td>
+    </tr>
+    <?php } ?>
+    <?php } ?>
+    <tr>
+      <td>ファイル</td>
+      <td>
+	<input type="file" name="upload1">
+      </td>
+    </tr>
+    <tr>
+      <td>ファイル</td>
+      <td>
+	<input type="file" name="upload2">
+      </td>
+    </tr>
+    <tr>
+      <td>ファイル</td>
+      <td>
+	<input type="file" name="upload3">
+      </td>
+    </tr>
+    <tr>
+      <td>ファイル</td>
+      <td>
+	<input type="file" name="upload4">
       </td>
     </tr>
   </table>
