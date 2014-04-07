@@ -200,6 +200,7 @@
             <?php if(empty($entries)): ?>
             <p>現在予約しているフリーマーケットがありません。</p>
             <?php else: ?>
+<?php var_dump($entries); ?>
             <?php foreach($entries as $entry): ?>
             <!-- result -->
             <div class="result clearfix">
@@ -227,10 +228,10 @@
                   <dd><?php echo e($entry['about_access']);?></dd>
                 </dl>
                 <ul class="facilitys">
-                  <li class="facility1 <?php echo $entry['car_shop_flag'] == \Model_Fleamarket::CAR_SHOP_FLAG_NG ? 'off': '';?>">車出店可能</li>
-                  <li class="facility2 <?php echo $entry['charge_parking_flag'] == \Model_Fleamarket::CHARGE_PARKING_FLAG_NONE ? 'off': '';?>">有料駐車場</li>
-                  <li class="facility3 <?php echo $entry['free_parking_flag'] == \Model_Fleamarket::FREE_PARKING_FLAG_NONE ? 'off': '';?>">無料駐車場</li>
-                  <li class="facility4 <?php echo $entry['rainy_location_flag'] == \Model_Fleamarket::RAINY_LOCATION_FLAG_NONE ? 'off': '';?>">雨天開催会場</li>
+                  <li class="facility1 <?php $flagcheck($entry['car_shop_flag']) ?>"      >車出店可能</li>
+                  <li class="facility2 <?php $flagcheck($entry['charge_parking_flag']) ?>">有料駐車場</li>
+                  <li class="facility3 <?php $flagcheck($entry['free_parking_flag']) ?>"  >無料駐車場</li>
+                  <li class="facility4 <?php $flagcheck($entry['rainy_location_flag']) ?>">雨天開催会場</li>
                 </ul>
                 <ul class="detailLink">
                   <li><a href="/detail/<?php echo $entry['fleamarket_id'] ?>">詳細情報を見る<i></i></a></li>
@@ -281,10 +282,10 @@
                 <dd><?php echo e($mylist['about_access']);?></dd>
               </dl>
               <ul class="facilitys">
-                <li class="facility1 <?php echo $mylist['car_shop_flag'] == \Model_Fleamarket::CAR_SHOP_FLAG_NG ? 'off': '';?>">車出店可能</li>
-                <li class="facility2 <?php echo $mylist['charge_parking_flag'] == \Model_Fleamarket::CHARGE_PARKING_FLAG_NONE ? 'off': '';?>">有料駐車場</li>
-                <li class="facility3 <?php echo $mylist['free_parking_flag'] == \Model_Fleamarket::FREE_PARKING_FLAG_NONE ? 'off': '';?>">無料駐車場</li>
-                <li class="facility4 <?php echo $mylist['rainy_location_flag'] == \Model_Fleamarket::RAINY_LOCATION_FLAG_NONE ? 'off': '';?>">雨天開催会場</li>
+                <li class="facility1 <?php $flagcheck($mylist['car_shop_flag'])?>"      >車出店可能</li>
+                <li class="facility2 <?php $flagcheck($mylist['charge_parking_flag'])?>">有料駐車場</li>
+                <li class="facility3 <?php $flagcheck($mylist['free_parking_flag'])?>"  >無料駐車場</li>
+                <li class="facility4 <?php $flagcheck($mylist['rainy_location_flag'])?>">雨天開催会場</li>
               </ul>
               <ul class="detailLink">
                 <li><a href="/detail/<?php echo $mylist['fleamarket_id'] ?>">詳細情報を見る<i></i></a></li>
@@ -342,10 +343,10 @@
             <dd><?php echo e($myfleamarket['about_access']);?></dd>
           </dl>
           <ul class="facilitys">
-            <li class="facility1 <?php echo $myfleamarket['car_shop_flag'] == \Model_Fleamarket::CAR_SHOP_FLAG_NG ? 'off': '';?>">車出店可能</li>
-            <li class="facility2 <?php echo $myfleamarket['charge_parking_flag'] == \Model_Fleamarket::CHARGE_PARKING_FLAG_NONE ? 'off': '';?>">有料駐車場</li>
-            <li class="facility3 <?php echo $myfleamarket['free_parking_flag'] == \Model_Fleamarket::FREE_PARKING_FLAG_NONE ? 'off': '';?>">無料駐車場</li>
-            <li class="facility4 <?php echo $myfleamarket['rainy_location_flag'] == \Model_Fleamarket::RAINY_LOCATION_FLAG_NONE ? 'off': '';?>">雨天開催会場</li>
+            <li class="facility1 <?php $flagcheck($myfleamarket['car_shop_flag'])?>"      >車出店可能</li>
+            <li class="facility2 <?php $flagcheck($myfleamarket['charge_parking_flag'])?>">有料駐車場</li>
+            <li class="facility3 <?php $flagcheck($myfleamarket['free_parking_flag'])?>"  >無料駐車場</li>
+            <li class="facility4 <?php $flagcheck($myfleamarket['rainy_location_flag'])?>">雨天開催会場</li>
           </ul>
           <ul class="detailLink">
             <li><a href="/detail/<?php echo $myfleamarket['fleamarket_id'] ?>">詳細情報を見る<i></i></a></li>
