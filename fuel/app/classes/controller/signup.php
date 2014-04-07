@@ -77,29 +77,26 @@ class Controller_Signup extends Controller_Base_Template
     public function post_verify()
     {
         if (! Security::check_token()) {
-            return \Response::redirect('errors/doubletransmission');
+            throw new SystemException('E00002');
         }
 
         $fieldset = self::createFieldset();
-        $user_data = array_filter($fieldset->validation()->validated(), 'strlen');
+        $properties = array_filter($fieldset->validation()->validated(), 'strlen');
 
         try {
-            $new_user = Model_User::forge($user_data);
-            $new_user->setPassword($user_data['password']);
-            $new_user->save();
-
+            $new_user = Model_User::createNewUser($properties['email'], $properties['password'], $properties);
             $new_token = Model_Token::generate($new_user->user_id);
             $email_template_params = array(
                 'nick_name'    => $new_user->nick_name,
                 'activate_url' => $new_token->getActivationUrl(),
             );
             $new_user->sendmail('signup/verify', $email_template_params);
-        } catch (Orm\ValidationFailed $e) {
-            return \Response::redirect('errors/timeout');
+        } catch (Exception $e) {
+            throw $e;
         }
 
         $this->template->content = View::forge('signup/verify');
-        $this->template->content->set('user_input', $user_data);
+        $this->template->content->set('user_input', $properties);
     }
 
     /**
@@ -132,7 +129,7 @@ class Controller_Signup extends Controller_Base_Template
             return \Response::redirect('error/503');
         }
 
-        Auth::force_login($user->user_id);
+        \Auth::force_login($user->user_id);
         return \Response::redirect('signup/thanks');
     }
 
