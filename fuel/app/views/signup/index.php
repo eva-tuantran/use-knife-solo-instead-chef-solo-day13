@@ -42,7 +42,7 @@
           </div>
         </div>
         <div class="form-group form-address">
-          <label class="col-sm-2 control-label" for="inputAddress">ご住所</label>
+          <label class="col-sm-2 control-label" for="inputAddress">ご住所 *</label>
           <div class="col-sm-10">
             <input type="text" class="form-control" id="inputZip" placeholder="例）123-4567" name="zip" value="<?php echo $input['zip'] ?>" />
             <button type="submit" class="btn btn-default" onclick="AjaxZip3.zip2addr('zip','','prefecture_id','address'); return false;">住所を検索</button>

@@ -114,6 +114,7 @@ class Model_User extends Orm\Model_Soft
             'label' => '郵便番号',
             'validation' => array(
                 'trim',
+                'required',
                 'valid_zip',
                 'max_length' => array(10),
             ),
