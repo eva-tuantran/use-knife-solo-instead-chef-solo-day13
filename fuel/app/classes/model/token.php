@@ -45,6 +45,8 @@ class Model_Token extends Orm\Model_Soft
         ),
     );
 
+    public $expiration_date = '+ 24 hour';
+
     /**
      * 特定のユーザIDに対する認証用トークンを発行します。
      * 成功時にはModel_Tokenオブジェクトをリターンします。
