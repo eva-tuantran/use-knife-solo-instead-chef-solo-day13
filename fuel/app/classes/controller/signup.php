@@ -37,7 +37,7 @@ class Controller_Signup extends Controller_Base_Template
         $this->template->content = View::forge('signup/index');
         $this->template->content->set('prefectures', Config::get('master.prefectures'));
         $this->template->content->set('input', $fieldset->input());
-        $this->template->content->set('error', $fieldset->validation()->error_message());
+        $this->template->content->set('errors', $fieldset->validation()->error_message());
     }
 
     /**
