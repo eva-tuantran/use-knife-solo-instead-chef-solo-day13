@@ -868,6 +868,12 @@ QUERY;
             );
         }
 
+        if (isset($data['region']) && $data['region'] !== '') {
+            $region_prefectures = \Config::get('master.region_prefectures');
+            $prefecture = $region_prefectures[$data['region']];
+            $conditions[] = array('prefecture_id', 'IN', $prefecture);
+        }
+
         if (isset($data['prefecture']) && $data['prefecture'] !== '') {
             $conditions[] = array('prefecture_id', '=', $data['prefecture']);
         }
@@ -936,7 +942,7 @@ QUERY;
 
         if (isset($data['upcomming']) && $data['upcomming']) {
             $conditions[] = array(
-                'DATE_FORMAT(f.event_date, \'%Y-%m-%d\') >= CURDATE()'
+                'f.event_date >= CURDATE()'
             );
         }
 
@@ -1010,17 +1016,20 @@ QUERY;
      * Fieldsetオブジェクトの生成
      *
      * @access public
-     * @param
+     * @param is_admin: 管理画面かどうか
      * @return array
      * @author ida
+     * @author kobayasi
      */
-    public static function createFieldset()
+    public static function createFieldset($is_admin = false)
     {
         $fieldset = \Fieldset::forge('fleamarket');
         $fieldset->add_model('Model_Fleamarket');
-        $fieldset->add('reservation_email_confirm')
-            ->add_rule('match_field', 'reservation_email');
 
+        if (! $is_admin) {
+            $fieldset->add('reservation_email_confirm')
+                ->add_rule('match_field', 'reservation_email');
+        }
         return $fieldset;
     }
 

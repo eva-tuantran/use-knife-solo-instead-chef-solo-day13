@@ -20,8 +20,8 @@
 <link href="/assets/css/base.css" rel="stylesheet">
 <script src="/assets/js/jquery.min.js"></script>
 <script src="/assets/js/bootstrap.min.js"></script>
-<?php echo Asset::render('add_css');?>
-<?php echo Asset::render('add_js');?>
+<?php echo Asset::render('add_css', true);?>
+<?php echo Asset::render('add_js', true);?>
 </head>
 <body>
 <!-- header -->
