@@ -200,7 +200,6 @@
             <?php if(empty($entries)): ?>
             <p>現在予約しているフリーマーケットがありません。</p>
             <?php else: ?>
-<?php var_dump($entries); ?>
             <?php foreach($entries as $entry): ?>
             <!-- result -->
             <div class="result clearfix">
