@@ -65,6 +65,12 @@ Map.prototype = {
     if ($fleamarket['register_type'] == \Model_Fleamarket::REGISTER_TYPE_ADMIN):
         $is_admin_fleamarket = true;
     endif;
+    if ($is_admin_fleamarket):
+        $reservation_button = '出店予約をする';
+        if ($fleamarket['event_status'] == \Model_Fleamarket::EVENT_STATUS_RECEIPT_END):
+            $reservation_button = 'キャンセル待ちをする';
+        endif;
+    endif;
 
     $total_booth = 0;
     $entry_style_string = '';
@@ -106,13 +112,13 @@ Map.prototype = {
             endif;
         ?></p>
         <ul class="mylist">
-          <li class="button addMylist"><a href="#"><i></i>マイリストに追加</a></li>
+          <li class="button addMylist"><a href="#" id="fleamarket_id_<?php echo $fleamarket['fleamarket_id']; ?>"><i></i>マイリストに追加</a></li>
           <li class="button gotoMylist"><a href="/mypage#mylist"><i></i>マイリストを見る</a></li>
         </ul>
       </div>
       <ul class="rightbutton">
         <?php if ($is_admin_fleamarket):?>
-        <li class="button makeReservation"><a href="/reservation/?fleamarket_id=<?php echo e($fleamarket_id);?>/"><i></i>出店予約をする</a></li>
+        <li class="button makeReservation"><a href="/reservation/?fleamarket_id=<?php echo e($fleamarket_id);?>/"><i></i><?php echo $reservation_button;?></a></li>
         <?php endif;?>
         <li id="do_print" class="button print hidden-xs"><a href="#"><i></i>ページの印刷をする</a></li>
       </ul>
@@ -140,7 +146,7 @@ Map.prototype = {
   <!-- text -->
   <div id="text" class="col-sm-12">
 <!--  <div id="text" class="container"> -->
-    <div class="box clearfix"><?php echo e($fleamarket['description']);?></div>
+    <div class="box clearfix"><?php echo nl2br(e($fleamarket['description']));?></div>
   </div>
   <!-- /text -->
   <!-- table -->
@@ -197,7 +203,8 @@ Map.prototype = {
         <dt>交通・アクセス</dt>
         <dd><?php
             if (isset($fleamarket['abouts'][\Model_Fleamarket_About::ACCESS])):
-                echo e($fleamarket['abouts'][\Model_Fleamarket_About::ACCESS]['description']);
+                $about_access = $fleamarket['abouts'][\Model_Fleamarket_About::ACCESS];
+                echo nl2br(e($about_access['description']));
             else:
                 echo '-';
             endif;
@@ -235,7 +242,7 @@ Map.prototype = {
                     endif;
         ?>
         <dt><?php echo e($about['title']);?></dt>
-        <dd><?php echo e($about['description']);?></dd>
+        <dd><?php echo nl2br(e($about['description']));?></dd>
         <?php
                     $about_count++;
                 endforeach;
@@ -248,10 +255,34 @@ Map.prototype = {
       </ul>
       <ul class="rightbutton">
         <?php if ($is_admin_fleamarket):?>
-        <li class="button makeReservation"><a id="do_reservation" href="/reservation/?fleamarket_id=<?php echo e($fleamarket_id);?>/"><i></i>出店予約をする</a></li>
+        <li class="button makeReservation"><a id="do_reservation" href="/reservation/?fleamarket_id=<?php echo e($fleamarket_id);?>/"><i></i><?php echo $reservation_button;?></a></li>
         <?php endif;?>
       </ul>
     </div>
   </div>
 </div>
 <!-- /table -->
+<script type="text/javascript">
+$(function() {
+  $(".addMylist a").click(function(){
+      var id = $(this).attr('id');
+      id = id.match(/^fleamarket_id_(\d+)/)[1];
+      $.ajax({
+          type: "post",
+          url: '/favorite/add',
+          dataType: "json",
+          data: {fleamarket_id: id}
+      }).done(function(json, textStatus, jqXHR) {
+          if(json == 'nologin' || json == 'nodata'){
+              alert(json);
+          }else if(json){
+              alert('登録しました');
+          }else{
+              alert('失敗しました');
+          }
+      }).fail(function(jqXHR, textStatus, errorThrown) {
+          alert('失敗しました');
+      });
+  });
+});
+</script>

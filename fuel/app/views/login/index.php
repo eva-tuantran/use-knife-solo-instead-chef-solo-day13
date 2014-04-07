@@ -22,7 +22,7 @@
         </div>
       </form>
       <ul>
-        <li><a href="#" target="_blank">パスワードを忘れた方はこちら</a></li>
+        <li><a href="/reminder" target="_blank">パスワードを忘れた方はこちら</a></li>
         <li><a href="#" target="_blank">よくあるご質問はこちら</a></li>
       </ul>
     </div>

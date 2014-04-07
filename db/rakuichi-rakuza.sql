@@ -126,6 +126,7 @@ CREATE TABLE IF NOT EXISTS `rakuichi-rakuza`.`fleamarkets` (
   `event_time_start` TIME NOT NULL COMMENT '開催開始時間',
   `event_time_end` TIME NOT NULL COMMENT '開催終了時間',
   `event_status` TINYINT NOT NULL COMMENT '開催状況 1:開催予定,2:予約受付中,3:受付終了,4:開催終了,5:中止',
+  `event_reservation_status` TINYINT NOT NULL COMMENT '予約状況 1.まだまだあります 2.残り僅か！ 3.満員',
   `headline` VARCHAR(127) NULL COMMENT '見出し',
   `information` VARCHAR(255) NULL,
   `description` TEXT NULL COMMENT '説明',

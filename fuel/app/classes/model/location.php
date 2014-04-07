@@ -99,9 +99,8 @@ class Model_Location extends \Orm\Model
      */
     public static function createFieldset()
     {
-        $location = self::forge();
         $fieldset = \Fieldset::forge('location');
-        $fieldset->add_model($location);
+        $fieldset->add_model('Model_Location');
         // @TODO 'required', array('array_key_exists', Config::get('master.prefectures'))
 
         return $fieldset;

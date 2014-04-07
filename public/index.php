@@ -48,6 +48,10 @@ try
 {
 	$response = Request::forge()->execute()->response();
 }
+catch (SystemException $e)
+{
+    $response = $e->response();
+}
 catch (HttpNotFoundException $e)
 {
 	\Request::reset_request(true);

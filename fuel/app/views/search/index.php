@@ -89,18 +89,26 @@
           <dd><?php echo e(@$fleamarket['about_access']);?></dd>
         </dl>
         <ul class="facilitys">
-          <li class="facility1 <?php echo $fleamarket['car_shop_flag'] == \Model_Fleamarket::CAR_SHOP_FLAG_NG ?: 'off';?>">車出店可能</li>
-          <li class="facility2 <?php echo $fleamarket['charge_parking_flag'] == \Model_Fleamarket::CHARGE_PARKING_FLAG_NONE ?: 'off';?>">有料駐車場</li>
-          <li class="facility3 <?php echo $fleamarket['free_parking_flag'] == \Model_Fleamarket::FREE_PARKING_FLAG_NONE ?: 'off';?>">無料駐車場</li>
-          <li class="facility4 <?php echo $fleamarket['rainy_location_flag'] == \Model_Fleamarket::RAINY_LOCATION_FLAG_NONE ?: 'off';?>">雨天開催会場</li>
+          <li class="facility1 <?php echo $fleamarket['car_shop_flag'] != \Model_Fleamarket::CAR_SHOP_FLAG_NG ?: 'off';?>">車出店可能</li>
+          <li class="facility2 <?php echo $fleamarket['charge_parking_flag'] != \Model_Fleamarket::CHARGE_PARKING_FLAG_NONE ?: 'off';?>">有料駐車場</li>
+          <li class="facility3 <?php echo $fleamarket['free_parking_flag'] != \Model_Fleamarket::FREE_PARKING_FLAG_NONE ?: 'off';?>">無料駐車場</li>
+          <li class="facility4 <?php echo $fleamarket['rainy_location_flag'] != \Model_Fleamarket::RAINY_LOCATION_FLAG_NONE ?: 'off';?>">雨天開催会場</li>
         </ul>
         <ul class="detailLink">
           <li><a href="/detail/<?php echo e($fleamarket_id);?>/">詳細情報を見る<i></i></a></li>
         </ul>
         <ul class="rightbutton">
-          <?php if ($is_admin_fleamarket):?>
-          <li class="button makeReservation"><a href="/reservation?fleamarket_id=<?php echo e($fleamarket_id);?>">出店予約をする</a></li>
-          <?php endif;?>
+          <?php
+            if ($is_admin_fleamarket):
+                $reservation_button = '出店予約をする';
+                if ($fleamarket['event_status'] == \Model_Fleamarket::EVENT_STATUS_RECEIPT_END):
+                    $reservation_button = 'キャンセル待ちをする';
+                endif;
+          ?>
+          <li class="button makeReservation"><a href="/reservation?fleamarket_id=<?php echo e($fleamarket_id);?>"><?php echo $reservation_button;?></a></li>
+          <?php
+            endif;
+          ?>
           <li class="button addMylist"><a id="fleamarket_id_<?php echo $fleamarket['fleamarket_id']; ?>" href="#">マイリストに追加</a></li>
         </ul>
       </div>
@@ -258,7 +266,9 @@ $(function() {
           dataType: "json",
           data: {fleamarket_id: id}
       }).done(function(json, textStatus, jqXHR) {
-          if(json){
+          if(json == 'nologin' || json == 'nodata'){
+              alert(json);
+          }else if(json){
               alert('登録しました');
           }else{
               alert('失敗しました');

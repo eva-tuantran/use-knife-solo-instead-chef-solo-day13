@@ -72,6 +72,13 @@ class Model_Fleamarket extends \Orm\Model
     const PICKUP_FLAG_OFF = 0;
     const PICKUP_FLAG_ON = 1;
 
+    /**
+     * 予約状況  1. まだまだあります 2. 残り僅か！ 3. 満員
+     */
+    const EVENT_RESERVATION_STATUS_ENOUGH = 1;
+    const EVENT_RESERVATION_STATUS_FEW    = 2;
+    const EVENT_RESERVATION_STATUS_FULL   = 3;
+
     protected static $_table_name = 'fleamarkets';
 
     protected static $_primary_key = array('fleamarket_id');
@@ -82,15 +89,9 @@ class Model_Fleamarket extends \Orm\Model
         )
     );
     protected static $_properties = array(
-        'fleamarket_id' => array(
-            'form'  => array('type' => false)
-        ),
-        'location_id' => array(
-            'form'  => array('type' => false)
-        ),
-        'group_code' => array(
-            'form'  => array('type' => false)
-        ),
+        'fleamarket_id',
+        'location_id',
+        'group_code',
         'name' => array(
             'label' => 'フリマ名',
             'validation' => array(
@@ -223,6 +224,9 @@ class Model_Fleamarket extends \Orm\Model
         'display_flag' => array(
             'form'  => array('type' => false)
         ),
+        'event_reservation_status' => array(
+            'form'  => array('type' => false)
+        ),
         'created_user' => array(
             'form'  => array('type' => false)
         ),
@@ -275,6 +279,31 @@ class Model_Fleamarket extends \Orm\Model
     public static function getEventStatuses()
     {
         return self::$event_statuses;
+    }
+
+    /**
+     * 指定されたユーザのフリーマーケット情報を取得する
+     *
+     * @access public
+     * @param mixed $user_id ユーザID
+     * @return array
+     * @author ida
+     */
+    public static function findByUserId($fleamarket_id, $user_id)
+    {
+        if (! $fleamarket_id || ! $user_id) {
+            return false;
+        }
+
+        $result =  self::find('first', array(
+            'where' => array(
+                'fleamarket_id' => $fleamarket_id,
+                'created_user' => $user_id,
+                'register_type' => self::REGISTER_TYPE_USER,
+            )
+        ));
+
+        return $result;
     }
 
     /**
@@ -839,6 +868,12 @@ QUERY;
             );
         }
 
+        if (isset($data['region']) && $data['region'] !== '') {
+            $region_prefectures = \Config::get('master.region_prefectures');
+            $prefecture = $region_prefectures[$data['region']];
+            $conditions[] = array('prefecture_id', 'IN', $prefecture);
+        }
+
         if (isset($data['prefecture']) && $data['prefecture'] !== '') {
             $conditions[] = array('prefecture_id', '=', $data['prefecture']);
         }
@@ -907,7 +942,7 @@ QUERY;
 
         if (isset($data['upcomming']) && $data['upcomming']) {
             $conditions[] = array(
-                'DATE_FORMAT(f.event_date, \'%Y-%m-%d\') >= CURDATE()'
+                'f.event_date >= CURDATE()'
             );
         }
 
@@ -981,18 +1016,43 @@ QUERY;
      * Fieldsetオブジェクトの生成
      *
      * @access public
-     * @param
+     * @param is_admin: 管理画面かどうか
      * @return array
      * @author ida
+     * @author kobayasi
      */
-    public static function createFieldset()
+    public static function createFieldset($is_admin = false)
     {
-        $fleamarket = self::forge();
         $fieldset = \Fieldset::forge('fleamarket');
-        $fieldset->add_model($fleamarket);
-        $fieldset->add('reservation_email_confirm')
-            ->add_rule('match_field', 'reservation_email');
+        $fieldset->add_model('Model_Fleamarket');
 
+        if (! $is_admin) {
+            $fieldset->add('reservation_email_confirm')
+                ->add_rule('match_field', 'reservation_email');
+        }
         return $fieldset;
+    }
+
+    /*
+     * event_reservation_status の更新
+     *
+     * @access public
+     * @param
+     * @return
+     * @author kobayasi
+     */
+    public function updateEventReservationStatus()
+    {
+        $is_full = true;
+        foreach ($this->fleamarket_entry_styles as $fleamarket_entry_style) {
+            if (! $fleamarket_entry_style->isNeedWaiting()) {
+                $is_full = false;
+                break;
+            }
+        }
+        if ($is_full) {
+            $this->event_reservation_status = self::EVENT_RESERVATION_STATUS_FULL;
+            $this->save();
+        }
     }
 }
