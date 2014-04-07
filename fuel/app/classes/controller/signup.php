@@ -24,20 +24,6 @@ class Controller_Signup extends Controller_Base_Template
     );
 
     /**
-     * 各アクション共通実行項目
-     *
-     * @todo 既にログインしているユーザに対して、会員IDを発行できるようにするのか確認
-     * @todo タイムアウト時間の確認
-     * @access public
-     * @return void
-     * @author shimma
-     */
-    public function before()
-    {
-        parent::before();
-    }
-
-    /**
      * 初期画面
      *
      * @access public
@@ -138,16 +124,16 @@ class Controller_Signup extends Controller_Base_Template
             $user = Model_User::find($valid_token->user_id);
             $user->activate();
             $valid_token->delete();
-
             $email_template_params = array(
                 'nick_name' => $user->nick_name,
             );
             $user->sendmail('signup/activate', $email_template_params);
-
-            return \Response::redirect('signup/thanks');
         } catch (Exception $e) {
             return \Response::redirect('error/503');
         }
+
+        Auth::force_login($user->user_id);
+        return \Response::redirect('signup/thanks');
     }
 
     /**

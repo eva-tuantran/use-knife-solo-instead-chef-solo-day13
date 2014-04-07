@@ -299,6 +299,161 @@ QUERY;
 
 
     /**
+     * Change a user's password
+     *
+     * @param   string
+     * @param   string
+     * @param   string  username or null for current user
+     * @return  bool
+     *
+     * @todo: 実装中 
+     */
+    public function change_password($old_password, $new_password, $username = null)
+    {
+        try {
+            return (bool) $this->update_user(array('old_password' => $old_password, 'password' => $new_password), $username);
+        } catch (SimpleUserWrongPassword $e) {
+            return false;
+        }
+    }
+
+    /**
+     * Update a user's properties
+     * Note: Username cannot be updated, to update password the old password must be passed as old_password
+     *
+     * @param   Array  properties to be updated including profile fields
+     * @param   string
+     * @return  bool
+     *
+     * @todo: 実装中 
+     */
+    public function update_user($values, $username = null)
+    {
+        $username = $username ?: $this->user['username'];
+        $current_values = \DB::select_array(\Config::get('baseauth.table_columns', array('*')))
+            ->where('username', '=', $username)
+            ->from(\Config::get('baseauth.table_name'))
+            ->execute(\Config::get('baseauth.db_connection'));
+
+        if (empty($current_values))
+        {
+            throw new \SimpleUserUpdateException('Username not found', 4);
+        }
+
+        $update = array();
+        if (array_key_exists('username', $values))
+        {
+            throw new \SimpleUserUpdateException('Username cannot be changed.', 5);
+        }
+        if (array_key_exists('password', $values))
+        {
+            if (empty($values['old_password'])
+                or $current_values->get('password') != $this->hash_password(trim($values['old_password'])))
+            {
+                throw new \SimpleUserWrongPassword('Old password is invalid');
+            }
+
+            $password = trim(strval($values['password']));
+            if ($password === '')
+            {
+                throw new \SimpleUserUpdateException('Password can\'t be empty.', 6);
+            }
+            $update['password'] = $this->hash_password($password);
+            unset($values['password']);
+        }
+        if (array_key_exists('old_password', $values))
+        {
+            unset($values['old_password']);
+        }
+        if (array_key_exists('email', $values))
+        {
+            $email = filter_var(trim($values['email']), FILTER_VALIDATE_EMAIL);
+            if ( ! $email)
+            {
+                throw new \SimpleUserUpdateException('Email address is not valid', 7);
+            }
+            $matches = \DB::select()
+                ->where('email', '=', $email)
+                ->where('id', '!=', $current_values[0]['id'])
+                ->from(\Config::get('baseauth.table_name'))
+                ->execute(\Config::get('baseauth.db_connection'));
+            if (count($matches))
+            {
+                throw new \SimpleUserUpdateException('Email address is already in use', 11);
+            }
+            $update['email'] = $email;
+            unset($values['email']);
+        }
+        if (array_key_exists('group', $values))
+        {
+            if (is_numeric($values['group']))
+            {
+                $update['group'] = (int) $values['group'];
+            }
+            unset($values['group']);
+        }
+        if ( ! empty($values))
+        {
+            $profile_fields = @unserialize($current_values->get('profile_fields')) ?: array();
+            foreach ($values as $key => $val)
+            {
+                if ($val === null)
+                {
+                    unset($profile_fields[$key]);
+                }
+                else
+                {
+                    $profile_fields[$key] = $val;
+                }
+            }
+            $update['profile_fields'] = serialize($profile_fields);
+        }
+
+        $update['updated_at'] = \Date::forge()->get_timestamp();
+
+        $affected_rows = \DB::update(\Config::get('baseauth.table_name'))
+            ->set($update)
+            ->where('username', '=', $username)
+            ->execute(\Config::get('baseauth.db_connection'));
+
+        // Refresh user
+        if ($this->user['username'] == $username)
+        {
+            $this->user = \DB::select_array(\Config::get('baseauth.table_columns', array('*')))
+                ->where('username', '=', $username)
+                ->from(\Config::get('baseauth.table_name'))
+                ->execute(\Config::get('baseauth.db_connection'))->current();
+        }
+
+        return $affected_rows > 0;
+    }
+
+
+    /**
+     * Force login user
+     *
+     * @param   string
+     * @return  bool
+     */
+    public function force_login($user_id)
+    {
+        try {
+            $user = Model_User::find($user_id);
+            $this->user = $user;
+            $this->user->last_login = Date::forge()->format('mysql');
+            $this->user->save();
+            Session::set('current_user', array('user_id' => $this->user->user_id,));
+
+            return true;
+        } catch (Exception $e) {
+            throw SystemException('E001');
+        }
+
+        return false;
+    }
+
+
+    /**
      * oil経由で実行するための関数 [未実装]
      * 法人IDの一括発行をコマンドライン生成できるようになるので、必要になったら実装する
      *
