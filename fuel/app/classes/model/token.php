@@ -59,7 +59,7 @@ class Model_Token extends Orm\Model_Soft
     public static function generate($user_id)
     {
         if (! Model_User::find($user_id)) {
-            throw new Exception('E00001');
+            throw new SystemException('E00001');
         }
 
         $unique_hash = self::getUniqueHash($user_id);
@@ -73,7 +73,7 @@ class Model_Token extends Orm\Model_Soft
             $new_token = self::forge($data);
             $new_token->save();
         } catch (Exception $e) {
-            throw new Exception('E00002');
+            throw new SystemException('E00002');
         }
 
         return $new_token;

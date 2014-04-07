@@ -299,17 +299,55 @@ QUERY;
 
 
     /**
-     * oil経由で実行するための関数 [未実装]
-     * 法人IDの一括発行をコマンドライン生成できるようになるので、必要になったら実装する
+     * Change a user's password
+     * fuel標準のchange_passwordに準拠しているため、usernameのパラメータを利用していません
      *
-     * @todo 実装完了およびテスト
-     * @param mixed $username
-     * @param mixed $password
+     * @param  string
+     * @param  string
+     * @param  string  username or null for current user
+     * @return bool
+     * @author shimma
+     */
+    public function change_password($old_password, $new_password, $username = null)
+    {
+        return $this->user->changePassword($old_password, $new_password);
+    }
+
+    /**
+     * Force login user
+     *
+     * @param   string
+     * @return  bool
+     */
+    public function force_login($user_id)
+    {
+        try {
+            $user = Model_User::find($user_id);
+            $this->user = $user;
+            $this->user->last_login = Date::forge()->format('mysql');
+            $this->user->save();
+            Session::set('current_user', array('user_id' => $this->user->user_id,));
+
+            return true;
+        } catch (Exception $e) {
+            throw SystemException('E001');
+        }
+
+        return false;
+    }
+
+    /**
+     * 新規ユーザ作成(fuelのauth準拠)
+     * oil経由で実行するための関数
+     *
      * @param mixed $email
+     * @param mixed $password
+     * @param mixed $properties ユーザの登録情報
      * @access public
      * @return int
+     * @author shimma
      */
-    public function create_user($username, $password, $email)
+    public function create_user($email, $password, $properties)
     {
         $password = trim($password);
         $email = filter_var(trim($email), FILTER_VALIDATE_EMAIL);
@@ -318,16 +356,8 @@ QUERY;
             throw new Exception('Username, password or email address is not given, or email address is invalid');
         }
 
-        $data = array(
-            'usename'  => '',
-            'email'    => '',
-            'password' => '',
-        );
-
-        $user = Model_User::forge($data);
-
         try {
-            $user->save();
+            Model_User::createNewUser($email, $password, $properties);
         } catch (Exception $e) {
             throw new Exception('create user registry error');
         }

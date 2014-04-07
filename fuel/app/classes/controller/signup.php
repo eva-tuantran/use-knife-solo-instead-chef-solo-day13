@@ -24,20 +24,6 @@ class Controller_Signup extends Controller_Base_Template
     );
 
     /**
-     * 各アクション共通実行項目
-     *
-     * @todo 既にログインしているユーザに対して、会員IDを発行できるようにするのか確認
-     * @todo タイムアウト時間の確認
-     * @access public
-     * @return void
-     * @author shimma
-     */
-    public function before()
-    {
-        parent::before();
-    }
-
-    /**
      * 初期画面
      *
      * @access public
@@ -51,7 +37,7 @@ class Controller_Signup extends Controller_Base_Template
         $this->template->content = View::forge('signup/index');
         $this->template->content->set('prefectures', Config::get('master.prefectures'));
         $this->template->content->set('input', $fieldset->input());
-        $this->template->content->set('error', $fieldset->validation()->error_message());
+        $this->template->content->set('errors', $fieldset->validation()->error_message());
     }
 
     /**
@@ -91,29 +77,26 @@ class Controller_Signup extends Controller_Base_Template
     public function post_verify()
     {
         if (! Security::check_token()) {
-            return \Response::redirect('errors/doubletransmission');
+            throw new SystemException('E00002');
         }
 
         $fieldset = self::createFieldset();
-        $user_data = array_filter($fieldset->validation()->validated(), 'strlen');
+        $properties = array_filter($fieldset->validation()->validated(), 'strlen');
 
         try {
-            $new_user = Model_User::forge($user_data);
-            $new_user->setPassword($user_data['password']);
-            $new_user->save();
-
+            $new_user = Model_User::createNewUser($properties['email'], $properties['password'], $properties);
             $new_token = Model_Token::generate($new_user->user_id);
             $email_template_params = array(
                 'nick_name'    => $new_user->nick_name,
                 'activate_url' => $new_token->getActivationUrl(),
             );
             $new_user->sendmail('signup/verify', $email_template_params);
-        } catch (Orm\ValidationFailed $e) {
-            return \Response::redirect('errors/timeout');
+        } catch (Exception $e) {
+            throw $e;
         }
 
         $this->template->content = View::forge('signup/verify');
-        $this->template->content->set('user_input', $user_data);
+        $this->template->content->set('user_input', $properties);
     }
 
     /**
@@ -138,16 +121,16 @@ class Controller_Signup extends Controller_Base_Template
             $user = Model_User::find($valid_token->user_id);
             $user->activate();
             $valid_token->delete();
-
             $email_template_params = array(
                 'nick_name' => $user->nick_name,
             );
             $user->sendmail('signup/activate', $email_template_params);
-
-            return \Response::redirect('signup/thanks');
         } catch (Exception $e) {
             return \Response::redirect('error/503');
         }
+
+        \Auth::force_login($user->user_id);
+        return \Response::redirect('signup/thanks');
     }
 
     /**
