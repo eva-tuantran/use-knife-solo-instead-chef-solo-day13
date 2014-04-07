@@ -354,7 +354,6 @@ class Model_User extends Orm\Model_Soft
         ),
     );
 
-
     /**
      * 登録ステータス 0:仮登録,1:本登録.2:退会,3:強制退会
      *
@@ -364,11 +363,9 @@ class Model_User extends Orm\Model_Soft
     const REGISTER_STATUS_STOPPED     = 2;
     const REGISTER_STATUS_BANNED      = 3;
 
-
     /**
      * 新しいパスワードをセットします
      * パスワードの強制的な上書きなどに利用します。
-     * ただし基本的にFuelのAuthで用意されているので、そちらを活用します。
      *
      * @param string $new_password 新パスワード
      * @access public
@@ -377,8 +374,42 @@ class Model_User extends Orm\Model_Soft
      */
     public function setPassword($new_password)
     {
-        $this->password = \Auth::hash_password($new_password);;
+        try {
+            $this->password = \Auth::hash_password($new_password);
+            $this->save();
+
+            return true;
+        } catch (Exception $e) {
+            return false;
+        }
     }
+
+
+    public function changePassword($old_password, $new_password)
+    {
+        if ($this->password == \Auth::hash_password($old_password)) {
+            return $this->setPassword($new_password);
+        }
+
+        return false;
+    }
+
+    public static function createNewUser($email, $password, $properties)
+    {
+        $password = trim($password);
+        $email = filter_var(trim($email), FILTER_VALIDATE_EMAIL);
+
+        try {
+            $new_user = Model_User::forge($properties);
+            $new_user->email = $email;
+            $new_user->setPassword(trim($password));
+
+            return $new_user;
+        } catch (Exception $e) {
+            throw new SystemException('E00001');
+        }
+    }
+
 
     /**
      * getBaseFieldset

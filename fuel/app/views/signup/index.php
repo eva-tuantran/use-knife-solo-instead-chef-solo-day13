@@ -18,6 +18,8 @@
   <!-- form -->
   <div id="form" class="container">
 
+<?php echo var_dump($error); ?>
+
     <div class="box clearfix">
       <h3>お客様情報入力欄</h3>
       <form class="form-horizontal" action="/signup/confirm" method="POST">
