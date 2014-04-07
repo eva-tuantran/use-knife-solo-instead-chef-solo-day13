@@ -49,7 +49,6 @@ class Model_Token extends Orm\Model_Soft
      * 特定のユーザIDに対する認証用トークンを発行します。
      * 成功時にはModel_Tokenオブジェクトをリターンします。
      *
-     * @todo エラーのハンドリングについて番号含めて調整
      * @param int $user_id
      * @static
      * @access public
@@ -59,7 +58,7 @@ class Model_Token extends Orm\Model_Soft
     public static function generate($user_id)
     {
         if (! Model_User::find($user_id)) {
-            throw new SystemException('E00001');
+            throw new SystemException('該当ユーザが見つかりません');
         }
 
         $unique_hash = self::getUniqueHash($user_id);
@@ -73,7 +72,7 @@ class Model_Token extends Orm\Model_Soft
             $new_token = self::forge($data);
             $new_token->save();
         } catch (Exception $e) {
-            throw new SystemException('E00002');
+            throw new SystemException('トークン作成に失敗しました');
         }
 
         return $new_token;
@@ -104,15 +103,24 @@ class Model_Token extends Orm\Model_Soft
      * @access public
      * @return Model_Token $token
      * @author shimma
+     *
+     * @todo 日本語で書かれているExceptionを分かるように記述を変更
      */
     public static function findByUserId($user_id)
     {
         $token = self::find('last', array(
             'where' => array(
                 array('user_id' => $user_id),
-                array('expired_at', '>', Date::forge()->format('mysql')),
             ),
         ));
+
+        if (! $token) {
+            throw new SystemException('該当ユーザのトークンが発行されておりません');
+        }
+
+        if ($token->expired_at < Date::forge()->format('mysql')) {
+            throw new SystemException('トークンが有効期限切れです');
+        }
 
         return $token;
     }
@@ -125,15 +133,24 @@ class Model_Token extends Orm\Model_Soft
      * @access public
      * @return Model_Token $token
      * @author shimma
+     *
+     * @todo 日本語で書かれているExceptionを分かるように記述を変更
      */
     public static function findByHash($hash)
     {
         $token = self::find('last', array(
             'where' => array(
                 array('hash' => $hash),
-                array('expired_at', '>', Date::forge()->format('mysql')),
             ),
         ));
+
+        if (! $token) {
+            throw new SystemException('トークンが存在しておりません');
+        }
+
+        if ($token->expired_at < Date::forge()->format('mysql')) {
+            throw new SystemException('トークンが有効期限切れです');
+        }
 
         return $token;
     }
