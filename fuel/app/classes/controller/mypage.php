@@ -44,12 +44,15 @@ class Controller_Mypage extends Controller_Base_Template
      * @access public
      * @return void
      * @author shimma
+     * 
+     * @todo メインページのテンプレートからJSを分離
      */
     public function action_index()
     {
         Asset::js('jquery.carouFredSel.js', array(), 'add_js');
         $view_model = ViewModel::forge('mypage/index');
         $view_model->set('prefectures', Config::get('master.prefectures'), false);
+        $view_model->set('regions', Config::get('master.regions'), false);
 
         $view_model->set('entries', $this->login_user->getEntries(1, 3));
         $view_model->set('mylists', $this->login_user->getFavorites(1, 3));
