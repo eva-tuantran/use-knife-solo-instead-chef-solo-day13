@@ -86,6 +86,9 @@ class Model_Fleamarket extends \Orm\Model
     protected static $_has_many = array(
         'fleamarket_entry_styles' => array(
             'key_from' => 'fleamarket_id',
+        ),
+        'fleamarket_images' => array(
+            'key_from' => 'fleamarket_id',
         )
     );
     protected static $_properties = array(
