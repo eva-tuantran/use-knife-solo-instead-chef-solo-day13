@@ -2,7 +2,7 @@
 
   <!-- mypageProfile -->
   <div id="calendar" class="col-sm-3">
-    <div class="box clearfix">
+    <div class="box clearfix" id="calendar-search">
     <?php echo $calendar; ?>
     </div>
 
@@ -368,10 +368,10 @@ var Calendar = {
       url: url,
       dataType: "html"
     }).done(function(html, textStatus, jqXHR) {
-      $("#calendar").empty();
-      $("#calendar").html(html);
-      //$("#calendar-search").empty();
-      //$("#calendar-search").html(html);
+      // $("#calendar").empty();
+      // $("#calendar").html(html);
+      $("#calendar-search").empty();
+      $("#calendar-search").html(html);
     }).fail(function(jqXHR, textStatus, errorThrown) {
     }).always(function() {
     });
