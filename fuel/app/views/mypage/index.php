@@ -62,22 +62,27 @@
             </div>
             <div id="searchSelect" class="col-md-3">
               <div class="form-group">
-                <select class="form-control">
-                  <option>エリア</option>
-                  <option label="北海道・東北" value="1">北海道・東北</option>
-                  <option label="関東" value="2">関東</option>
-                  <option label="中部" value="3">中部</option>
-                  <option label="近畿" value="4">近畿</option>
-                  <option label="中国・四国" value="5">中国・四国</option>
-                  <option label="九州・沖縄" value="6">九州・沖縄</option>
+                <select id="select_region" class="form-control" name="conditions[region]">
+                  <option value="">エリア</option>
+                  <?php
+                    foreach ($regions as $region_id => $name):
+                  ?>
+                    <option value="<?php echo $region_id;?>"><?php echo $name;?></option>
+                  <?php
+                    endforeach;
+                  ?>
                 </select>
               </div>
               <div class="form-group">
-                <select class="form-control" name="conditions[prefecture]">
+                <select id="select_prefecture" class="form-control" name="conditions[prefecture]">
                   <option value="">都道府県</option>
-                  <?php foreach ($prefectures as $prefecture_id => $name): ?>
-                  <option value="<?php echo $prefecture_id;?>"><?php echo $name;?></option>
-                  <?php endforeach; ?>
+                  <?php
+                    foreach ($prefectures as $prefecture_id => $name):
+                  ?>
+                    <option value="<?php echo $prefecture_id;?>"><?php echo $name;?></option>
+                  <?php
+                    endforeach;
+                  ?>
                 </select>
               </div>
             </div>
@@ -345,6 +350,7 @@ $('.fleamarket_cancel').click(function() {
 $(function() {
   Calendar.init();
   Carousel.start();
+  Search.init();
 });
 
 var Calendar = {
@@ -374,6 +380,33 @@ var Calendar = {
       $("#calendar-search").html(html);
     }).fail(function(jqXHR, textStatus, errorThrown) {
     }).always(function() {
+    });
+  }
+};
+
+var Search = {
+  init: function() {
+    $("#select_region").on("change", function(evt) {
+      Search.changeRegion();
+    });
+  },
+  changeRegion: function() {
+    $("#select_prefecture").prop("selectedIndex", 0);
+    var region_id = $("#select_region").val();
+    $.ajax({
+      type: "get",
+      url: '/search/prefecture',
+      dataType: "json",
+      data: {region_id: region_id}
+    }).done(function(json, textStatus, jqXHR) {
+      if (json) {
+        $("#select_prefecture").empty();
+        $("#select_prefecture").append('<option value="">都道府県</option>');
+        $.each(json, function(key, value) {
+          $("#select_prefecture").append('<option value="' + key + '">' + value + '</option>');
+        });
+      }
+    }).fail(function(jqXHR, textStatus, errorThrown) {
     });
   }
 };
