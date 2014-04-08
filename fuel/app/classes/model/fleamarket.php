@@ -86,6 +86,9 @@ class Model_Fleamarket extends \Orm\Model
     protected static $_has_many = array(
         'fleamarket_entry_styles' => array(
             'key_from' => 'fleamarket_id',
+        ),
+        'fleamarket_images' => array(
+            'key_from' => 'fleamarket_id',
         )
     );
     protected static $_properties = array(
@@ -381,6 +384,7 @@ SELECT
     f.reservation_end,
     f.reservation_tel,
     f.reservation_email,
+    f.event_reservation_status,
     f.website,
     f.shop_fee_flag,
     f.car_shop_flag,
@@ -526,6 +530,7 @@ SELECT
     f.reservation_end,
     f.reservation_tel,
     f.reservation_email,
+    f.event_reservation_status,
     f.website,
     f.shop_fee_flag,
     f.car_shop_flag,
@@ -1016,17 +1021,20 @@ QUERY;
      * Fieldsetオブジェクトの生成
      *
      * @access public
-     * @param
+     * @param is_admin: 管理画面かどうか
      * @return array
      * @author ida
+     * @author kobayasi
      */
-    public static function createFieldset()
+    public static function createFieldset($is_admin = false)
     {
         $fieldset = \Fieldset::forge('fleamarket');
         $fieldset->add_model('Model_Fleamarket');
-        $fieldset->add('reservation_email_confirm')
-            ->add_rule('match_field', 'reservation_email');
 
+        if (! $is_admin) {
+            $fieldset->add('reservation_email_confirm')
+                ->add_rule('match_field', 'reservation_email');
+        }
         return $fieldset;
     }
 

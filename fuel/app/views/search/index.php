@@ -53,19 +53,22 @@
     <div class="box result <?php echo $status_class;?> <?php echo $resultPush;?> clearfix">
       <h3>
           <?php if ($is_admin_fleamarket):?><strong>楽市楽座主催</strong>&nbsp;<?php endif;?>
-          <a href="/detail/<?php echo e($fleamarket['fleamarket_id']);?>/">
+          <a href="/detail/<?php echo e($fleamarket['fleamarket_id']);?>">
               <?php echo e(date('Y年n月j日', strtotime($fleamarket['event_date'])));?>(<?php echo $week_list[date('w', strtotime($fleamarket['event_date']))];?>)&nbsp;
               <?php echo e($fleamarket['name']);?>
           </a>
       </h3>
-      <div class="resultPhoto"><a href="/detail/<?php echo e($fleamarket_id);?>/"><img src="/assets/img/noimage.jpg" class="img-rounded"></a></div>
+      <div class="resultPhoto"><a href="/detail/<?php echo e($fleamarket_id);?>"><img src="/assets/img/noimage.jpg" class="img-rounded"></a></div>
       <div class="resultDetail">
         <dl class="col-md-6">
           <dt>出店数</dt>
-          <dd><?php if ($total_booth > 0):
-              echo e($total_booth . '店');
-          endif;
-        ?></dd>
+          <dd><?php
+            if ($total_booth > 0):
+                echo e($total_booth . '店');
+            else:
+                echo '-';
+            endif;
+          ?></dd>
         </dl>
         <dl class="col-md-6">
           <dt>開催時間</dt>
@@ -78,15 +81,33 @@
         </dl>
         <dl class="col-md-6">
           <dt>出店形態</dt>
-          <dd><?php echo e($entry_style_string);?></dd>
+          <dd><?php
+            if ($entry_style_string):
+                echo e($entry_style_string);
+            else:
+                echo '-';
+            endif;
+          ?></dd>
         </dl>
         <dl class="col-md-6">
           <dt>出店料金</dt>
-          <dd><?php echo e($shop_fee_string); ?></dd>
+          <dd><?php
+            if ($shop_fee_string):
+                echo e($shop_fee_string);
+            else:
+                echo '-';
+            endif;
+          ?></dd>
         </dl>
         <dl class="col-md-11">
           <dt>交通</dt>
-          <dd><?php echo e(@$fleamarket['about_access']);?></dd>
+          <dd><?php
+            if (isset($fleamarket['about_access']) && $fleamarket['about_access'] != ''):
+                echo e($fleamarket['about_access']);
+            else:
+                echo '-';
+            endif;
+          ?></dd>
         </dl>
         <ul class="facilitys">
           <li class="facility1 <?php echo $fleamarket['car_shop_flag'] != \Model_Fleamarket::CAR_SHOP_FLAG_NG ?: 'off';?>">車出店可能</li>
@@ -95,13 +116,13 @@
           <li class="facility4 <?php echo $fleamarket['rainy_location_flag'] != \Model_Fleamarket::RAINY_LOCATION_FLAG_NONE ?: 'off';?>">雨天開催会場</li>
         </ul>
         <ul class="detailLink">
-          <li><a href="/detail/<?php echo e($fleamarket_id);?>/">詳細情報を見る<i></i></a></li>
+          <li><a href="/detail/<?php echo e($fleamarket_id);?>">詳細情報を見る<i></i></a></li>
         </ul>
         <ul class="rightbutton">
           <?php
             if ($is_admin_fleamarket):
                 $reservation_button = '出店予約をする';
-                if ($fleamarket['event_status'] == \Model_Fleamarket::EVENT_STATUS_RECEIPT_END):
+                if ($fleamarket['event_reservation_status'] == \Model_Fleamarket::EVENT_RESERVATION_STATUS_FULL):
                     $reservation_button = 'キャンセル待ちをする';
                 endif;
           ?>
@@ -186,6 +207,7 @@
           </div>
         </fieldset>
       </div>
+<!--
       <div class="box clearfix">
         <dl>
           <dt>期間から選択</dt>
@@ -222,6 +244,7 @@
           <dd><a href="#">その他主催</a></dd>
         </dl>
       </div>
+-->
     </div>
   </form>
 </div>
@@ -258,6 +281,7 @@ $(function() {
   });
 
   $(".addMylist a").click(function(){
+      evt.preventDefault();
       var id = $(this).attr('id');
       id = id.match(/^fleamarket_id_(\d+)/)[1];
       $.ajax({

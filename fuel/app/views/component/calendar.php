@@ -18,7 +18,7 @@
       <?php foreach($week as $day): ?>
       <td>
         <?php if (isset($day['is_event']) && $day['is_event'] === true):?>
-          <a href="/search/1/?d=<?php echo $day['date'];?>"><?php echo $day['day'];?></a>
+          <a href="/search/1?d=<?php echo $day['date'];?>"><?php echo $day['day'];?></a>
         <?php else:?>
           <?php echo $day['day']; ?>
         <?php endif;?>

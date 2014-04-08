@@ -2,7 +2,7 @@
 
   <!-- mypageProfile -->
   <div id="calendar" class="col-sm-3">
-    <div class="box clearfix">
+    <div class="box clearfix" id="calendar-search">
     <?php echo $calendar; ?>
     </div>
 
@@ -104,7 +104,6 @@
     <ul class="nav nav-tabs hidden-xs">
       <li class="active"><a href="#latest" data-toggle="tab">最新の開催</a></li>
       <li><a href="#ranking" data-toggle="tab">人気開催ランキング</a></li>
-      <li><a href="#check" data-toggle="tab">最近チェックしたフリマ</a></li>
     </ul>
     <ul class="nav nav-tabs visible-xs">
       <li class="active"><a href="#latest" data-toggle="tab">最新</a></li>
@@ -133,51 +132,6 @@
           </div>
           <!-- /ranking -->
 
-
-          <!-- check -->
-          <div class="tab-pane" id="check">
-            <!-- result -->
-            <div class="result clearfix">
-              <h3><a href="#">2014年3年8日(土)　東京都　★無料フリマ★チャリティフリーマーケットin太田</a></h3>
-              <div class="resultPhoto"><a href="#"><img src="http://dummyimage.com/200x150/ccc/fff.jpg" class="img-rounded"></a></div>
-              <div class="resultDetail">
-                <dl class="col-md-3">
-                  <dt>出店数</dt>
-                  <dd>60店</dd>
-                </dl>
-                <dl class="col-md-3">
-                  <dt>開催時間</dt>
-                  <dd>9時〜14時</dd>
-                </dl>
-                <dl class="col-md-3">
-                  <dt>出店形態</dt>
-                  <dd>車出店</dd>
-                </dl>
-                <dl class="col-md-3">
-                  <dt>出店料金</dt>
-                  <dd>無料</dd>
-                </dl>
-                <dl class="col-md-11">
-                  <dt>交通</dt>
-                  <dd>国分寺駅から京王バス（府中駅行き）藤塚バス停下車</dd>
-                </dl>
-                <ul class="facilitys">
-                  <li class="facility1">車出店可能</li>
-                  <li class="facility2">有料駐車場</li>
-                  <li class="facility3">無料駐車場</li>
-                  <li class="facility4">雨天開催会場</li>
-                </ul>
-                <ul class="detailLink">
-                  <li><a href="#">詳細情報を見る<i></i></a></li>
-                </ul>
-                <ul class="rightbutton">
-                  <li class="button makeReservation"><a href="#"><i></i>出店予約をする</a></li>
-                </ul>
-              </div>
-            </div>
-            <!-- /result -->
-          </div>
-          <!-- /check -->
         </div>
       </div>
     </div>
@@ -227,10 +181,10 @@
                   <dd><?php echo e($entry['about_access']);?></dd>
                 </dl>
                 <ul class="facilitys">
-                  <li class="facility1 <?php echo $entry['car_shop_flag'] == \Model_Fleamarket::CAR_SHOP_FLAG_NG ? 'off': '';?>">車出店可能</li>
-                  <li class="facility2 <?php echo $entry['charge_parking_flag'] == \Model_Fleamarket::CHARGE_PARKING_FLAG_NONE ? 'off': '';?>">有料駐車場</li>
-                  <li class="facility3 <?php echo $entry['free_parking_flag'] == \Model_Fleamarket::FREE_PARKING_FLAG_NONE ? 'off': '';?>">無料駐車場</li>
-                  <li class="facility4 <?php echo $entry['rainy_location_flag'] == \Model_Fleamarket::RAINY_LOCATION_FLAG_NONE ? 'off': '';?>">雨天開催会場</li>
+                  <li class="facility1 <?php $flagcheck($entry['car_shop_flag']) ?>"      >車出店可能</li>
+                  <li class="facility2 <?php $flagcheck($entry['charge_parking_flag']) ?>">有料駐車場</li>
+                  <li class="facility3 <?php $flagcheck($entry['free_parking_flag']) ?>"  >無料駐車場</li>
+                  <li class="facility4 <?php $flagcheck($entry['rainy_location_flag']) ?>">雨天開催会場</li>
                 </ul>
                 <ul class="detailLink">
                   <li><a href="/detail/<?php echo $entry['fleamarket_id'] ?>">詳細情報を見る<i></i></a></li>
@@ -281,10 +235,10 @@
                 <dd><?php echo e($mylist['about_access']);?></dd>
               </dl>
               <ul class="facilitys">
-                <li class="facility1 <?php echo $mylist['car_shop_flag'] == \Model_Fleamarket::CAR_SHOP_FLAG_NG ? 'off': '';?>">車出店可能</li>
-                <li class="facility2 <?php echo $mylist['charge_parking_flag'] == \Model_Fleamarket::CHARGE_PARKING_FLAG_NONE ? 'off': '';?>">有料駐車場</li>
-                <li class="facility3 <?php echo $mylist['free_parking_flag'] == \Model_Fleamarket::FREE_PARKING_FLAG_NONE ? 'off': '';?>">無料駐車場</li>
-                <li class="facility4 <?php echo $mylist['rainy_location_flag'] == \Model_Fleamarket::RAINY_LOCATION_FLAG_NONE ? 'off': '';?>">雨天開催会場</li>
+                <li class="facility1 <?php $flagcheck($mylist['car_shop_flag'])?>"      >車出店可能</li>
+                <li class="facility2 <?php $flagcheck($mylist['charge_parking_flag'])?>">有料駐車場</li>
+                <li class="facility3 <?php $flagcheck($mylist['free_parking_flag'])?>"  >無料駐車場</li>
+                <li class="facility4 <?php $flagcheck($mylist['rainy_location_flag'])?>">雨天開催会場</li>
               </ul>
               <ul class="detailLink">
                 <li><a href="/detail/<?php echo $mylist['fleamarket_id'] ?>">詳細情報を見る<i></i></a></li>
@@ -342,10 +296,10 @@
             <dd><?php echo e($myfleamarket['about_access']);?></dd>
           </dl>
           <ul class="facilitys">
-            <li class="facility1 <?php echo $myfleamarket['car_shop_flag'] == \Model_Fleamarket::CAR_SHOP_FLAG_NG ? 'off': '';?>">車出店可能</li>
-            <li class="facility2 <?php echo $myfleamarket['charge_parking_flag'] == \Model_Fleamarket::CHARGE_PARKING_FLAG_NONE ? 'off': '';?>">有料駐車場</li>
-            <li class="facility3 <?php echo $myfleamarket['free_parking_flag'] == \Model_Fleamarket::FREE_PARKING_FLAG_NONE ? 'off': '';?>">無料駐車場</li>
-            <li class="facility4 <?php echo $myfleamarket['rainy_location_flag'] == \Model_Fleamarket::RAINY_LOCATION_FLAG_NONE ? 'off': '';?>">雨天開催会場</li>
+            <li class="facility1 <?php $flagcheck($myfleamarket['car_shop_flag'])?>"      >車出店可能</li>
+            <li class="facility2 <?php $flagcheck($myfleamarket['charge_parking_flag'])?>">有料駐車場</li>
+            <li class="facility3 <?php $flagcheck($myfleamarket['free_parking_flag'])?>"  >無料駐車場</li>
+            <li class="facility4 <?php $flagcheck($myfleamarket['rainy_location_flag'])?>">雨天開催会場</li>
           </ul>
           <ul class="detailLink">
             <li><a href="/detail/<?php echo $myfleamarket['fleamarket_id'] ?>">詳細情報を見る<i></i></a></li>
@@ -414,10 +368,10 @@ var Calendar = {
       url: url,
       dataType: "html"
     }).done(function(html, textStatus, jqXHR) {
-      $("#calendar").empty();
-      $("#calendar").html(html);
-      //$("#calendar-search").empty();
-      //$("#calendar-search").html(html);
+      // $("#calendar").empty();
+      // $("#calendar").html(html);
+      $("#calendar-search").empty();
+      $("#calendar-search").html(html);
     }).fail(function(jqXHR, textStatus, errorThrown) {
     }).always(function() {
     });

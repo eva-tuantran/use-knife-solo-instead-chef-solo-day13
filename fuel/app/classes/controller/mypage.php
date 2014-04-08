@@ -93,25 +93,6 @@ class Controller_Mypage extends Controller_Base_Template
         $this->setLazyRedirect('/mypage');
         $this->template->content = View::forge('mypage/cancel');
    }
-
-    /**
-     * パスワード変更ページ
-     *
-     * @access public
-     * @return void
-     * @author shimma
-     *
-     * @todo 作りかけ
-     */
-    public function action_password()
-    {
-        $fieldset = Fieldset::forge();
-        $fieldset->add_model('Model_User')->populate($this->login_user);
-
-        $this->template->content = View::forge('mypage/index');
-        $this->template->content->set('dump', $fieldset->build('test'), false);
-    }
-
     /**
      * ユーザのアカウント情報の変更ページ
      *
@@ -135,6 +116,7 @@ class Controller_Mypage extends Controller_Base_Template
         $this->template->content->set('user_account_form', $fieldset->build('/mypage/save'), false);
     }
 
+
     /**
      * 変更内容保存
      *
@@ -147,7 +129,7 @@ class Controller_Mypage extends Controller_Base_Template
      */
     public function post_save()
     {
-        $fieldset = Fieldset::forge()->add_model('Model_User');
+        $fieldset = Model_User::createFieldset();
         $fieldset->repopulate();
         $validation = $fieldset->validation();
 
@@ -164,5 +146,84 @@ class Controller_Mypage extends Controller_Base_Template
 
         return \Response::redirect('/mypage/account');
     }
+
+    /**
+     * パスワード変更ページ
+     *
+     * @access public
+     * @return void
+     * @author shimma
+     */
+    public function action_password()
+    {
+        $fieldset = $this->createFieldsetPassword();
+
+        $this->template->content = View::forge('mypage/password');
+        $this->template->content->set('input', $fieldset->input());
+        $this->template->content->set('error', $fieldset->validation()->error_message());
+    }
+
+    /**
+     * パスワード変更ページ変更処理
+     *
+     * @access public
+     * @return void
+     * @author shimma
+     */
+    public function post_passwordchange()
+    {
+        $fieldset = $this->createFieldsetPassword();
+
+        if (! Security::check_token()) {
+            Session::set_flash('status_code', \STATUS_PASSWORD_CHANGE_TIMEOUT);
+            return \Response::redirect('/mypage/password');
+        }
+
+        $validation = $fieldset->validation();
+        Session::set_flash('mypage.password.fieldset', $fieldset);
+
+        if (! $validation->run()) {
+            Session::set_flash('status_code', \STATUS_PASSWORD_CHANGE_FAILED);
+            return \Response::redirect('/mypage/password');
+        }
+
+        try {
+            if (! Auth::change_password($fieldset->input('password'), $fieldset->input('new_password'))) {
+                Session::set_flash('status_code', \STATUS_PASSWORD_CHANGE_FAILED);
+                return \Response::redirect('/mypage/password');
+            } else {
+                Session::set_flash('status_code', \STATUS_PASSWORD_CHANGE_SUCCESS);
+                return \Response::redirect('/mypage');
+            }
+        } catch (Exception $e) {
+            return \Response::redirect('errors/forbidden');
+        }
+    }
+
+
+    public function createFieldsetPassword()
+    {
+        $fieldset = Session::get_flash('mypage.password.fieldset');
+
+        if (! $fieldset) {
+            $fieldset = \Fieldset::forge('mypage.password');
+
+            $fieldset->add('password', 'Passowrd')
+                ->add_rule('required')
+                ->add_rule('min_length', '6')
+                ->add_rule('max_length', '50');
+            $fieldset->add('new_password', 'New Passowrd')
+                ->add_rule('required')
+                ->add_rule('min_length', '6')
+                ->add_rule('max_length', '50');
+            $fieldset->add('new_password2', 'New Passowrd2')
+                ->add_rule('required')
+                ->add_rule('match_field', 'new_password');
+        }
+
+        $fieldset->repopulate();
+        return $fieldset;
+    }
+
 
 }
