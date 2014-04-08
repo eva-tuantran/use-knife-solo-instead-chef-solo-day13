@@ -13,5 +13,6 @@ return array(
     'reserved_booth' => ':label が予約できる数を超えました',
     'valid_time'     => ':label は正しくありません',
     'unique_email'   => ':label は既に登録されています',
-    'valid_zip'      => ':label は正しい郵便番号ではありません',
+    'valid_zip'      => ':label は正しくありません',
+    'valid_kana'     => ':label にカタカナ以外の文字列が含まれています',
 );

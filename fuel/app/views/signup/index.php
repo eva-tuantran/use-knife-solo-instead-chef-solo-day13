@@ -26,21 +26,23 @@
           <div class="col-sm-10">
             <input type="text" class="form-control" id="inputName_last" placeholder="姓を入力" name="last_name" style="width: 10em; float: left; margin-right: 10px;" value="<?php echo $input['last_name'] ?>" />
             <input type="text" class="form-control" id="inputName_first" placeholder="名を入力" name="first_name" style="width: 10em;" value="<?php echo $input['first_name'] ?>" />
-            <?php if (isset($errors['last_name'])) { echo $errors['last_name'];  } ?>
-            <?php if (isset($errors['first_name'])) { echo $errors['first_name'];  } ?>
+            <?php if (isset($errors['last_name']) || isset($errors['first_name'])): ?>
+                名前は必須入力です
+            <?php endif; ?>
           </div>
         </div>
         <div class="form-group">
-          <label class="col-sm-2 control-label" for="inputPhonetic">フリガナ</label>
+          <label class="col-sm-2 control-label" for="inputPhonetic">フリガナ *</label>
           <div class="col-sm-10">
             <input type="text" class="form-control" id="inputPhonetic_last" placeholder="セイを入力" name="last_name_kana" style="width: 10em; float: left; margin-right: 10px;" value="<?php echo $input['last_name_kana'] ?>"/>
             <input type="text" class="form-control" id="inputPhonetic_first" placeholder="メイを入力" name="first_name_kana" style="width: 10em;" value="<?php echo $input['first_name_kana'] ?>"/>
-            <?php if (isset($errors['last_name_kana'])) { echo $errors['last_name_kana'];  } ?>
-            <?php if (isset($errors['first_name_kana'])) { echo $errors['first_name_kana'];  } ?>
+            <?php if (isset($errors['last_name_kana']) || isset($errors['first_name_kana'])): ?>
+                正しいカナを入力して下さい
+            <?php endif; ?>
           </div>
         </div>
         <div class="form-group form-address">
-          <label class="col-sm-2 control-label" for="inputAddress">ご住所</label>
+          <label class="col-sm-2 control-label" for="inputAddress">ご住所 *</label>
           <div class="col-sm-10">
             <input type="text" class="form-control" id="inputZip" placeholder="例）123-4567" name="zip" value="<?php echo $input['zip'] ?>" />
             <button type="submit" class="btn btn-default" onclick="AjaxZip3.zip2addr('zip','','prefecture_id','address'); return false;">住所を検索</button>

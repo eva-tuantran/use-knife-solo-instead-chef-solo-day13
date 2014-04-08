@@ -330,7 +330,7 @@ QUERY;
 
             return true;
         } catch (Exception $e) {
-            throw SystemException('E001');
+            throw new SystemException('E001');
         }
 
         return false;

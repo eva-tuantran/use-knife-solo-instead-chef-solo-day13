@@ -126,7 +126,7 @@ class Controller_Signup extends Controller_Base_Template
             );
             $user->sendmail('signup/activate', $email_template_params);
         } catch (Exception $e) {
-            return \Response::redirect('error/503');
+            throw $e;
         }
 
         \Auth::force_login($user->user_id);

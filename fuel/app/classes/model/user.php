@@ -52,6 +52,8 @@ class Model_User extends Orm\Model_Soft
             'validation' => array(
                 'trim',
                 'max_length' => array(10),
+                'required',
+                'valid_kana',
             ),
             'form' => array(
                 'type' => 'text'
@@ -62,6 +64,8 @@ class Model_User extends Orm\Model_Soft
             'validation' => array(
                 'trim',
                 'max_length' => array(10),
+                'required',
+                'valid_kana',
             ),
             'form' => array(
                 'type' => 'text'
@@ -110,6 +114,7 @@ class Model_User extends Orm\Model_Soft
             'label' => '郵便番号',
             'validation' => array(
                 'trim',
+                'required',
                 'valid_zip',
                 'max_length' => array(10),
             ),
@@ -151,7 +156,6 @@ class Model_User extends Orm\Model_Soft
             'validation' => array(
                 'trim',
                 'max_length' => array(10),
-                'valid_tel',
             ),
         ),
         'email' => array(
@@ -367,6 +371,17 @@ class Model_User extends Orm\Model_Soft
     }
 
 
+    /**
+     * パスワード変更関数
+     *
+     * @param mixed $email
+     * @param mixed $password
+     * @param mixed $properties
+     * @static
+     * @access public
+     * @return void
+     * @author shimma
+     */
     public function changePassword($old_password, $new_password)
     {
         if ($this->password == \Auth::hash_password($old_password)) {
@@ -376,6 +391,19 @@ class Model_User extends Orm\Model_Soft
         return false;
     }
 
+    /**
+     * createNewUser
+     *
+     * @param mixed $email
+     * @param mixed $password
+     * @param mixed $properties
+     * @static
+     * @access public
+     * @return void
+     * @author shimma
+     *
+     * @todo 日本語で書かれているExceptionを分かるように記述を変更
+     */
     public static function createNewUser($email, $password, $properties)
     {
         $password = trim($password);
@@ -388,7 +416,7 @@ class Model_User extends Orm\Model_Soft
 
             return $new_user;
         } catch (Exception $e) {
-            throw new SystemException('E00001');
+            throw new SystemException('ユーザ作成に失敗しました');
         }
     }
 
@@ -441,11 +469,16 @@ class Model_User extends Orm\Model_Soft
      * @return bool
      * @author shimma
      *
+     * @todo 日本語のエラー表示を正しいものに変換する
      */
     public function sendmail($template_name, $params = array())
     {
-        $email = new \Model_Email();
-        $email->sendMailByParams($template_name, $params, $this->email);
+        try {
+            $email = new \Model_Email();
+            $email->sendMailByParams($template_name, $params, $this->email);
+        } catch (Exception $e) {
+            throw new SystemException('ユーザ宛のメール送信に失敗した可能性があります');
+        }
     }
 
 
@@ -544,11 +577,17 @@ class Model_User extends Orm\Model_Soft
      * @access public
      * @return void
      * @author shimma
+     *
+     * @todo エラーの日本語表記を正しいエラーコードに変換する
      */
     public function activate()
     {
-        $this->register_status = self::REGISTER_STATUS_ACTIVATED;
-        $this->save();
+        try {
+            $this->register_status = self::REGISTER_STATUS_ACTIVATED;
+            $this->save();
+        } catch (Exception $e) {
+            throw new SystemException('アクティベート化に失敗しました');
+        }
     }
 
 
