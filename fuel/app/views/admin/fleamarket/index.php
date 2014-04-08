@@ -371,7 +371,7 @@
       <td>ファイル</td>
       <td>
 	<img src="<?php echo $fleamarket_image->Url(); ?>">
-	<input type="checkbox" name=""fleamarket_image_id value="1<?php echo $fleamarket_image->fleamarket_image_id; ?>">削除する
+	<input type="checkbox" name="fleamarket_image_id[]" value="<?php echo $fleamarket_image->fleamarket_image_id; ?>">削除する
       </td>
     </tr>
     <?php } ?>

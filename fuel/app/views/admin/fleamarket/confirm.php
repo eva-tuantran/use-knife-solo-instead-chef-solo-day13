@@ -186,10 +186,14 @@
       </td>
     </tr>
     <?php foreach ($fleamarket->fleamarket_images as $fleamarket_image) { ?>
+    <?php foreach ($input['fleamarket_image_id'] as $fleamarket_image_id) { ?>
+    <?php if ($fleamarket_image->fleamarket_image_id == $fleamarket_image_id) { ?>
     <tr>
       <td>ファイル</td>
       <td><img src="<?php echo $fleamarket_image->Url(); ?>">を削除</td>
     </tr>
+    <?php } ?>
+    <?php } ?>
     <?php } ?>
     <?php foreach ($files as $file) { ?>
     <tr>

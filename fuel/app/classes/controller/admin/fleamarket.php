@@ -73,6 +73,7 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
         $view = View::forge('admin/fleamarket/thanks');
         $this->template->content = $view;
 
+        $this->removeFleamarketImages();
         $files = $this->moveUploadedImages();
         
         try {
@@ -132,6 +133,8 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
         } else {
             $fieldset = Model_Fleamarket::createFieldset(true);
         }
+
+        $fieldset->add('fleamarket_image_id');
         
         $fieldset->repopulate();
         $fieldset->validation()->add_callable('Custom_Validation');
@@ -171,7 +174,7 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
      */
     private function getFleamarketData()
     {
-        $fieldset = Session::get_flash('admin.fleamarket.fieldset');
+        $fieldset = $this->getFieldset();
 
         if (! $fieldset) {
             return false;
@@ -256,6 +259,19 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
             }
             imagedestroy($image);
             imagedestroy($resize);
+        }
+    }
+
+    public function removeFleamarketImages()
+    {
+        $input = $this->getFieldset()->input();
+        if ($input['fleamarket_image_id']) {
+            foreach ($input['fleamarket_image_id'] as $fleamarket_image_id) {
+                $fleamarket_image = Model_Fleamarket_Image::find($fleamarket_image_id);
+                if ($fleamarket_image) {
+                    $fleamarket_image->delete();
+                }
+            }
         }
     }
 }

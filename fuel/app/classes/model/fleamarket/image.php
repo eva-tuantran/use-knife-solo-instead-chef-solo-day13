@@ -1,6 +1,6 @@
 <?php
 
-class Model_Fleamarket_Image extends \Orm\Model
+class Model_Fleamarket_Image extends \Orm\Model_Soft
 {
     protected static $_table_name = 'fleamarket_images';
 
@@ -14,6 +14,7 @@ class Model_Fleamarket_Image extends \Orm\Model
         'updated_user',
         'created_at',
         'updated_at',
+        'deleted_at',
     );
 
     protected static $_observers = array(
@@ -27,6 +28,11 @@ class Model_Fleamarket_Image extends \Orm\Model
             'mysql_timestamp' => true,
             'property'        => 'updated_at',
         ),
+    );
+
+    protected static $_soft_delete = array(
+        'deleted_field'   => 'deleted_at',
+        'mysql_timestamp' => true,
     );
 
     public function Url()
