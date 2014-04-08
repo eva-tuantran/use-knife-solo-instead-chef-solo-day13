@@ -104,7 +104,6 @@
     <ul class="nav nav-tabs hidden-xs">
       <li class="active"><a href="#latest" data-toggle="tab">最新の開催</a></li>
       <li><a href="#ranking" data-toggle="tab">人気開催ランキング</a></li>
-      <li><a href="#check" data-toggle="tab">最近チェックしたフリマ</a></li>
     </ul>
     <ul class="nav nav-tabs visible-xs">
       <li class="active"><a href="#latest" data-toggle="tab">最新</a></li>
@@ -133,51 +132,6 @@
           </div>
           <!-- /ranking -->
 
-
-          <!-- check -->
-          <div class="tab-pane" id="check">
-            <!-- result -->
-            <div class="result clearfix">
-              <h3><a href="#">2014年3年8日(土)　東京都　★無料フリマ★チャリティフリーマーケットin太田</a></h3>
-              <div class="resultPhoto"><a href="#"><img src="http://dummyimage.com/200x150/ccc/fff.jpg" class="img-rounded"></a></div>
-              <div class="resultDetail">
-                <dl class="col-md-3">
-                  <dt>出店数</dt>
-                  <dd>60店</dd>
-                </dl>
-                <dl class="col-md-3">
-                  <dt>開催時間</dt>
-                  <dd>9時〜14時</dd>
-                </dl>
-                <dl class="col-md-3">
-                  <dt>出店形態</dt>
-                  <dd>車出店</dd>
-                </dl>
-                <dl class="col-md-3">
-                  <dt>出店料金</dt>
-                  <dd>無料</dd>
-                </dl>
-                <dl class="col-md-11">
-                  <dt>交通</dt>
-                  <dd>国分寺駅から京王バス（府中駅行き）藤塚バス停下車</dd>
-                </dl>
-                <ul class="facilitys">
-                  <li class="facility1">車出店可能</li>
-                  <li class="facility2">有料駐車場</li>
-                  <li class="facility3">無料駐車場</li>
-                  <li class="facility4">雨天開催会場</li>
-                </ul>
-                <ul class="detailLink">
-                  <li><a href="#">詳細情報を見る<i></i></a></li>
-                </ul>
-                <ul class="rightbutton">
-                  <li class="button makeReservation"><a href="#"><i></i>出店予約をする</a></li>
-                </ul>
-              </div>
-            </div>
-            <!-- /result -->
-          </div>
-          <!-- /check -->
         </div>
       </div>
     </div>
