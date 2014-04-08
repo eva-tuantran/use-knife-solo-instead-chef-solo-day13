@@ -29,7 +29,7 @@
             <div class="inner">
               <h2>北海道地方</h2>
               <ul>
-                <li><a href="/area/hokkaido/1/">北海道</a></li>
+                <li><a href="/search/1?prefecture=hokkaido">北海道</a></li>
               </ul>
             </div>
           </div>
@@ -37,12 +37,12 @@
             <div class="inner">
               <h2>東北地方</h2>
               <ul>
-                <li><a href="/area/aomori/1/">青森県</a></li>
-                <li><a href="/area/iwate/1/">岩手県</a></li>
-                <li><a href="/area/miyagi/1/">宮城県</a></li>
-                <li><a href="/area/akita/1/">秋田県</a></li>
-                <li><a href="/area/yamagata/1/">山形県</a></li>
-                <li><a href="/area/fukushima/1/">福島県</a></li>
+                <li><a href="/search/1?prefecture=aomori">青森県</a></li>
+                <li><a href="/search/1?prefecture=iwate">岩手県</a></li>
+                <li><a href="/search/1?prefecture=miyagi">宮城県</a></li>
+                <li><a href="/search/1?prefecture=akita">秋田県</a></li>
+                <li><a href="/search/1?prefecture=yamagata">山形県</a></li>
+                <li><a href="/search/1?prefecture=fukushima">福島県</a></li>
               </ul>
             </div>
           </div>
@@ -50,13 +50,13 @@
             <div class="inner">
               <h2>関東地方</h2>
               <ul>
-                <li><a href="/area/ibaraki/1/">茨城県</a></li>
-                <li><a href="/area/tochigi/1/">栃木県</a></li>
-                <li><a href="/area/gunma/1/">群馬県</a></li>
-                <li><a href="/area/saitama/1/">埼玉県</a></li>
-                <li><a href="/area/chiba/1/">千葉県</a></li>
-                <li><a href="/area/tokyo/1/">東京都</a></li>
-                <li><a href="/area/kanagawa/1/">神奈川県</a></li>
+                <li><a href="/search/1?prefecture=ibaraki">茨城県</a></li>
+                <li><a href="/search/1?prefecture=tochigi">栃木県</a></li>
+                <li><a href="/search/1?prefecture=gunma">群馬県</a></li>
+                <li><a href="/search/1?prefecture=saitama">埼玉県</a></li>
+                <li><a href="/search/1?prefecture=chiba">千葉県</a></li>
+                <li><a href="/search/1?prefecture=tokyo">東京都</a></li>
+                <li><a href="/search/1?prefecture=kanagawa">神奈川県</a></li>
               </ul>
             </div>
           </div>
@@ -64,15 +64,15 @@
             <div class="inner">
               <h2>中部地方</h2>
               <ul>
-                <li><a href="/area/niigata/1/">新潟県</a></li>
-                <li><a href="/area/toyama/1/">富山県</a></li>
-                <li><a href="/area/ishikawa/1/">石川県</a></li>
-                <li><a href="/area/fukui/1/">福井県</a></li>
-                <li><a href="/area/yamanashi/1/">山梨県</a></li>
-                <li><a href="/area/nagano/1/">長野県</a></li>
-                <li><a href="/area/gifu/1/">岐阜県</a></li>
-                <li><a href="/area/shizuoka/1/">静岡県</a></li>
-                <li><a href="/area/aichi/1/">愛知県</a></li>
+                <li><a href="/search/1?prefecture=niigata">新潟県</a></li>
+                <li><a href="/search/1?prefecture=toyama">富山県</a></li>
+                <li><a href="/search/1?prefecture=ishikawa">石川県</a></li>
+                <li><a href="/search/1?prefecture=fukui">福井県</a></li>
+                <li><a href="/search/1?prefecture=yamanashi">山梨県</a></li>
+                <li><a href="/search/1?prefecture=nagano">長野県</a></li>
+                <li><a href="/search/1?prefecture=gifu">岐阜県</a></li>
+                <li><a href="/search/1?prefecture=shizuoka">静岡県</a></li>
+                <li><a href="/search/1?prefecture=aichi">愛知県</a></li>
               </ul>
             </div>
           </div>
@@ -80,13 +80,13 @@
             <div class="inner">
               <h2>関西地方</h2>
               <ul>
-                <li><a href="/area/mie/1/">三重県</a></li>
-                <li><a href="/area/shiga/1/">滋賀県</a></li>
-                <li><a href="/area/kyoto/1/">京都府</a></li>
-                <li><a href="/area/osaka/1/">大阪府</a></li>
-                <li><a href="/area/hyogo/1/">兵庫県</a></li>
-                <li><a href="/area/nara/1/">奈良県</a></li>
-                <li><a href="/area/wakayama/1/">和歌山県</a></li>
+                <li><a href="/search/1?prefecture=mie">三重県</a></li>
+                <li><a href="/search/1?prefecture=shiga">滋賀県</a></li>
+                <li><a href="/search/1?prefecture=kyoto">京都府</a></li>
+                <li><a href="/search/1?prefecture=osaka">大阪府</a></li>
+                <li><a href="/search/1?prefecture=hyogo">兵庫県</a></li>
+                <li><a href="/search/1?prefecture=nara">奈良県</a></li>
+                <li><a href="/search/1?prefecture=wakayama">和歌山県</a></li>
               </ul>
             </div>
           </div>
@@ -94,11 +94,11 @@
             <div class="inner">
               <h2>中国地方</h2>
               <ul>
-                <li><a href="/area/tottori/1/">鳥取県</a></li>
-                <li><a href="/area/shimane/1/">島根県</a></li>
-                <li><a href="/area/okayama/1/">岡山県</a></li>
-                <li><a href="/area/hiroshima/1/">広島県</a></li>
-                <li><a href="/area/yamaguchi/1/">山口県</a></li>
+                <li><a href="/search/1?prefecture=tottori">鳥取県</a></li>
+                <li><a href="/search/1?prefecture=shimane">島根県</a></li>
+                <li><a href="/search/1?prefecture=okayama">岡山県</a></li>
+                <li><a href="/search/1?prefecture=hiroshima">広島県</a></li>
+                <li><a href="/search/1?prefecture=yamaguchi">山口県</a></li>
               </ul>
             </div>
           </div>
@@ -106,10 +106,10 @@
             <div class="inner">
               <h2>四国地方</h2>
               <ul>
-                <li><a href="/area/tokushima/1/">徳島県</a></li>
-                <li><a href="/area/kagawa/1/">香川県</a></li>
-                <li><a href="/area/ehime/1/">愛媛県</a></li>
-                <li><a href="/area/kochi/1/">高知県</a></li>
+                <li><a href="/search/1?prefecture=tokushima">徳島県</a></li>
+                <li><a href="/search/1?prefecture=kagawa">香川県</a></li>
+                <li><a href="/search/1?prefecture=ehime">愛媛県</a></li>
+                <li><a href="/search/1?prefecture=kochi">高知県</a></li>
               </ul>
             </div>
           </div>
@@ -117,13 +117,13 @@
             <div class="inner">
               <h2>九州地方</h2>
               <ul>
-                <li><a href="/area/fukuoka/1/">福岡県</a></li>
-                <li><a href="/area/saga/1/">佐賀県</a></li>
-                <li><a href="/area/nagasaki/1/">長崎県</a></li>
-                <li><a href="/area/kumamoto/1/">熊本県</a></li>
-                <li><a href="/area/oita/1/">大分県</a></li>
-                <li><a href="/area/miyazaki/1/">宮崎県</a></li>
-                <li><a href="/area/kagoshima/1/">鹿児島県</a></li>
+                <li><a href="/search/1?prefecture=fukuoka">福岡県</a></li>
+                <li><a href="/search/1?prefecture=saga">佐賀県</a></li>
+                <li><a href="/search/1?prefecture=nagasaki">長崎県</a></li>
+                <li><a href="/search/1?prefecture=kumamoto">熊本県</a></li>
+                <li><a href="/search/1?prefecture=oita">大分県</a></li>
+                <li><a href="/search/1?prefecture=miyazaki">宮崎県</a></li>
+                <li><a href="/search/1?prefecture=kagoshima">鹿児島県</a></li>
               </ul>
             </div>
           </div>
@@ -131,7 +131,7 @@
             <div class="inner">
               <h2>沖縄地方</h2>
               <ul>
-                <li><a href="/area/okinawa/1/">沖縄県</a></li>
+                <li><a href="/search/1?prefecture=okinawa">沖縄県</a></li>
               </ul>
             </div>
           </div>
@@ -152,7 +152,7 @@
   <div id="search" class="container">
     <div class="box">
       <div class="row">
-        <form id="form_search_calendar" action="/search/1/" method="get">
+        <form id="form_search_calendar" action="/search/1" method="get">
           <fieldset>
             <div id="searchTitle" class="col-md-2">
               <h2><i></i>条件で探す</h2>

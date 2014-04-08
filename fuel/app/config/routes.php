@@ -5,7 +5,6 @@ return array(
     'signup'     => 'signup',
     'login'      => 'login',
     'fleamarket/(:num)' => 'fleamarket/index/$1',
-    'area/(:alpha)/(:num)'   => 'search/index/$2/$1',
     'search/(:num)'   => 'search/index/$1',
     'detail/(:num)'   => 'search/detail/$1',
     'calendar/:year/:month' => 'calendar/index',

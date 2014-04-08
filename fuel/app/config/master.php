@@ -46,7 +46,7 @@ return array(
         21 => 'gifu', 22 => 'shizuoka', 23 => 'aichi',
         24 => 'mie', 25 => 'shiga', 26 => 'kyoto',
         27 => 'osaka', 28 => 'hyogo', 29 => 'nara', 30 => 'wakayama',
-        31 => '.tottori', 32 => 'shimane',
+        31 => 'tottori', 32 => 'shimane',
         33 => 'okayama', 34 => 'hiroshima', 35 => 'yamaguchi',
         36 => 'tokushima', 37 => 'kagawa', 38 => 'ehime', 39 => 'kochi',
         40 => 'fukuoka', 41 => 'saga', 42 => 'nagasaki', 43 => 'kumamoto',

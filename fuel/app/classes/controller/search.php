@@ -25,11 +25,10 @@ class Controller_Search extends Controller_Base_Template
      *
      * @access public
      * @param int $page ページ番号
-     * @param string $prefecture 都道府県
      * @return void
      * @author ida
      */
-    public function get_index($page = null, $prefecure = null)
+    public function get_index($page = null)
     {
         if (! $page) {
             $page = 1;
@@ -37,6 +36,7 @@ class Controller_Search extends Controller_Base_Template
 
         $base_conditions = Input::get('conditions', array());
 
+        $prefecure = Input::get('prefecture');
         if (null != $prefecure) {
             $alphabet_prefectures = \Config::get('master.alphabet_prefectures');
             $prefecture_id = array_search($prefecure, $alphabet_prefectures);

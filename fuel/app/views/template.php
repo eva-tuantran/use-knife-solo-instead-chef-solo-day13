@@ -55,8 +55,8 @@
     <button class="navbar-toggle" data-toggle="collapse" data-target=".target"> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span> </button>
     <div class="collapse navbar-collapse target">
       <ul id="globalNav">
-        <li class="market"><a href="/search"><i></i>フリマ会場一覧</a></li>
-        <li class="reservation"><a href="/search/1/?reservation=1"><i></i>出店予約</a></li>
+        <li class="market"><a href="/search/1"><i></i>フリマ会場一覧</a></li>
+        <li class="reservation"><a href="/search?reservation=1"><i></i>出店予約</a></li>
         <li class="reservation"><a href="/fleamarket"><i></i>フリマ投稿</a></li>
         <!-- <li class="news"><a href="/news"><i></i>新着情報</a></li> -->
         <li class="blog"><a href="http://aucfan.com/article/" target="_blank"><i></i>新着ブログ(仮)</a></li>
@@ -97,69 +97,69 @@
   </div>
   <div id="footer" class="container">
     <dl class="col-sm-4">
-      <dt><a href="">北海道・東北</a></dt>
-      <dd><a href="">北海道</a></dd>
-      <dd><a href="">青森</a></dd>
-      <dd><a href="">岩手</a></dd>
-      <dd><a href="">宮城</a></dd>
-      <dd><a href="">秋田</a></dd>
-      <dd><a href="">山形</a></dd>
-      <dd><a href="">福島</a></dd>
+      <dt>北海道・東北</dt>
+      <dd><a href="/search/1?prefecture=hokkaido">北海道</a></dd>
+      <dd><a href="/search/1?prefecture=aomori">青森</a></dd>
+      <dd><a href="/search/1?prefecture=iwate">岩手</a></dd>
+      <dd><a href="/search/1?prefecture=miyagi">宮城</a></dd>
+      <dd><a href="/search/1?prefecture=akita">秋田</a></dd>
+      <dd><a href="/search/1?prefecture=yamagata">山形</a></dd>
+      <dd><a href="/search/1?prefecture=fukushima">福島</a></dd>
     </dl>
     <dl class="col-sm-4">
-      <dt><a href="">関東</a></dt>
-      <dd><a href="">茨城</a></dd>
-      <dd><a href="">栃木</a></dd>
-      <dd><a href="">群馬</a></dd>
-      <dd><a href="">埼玉</a></dd>
-      <dd><a href="">千葉</a></dd>
-      <dd><a href="">東京</a></dd>
-      <dd><a href="">神奈川</a></dd>
+      <dt>関東</dt>
+      <dd><a href="/search/1?prefecture=ibaraki">茨城</a></dd>
+      <dd><a href="/search/1?prefecture=tochigi">栃木</a></dd>
+      <dd><a href="/search/1?prefecture=gunma">群馬</a></dd>
+      <dd><a href="/search/1?prefecture=saitama">埼玉</a></dd>
+      <dd><a href="/search/1?prefecture=chiba">千葉</a></dd>
+      <dd><a href="/search/1?prefecture=tokyo">東京</a></dd>
+      <dd><a href="/search/1?prefecture=kanagawa">神奈川</a></dd>
     </dl>
     <dl class="col-sm-4">
-      <dt><a href="">中部</a></dt>
-      <dd><a href="">新潟</a></dd>
-      <dd><a href="">富山</a></dd>
-      <dd><a href="">石川</a></dd>
-      <dd><a href="">福井</a></dd>
-      <dd><a href="">山梨</a></dd>
-      <dd><a href="">長野</a></dd>
-      <dd><a href="">岐阜</a></dd>
-      <dd><a href="">静岡</a></dd>
-      <dd><a href="">愛知</a></dd>
+      <dt>中部</dt>
+      <dd><a href="/search/1?prefecture=niigata">新潟</a></dd>
+      <dd><a href="/search/1?prefecture=toyama">富山</a></dd>
+      <dd><a href="/search/1?prefecture=ishikawa">石川</a></dd>
+      <dd><a href="/search/1?prefecture=fukui">福井</a></dd>
+      <dd><a href="/search/1?prefecture=yamanashi">山梨</a></dd>
+      <dd><a href="/search/1?prefecture=nagano">長野</a></dd>
+      <dd><a href="/search/1?prefecture=gifu">岐阜</a></dd>
+      <dd><a href="/search/1?prefecture=shizuoka">静岡</a></dd>
+      <dd><a href="/search/1?prefecture=aichi">愛知</a></dd>
     </dl>
     <dl class="col-sm-4">
-      <dt><a href="">近畿</a></dt>
-      <dd><a href="">三重</a></dd>
-      <dd><a href="">滋賀</a></dd>
-      <dd><a href="">京都</a></dd>
-      <dd><a href="">大阪</a></dd>
-      <dd><a href="">兵庫</a></dd>
-      <dd><a href="">奈良</a></dd>
-      <dd><a href="">和歌山</a></dd>
+      <dt>近畿</dt>
+      <dd><a href="/search/1?prefecture=mie">三重</a></dd>
+      <dd><a href="/search/1?prefecture=shiga">滋賀</a></dd>
+      <dd><a href="/search/1?prefecture=kyoto">京都</a></dd>
+      <dd><a href="/search/1?prefecture=osaka">大阪</a></dd>
+      <dd><a href="/search/1?prefecture=hyogo">兵庫</a></dd>
+      <dd><a href="/search/1?prefecture=nara">奈良</a></dd>
+      <dd><a href="/search/1?prefecture=wakayama">和歌山</a></dd>
     </dl>
     <dl class="col-sm-4">
-      <dt><a href="">中国・四国</a></dt>
-      <dd><a href="">鳥取</a></dd>
-      <dd><a href="">島根</a></dd>
-      <dd><a href="">岡山</a></dd>
-      <dd><a href="">広島</a></dd>
-      <dd><a href="">山口</a></dd>
-      <dd><a href="">徳島</a></dd>
-      <dd><a href="">香川</a></dd>
-      <dd><a href="">愛媛</a></dd>
-      <dd><a href="">愛知</a></dd>
+      <dt>中国・四国</dt>
+      <dd><a href="/search/1?prefecture=tottori">鳥取</a></dd>
+      <dd><a href="/search/1?prefecture=shimane">島根</a></dd>
+      <dd><a href="/search/1?prefecture=okayama">岡山</a></dd>
+      <dd><a href="/search/1?prefecture=hiroshima">広島</a></dd>
+      <dd><a href="/search/1?prefecture=yamaguchi">山口</a></dd>
+      <dd><a href="/search/1?prefecture=tokushima">徳島</a></dd>
+      <dd><a href="/search/1?prefecture=kagawa">香川</a></dd>
+      <dd><a href="/search/1?prefecture=ehime">愛媛</a></dd>
+      <dd><a href="/search/1?prefecture=kochi">高知</a></dd>
     </dl>
     <dl class="col-sm-4">
-      <dt><a href="">九州・沖縄</a></dt>
-      <dd><a href="">福岡</a></dd>
-      <dd><a href="">佐賀</a></dd>
-      <dd><a href="">長崎</a></dd>
-      <dd><a href="">熊本</a></dd>
-      <dd><a href="">大分</a></dd>
-      <dd><a href="">宮崎</a></dd>
-      <dd><a href="">鹿児島</a></dd>
-      <dd><a href="">沖縄</a></dd>
+      <dt>九州・沖縄</dt>
+      <dd><a href="/search/1?prefecture=fukuoka">福岡</a></dd>
+      <dd><a href="/search/1?prefecture=saga">佐賀</a></dd>
+      <dd><a href="/search/1?prefecture=nagasaki">長崎</a></dd>
+      <dd><a href="/search/1?prefecture=kumamoto">熊本</a></dd>
+      <dd><a href="/search/1?prefecture=oita">大分</a></dd>
+      <dd><a href="/search/1?prefecture=miyazaki">宮崎</a></dd>
+      <dd><a href="/search/1?prefecture=kagoshima">鹿児島</a></dd>
+      <dd><a href="/search/1?prefecture=okinawa">沖縄</a></dd>
     </dl>
     <ul id="footerNav" class="list-inline">
       <li><a href="">初めての方へ</a></li>
