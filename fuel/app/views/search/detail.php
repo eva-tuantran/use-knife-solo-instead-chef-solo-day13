@@ -67,7 +67,7 @@ Map.prototype = {
     endif;
     if ($is_admin_fleamarket):
         $reservation_button = '出店予約をする';
-        if ($fleamarket['event_status'] == \Model_Fleamarket::EVENT_STATUS_RECEIPT_END):
+        if ($fleamarket['event_reservation_status'] == \Model_Fleamarket::EVENT_RESERVATION_STATUS_FULL):
             $reservation_button = 'キャンセル待ちをする';
         endif;
     endif;
@@ -112,13 +112,13 @@ Map.prototype = {
             endif;
         ?></p>
         <ul class="mylist">
-          <li class="button addMylist"><a href="#" id="fleamarket_id_<?php echo $fleamarket['fleamarket_id']; ?>"><i></i>マイリストに追加</a></li>
+          <li class="button addMylist"><a href="#" id="fleamarket_id_<?php echo $fleamarket['fleamarket_id'];?>"><i></i>マイリストに追加</a></li>
           <li class="button gotoMylist"><a href="/mypage#mylist"><i></i>マイリストを見る</a></li>
         </ul>
       </div>
       <ul class="rightbutton">
         <?php if ($is_admin_fleamarket):?>
-        <li class="button makeReservation"><a href="/reservation/?fleamarket_id=<?php echo e($fleamarket_id);?>/"><i></i><?php echo $reservation_button;?></a></li>
+        <li class="button makeReservation"><a href="/reservation/?fleamarket_id=<?php echo e($fleamarket_id);?>"><i></i><?php echo $reservation_button;?></a></li>
         <?php endif;?>
         <li id="do_print" class="button print hidden-xs"><a href="#"><i></i>ページの印刷をする</a></li>
       </ul>
@@ -209,6 +209,9 @@ Map.prototype = {
                 echo '-';
             endif;
         ?></dd>
+<?php
+    if ($is_admin_fleamarket):
+?>
         <dt>出店形態</dt>
         <dd><?php
             if ($entry_style_string):
@@ -248,14 +251,17 @@ Map.prototype = {
                 endforeach;
             endif;
         ?>
+<?php
+    endif;
+?>
       </dl>
       <ul class="mylist <?php if (! $is_admin_fleamarket):?>noneReservation<?php endif;?>">
-        <li class="button addMylist"><a href="#"><i></i>マイリストに追加</a></li>
+        <li class="button addMylist"><a href="#" id="fleamarket_id_<?php echo $fleamarket['fleamarket_id'];?>"><i></i>マイリストに追加</a></li>
         <li class="button gotoMylist"><a href="/mypage#mylist"><i></i>マイリストを見る</a></li>
       </ul>
       <ul class="rightbutton">
         <?php if ($is_admin_fleamarket):?>
-        <li class="button makeReservation"><a id="do_reservation" href="/reservation/?fleamarket_id=<?php echo e($fleamarket_id);?>/"><i></i><?php echo $reservation_button;?></a></li>
+        <li class="button makeReservation"><a id="do_reservation" href="/reservation/?fleamarket_id=<?php echo e($fleamarket_id);?>"><i></i><?php echo $reservation_button;?></a></li>
         <?php endif;?>
       </ul>
     </div>
@@ -264,7 +270,8 @@ Map.prototype = {
 <!-- /table -->
 <script type="text/javascript">
 $(function() {
-  $(".addMylist a").click(function(){
+  $(".addMylist a").click(function(evt) {
+      evt.preventDefault();
       var id = $(this).attr('id');
       id = id.match(/^fleamarket_id_(\d+)/)[1];
       $.ajax({
