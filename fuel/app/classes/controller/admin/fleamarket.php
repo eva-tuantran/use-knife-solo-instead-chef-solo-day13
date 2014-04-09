@@ -27,6 +27,13 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
      */
     public function action_index()
     {
+        Asset::css('jquery-ui.min.css', array(), 'add_css');
+        Asset::css('jquery-ui-timepicker.css', array(), 'add_css');
+        Asset::js('jquery-ui.min.js', array(), 'add_js');
+        Asset::js('jquery.ui.datepicker-ja.js', array(), 'add_js');
+        Asset::js('jquery-ui-timepicker.js', array(), 'add_js');
+        Asset::js('jquery-ui-timepicker-ja.js', array(), 'add_js');
+
         $view = View::forge('admin/fleamarket/index');
         $fieldset = $this->getFieldset();
         $view->set('fieldset', $fieldset, false);
@@ -163,9 +170,10 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
             } else {
                 $fleamarket = Model_Fleamarket::forge();
             }
-            $fleamarket->set($data);
-            $fleamarket->save();
-
+            if ($fleamarket) {
+                $fleamarket->set($data);
+                $fleamarket->save();
+            }
             return $fleamarket;
         }
     }
