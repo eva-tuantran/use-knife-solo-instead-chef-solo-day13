@@ -73,7 +73,7 @@ class Model_Fleamarket extends \Orm\Model
     const PICKUP_FLAG_ON = 1;
 
     /**
-     * 予約状況  1. まだまだあります 2. 残り僅か！ 3. 満員
+     * 予約状況  1:まだまだあります,2:残り僅か！,3:満員
      */
     const EVENT_RESERVATION_STATUS_ENOUGH = 1;
     const EVENT_RESERVATION_STATUS_FEW    = 2;
@@ -127,6 +127,7 @@ class Model_Fleamarket extends \Orm\Model
         'event_status' => array(
             'form'  => array('type' => false)
         ),
+        'event_reservation_status',
         'headline' => array(
             'validation' => array(
                 'max_length' => array(100)
