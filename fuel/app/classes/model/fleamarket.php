@@ -1045,7 +1045,7 @@ QUERY;
      * @return
      * @author kobayasi
      */
-    public function updateEventReservationStatus()
+    public function updateEventReservationStatus($save = true)
     {
         $is_full = true;
         foreach ($this->fleamarket_entry_styles as $fleamarket_entry_style) {
@@ -1056,6 +1056,16 @@ QUERY;
         }
         if ($is_full) {
             $this->event_reservation_status = self::EVENT_RESERVATION_STATUS_FULL;
+            if ($save) {
+                $this->save();
+            }
+        }
+    }
+
+    public function incrementReservationSerial($save = true)
+    {
+        $this->reservation_serial = DB::expr('reservation_serial + 1');
+        if ($save) {
             $this->save();
         }
     }

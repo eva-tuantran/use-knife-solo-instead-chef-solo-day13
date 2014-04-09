@@ -161,22 +161,27 @@ class Controller_Reservation extends Controller_Base_Template
                 'fleamarket_entry_style_id' => $data['fleamarket_entry_style_id'],
             );
 
+            $fleamarket = Model_Fleamarket::find($data['fleamarket_id']);
+
+            $data['reservation_number'] = sprintf(
+                '%05d-%05d',
+                $data['fleamarket_id'],
+                $fleamarket->reservation_serial
+            );
+
             $entry = Model_Entry::find('first',$condition);
+
             if ($entry) {
                 $entry->set($data);
-                $entry->save();
-            } else {
-                $entry = Model_Entry::find_deleted('first',$condition);
-                if ($entry) {
-                    $entry->set($data);
-                    $entry->restore();
-                } else {
-                    $entry = Model_Entry::forge($data);
-                    $entry->save();
-                }
+            }else{
+                $entry = Model_Entry::forge($data);
             }
 
-            $entry->fleamarket->updateEventReservationStatus();
+            $entry->save();
+
+            $fleamarket->incrementReservationSerial(false);
+            $fleamarket->updateEventReservationStatus(false);
+            $fleamarket->save();
 
             if (! Input::post('cancel') && 
                 $entry->fleamarket_entry_style->isOverReservationLimit()) {
