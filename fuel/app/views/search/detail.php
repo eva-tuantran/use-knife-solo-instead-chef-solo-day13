@@ -117,9 +117,17 @@ Map.prototype = {
         </ul>
       </div>
       <ul class="rightbutton">
-        <?php if ($is_admin_fleamarket):?>
+        <?php
+            if ($is_admin_fleamarket && $fleamarket['event_status'] == \Model_Fleamarket::EVENT_STATUS_RESERVATION_RECEIPT):
+                $reservation_button = '出店予約をする';
+                if ($fleamarket['event_reservation_status'] == \Model_Fleamarket::EVENT_RESERVATION_STATUS_FULL):
+                    $reservation_button = 'キャンセル待ちをする';
+                endif;
+        ?>
         <li class="button makeReservation"><a href="/reservation/?fleamarket_id=<?php echo e($fleamarket_id);?>"><i></i><?php echo $reservation_button;?></a></li>
-        <?php endif;?>
+        <?php
+            endif;
+        ?>
         <li id="do_print" class="button print hidden-xs"><a href="#"><i></i>ページの印刷をする</a></li>
       </ul>
     </div>
@@ -260,9 +268,17 @@ Map.prototype = {
         <li class="button gotoMylist"><a href="/mypage#mylist"><i></i>マイリストを見る</a></li>
       </ul>
       <ul class="rightbutton">
-        <?php if ($is_admin_fleamarket):?>
+        <?php
+            if ($is_admin_fleamarket && $fleamarket['event_status'] == \Model_Fleamarket::EVENT_STATUS_RESERVATION_RECEIPT):
+                $reservation_button = '出店予約をする';
+                if ($fleamarket['event_reservation_status'] == \Model_Fleamarket::EVENT_RESERVATION_STATUS_FULL):
+                    $reservation_button = 'キャンセル待ちをする';
+                endif;
+        ?>
         <li class="button makeReservation"><a id="do_reservation" href="/reservation/?fleamarket_id=<?php echo e($fleamarket_id);?>"><i></i><?php echo $reservation_button;?></a></li>
-        <?php endif;?>
+        <?php
+            endif;
+        ?>
       </ul>
     </div>
   </div>

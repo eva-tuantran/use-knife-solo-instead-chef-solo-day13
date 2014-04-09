@@ -22,6 +22,8 @@ class View_Search_Index extends ViewModel
         $this->fleamarket_list = $fleamarket_list;
         $this->week_list = \Config::get('master.week');
         $this->entry_styles = \Config::get('master.entry_styles');
+        $this->regions = \Config::get('master.regions');
+        $this->prefectures = \Config::get('master.prefectures');
     }
 
     /**

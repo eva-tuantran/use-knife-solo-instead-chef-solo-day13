@@ -43,9 +43,9 @@ class Controller_Search extends Controller_Base_Template
             $base_conditions = array('prefecture' => $prefecture_id);
         }
 
-        $date = Input::get('d');
+        $date = Input::get('calendar');
         if ($date) {
-            $base_conditions = array('date' => $date);
+            $base_conditions = array('calendar' => $date);
         }
 
         $upcomming = Input::get('upcomming');
