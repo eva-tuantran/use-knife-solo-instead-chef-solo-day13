@@ -1,17 +1,41 @@
 @charset "UTF-8";
 
 #info h2 {
-  border-left: 5px solid #0070c0;
-  border-bottom: 1px solid #0070c0;
-  padding: 3px 0 5px 5px;
-  margin: 30px 0 20px 0;
-  line-height: 1;
-  clear: left;
-  font-size: 1em;
+    font-size: 130%;
+    color: #78bd36;
+    padding: 5px 0 0 10px;
+
+}
+
+#info h3 {
+    color: black;
+    border-left: 5px solid #0070c0;
+    border-bottom: 1px solid #0070c0;
+    padding: 3px 0 5px 5px;
+    margin: 30px 0 20px 0;
+    line-height: 1;
+    clear: left;
+    font-size: 1em;
 }
 
 #info {
     margin-bottom: 20px;
+}
+
+#info ol {
+    margin-left : 10px
+}
+
+#info ol li {
+    margin-left : 10px
+}
+
+#info ul li {
+    margin-left : 10px
+}
+
+#info p {
+    margin-left : 10px
 }
 
 .change_policy {

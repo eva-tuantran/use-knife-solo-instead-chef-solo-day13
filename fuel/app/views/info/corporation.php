@@ -2,7 +2,7 @@
   <!-- form -->
   <div id="info" class="container">
     <div class="box clearfix">
-      <h3>中身を記述する</h3>
+      <h2>中身を記述する</h2>
       <p>どこのテキスト持ってこればいいか不明</p>
     </div>
   </div>
