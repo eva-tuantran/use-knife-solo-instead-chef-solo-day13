@@ -2,6 +2,7 @@
   <!-- searchResult -->
   <div id="searchResult" class="col-sm-9 col-sm-push-3">
     <?php
+        $title = '';
         $titles = array();
         if ($base_conditions):
             if (isset($base_conditions['prefecture']) && ! empty($base_conditions['prefecture'])):
@@ -52,7 +53,6 @@
                 $titles[] = '無料駐車場あり';
             endif;
 
-            $title = '';
             if (! empty($titles)):
                 $title = implode('/', $titles);
                 $title .= 'の';
