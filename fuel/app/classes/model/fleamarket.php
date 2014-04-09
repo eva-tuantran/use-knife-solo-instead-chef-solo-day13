@@ -329,7 +329,7 @@ class Model_Fleamarket extends \Orm\Model
         $table_name = self::$_table_name;
         $query = <<<"QUERY"
 SELECT
-    DATE_FORMAT(f.event_date, '%Y-%m-%d') AS event_date
+    f.event_date
 FROM
     {$table_name} AS f
 WHERE
@@ -753,7 +753,6 @@ QUERY;
         return $rows;
     }
 
-
     /**
      * 特定のユーザの投稿したフリマ情報を取得します
      *
@@ -843,11 +842,6 @@ QUERY;
         return array();
     }
 
-
-
-
-
-
     /**
      * 検索条件を取得する
      *
@@ -874,14 +868,12 @@ QUERY;
             );
         }
 
-        if (isset($data['region']) && $data['region'] !== '') {
+        if (isset($data['prefecture']) && $data['prefecture'] !== '') {
+            $conditions[] = array('prefecture_id', '=', $data['prefecture']);
+        } else if (isset($data['region']) && $data['region'] !== '') {
             $region_prefectures = \Config::get('master.region_prefectures');
             $prefecture = $region_prefectures[$data['region']];
             $conditions[] = array('prefecture_id', 'IN', $prefecture);
-        }
-
-        if (isset($data['prefecture']) && $data['prefecture'] !== '') {
-            $conditions[] = array('prefecture_id', '=', $data['prefecture']);
         }
 
         if (isset($data['shop_fee']) && $data['shop_fee'] !== '') {
@@ -940,9 +932,9 @@ QUERY;
             );
         }
 
-        if (isset($data['date']) && $data['date']) {
+        if (isset($data['calendar']) && $data['calendar']) {
             $conditions[] = array(
-                'f.event_date', '=', $data['date']
+                'f.event_date', '=', $data['calendar']
             );
         }
 
@@ -954,7 +946,13 @@ QUERY;
 
         if (isset($data['reservation']) && $data['reservation']) {
             $conditions[] = array(
-                'f.register_type', '=', \Model_Fleamarket::REGISTER_TYPE_ADMIN
+                'f.event_date >= CURDATE()'
+            );
+            $conditions[] = array(
+                'f.event_status', '=', \Model_Fleamarket::EVENT_STATUS_RESERVATION_RECEIPT,
+            );
+            $conditions[] = array(
+                'f.register_type', '=', \Model_Fleamarket::REGISTER_TYPE_ADMIN,
             );
         }
 
