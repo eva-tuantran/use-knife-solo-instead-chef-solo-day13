@@ -27,6 +27,13 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
      */
     public function action_index()
     {
+        Asset::css('jquery-ui.min.css', array(), 'add_css');
+        Asset::css('jquery-ui-timepicker.css', array(), 'add_css');
+        Asset::js('jquery-ui.min.js', array(), 'add_js');
+        Asset::js('jquery.ui.datepicker-ja.js', array(), 'add_js');
+        Asset::js('jquery-ui-timepicker.js', array(), 'add_js');
+        Asset::js('jquery-ui-timepicker-ja.js', array(), 'add_js');
+
         $view = View::forge('admin/fleamarket/index');
         $fieldset = $this->getFieldset();
         $view->set('fieldset', $fieldset, false);
@@ -48,11 +55,15 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
             return Response::redirect('admin/fleamarket?fleamarket_id=' . Input::param('fleamarket_id',''));
         }
 
+        $files = $this->saveUploadedImages();
+
+        if(! is_array($files)){
+            return Response::redirect('admin/fleamarket?fleamarket_id=' . Input::param('fleamarket_id',''));
+        }
+
         $view = View::forge('admin/fleamarket/confirm');
         $view->set('fieldset', $fieldset, false);
         $view->set('fleamarket', $this->fleamarket, false);
-
-        $files = $this->saveUploadedImages();
         $view->set('files', $files, false);
 
         $this->template->content = $view;
@@ -159,9 +170,10 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
             } else {
                 $fleamarket = Model_Fleamarket::forge();
             }
-            $fleamarket->set($data);
-            $fleamarket->save();
-
+            if ($fleamarket) {
+                $fleamarket->set($data);
+                $fleamarket->save();
+            }
             return $fleamarket;
         }
     }
@@ -194,7 +206,7 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
     {
         Upload::process(array(
             'path' => DOCROOT . 'files/admin/fleamarket/img/',
-            'ext_white_list' => array('jpg'),
+            'ext_whitelist' => array('jpg'),
             'randomize'      => true,
         ));
 
@@ -204,6 +216,13 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
             Session::set_flash('admin.fleamarket.files', $files);
             return $files;
         } else {
+            foreach (Upload::get_errors() as $file) {
+                foreach ($file['errors'] as $error){
+                    if( $error['error'] != Upload::UPLOAD_ERR_NO_FILE) {
+                        return false;
+                    }
+                }
+            }
             return array();
         }
     }
@@ -267,10 +286,9 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
         $input = $this->getFieldset()->input();
         if ($input['fleamarket_image_id']) {
             foreach ($input['fleamarket_image_id'] as $fleamarket_image_id) {
-                $fleamarket_image = Model_Fleamarket_Image::find($fleamarket_image_id);
-                if ($fleamarket_image) {
-                    $fleamarket_image->delete();
-                }
+                $query = Model_Fleamarket_Image::query()
+                    ->where('fleamarket_image_id',$fleamarket_image_id);
+                $query->delete();
             }
         }
     }

@@ -44,7 +44,10 @@
     <tr>
       <td>event_status</td>
       <td>
-	<?php echo e($input['event_status']); ?>
+	<?php 
+	   $statuses = Model_Fleamarket::getEventStatuses();
+	   echo $statuses[$input['event_status']];
+        ?>
       </td>
     </tr>
     <tr>
@@ -116,43 +119,43 @@
     <tr>
       <td>pickup_flag</td>
       <td>
-	<?php echo e($input['pickup_flag']); ?>
+	<?php echo $input['pickup_flag'] ? 'YES' : 'NO'; ?>
       </td>
     </tr>
     <tr>
       <td>shop_fee_flag</td>
       <td>
-	<?php echo e($input['shop_fee_flag']); ?>
+        <?php echo $input['shop_fee_flag'] ? 'YES' : 'NO'; ?>
       </td>
     </tr>
     <tr>
       <td>car_shop_flag</td>
       <td>
-	<?php echo e($input['car_shop_flag']); ?>
+        <?php echo $input['car_shop_flag'] ? 'YES' : 'NO'; ?>
       </td>
     </tr>
     <tr>
       <td>pro_shop_flag</td>
       <td>
-	<?php echo e($input['pro_shop_flag']); ?>
+        <?php echo $input['pro_shop_flag'] ? 'YES' : 'NO'; ?>
       </td>
     </tr>
     <tr>
       <td>rainy_location_flag</td>
       <td>
-	<?php echo e($input['rainy_location_flag']); ?>
+        <?php echo $input['rainy_location_flag'] ? 'YES' : 'NO'; ?>
       </td>
     </tr>
     <tr>
       <td>charge_parking_flag</td>
       <td>
-	<?php echo e($input['charge_parking_flag']); ?>
+        <?php echo $input['charge_parking_flag'] ? 'YES' : 'NO'; ?>
       </td>
     </tr>
     <tr>
       <td>free_parking_flag</td>
       <td>
-   	<?php echo e($input['free_parking_flag']); ?>
+        <?php echo $input['free_parking_flag'] ? 'YES' : 'NO'; ?>
       </td>
     </tr>
     <tr>
@@ -170,13 +173,15 @@
     <tr>
       <td>register_type</td>
       <td>
-	<?php echo e($input['register_type']); ?>
+	<?php if ($input['register_type'] == Model_Fleamarket::REGISTER_TYPE_ADMIN) { echo '運営者'; }
+	      else if($input['register_type'] == Model_Fleamarket::REGISTER_TYPE_USER) { echo 'ユーザー投稿'; }
+	      ?>
       </td>
     </tr>
     <tr>
       <td>display_flag</td>
       <td>
-	<?php echo e($input['display_flag']); ?>
+        <?php echo $input['display_flag'] ? 'YES' : 'NO'; ?>
       </td>
     </tr>
     <tr>
@@ -185,6 +190,7 @@
 	<?php echo e($input['event_reservation_status']); ?>
       </td>
     </tr>
+    <?php if ($fleamarket && $input['fleamarket_image_id']) { ?>
     <?php foreach ($fleamarket->fleamarket_images as $fleamarket_image) { ?>
     <?php foreach ($input['fleamarket_image_id'] as $fleamarket_image_id) { ?>
     <?php if ($fleamarket_image->fleamarket_image_id == $fleamarket_image_id) { ?>
@@ -192,6 +198,7 @@
       <td>ファイル</td>
       <td><img src="<?php echo $fleamarket_image->Url(); ?>">を削除</td>
     </tr>
+    <?php } ?>
     <?php } ?>
     <?php } ?>
     <?php } ?>
