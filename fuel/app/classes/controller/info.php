@@ -27,4 +27,40 @@ class Controller_Info extends Controller_Base_Template
     }
 
 
+    public function action_food()
+    {
+        $this->template->content = View::forge('info/food');
+    }
+
+
+    public function action_corporation()
+    {
+        $this->template->content = View::forge('info/corporation');
+    }
+
+
+    public function action_visitor()
+    {
+        $this->template->content = View::forge('info/visitor');
+    }
+
+
+    public function action_agreement()
+    {
+        $this->template->content = View::forge('info/agreement');
+    }
+
+
+    public function action_manager()
+    {
+        $this->template->content = View::forge('info/manager');
+    }
+
+
+    public function action_policy()
+    {
+        $this->template->content = View::forge('info/policy');
+    }
+
+
 }

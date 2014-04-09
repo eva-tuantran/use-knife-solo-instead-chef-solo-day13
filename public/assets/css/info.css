@@ -10,3 +10,10 @@
   font-size: 1em;
 }
 
+#info {
+    margin-bottom: 20px;
+}
+
+.change_policy {
+    text-align: right;
+}
