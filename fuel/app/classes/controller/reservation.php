@@ -161,7 +161,7 @@ class Controller_Reservation extends Controller_Base_Template
                 'fleamarket_entry_style_id' => $data['fleamarket_entry_style_id'],
             );
 
-            $fleamarket = Model_Fleamarket::find($data['fleamarket_id']);
+            $fleamarket = Model_Fleamarket::findForUpdate($data['fleamarket_id']);
 
             $data['reservation_number'] = sprintf(
                 '%05d-%05d',
