@@ -1077,10 +1077,8 @@ QUERY;
             ->from('fleamarkets')
             ->where('fleamarket_id',$fleamarket_id) . " FOR UPDATE";
 
-        $statement = \DB::query($query)->parameters(array(
-            ':fleamarket_id' => $fleamarket_id,
-        ));
-        $result = $statement->as_object('Model_Fleamarket')->execute();
+        $result = DB::query($query)->as_object('Model_Fleamarket')->execute();
+
         return $result ? $result[0] : null;
     }
 }
