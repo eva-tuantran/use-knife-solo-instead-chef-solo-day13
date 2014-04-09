@@ -12,7 +12,7 @@
     <!-- </div> -->
 
     <!-- ad -->
-    <div class="ad clearfix"> <a href="#"><img src="http://dummyimage.com/220x150/ccc/fff.jpg" class="img-responsive"></a></div>
+    <!-- <div class="ad clearfix"> <a href="#"><img src="http://dummyimage.com/220x150/ccc/fff.jpg" class="img-responsive"></a></div> -->
     <!-- /ad -->
   </div>
   <!-- /mypageProfile -->
