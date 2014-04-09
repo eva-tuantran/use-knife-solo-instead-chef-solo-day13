@@ -1069,4 +1069,15 @@ QUERY;
             $this->save();
         }
     }
+
+    public static function findForUpdate($fleamarket_id)
+    {
+        $query = DB::select()
+            ->from('fleamarkets')
+            ->where('fleamarket_id',$fleamarket_id) . " FOR UPDATE";
+
+        $result = DB::query($query)->as_object('Model_Fleamarket')->execute();
+
+        return $result ? $result[0] : null;
+    }
 }
