@@ -185,6 +185,7 @@
 	<?php echo e($input['event_reservation_status']); ?>
       </td>
     </tr>
+    <?php if ($fleamarket && $input['fleamarket_image_id']) { ?>
     <?php foreach ($fleamarket->fleamarket_images as $fleamarket_image) { ?>
     <?php foreach ($input['fleamarket_image_id'] as $fleamarket_image_id) { ?>
     <?php if ($fleamarket_image->fleamarket_image_id == $fleamarket_image_id) { ?>
@@ -192,6 +193,7 @@
       <td>ファイル</td>
       <td><img src="<?php echo $fleamarket_image->Url(); ?>">を削除</td>
     </tr>
+    <?php } ?>
     <?php } ?>
     <?php } ?>
     <?php } ?>
