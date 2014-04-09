@@ -171,7 +171,9 @@ class Controller_Reservation extends Controller_Base_Template
 
             $entry = Model_Entry::find('first',$condition);
 
-            if (!$entry){
+            if ($entry) {
+                $entry->set($data);
+            }else{
                 $entry = Model_Entry::forge($data);
             }
 
