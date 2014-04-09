@@ -1,0 +1,2 @@
+5 0 * * * apache php /var/www/html/oil refine fleamarket_event_close
+
