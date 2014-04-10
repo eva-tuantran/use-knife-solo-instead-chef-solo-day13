@@ -29,7 +29,6 @@ class Fleamarket_Event_Close
 
         if ($fleamarkets) {
             foreach ($fleamarkets as $fleamarket) {
-var_dump($fleamarket->fleamarket_id);
                 $fleamarket->event_status = \Model_Fleamarket::EVENT_STATUS_CLOSE;
                 $fleamarket->save();
             }
