@@ -48,13 +48,13 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
         Session::set_flash('admin.fleamarket.fieldset', $fieldset);
 
         if (! $fieldset->validation()->run()) {
-            return Response::redirect('admin/fleamarket?fleamarket_id=' . Input::param('fleamarket_id',''));
+            return Response::redirect('admin/fleamarket/?fleamarket_id=' . Input::param('fleamarket_id',''));
         }
 
         $files = $this->saveUploadedImages();
 
         if(! is_array($files)){
-            return Response::redirect('admin/fleamarket?fleamarket_id=' . Input::param('fleamarket_id',''));
+            return Response::redirect('admin/fleamarket/?fleamarket_id=' . Input::param('fleamarket_id',''));
         }
 
         $view = View::forge('admin/fleamarket/confirm');

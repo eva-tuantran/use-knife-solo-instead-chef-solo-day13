@@ -17,6 +17,8 @@ $(function() {
 });
 </script>
 
+<?php $entry_styles = Config::get('master.entry_styles'); ?>
+
 <?php $input  = $fieldset->input(); ?>
 <?php $errors = $fieldset->validation()->error_message(); ?>
 <?php $fields = $fieldset->field(); ?>
@@ -452,9 +454,15 @@ $(function() {
       </td>
     </tr>
     <?php } ?>
+    <?php if ($fleamarket) {
+	  foreach ($fleamarket->fleamarket_entry_styles as $fleamarket_entry_style) { ?>
+    <tr>
+    <td><?php echo e($entry_styles[$fleamarket_entry_style->entry_style_id]); ?></td>
+    <td>
+    </td>
+    </tr>
+    <?php }} ?>
   </table>
-
-    
-  <input type="submit" value="登録">
+<input type="submit" value="登録">
   <input type="hidden" name="fleamarket_id" value="<?php echo e(Input::param('fleamarket_id')); ?>">
 </form>

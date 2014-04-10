@@ -92,7 +92,10 @@ class Model_Fleamarket extends \Orm\Model
         ),
         'fleamarket_abouts' => array(
             'key_from' => 'fleamarket_id',
-        )
+        ),
+        'entries' => array(
+            'key_from' => 'fleamarket_id',
+        ),
     );
     protected static $_properties = array(
         'fleamarket_id',
