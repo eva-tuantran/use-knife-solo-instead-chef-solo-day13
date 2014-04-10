@@ -3,39 +3,57 @@
 #info h2 {
     font-size: 130%;
     color: #78bd36;
-    padding: 5px 0 0 10px;
-
+    padding: 5px 10px 0 10px;
+    margin-bottom: 30px;
 }
 
 #info h3 {
     color: black;
-    border-left: 5px solid #0070c0;
-    border-bottom: 1px solid #0070c0;
+    border-left: 5px solid #78bd36;
+    border-bottom: 1px solid #78bd36;
     padding: 3px 0 5px 5px;
-    margin: 30px 0 20px 0;
+    margin: 20px 0 20px 0;
     line-height: 1;
     clear: left;
     font-size: 1em;
 }
+
+.agreement_article {
+    font-size: 130%;
+    color: #78bd36;
+    padding: 35px 20px 20px 20px;
+    float: left;
+}
+
 
 #info {
     margin-bottom: 20px;
 }
 
 #info ol {
-    margin-left : 10px
+    margin-left : 20px;
+    list-style-type : decimal;
 }
 
 #info ol li {
-    margin-left : 10px
+    margin-left : 10px;
+    line-height : 1.5em;
+}
+
+#info ul {
+    margin-left : 10px;
+    list-style-type: disc;
 }
 
 #info ul li {
-    margin-left : 10px
+    margin-left : 20px;
+    line-height : 1.5em;
+
 }
 
 #info p {
-    margin-left : 10px
+    margin : 10px 0 10px 10px;
+    line-height : 1.5em;
 }
 
 .change_policy {
