@@ -1,0 +1,2 @@
+# 予約受付開始日を過ぎたフリマの開催状況(event_status)を予約受付中に更新する
+1 0 * * * apache php /var/www/html/oil refine fleamarket_event_reservation_receipt
