@@ -165,19 +165,19 @@
               <h3><a href="/detail/<?php echo $entry['fleamarket_id'] ?>"><?php echo $entry['name'] ?></a></h3>
               <div class="resultPhoto"><a href="#"><img src="http://dummyimage.com/200x150/ccc/fff.jpg" class="img-rounded"></a></div>
               <div class="resultDetail">
-                <dl class="col-md-3">
+                <dl class="col-md-6">
                   <dt>出店数</dt>
                   <dd><?php echo e(@$entry['booth_string']);?></dd>
                 </dl>
-                <dl class="col-md-3">
+                <dl class="col-md-6">
                   <dt>開催時間</dt>
                   <dd><?php echo e($entry['event_date']); ?></dd>
                 </dl>
-                <dl class="col-md-3">
+                <dl class="col-md-6">
                   <dt>出店形態</dt>
                   <dd><?php echo e($entry['fleamarket_entry_style_name']); ?></dd>
                 </dl>
-                <dl class="col-md-3">
+                <dl class="col-md-6">
                   <dt>出店料金</dt>
                   <dd><?php echo e(@$entry['booth_fee_string']); ?></dd>
                 </dl>
@@ -186,10 +186,10 @@
                   <dd><?php echo e($entry['about_access']);?></dd>
                 </dl>
                 <ul class="facilitys">
-                  <li class="facility1 <?php $flagcheck($entry['car_shop_flag']) ?>"      >車出店可能</li>
-                  <li class="facility2 <?php $flagcheck($entry['charge_parking_flag']) ?>">有料駐車場</li>
-                  <li class="facility3 <?php $flagcheck($entry['free_parking_flag']) ?>"  >無料駐車場</li>
-                  <li class="facility4 <?php $flagcheck($entry['rainy_location_flag']) ?>">雨天開催会場</li>
+                  <li class="facility1 <?php echo e($entry['car_shop_flag'])       ? 'on' : 'off'; ?>">車出店可能</li>
+                  <li class="facility2 <?php echo e($entry['charge_parking_flag']) ? 'on' : 'off'; ?>">有料駐車場</li>
+                  <li class="facility3 <?php echo e($entry['free_parking_flag'])   ? 'on' : 'off'; ?>">無料駐車場</li>
+                  <li class="facility4 <?php echo e($entry['rainy_location_flag']) ? 'on' : 'off'; ?>">雨天開催会場</li>
                 </ul>
                 <ul class="detailLink">
                   <li><a href="/detail/<?php echo $entry['fleamarket_id'] ?>">詳細情報を見る<i></i></a></li>
@@ -219,19 +219,19 @@
             <h3><a href="/detail/<?php echo $mylist['fleamarket_id'] ?>"><?php echo $mylist['name'] ?></a></h3>
             <div class="resultPhoto"><a href="#"><img src="http://dummyimage.com/200x150/ccc/fff.jpg" class="img-rounded"></a></div>
             <div class="resultDetail">
-              <dl class="col-md-3">
+              <dl class="col-md-6">
                 <dt>出店数</dt>
                 <dd><?php echo e(@$mylist['booth_string']);?></dd>
               </dl>
-              <dl class="col-md-3">
+              <dl class="col-md-6">
                 <dt>開催時間</dt>
                 <dd><?php echo e($mylist['event_date']); ?></dd>
               </dl>
-              <dl class="col-md-3">
+              <dl class="col-md-6">
                 <dt>出店形態</dt>
                 <dd><?php echo e($mylist['fleamarket_entry_style_name']); ?></dd>
               </dl>
-              <dl class="col-md-3">
+              <dl class="col-md-6">
                 <dt>出店料金</dt>
                 <dd><?php echo e(@$mylist['booth_fee_string']); ?></dd>
               </dl>
@@ -240,10 +240,10 @@
                 <dd><?php echo e($mylist['about_access']);?></dd>
               </dl>
               <ul class="facilitys">
-                <li class="facility1 <?php $flagcheck($mylist['car_shop_flag'])?>"      >車出店可能</li>
-                <li class="facility2 <?php $flagcheck($mylist['charge_parking_flag'])?>">有料駐車場</li>
-                <li class="facility3 <?php $flagcheck($mylist['free_parking_flag'])?>"  >無料駐車場</li>
-                <li class="facility4 <?php $flagcheck($mylist['rainy_location_flag'])?>">雨天開催会場</li>
+                <li class="facility1 <?php echo e($mylist['car_shop_flag'])       ? 'on' : 'off'; ?>">車出店可能</li>
+                <li class="facility2 <?php echo e($mylist['charge_parking_flag']) ? 'on' : 'off'; ?>">有料駐車場</li>
+                <li class="facility3 <?php echo e($mylist['free_parking_flag'])   ? 'on' : 'off'; ?>">無料駐車場</li>
+                <li class="facility4 <?php echo e($mylist['rainy_location_flag']) ? 'on' : 'off'; ?>">雨天開催会場</li>
               </ul>
               <ul class="detailLink">
                 <li><a href="/detail/<?php echo $mylist['fleamarket_id'] ?>">詳細情報を見る<i></i></a></li>
@@ -280,19 +280,19 @@
       <h3><a href="/detail/<?php echo $myfleamarket['fleamarket_id'] ?>"><?php echo $myfleamarket['name'] ?></a></h3>
       <div class="resultPhoto"><a href="#"><img src="http://dummyimage.com/200x150/ccc/fff.jpg" class="img-rounded"></a></div>
         <div class="resultDetail">
-          <dl class="col-md-3">
+          <dl class="col-md-6">
             <dt>出店数</dt>
             <dd><?php echo e(@$myfleamarket['booth_string']);?></dd>
           </dl>
-          <dl class="col-md-3">
+          <dl class="col-md-6">
             <dt>開催時間</dt>
             <dd><?php echo e($myfleamarket['event_date']); ?></dd>
           </dl>
-          <dl class="col-md-3">
+          <dl class="col-md-6">
             <dt>出店形態</dt>
             <dd><?php echo e($myfleamarket['fleamarket_entry_style_name']); ?></dd>
           </dl>
-          <dl class="col-md-3">
+          <dl class="col-md-6">
             <dt>出店料金</dt>
             <dd><?php echo e(@$myfleamarket['booth_fee_string']); ?></dd>
           </dl>
@@ -301,10 +301,10 @@
             <dd><?php echo e($myfleamarket['about_access']);?></dd>
           </dl>
           <ul class="facilitys">
-            <li class="facility1 <?php $flagcheck($myfleamarket['car_shop_flag'])?>"      >車出店可能</li>
-            <li class="facility2 <?php $flagcheck($myfleamarket['charge_parking_flag'])?>">有料駐車場</li>
-            <li class="facility3 <?php $flagcheck($myfleamarket['free_parking_flag'])?>"  >無料駐車場</li>
-            <li class="facility4 <?php $flagcheck($myfleamarket['rainy_location_flag'])?>">雨天開催会場</li>
+            <li class="facility1 <?php echo e($myfleamarket['car_shop_flag'])       ? 'on' : 'off'; ?>">車出店可能</li>
+            <li class="facility2 <?php echo e($myfleamarket['charge_parking_flag']) ? 'on' : 'off'; ?>">有料駐車場</li>
+            <li class="facility3 <?php echo e($myfleamarket['free_parking_flag'])   ? 'on' : 'off'; ?>">無料駐車場</li>
+            <li class="facility4 <?php echo e($myfleamarket['rainy_location_flag']) ? 'on' : 'off'; ?>">雨天開催会場</li>
           </ul>
           <ul class="detailLink">
             <li><a href="/detail/<?php echo $myfleamarket['fleamarket_id'] ?>">詳細情報を見る<i></i></a></li>

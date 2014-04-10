@@ -894,7 +894,7 @@ li.inquiry i {
 	text-decoration: underline;
 	display: block;
 }
-#contentSearch #resultTitle {
+#resultTitle {
 	font-size: 138.5%;
 	color: #fff;
 	text-align: left;
