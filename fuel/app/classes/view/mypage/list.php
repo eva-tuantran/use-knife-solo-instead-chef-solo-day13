@@ -17,28 +17,28 @@ class View_Mypage_List extends ViewModel
      */
     public function view()
     {
-//        foreach ($this->entries as &$entry) {
-//            $this->addDisplayStrings($entry);
-//        }
-//        unset($entry);
-//
-//
-//        foreach ($this->mylists as &$mylist) {
-//            $this->addDisplayStrings($mylist);
-//        }
-//        unset($mylist);
-//
-//
-//        foreach ($this->myfleamarkets as &$myfleamarket) {
-//            $this->addDisplayStrings($myfleamarket);
-//        }
-//        unset($myfleamarket);
-//
-//        $this->flagcheck = function($flag) {
-//            if (! $flag) {
-//                echo "off";
-//            }
-//        };
+        $fleamarkets = array();
+        foreach ($this->fleamarkets as $fleamarket) {
+            $fleamarkets[] = $this->addDisplayStrings($fleamarket);
+        }
+        $this->fleamarkets = $fleamarkets;
+
+
+        $this->render_status = function($fleamarket) {
+            if (! empty($fleamarket['event_status'])) {
+                echo 'status' . $fleamarket['event_status'];
+            }
+        };
+
+        $this->is_official = function($fleamarket) {
+            if (! empty($fleamarket['register_type']) ) {
+                if ($fleamarket['register_type'] == \Model_Fleamarket::REGISTER_TYPE_ADMIN) {
+                    return true;
+                }
+            }
+
+            return false;
+        };
     }
 
     /**
@@ -47,8 +47,10 @@ class View_Mypage_List extends ViewModel
      * @access private
      * @return void
      * @author shimma
+     *
+     * @todo それぞれをmethodにしてidを与えると、表示用のstgを吐いてくれるような実装に切り替えたい
      */
-    public function addDisplayStrings(&$entry)
+    public function addDisplayStrings($fleamarket)
     {
         /**
          * エントリースタイル名
@@ -60,20 +62,26 @@ class View_Mypage_List extends ViewModel
          * '6' => '企業車出店',
          * '7' => '飲食店',
          */
-        if (isset($entry['fleamarket_entry_style_id'])) {
-            $entry['fleamarket_entry_style_name'] = Config::get("master.entry_styles.$entry[fleamarket_entry_style_id]", '-');
+        if (! empty($fleamarket['fleamarket_entry_style_id'])) {
+            $fleamarket['fleamarket_entry_style_name'] = Config::get("master.entry_styles.$fleamarket[fleamarket_entry_style_id]", '-');
         }
 
         /**
          *  エントリー費用
          *  現在の所、車出店など横に出している
          */
-        if (isset($entry['booth_fee']) && isset($entry['fleamarket_entry_style_name'])) {
-            $entry['booth_fee_string'] = $this->createFeeString($entry['fleamarket_entry_style_name'], $entry['booth_fee']);
+        if (isset($fleamarket['booth_fee']) && isset($fleamarket['fleamarket_entry_style_name'])) {
+            $fleamarket['booth_fee_string'] = $this->createFeeString($fleamarket['fleamarket_entry_style_name'], $fleamarket['booth_fee']);
         } else {
-            $entry['booth_fee_string'] = '未設定';
+            $fleamarket['booth_fee_string'] = '未設定';
         }
 
+
+        //@todo 果たしてfleamarketで丸ごとarrayを渡すのはいいのか確認
+        $fleamarket['entry_styles'] = \Model_Fleamarket_Entry_Style::getFleamarketEntryStyle($fleamarket);
+        $fleamarket['total_booth'] = \Model_Fleamarket_Entry_Style::getTotalBooth($fleamarket);
+
+        return $fleamarket;
     }
 
 

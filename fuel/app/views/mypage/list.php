@@ -17,9 +17,9 @@
   <div id="searchResult" class="col-sm-9">
     <!-- pills -->
     <ul class="nav nav-pills">
-      <li><a href="#">これまで参加したフリマ <span class="badge"><?php echo e(Auth::getFinishedEntryCount()); ?>件</span></a></li>
-      <li><a href="#">出店予約中のフリマ <span class="badge"><?php echo e(Auth::getReservedEntryCount()); ?>件</span></a></li>
-      <li><a href="#">マイリスト <span class="badge"><?php echo e(Auth::getFavoriteCount()); ?>件</span></a></li>
+      <li><a href="/mypage/list?type=entry">これまで参加したフリマ <span class="badge"><?php echo e(Auth::getFinishedEntryCount()); ?>件</span></a></li>
+      <li><a href="/mypage/list?type=reserved">出店予約中のフリマ <span class="badge"><?php echo e(Auth::getReservedEntryCount()); ?>件</span></a></li>
+      <li><a href="/mypage/list?type=mylist">マイリスト <span class="badge"><?php echo e(Auth::getFavoriteCount()); ?>件</span></a></li>
     </ul>
     <!-- /pills -->
     <!-- search -->
@@ -109,15 +109,23 @@
     </div>
 
 
+    <?php if(empty($fleamarkets)): ?>
+    <p>フリマ情報はありません</p>
+    <?php else: ?>
     <?php foreach ($fleamarkets as $fleamarket): ?>
     <!-- result -->
-    <div class="box result status1 clearfix">
-      <h3><a href="/detail/<?php echo $fleamarket['fleamarket_id'] ?>"><?php echo $fleamarket['name'] ?></a></h3>
+    <div class="box result <?php $render_status($fleamarket); ?> <?php echo $is_official($fleamarket) ? 'resultPush' : ''; ?>  clearfix">
+      <h3>
+        <?php if ($is_official($fleamarket)): ?>
+        <strong>楽市楽座主催</strong>
+        <?php endif ?>
+        <a href="/detail/<?php echo $fleamarket['fleamarket_id'] ?>"><?php echo $fleamarket['name'] ?></a>
+      </h3>
       <div class="resultPhoto"><a href="#"><img src="http://dummyimage.com/200x150/ccc/fff.jpg" class="img-rounded"></a></div>
       <div class="resultDetail">
           <dl class="col-md-6">
             <dt>出店数</dt>
-            <dd><?php echo e(@$fleamarket['booth_string']);?></dd>
+            <dd><?php echo e(@$fleamarket['total_booth']);?>店</dd>
           </dl>
           <dl class="col-md-6">
             <dt>開催時間</dt>
@@ -142,17 +150,27 @@
             <li class="facility4 <?php echo e($fleamarket['rainy_location_flag']) ? 'on' : 'off'; ?>">雨天開催会場</li>
           </ul>
         <ul class="detailLink">
-          <li><a href="#">詳細情報を見る<i></i></a></li>
+          <li><a href="/detail/<?php echo $fleamarket['fleamarket_id'] ?>">詳細情報を見る<i></i></a></li>
         </ul>
         <ul class="rightbutton">
-          <li class="button change makeReservation"><a href="#"><i></i>予約変更</a></li>
-          <li class="button cancel"><a href="#"><i></i>予約解除</a></li>
+        <?php if($type == 'mylist'): ?>
+              <li class="button makeReservation"><a href="/reservation?fleamarket_id=<?php echo $fleamarket['fleamarket_id'] ?>">出店予約をする</a></li>
+              <li class="button cancel"><a href="#" class="mylist_remove" id="fleamarket_id_<?php echo $fleamarket['fleamarket_id']; ?>"><i></i>マイリスト解除</a></li>
+        <?php elseif($type == 'entry'): ?>
+              <li class="button change makeReservation"><a href="/mypage/change?fleamarket_id=<?php echo $fleamarket['fleamarket_id'] ?>"><i></i>予約変更</a></li>
+              <li class="button cancel"><a href="/mypage/cancel?fleamarket_id=<?php echo $fleamarket['fleamarket_id'] ?>" class="fleamarket_cancel"><i></i>予約解除</a></li>
+        <?php elseif($type == 'myfleamarket'): ?>
+              <li class="button makeReservation change"><a href="/fleamarket/<?php echo $fleamarket['fleamarket_id'] ?>"><i></i>内容変更</a></li>
+        <?php elseif($type == 'reserved'): ?>
+              <li class="button change makeReservation"><a href="/mypage/change?fleamarket_id=<?php echo $fleamarket['fleamarket_id'] ?>"><i></i>予約変更</a></li>
+              <li class="button cancel"><a href="/mypage/cancel?fleamarket_id=<?php echo $fleamarket['fleamarket_id'] ?>" class="fleamarket_cancel"><i></i>予約解除</a></li>
+        <?php endif; ?>
         </ul>
       </div>
     </div>
     <!-- /result -->
     <?php endforeach; ?>
-
+    <?php endif; ?>
 
     <!-- result -->
     <div class="box result status2 resultPush clearfix">
@@ -196,101 +214,18 @@
     </div>
     <!-- /result -->
 
-    <!-- result -->
-    <div class="box result clearfix">
-      <h3><a href="#">2014年3年8日(土)　東京都　★無料フリマ★チャリティフリーマーケットin太田</a></h3>
-      <div class="resultPhoto"><a href="#"><img src="http://dummyimage.com/200x150/ccc/fff.jpg" class="img-rounded"></a></div>
-      <div class="resultDetail">
-        <dl class="col-md-6">
-          <dt>出店数</dt>
-          <dd>60店</dd>
-        </dl>
-        <dl class="col-md-6">
-          <dt>開催時間</dt>
-          <dd>9時〜14時</dd>
-        </dl>
-        <dl class="col-md-6">
-          <dt>出店形態</dt>
-          <dd>車出店車出店車出店車出店車出店車出店車出店</dd>
-        </dl>
-        <dl class="col-md-6">
-          <dt>出店料金</dt>
-          <dd>無料無料無料無料無料無料無料無料無料無料</dd>
-        </dl>
-        <dl class="col-md-11">
-          <dt>交通</dt>
-          <dd>国分寺駅から京王バス（府中駅行き）藤塚バス停下車</dd>
-        </dl>
-        <ul class="facilitys">
-          <li class="facility1 off">車出店可能</li>
-          <li class="facility2">有料駐車場</li>
-          <li class="facility3 off">無料駐車場</li>
-          <li class="facility4">雨天開催会場</li>
-        </ul>
-        <ul class="detailLink">
-          <li><a href="#">詳細情報を見る<i></i></a></li>
-        </ul>
-        <ul class="rightbutton">
-          <li class="button change makeReservation"><a href="#"><i></i>予約変更</a></li>
-          <li class="button cancel"><a href="#"><i></i>予約解除</a></li>
-        </ul>
-      </div>
-    </div>
-    <!-- /result -->
-
-    <!-- result -->
-    <div class="box result clearfix">
-      <h3><a href="#">2014年3年8日(土)　東京都　★無料フリマ★チャリティフリーマーケットin太田</a></h3>
-      <div class="resultPhoto"><a href="#"><img src="http://dummyimage.com/200x150/ccc/fff.jpg" class="img-rounded"></a></div>
-      <div class="resultDetail">
-        <dl class="col-md-6">
-          <dt>出店数</dt>
-          <dd>60店</dd>
-        </dl>
-        <dl class="col-md-6">
-          <dt>開催時間</dt>
-          <dd>9時〜14時</dd>
-        </dl>
-        <dl class="col-md-6">
-          <dt>出店形態</dt>
-          <dd>車出店車出店車出店車出店車出店車出店車出店</dd>
-        </dl>
-        <dl class="col-md-6">
-          <dt>出店料金</dt>
-          <dd>無料無料無料無料無料無料無料無料無料無料</dd>
-        </dl>
-        <dl class="col-md-11">
-          <dt>交通</dt>
-          <dd>国分寺駅から京王バス（府中駅行き）藤塚バス停下車</dd>
-        </dl>
-        <ul class="facilitys">
-          <li class="facility1">車出店可能</li>
-          <li class="facility2">有料駐車場</li>
-          <li class="facility3">無料駐車場</li>
-          <li class="facility4">雨天開催会場</li>
-        </ul>
-        <ul class="detailLink">
-          <li><a href="#">詳細情報を見る<i></i></a></li>
-        </ul>
-        <ul class="rightbutton">
-          <li class="button change makeReservation"><a href="#"><i></i>予約変更</a></li>
-          <li class="button cancel"><a href="#"><i></i>予約解除</a></li>
-        </ul>
-      </div>
-    </div>
-    <!-- /result -->
-
     <!-- pagination -->
+    <?php if ('' != ($pagnation =  $pagination->render())): ?> 
+    <?php echo $pagnation; ?>
+    <?php else: ?>
     <ul class="pagination">
-      <li><a href="#">&laquo;</a></li>
-      <li class="disabled"><a href="#">1</a></li>
-      <li class="active"><a href="#">2</a></li>
-      <li><a href="#">3</a></li>
-      <li><a href="#">4</a></li>
-      <li><a href="#">5</a></li>
-      <li><a href="#">&raquo;</a></li>
+        <li class="disabled"><a href="javascript:void(0);" rel="prev">«</a></li>
+        <li class="active"><a href="javascript:void(0);">1<span class="sr-only"></span></a></li>
+        <li class="disabled"><a href="javascript:void(0);" rel="next">»</a></li>
     </ul>
+    <?php endif; ?>
     <!-- /pagination -->
+
   </div>
   <!-- /searchResult -->
 </div>

@@ -13,6 +13,8 @@ class Controller_Mypage extends Controller_Base_Template
         'password',
         'account',
         'save',
+        'list',
+        'passwordchange',
     );
 
     protected $_secure_actions = array(
@@ -20,14 +22,21 @@ class Controller_Mypage extends Controller_Base_Template
         'password',
         'account',
         'save',
+        'list',
+        'passwordchange',
     );
 
+    /**
+     * before
+     *
+     * @todo エラーを移動
+     */
     public function before()
     {
         parent::before();
 
         if (! $this->login_user) {
-            return \Response::redirect('/login');
+            throw new SystemException('ユーザ情報が取得出来ませんでした');
         }
     }
 
@@ -61,10 +70,6 @@ class Controller_Mypage extends Controller_Base_Template
     /**
      * マイリスト/出店予約したフリマ/開催投稿したフリマ一覧ページ
      *
-     * - マイリストを出す(pagenationなし)
-     * - pagination付ける
-     * - 条件分岐して出す
-     *
      * @access public
      * @return void
      * @author shimma
@@ -73,92 +78,48 @@ class Controller_Mypage extends Controller_Base_Template
     {
         $view_model = ViewModel::forge('mypage/list');
 
-        $page = Input::get('page', 1);
-        switch (Input::get('type')) {
+        $item_per_page = 10;
+        $pagination_param = 'p';
+
+        $page = Input::get($pagination_param, 1);
+        $type = Input::get('type');
+        switch ($type) {
             case 'mylist':
-                $fleamarkets = $this->login_user->getFavorites($page, 3);
+                $fleamarkets = $this->login_user->getFavorites($page, $item_per_page);
+                $count       = $this->login_user->getFavoriteCount();
                 break;
             case 'entry':
-                $fleamarkets = $this->login_user->getEntries($page, 3);
+                $fleamarkets = $this->login_user->getEntries($page, $item_per_page);
+                $count       = $this->login_user->getEntryCount();
                 break;
             case 'myfleamarket':
-                $fleamarkets = $this->login_user->getMyFleamarkets($page, 3);
+                $fleamarkets = $this->login_user->getMyFleamarkets($page, $item_per_page);
+                $count       = $this->login_user->getMyFleamarkets();
+                break;
+            case 'reserved':
+                $fleamarkets = $this->login_user->getReservedEntries($page, $item_per_page);
+                $count       = $this->login_user->getReservedEntryCount();
                 break;
             default:
                 return \Response::redirect('/mypage');
         }
 
+        $pagination = Pagination::forge('mypage/list',
+            array(
+            'uri_segment'    => $pagination_param,
+            'num_links'      => 5,
+            'per_page'       => $item_per_page,
+            'total_items'    => $count,
+        ));
+
+        $view_model->set('type', $type, false);
+        $view_model->set('pagination', $pagination, false);
         $view_model->set('fleamarkets', $fleamarkets);
         $view_model->set('calendar', ViewModel::forge('component/calendar'), false);
         $view_model->set('prefectures', Config::get('master.prefectures'), false);
         $view_model->set('regions', Config::get('master.regions'), false);
         $this->template->content = $view_model;
-
-        //// ページネーション設定
-        //$pagination = Pagination::forge(
-        //    'fleamarket_pagination',
-        //    $this->getPaginationConfig($total_count)
-        //);
-        // $view_model->set('pagination', $pagination, false);
     }
-
-
-//    /**
-//     * ページネーション設定を取得する
-//     *
-//     * @access private
-//     * @param int $count 総行数
-//     * @return array
-//     * @author ida
-//     */
-//    private function getPaginationConfig($count)
-//    {
-//        $search_result_per_page = Input::post('search_result_per_page');
-//        if ($search_result_per_page) {
-//            $this->search_result_per_page = $search_result_per_page;
-//        }
-//
-//        return array(
-//            'pagination_url' => 'search',
-//            'uri_segment' => 2,
-//            'num_links' => 5,
-//            'per_page' => $this->search_result_per_page,
-//            'total_items' => $count,
-//        );
-//    }
-//
-//
-//    /**
-//     * 出店予約したフリマ一覧
-//     *
-//     * @access public
-//     * @return void
-//     * @author shimma
-//     */
-//    public function action_entries()
-//    {
-//        $view_model = ViewModel::forge('mypage/index');
-//        $this->template->content = $view_model;
-//    }
-//
-//    /**
-//     * 開催投稿したフリマ一覧
-//     *
-//     * @access public
-//     * @return void
-//     * @author shimma
-//     */
-//    public function action_myfleamarkets()
-//    {
-//        $view_model = ViewModel::forge('mypage/index');
-//        $this->template->content = $view_model;
-//    }
-//
-
-
-
-
-
 
 
     /**
