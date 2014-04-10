@@ -483,7 +483,7 @@ class Model_User extends Orm\Model_Soft
 
 
     /**
-     * エントリーしたフリーマーケットの最新情報を取得します
+     * エントリーした全てのフリーマーケットの情報を取得します
      *
      * @access public
      * @return mixed
@@ -492,6 +492,18 @@ class Model_User extends Orm\Model_Soft
     public function getEntries($page = 1, $row_count = 30)
     {
         return \Model_Entry::getUserEntries($this->user_id, $page, $row_count);
+    }
+
+    /**
+     * エントリーしたフリーマーケットの最新情報を取得します
+     *
+     * @access public
+     * @return mixed
+     * @author shimma
+     */
+    public function getReservedEntries($page = 1, $row_count = 30)
+    {
+        return \Model_Entry::getUserReservedEntries($this->user_id, $page, $row_count);
     }
 
     /**
@@ -530,6 +542,20 @@ class Model_User extends Orm\Model_Soft
     {
         return \Model_Favorite::getUserFavoriteCount($this->user_id);
     }
+
+    /**
+     * フリマ参加総数を取得します
+     *
+     * @access public
+     * @return int
+     * @author shimma
+     */
+    public function getEntryCount()
+    {
+        return \Model_Entry::getUserEntryCount($this->user_id);
+    }
+
+
 
     /**
      * 対象のフリマIDのフリマ予約をキャンセルします

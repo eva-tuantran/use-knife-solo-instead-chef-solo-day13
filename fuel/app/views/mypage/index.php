@@ -204,7 +204,7 @@
           <?php endforeach; ?>
           <?php endif ?>
         <ul class="more">
-          <li><a href="#">続きを見る</a></li>
+          <li><a href="/mypage/list?type=entry">続きを見る</a></li>
         </ul>
         </div>
 
@@ -259,7 +259,7 @@
         <?php endif ?>
       <!-- /result -->
       <ul class="more">
-        <li><a href="#">続きを見る</a></li>
+        <li><a href="/mypage/list?type=mylist">続きを見る</a></li>
       </ul>
       </div>
 
@@ -317,10 +317,10 @@
     <!-- /result -->
 
     <?php endforeach; ?>
-    <?php endif ?>
+    <?php endif; ?>
 
     <ul class="more">
-      <li><a href="#">続きを見る</a></li>
+      <li><a href="/mypage/list?type=myfleamarket">続きを見る</a></li>
     </ul>
   </div>
 

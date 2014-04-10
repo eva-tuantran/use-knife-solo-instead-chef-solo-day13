@@ -246,6 +246,17 @@ QUERY;
 
 
     /**
+     * ユーザが予約したフリマ総数
+     *
+     * @access public
+     * @return int
+     */
+    public function getEntryCount()
+    {
+        return $this->user->getEntryCount();
+    }
+
+    /**
      * ユーザが予約しているフリマの予約数
      *
      * @access public
