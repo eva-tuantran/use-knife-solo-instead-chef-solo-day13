@@ -434,7 +434,7 @@ class Model_User extends Orm\Model_Soft
     {
         $fieldset = Fieldset::forge();
         $fieldset->validation()->add_callable('Model_User');
-        $fieldset->validation()->add_callable('Custom_Validation');
+        // $fieldset->validation()->add_callable('Custom_Validation');
         $fieldset->add_model('Model_User');
 
         return $fieldset;

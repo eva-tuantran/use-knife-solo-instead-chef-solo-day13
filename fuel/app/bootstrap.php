@@ -12,6 +12,7 @@ Autoloader::add_classes(array(
 	// Add classes you want to override here
 	// Example: 'View' => APPPATH.'classes/view.php',
     'Fieldset'                  => APPPATH.'classes/fieldset.php',
+    'Validation'                => APPPATH.'classes/validation.php',
     'Controller_Base_Template'  => APPPATH.'classes/controller/base/template.php',
     'SystemException'           => APPPATH.'classes/systemexception.php',
 ));
