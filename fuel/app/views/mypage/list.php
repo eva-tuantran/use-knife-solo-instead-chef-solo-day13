@@ -172,48 +172,6 @@
     <?php endforeach; ?>
     <?php endif; ?>
 
-    <!-- result -->
-    <div class="box result status2 resultPush clearfix">
-      <h3><strong>楽市楽座主催</strong><a href="#">2014年3年8日(土)　東京都　★無料フリマ★チャリティフリーマーケットin太田</a></h3>
-      <div class="resultPhoto"><a href="#"><img src="http://dummyimage.com/200x150/ccc/fff.jpg" class="img-rounded"></a></div>
-      <div class="resultDetail">
-        <dl class="col-md-6">
-          <dt>出店数</dt>
-          <dd>60店</dd>
-        </dl>
-        <dl class="col-md-6">
-          <dt>開催時間</dt>
-          <dd>9時〜14時</dd>
-        </dl>
-        <dl class="col-md-6">
-          <dt>出店形態</dt>
-          <dd>車出店車出店車出店車出店車出店車出店車出店</dd>
-        </dl>
-        <dl class="col-md-6">
-          <dt>出店料金</dt>
-          <dd>無料無料無料無料無料無料無料無料無料無料</dd>
-        </dl>
-        <dl class="col-md-11">
-          <dt>交通</dt>
-          <dd>国分寺駅から京王バス（府中駅行き）藤塚バス停下車</dd>
-        </dl>
-        <ul class="facilitys">
-          <li class="facility1">車出店可能</li>
-          <li class="facility2 off">有料駐車場</li>
-          <li class="facility3 off">無料駐車場</li>
-          <li class="facility4 off">雨天開催会場</li>
-        </ul>
-        <ul class="detailLink">
-          <li><a href="#">詳細情報を見る<i></i></a></li>
-        </ul>
-        <ul class="rightbutton">
-          <li class="button change makeReservation"><a href="#"><i></i>予約変更</a></li>
-          <li class="button cancel"><a href="#"><i></i>予約解除</a></li>
-        </ul>
-      </div>
-    </div>
-    <!-- /result -->
-
     <!-- pagination -->
     <?php if ('' != ($pagnation =  $pagination->render())): ?> 
     <?php echo $pagnation; ?>
