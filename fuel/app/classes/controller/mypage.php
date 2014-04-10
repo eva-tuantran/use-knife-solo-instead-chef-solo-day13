@@ -13,6 +13,8 @@ class Controller_Mypage extends Controller_Base_Template
         'password',
         'account',
         'save',
+        'list',
+        'passwordchange',
     );
 
     protected $_secure_actions = array(
@@ -20,21 +22,21 @@ class Controller_Mypage extends Controller_Base_Template
         'password',
         'account',
         'save',
+        'list',
+        'passwordchange',
     );
 
     /**
      * before
      *
-     * @access public
-     * @return void
-     * @author shimma
+     * @todo エラーを移動
      */
     public function before()
     {
         parent::before();
 
         if (! $this->login_user) {
-            return \Response::redirect('/login');
+            throw new SystemException('ユーザ情報が取得出来ませんでした');
         }
     }
 
@@ -44,7 +46,7 @@ class Controller_Mypage extends Controller_Base_Template
      * @access public
      * @return void
      * @author shimma
-     * 
+     *
      * @todo メインページのテンプレートからJSを分離
      */
     public function action_index()
@@ -65,6 +67,60 @@ class Controller_Mypage extends Controller_Base_Template
         $this->template->content = $view_model;
     }
 
+    /**
+     * マイリスト/出店予約したフリマ/開催投稿したフリマ一覧ページ
+     *
+     * @access public
+     * @return void
+     * @author shimma
+     */
+    public function action_list()
+    {
+        $view_model = ViewModel::forge('mypage/list');
+
+        $item_per_page = 10;
+        $pagination_param = 'p';
+
+        $page = Input::get($pagination_param, 1);
+        $type = Input::get('type');
+        switch ($type) {
+            case 'mylist':
+                $fleamarkets = $this->login_user->getFavorites($page, $item_per_page);
+                $count       = $this->login_user->getFavoriteCount();
+                break;
+            case 'entry':
+                $fleamarkets = $this->login_user->getEntries($page, $item_per_page);
+                $count       = $this->login_user->getEntryCount();
+                break;
+            case 'myfleamarket':
+                $fleamarkets = $this->login_user->getMyFleamarkets($page, $item_per_page);
+                $count       = $this->login_user->getMyFleamarkets();
+                break;
+            case 'reserved':
+                $fleamarkets = $this->login_user->getReservedEntries($page, $item_per_page);
+                $count       = $this->login_user->getReservedEntryCount();
+                break;
+            default:
+                return \Response::redirect('/mypage');
+        }
+
+        $pagination = Pagination::forge('mypage/list',
+            array(
+            'uri_segment'    => $pagination_param,
+            'num_links'      => 5,
+            'per_page'       => $item_per_page,
+            'total_items'    => $count,
+        ));
+
+        $view_model->set('type', $type, false);
+        $view_model->set('pagination', $pagination, false);
+        $view_model->set('fleamarkets', $fleamarkets);
+        $view_model->set('calendar', ViewModel::forge('component/calendar'), false);
+        $view_model->set('prefectures', Config::get('master.prefectures'), false);
+        $view_model->set('regions', Config::get('master.regions'), false);
+        $this->template->content = $view_model;
+    }
+
 
     /**
      * フリーマーケットのキャンセル
@@ -79,6 +135,7 @@ class Controller_Mypage extends Controller_Base_Template
 
         if (! $fleamarket_id) {
             Session::set_flash('notice', \STATUS_FLEAMARKET_CANCEL_FAILED);
+
             return \Response::redirect('/mypage', 'refresh');
         }
 
@@ -118,7 +175,6 @@ class Controller_Mypage extends Controller_Base_Template
         $this->template->content = View::forge('mypage/account', $data);
         $this->template->content->set('user_account_form', $fieldset->build('/mypage/save'), false);
     }
-
 
     /**
      * 変更内容保存
@@ -179,6 +235,7 @@ class Controller_Mypage extends Controller_Base_Template
 
         if (! Security::check_token()) {
             Session::set_flash('status_code', \STATUS_PASSWORD_CHANGE_TIMEOUT);
+
             return \Response::redirect('/mypage/password');
         }
 
@@ -187,23 +244,32 @@ class Controller_Mypage extends Controller_Base_Template
 
         if (! $validation->run()) {
             Session::set_flash('status_code', \STATUS_PASSWORD_CHANGE_FAILED);
+
             return \Response::redirect('/mypage/password');
         }
 
         try {
             if (! Auth::change_password($fieldset->input('password'), $fieldset->input('new_password'))) {
                 Session::set_flash('status_code', \STATUS_PASSWORD_CHANGE_FAILED);
+
                 return \Response::redirect('/mypage/password');
             } else {
                 Session::set_flash('status_code', \STATUS_PASSWORD_CHANGE_SUCCESS);
+
                 return \Response::redirect('/mypage');
             }
         } catch (Exception $e) {
-            return \Response::redirect('errors/forbidden');
+            throw new SystemException('パスワード変更に失敗しました');
         }
     }
 
-
+    /**
+     * パスワード変更用のFieldset
+     *
+     * @access public
+     * @return void
+     * @author shimma
+     */
     public function createFieldsetPassword()
     {
         $fieldset = Session::get_flash('mypage.password.fieldset');
@@ -225,8 +291,8 @@ class Controller_Mypage extends Controller_Base_Template
         }
 
         $fieldset->repopulate();
+
         return $fieldset;
     }
-
 
 }

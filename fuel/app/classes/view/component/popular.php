@@ -33,6 +33,7 @@ class View_Component_Popular extends ViewModel
             $this->result_number
         );
         $fleamarket_list = $this->getFleamarketEntryStyle($fleamarket_list);
+        // $fleamarket_list = \Model_Fleamarket_Entry_Style::getFleamarketEntryStyle($fleamarket_list);
 
         $this->fleamarket_list = $fleamarket_list;
         $this->week_list = \Config::get('master.week');
