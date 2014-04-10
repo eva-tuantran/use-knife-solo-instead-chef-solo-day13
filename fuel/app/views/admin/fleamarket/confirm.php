@@ -6,6 +6,18 @@
 <form action="/admin/fleamarket/thanks" method="POST" class="form-horizontal">
   <table>
     <tr>
+      <td>location_id</td>
+      <td>
+	<?php 
+	   foreach ($locations as $location) {
+	     if( $location->location_id == $input['location_id'] ){
+	       echo e($location->name);
+             }
+           }
+	?>
+      </td>
+    </tr>
+    <tr>
       <td>フリマ名</td>
       <td>
 	<?php echo e($input['name']); ?>
@@ -207,6 +219,14 @@
       <td>ファイル</td>
       <td>
 	<img src="/files/admin/fleamarket/img/<?php echo $file['saved_as']; ?>">
+      </td>
+    </tr>
+    <?php } ?>
+    <?php foreach (Model_Fleamarket_About::getAboutTitles() as $id => $title) { ?>
+    <tr>
+      <td><?php echo e($title); ?></td>
+      <td>
+	<?php echo e($input["fleamarket_about_${id}"]); ?>
       </td>
     </tr>
     <?php } ?>
