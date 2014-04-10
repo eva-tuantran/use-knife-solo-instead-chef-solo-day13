@@ -89,6 +89,9 @@ class Model_Fleamarket extends \Orm\Model
         ),
         'fleamarket_images' => array(
             'key_from' => 'fleamarket_id',
+        ),
+        'fleamarket_abouts' => array(
+            'key_from' => 'fleamarket_id',
         )
     );
     protected static $_properties = array(
@@ -125,7 +128,9 @@ class Model_Fleamarket extends \Orm\Model
             'validation' => array('valid_time')
         ),
         'event_status' => array(
-            'form'  => array('type' => false)
+            'label' => '開催状況',
+            'form'  => array('type' => false),
+            'validation' => array('required'),
         ),
         'headline' => array(
             'validation' => array(

@@ -27,18 +27,14 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
      */
     public function action_index()
     {
-        Asset::css('jquery-ui.min.css', array(), 'add_css');
-        Asset::css('jquery-ui-timepicker.css', array(), 'add_css');
-        Asset::js('jquery-ui.min.js', array(), 'add_js');
-        Asset::js('jquery.ui.datepicker-ja.js', array(), 'add_js');
-        Asset::js('jquery-ui-timepicker.js', array(), 'add_js');
-        Asset::js('jquery-ui-timepicker-ja.js', array(), 'add_js');
-
+        $this->setAssets();
         $view = View::forge('admin/fleamarket/index');
         $fieldset = $this->getFieldset();
+        $view->set('locations',Model_Location::find('all'));
         $view->set('fieldset', $fieldset, false);
         $view->set('fleamarket', $this->fleamarket, false);
         $this->template->content = $view;
+
     }
     /**
      * 確認画面
@@ -62,6 +58,7 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
         }
 
         $view = View::forge('admin/fleamarket/confirm');
+        $view->set('locations',Model_Location::find('all'));
         $view->set('fieldset', $fieldset, false);
         $view->set('fleamarket', $this->fleamarket, false);
         $view->set('files', $files, false);
@@ -92,6 +89,7 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
             if ($files) {
                 $this->registerFleamarketImage($fleamarket, $files);
             }
+            $this->registerFleamarketAbout($fleamarket);
         } catch ( Exception $e ) {
             throw $e;
             //$view->set('error', $e, false);
@@ -146,7 +144,19 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
         }
 
         $fieldset->add('fleamarket_image_id');
-        
+
+        foreach (Model_Fleamarket_About::getAboutTitles() as $id => $title) {
+            $fieldset->add("fleamarket_about_${id}");
+        }
+
+        if ($this->fleamarket) {
+            foreach ($this->fleamarket->fleamarket_abouts as $fleamarket_about) {
+                $fieldset->field('fleamarket_about_' . $fleamarket_about->about_id)->set_value(
+                    $fleamarket_about->description
+                );
+            }
+        }
+
         $fieldset->repopulate();
         $fieldset->validation()->add_callable('Custom_Validation');
 
@@ -196,7 +206,6 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
 
         $input['created_user'] = 1;
         $input['updated_user'] = 1;
-        $input['location_id'] = 1;
         $input['group_code'] = '';
 
         return $input;
@@ -290,6 +299,47 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
                     ->where('fleamarket_image_id',$fleamarket_image_id);
                 $query->delete();
             }
+        }
+    }
+
+    public function setAssets()
+    {
+        Asset::css('jquery-ui.min.css', array(), 'add_css');
+        Asset::css('jquery-ui-timepicker.css', array(), 'add_css');
+        Asset::js('jquery-ui.min.js', array(), 'add_js');
+        Asset::js('jquery.ui.datepicker-ja.js', array(), 'add_js');
+        Asset::js('jquery-ui-timepicker.js', array(), 'add_js');
+        Asset::js('jquery-ui-timepicker-ja.js', array(), 'add_js');
+    }
+
+    public function registerFleamarketAbout($fleamarket)
+    {
+        $fieldset = $this->getFieldset();
+        $input = $fieldset->input();
+
+        foreach (Model_Fleamarket_About::getAboutTitles() as $id => $title) {
+            $fleamarket_about = Model_Fleamarket_About::find('first',array(
+                'where' => array(
+                    'fleamarket_id' => $fleamarket->fleamarket_id,
+                    'about_id' => $id
+                )
+            ));
+
+            if (! $fleamarket_about) {
+                $fleamarket_about = Model_Fleamarket_About::forge(array(
+                    'fleamarket_id' => $fleamarket->fleamarket_id,
+                    'about_id' => $id
+                ));
+            }
+
+            $fleamarket_about->set(array(
+                'title'        => $title,
+                'description'  => $input["fleamarket_about_${id}"],
+                'created_user' => 1,
+                'updated_user' => 1
+            ));
+            
+            $fleamarket_about->save();
         }
     }
 }

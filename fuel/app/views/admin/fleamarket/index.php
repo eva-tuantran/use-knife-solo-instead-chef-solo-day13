@@ -25,6 +25,16 @@ $(function() {
 <form action="/admin/fleamarket/confirm" method="POST" class="form-horizontal" enctype="multipart/form-data">
   <table>
     <tr>
+      <td>location_id</td>
+      <td>
+	<select name="location_id">
+	<?php foreach ($locations as $location) { ?>
+	<option value="<?php echo $location->location_id; ?>"<?php if ($location->location_id == $fields['location_id']->value) { echo ' selected=selected'; } ?>><?php echo e($location->name); ?></option>
+	<?php } ?>
+	</select>
+      </td>
+    </tr>
+    <tr>
       <td>フリマ名</td>
       <td>
 	<input type="text" name="name" value="<?php echo e($fields['name']->value); ?>">
@@ -432,9 +442,19 @@ $(function() {
 	<input type="file" name="upload4">
       </td>
     </tr>
+    <?php foreach (Model_Fleamarket_About::getAboutTitles() as $id => $title) { ?>
+    <tr>
+      <td>
+	<?php echo e($title); ?>
+      </td>
+      <td>
+	<input type="text" name="fleamarket_about_<?php echo $id ?>" value="<?php echo e($fields["fleamarket_about_${id}"]->value); ?>">
+      </td>
+    </tr>
+    <?php } ?>
   </table>
+
+    
   <input type="submit" value="登録">
   <input type="hidden" name="fleamarket_id" value="<?php echo e(Input::param('fleamarket_id')); ?>">
 </form>
-
-    
