@@ -413,6 +413,7 @@ class Controller_Admin_Mailmagazine extends Controller_Admin_Base_Template
             'select' => array('user_id', 'last_name', 'first_name', 'email'),
             'where' => array(
                 array('mm_flag', 1),
+                array('register_status', \Model_User::REGISTER_STATUS_ACTIVATED),
             ),
         ));
 
