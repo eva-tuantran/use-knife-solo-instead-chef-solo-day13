@@ -3,7 +3,7 @@
   <!-- mypageProfile -->
   <div id="calendar" class="col-sm-3">
     <div class="box clearfix" id="calendar-search">
-    <?php echo $calendar; ?>
+      <?php echo $calendar; ?>
     </div>
 
     <!-- <div class="box clearfix"> -->
@@ -64,11 +64,11 @@
                 <select id="select_region" class="form-control" name="conditions[region]">
                   <option value="">エリア</option>
                   <?php
-                    foreach ($regions as $region_id => $name):
+                  foreach ($regions as $region_id => $name):
                   ?>
-                    <option value="<?php echo $region_id;?>"><?php echo $name;?></option>
+                  <option value="<?php echo $region_id;?>"><?php echo $name;?></option>
                   <?php
-                    endforeach;
+                  endforeach;
                   ?>
                 </select>
               </div>
@@ -76,11 +76,11 @@
                 <select id="select_prefecture" class="form-control" name="conditions[prefecture]">
                   <option value="">都道府県</option>
                   <?php
-                    foreach ($prefectures as $prefecture_id => $name):
+                  foreach ($prefectures as $prefecture_id => $name):
                   ?>
-                    <option value="<?php echo $prefecture_id;?>"><?php echo $name;?></option>
+                  <option value="<?php echo $prefecture_id;?>"><?php echo $name;?></option>
                   <?php
-                    endforeach;
+                  endforeach;
                   ?>
                 </select>
               </div>
@@ -158,126 +158,145 @@
             <?php if(empty($entries)): ?>
             <p>現在予約しているフリーマーケットがありません。</p>
             <?php else: ?>
-            <?php foreach($entries as $entry): ?>
+            <?php foreach($entries as $fleamarket): ?>
             <!-- result -->
-            <div class="result clearfix">
-              <h3><a href="/detail/<?php echo $entry['fleamarket_id'] ?>"><?php echo $entry['name'] ?></a></h3>
+            <div class="box result <?php $render_status($fleamarket); ?> <?php echo $is_official($fleamarket) ? 'resultPush' : ''; ?>  clearfix">
+              <h3>
+                <?php if ($is_official($fleamarket)): ?>
+                <strong>楽市楽座主催</strong>
+                <?php endif; ?>
+                <a href="/detail/<?php echo $fleamarket['fleamarket_id'] ?>"><?php echo $fleamarket['name'] ?></a>
+              </h3>
               <div class="resultPhoto"><a href="#"><img src="http://dummyimage.com/200x150/ccc/fff.jpg" class="img-rounded"></a></div>
               <div class="resultDetail">
                 <dl class="col-md-6">
                   <dt>出店数</dt>
-                  <dd><?php echo e(@$entry['booth_string']);?></dd>
+                  <dd><?php echo $fleamarket['total_booth'] ? "${fleamarket['total_booth']}店" : "お問い合わせ"; ?></dd>
                 </dl>
                 <dl class="col-md-6">
                   <dt>開催時間</dt>
-                  <dd><?php echo e($entry['event_date']); ?></dd>
+                  <dd><?php echo e($fleamarket['event_date']); ?></dd>
                 </dl>
                 <dl class="col-md-6">
                   <dt>出店形態</dt>
-                  <dd><?php echo e($entry['fleamarket_entry_style_name']); ?></dd>
+                  <dd><?php echo e(@$fleamarket['fleamarket_entry_style_name']); ?></dd>
                 </dl>
                 <dl class="col-md-6">
                   <dt>出店料金</dt>
-                  <dd><?php echo e(@$entry['booth_fee_string']); ?></dd>
+                  <dd><?php echo e(@$fleamarket['booth_fee_string']); ?></dd>
                 </dl>
                 <dl class="col-md-11">
                   <dt>交通</dt>
-                  <dd><?php echo e($entry['about_access']);?></dd>
+                  <dd><?php echo e($fleamarket['about_access']);?></dd>
                 </dl>
                 <ul class="facilitys">
-                  <li class="facility1 <?php echo e($entry['car_shop_flag'])       ? 'on' : 'off'; ?>">車出店可能</li>
-                  <li class="facility2 <?php echo e($entry['charge_parking_flag']) ? 'on' : 'off'; ?>">有料駐車場</li>
-                  <li class="facility3 <?php echo e($entry['free_parking_flag'])   ? 'on' : 'off'; ?>">無料駐車場</li>
-                  <li class="facility4 <?php echo e($entry['rainy_location_flag']) ? 'on' : 'off'; ?>">雨天開催会場</li>
+                  <li class="facility1 <?php echo $fleamarket['car_shop_flag']       ? 'on' : 'off'; ?>">車出店可能</li>
+                  <li class="facility2 <?php echo $fleamarket['charge_parking_flag'] ? 'on' : 'off'; ?>">有料駐車場</li>
+                  <li class="facility3 <?php echo $fleamarket['free_parking_flag']   ? 'on' : 'off'; ?>">無料駐車場</li>
+                  <li class="facility4 <?php echo $fleamarket['rainy_location_flag'] ? 'on' : 'off'; ?>">雨天開催会場</li>
                 </ul>
                 <ul class="detailLink">
-                  <li><a href="/detail/<?php echo $entry['fleamarket_id'] ?>">詳細情報を見る<i></i></a></li>
+                  <li><a href="/detail/<?php echo $fleamarket['fleamarket_id'] ?>">詳細情報を見る<i></i></a></li>
                 </ul>
                 <ul class="rightbutton">
-                  <li class="button change makeReservation"><a href="/mypage/change?fleamarket_id=<?php echo $entry['fleamarket_id'] ?>"><i></i>予約変更</a></li>
-                  <li class="button cancel"><a href="/mypage/cancel?fleamarket_id=<?php echo $entry['fleamarket_id'] ?>" class="fleamarket_cancel"><i></i>予約解除</a></li>
+                  <?php if($type == 'mylist'): ?>
+                  <li class="button makeReservation"><a href="/reservation?fleamarket_id=<?php echo $fleamarket['fleamarket_id'] ?>">出店予約をする</a></li>
+                  <li class="button cancel"><a href="#" class="mylist_remove" id="fleamarket_id_<?php echo $fleamarket['fleamarket_id']; ?>"><i></i>マイリスト解除</a></li>
+                  <?php elseif($type == 'entry'): ?>
+                  <?php if ($is_official($fleamarket)): ?>
+                  <!-- <li class="button change makeReservation"><a href="/mypage/change?fleamarket_id=<?php echo $fleamarket['fleamarket_id'] ?>"><i></i>予約変更</a></li> -->
+                  <li class="button cancel"><a href="/mypage/cancel?fleamarket_id=<?php echo $fleamarket['fleamarket_id'] ?>" class="fleamarket_cancel"><i></i>予約解除</a></li>
+                  <?php endif; ?>
+                  <?php elseif($type == 'myfleamarket'): ?>
+                  <li class="button makeReservation change"><a href="/fleamarket/<?php echo $fleamarket['fleamarket_id'] ?>"><i></i>内容変更</a></li>
+                  <?php elseif($type == 'reserved'): ?>
+                  <?php if ($is_official($fleamarket)): ?>
+                  <!-- <li class="button change makeReservation"><a href="/mypage/change?fleamarket_id=<?php echo $fleamarket['fleamarket_id'] ?>"><i></i>予約変更</a></li> -->
+                  <li class="button cancel"><a href="/mypage/cancel?fleamarket_id=<?php echo $fleamarket['fleamarket_id'] ?>" class="fleamarket_cancel"><i></i>予約解除</a></li>
+                  <?php endif; ?>
+                  <?php endif; ?>
+                </ul>
+              </div>
+            </div>
+            <!-- /result -->
+            <?php endforeach; ?>
+            <?php endif ?>
+            <ul class="more">
+              <li><a href="/mypage/list?type=entry">続きを見る</a></li>
+            </ul>
+          </div>
+
+          <!-- mylist -->
+          <div class="tab-pane" id="mylist">
+            <?php if(empty($mylists)): ?>
+            <p>マイリストはありません</p>
+            <?php else: ?>
+            <?php foreach($mylists as $mylist): ?>
+            <!-- result -->
+            <div class="result clearfix" id="mylist_<?php echo $mylist['fleamarket_id']; ?>">
+              <h3><a href="/detail/<?php echo $mylist['fleamarket_id'] ?>"><?php echo $mylist['name'] ?></a></h3>
+              <div class="resultPhoto"><a href="#"><img src="http://dummyimage.com/200x150/ccc/fff.jpg" class="img-rounded"></a></div>
+              <div class="resultDetail">
+                <dl class="col-md-6">
+                  <dt>出店数</dt>
+                  <dd><?php echo e(@$mylist['booth_string']);?></dd>
+                </dl>
+                <dl class="col-md-6">
+                  <dt>開催時間</dt>
+                  <dd><?php echo e($mylist['event_date']); ?></dd>
+                </dl>
+                <dl class="col-md-6">
+                  <dt>出店形態</dt>
+                  <dd><?php echo e($mylist['fleamarket_entry_style_name']); ?></dd>
+                </dl>
+                <dl class="col-md-6">
+                  <dt>出店料金</dt>
+                  <dd><?php echo e(@$mylist['booth_fee_string']); ?></dd>
+                </dl>
+                <dl class="col-md-11">
+                  <dt>交通</dt>
+                  <dd><?php echo e($mylist['about_access']);?></dd>
+                </dl>
+                <ul class="facilitys">
+                  <li class="facility1 <?php echo e($mylist['car_shop_flag'])       ? 'on' : 'off'; ?>">車出店可能</li>
+                  <li class="facility2 <?php echo e($mylist['charge_parking_flag']) ? 'on' : 'off'; ?>">有料駐車場</li>
+                  <li class="facility3 <?php echo e($mylist['free_parking_flag'])   ? 'on' : 'off'; ?>">無料駐車場</li>
+                  <li class="facility4 <?php echo e($mylist['rainy_location_flag']) ? 'on' : 'off'; ?>">雨天開催会場</li>
+                </ul>
+                <ul class="detailLink">
+                  <li><a href="/detail/<?php echo $mylist['fleamarket_id'] ?>">詳細情報を見る<i></i></a></li>
+                </ul>
+                <ul class="rightbutton">
+                  <li class="button makeReservation"><a href="/reservation?fleamarket_id=<?php echo $mylist['fleamarket_id'] ?>">出店予約をする</a></li>
+                  <li class="button cancel"><a href="#" class="mylist_remove" id="fleamarket_id_<?php echo $mylist['fleamarket_id']; ?>"><i></i>マイリスト解除</a></li>
                 </form>
               </ul>
             </div>
           </div>
           <?php endforeach; ?>
           <?php endif ?>
-        <ul class="more">
-          <li><a href="/mypage/list?type=entry">続きを見る</a></li>
-        </ul>
+          <!-- /result -->
+          <ul class="more">
+            <li><a href="/mypage/list?type=mylist">続きを見る</a></li>
+          </ul>
         </div>
 
-        <!-- mylist -->
-        <div class="tab-pane" id="mylist">
-          <?php if(empty($mylists)): ?>
-          <p>マイリストはありません</p>
-          <?php else: ?>
-          <?php foreach($mylists as $mylist): ?>
-          <!-- result -->
-          <div class="result clearfix" id="mylist_<?php echo $mylist['fleamarket_id']; ?>">
-            <h3><a href="/detail/<?php echo $mylist['fleamarket_id'] ?>"><?php echo $mylist['name'] ?></a></h3>
-            <div class="resultPhoto"><a href="#"><img src="http://dummyimage.com/200x150/ccc/fff.jpg" class="img-rounded"></a></div>
-            <div class="resultDetail">
-              <dl class="col-md-6">
-                <dt>出店数</dt>
-                <dd><?php echo e(@$mylist['booth_string']);?></dd>
-              </dl>
-              <dl class="col-md-6">
-                <dt>開催時間</dt>
-                <dd><?php echo e($mylist['event_date']); ?></dd>
-              </dl>
-              <dl class="col-md-6">
-                <dt>出店形態</dt>
-                <dd><?php echo e($mylist['fleamarket_entry_style_name']); ?></dd>
-              </dl>
-              <dl class="col-md-6">
-                <dt>出店料金</dt>
-                <dd><?php echo e(@$mylist['booth_fee_string']); ?></dd>
-              </dl>
-              <dl class="col-md-11">
-                <dt>交通</dt>
-                <dd><?php echo e($mylist['about_access']);?></dd>
-              </dl>
-              <ul class="facilitys">
-                <li class="facility1 <?php echo e($mylist['car_shop_flag'])       ? 'on' : 'off'; ?>">車出店可能</li>
-                <li class="facility2 <?php echo e($mylist['charge_parking_flag']) ? 'on' : 'off'; ?>">有料駐車場</li>
-                <li class="facility3 <?php echo e($mylist['free_parking_flag'])   ? 'on' : 'off'; ?>">無料駐車場</li>
-                <li class="facility4 <?php echo e($mylist['rainy_location_flag']) ? 'on' : 'off'; ?>">雨天開催会場</li>
-              </ul>
-              <ul class="detailLink">
-                <li><a href="/detail/<?php echo $mylist['fleamarket_id'] ?>">詳細情報を見る<i></i></a></li>
-              </ul>
-              <ul class="rightbutton">
-                <li class="button makeReservation"><a href="/reservation?fleamarket_id=<?php echo $mylist['fleamarket_id'] ?>">出店予約をする</a></li>
-                <li class="button cancel"><a href="#" class="mylist_remove" id="fleamarket_id_<?php echo $mylist['fleamarket_id']; ?>"><i></i>マイリスト解除</a></li>
-              </form>
-            </ul>
-          </div>
-        </div>
-        <?php endforeach; ?>
-        <?php endif ?>
-      <!-- /result -->
-      <ul class="more">
-        <li><a href="/mypage/list?type=mylist">続きを見る</a></li>
-      </ul>
+
       </div>
-
-
     </div>
-  </div>
 
-  <div id="contribution" class="box clearfix">
-    <h3>開催投稿したフリマ</h3>
+    <div id="contribution" class="box clearfix">
+      <h3>開催投稿したフリマ</h3>
 
-    <?php if(empty($myfleamarkets)): ?>
-    <p>開催投稿したフリマはありません</p>
-    <?php else: ?>
-    <?php foreach($myfleamarkets as $myfleamarket): ?>
+      <?php if(empty($myfleamarkets)): ?>
+      <p>開催投稿したフリマはありません</p>
+      <?php else: ?>
+      <?php foreach($myfleamarkets as $myfleamarket): ?>
 
-    <!-- result -->
-    <div class="result clearfix">
-      <h3><a href="/detail/<?php echo $myfleamarket['fleamarket_id'] ?>"><?php echo $myfleamarket['name'] ?></a></h3>
-      <div class="resultPhoto"><a href="#"><img src="http://dummyimage.com/200x150/ccc/fff.jpg" class="img-rounded"></a></div>
+      <!-- result -->
+      <div class="result clearfix">
+        <h3><a href="/detail/<?php echo $myfleamarket['fleamarket_id'] ?>"><?php echo $myfleamarket['name'] ?></a></h3>
+        <div class="resultPhoto"><a href="#"><img src="http://dummyimage.com/200x150/ccc/fff.jpg" class="img-rounded"></a></div>
         <div class="resultDetail">
           <dl class="col-md-6">
             <dt>出店数</dt>
@@ -308,30 +327,30 @@
           <ul class="detailLink">
             <li><a href="/detail/<?php echo $myfleamarket['fleamarket_id'] ?>">詳細情報を見る<i></i></a></li>
           </ul>
-        <ul class="rightbutton">
-          <li class="button makeReservation change"><a href="/fleamarket/<?php echo $myfleamarket['fleamarket_id'] ?>"><i></i>内容変更</a></li>
-        </ul>
+          <ul class="rightbutton">
+            <li class="button makeReservation change"><a href="/fleamarket/<?php echo $myfleamarket['fleamarket_id'] ?>"><i></i>内容変更</a></li>
+          </ul>
+        </div>
       </div>
+      <!-- /result -->
+
+      <?php endforeach; ?>
+      <?php endif; ?>
+
+      <ul class="more">
+        <li><a href="/mypage/list?type=myfleamarket">続きを見る</a></li>
+      </ul>
     </div>
+
+
+
+
     <!-- /result -->
 
-    <?php endforeach; ?>
-    <?php endif; ?>
-
-    <ul class="more">
-      <li><a href="/mypage/list?type=myfleamarket">続きを見る</a></li>
-    </ul>
+    <!-- /contribution -->
   </div>
-
-
-
-
-  <!-- /result -->
-
-  <!-- /contribution -->
+  <!-- /searchResult -->
 </div>
-<!-- /searchResult -->
-  </div>
 </div>
 </div>
 </div>
@@ -343,117 +362,117 @@ $('.fleamarket_cancel').click(function() {
     if (!confirm('フリーマーケットをキャンセルします\nよろしいですか？')) {
     return false;
     }
-});
+    });
 
 
 $(function() {
-  Calendar.init();
-  Carousel.start();
-  Search.init();
-});
+    Calendar.init();
+    Carousel.start();
+    Search.init();
+    });
 
 var Calendar = {
-  init: function() {
-    $(document).on("click", ".calendar_nav a", function(evt) {
-      evt.preventDefault();
+init: function() {
+        $(document).on("click", ".calendar_nav a", function(evt) {
+            evt.preventDefault();
 
-      var url = $(this).attr("href");
-      Calendar.get(url);
+            var url = $(this).attr("href");
+            Calendar.get(url);
 
-      return false;
-    });
-  },
-  get: function(url) {
-    if (url == "" || typeof url === "undefined") {
-      url = "/calendar/";
-    }
+            return false;
+            });
+      },
+get: function(url) {
+       if (url == "" || typeof url === "undefined") {
+         url = "/calendar/";
+       }
 
-    $.ajax({
-      type: "get",
-      url: url,
-      dataType: "html"
-    }).done(function(html, textStatus, jqXHR) {
-      // $("#calendar").empty();
-      // $("#calendar").html(html);
-      $("#calendar-search").empty();
-      $("#calendar-search").html(html);
-    }).fail(function(jqXHR, textStatus, errorThrown) {
+       $.ajax({
+type: "get",
+url: url,
+dataType: "html"
+}).done(function(html, textStatus, jqXHR) {
+  // $("#calendar").empty();
+  // $("#calendar").html(html);
+  $("#calendar-search").empty();
+  $("#calendar-search").html(html);
+  }).fail(function(jqXHR, textStatus, errorThrown) {
     }).always(function() {
-    });
-  }
+      });
+}
 };
 
 var Search = {
-  init: function() {
-    $("#select_region").on("change", function(evt) {
-      Search.changeRegion();
-    });
-  },
-  changeRegion: function() {
-    $("#select_prefecture").prop("selectedIndex", 0);
-    var region_id = $("#select_region").val();
-    $.ajax({
-      type: "get",
-      url: '/search/prefecture',
-      dataType: "json",
-      data: {region_id: region_id}
-    }).done(function(json, textStatus, jqXHR) {
-      if (json) {
-        $("#select_prefecture").empty();
-        $("#select_prefecture").append('<option value="">都道府県</option>');
-        $.each(json, function(key, value) {
-          $("#select_prefecture").append('<option value="' + key + '">' + value + '</option>');
-        });
-      }
-    }).fail(function(jqXHR, textStatus, errorThrown) {
+init: function() {
+        $("#select_region").on("change", function(evt) {
+            Search.changeRegion();
+            });
+      },
+changeRegion: function() {
+                $("#select_prefecture").prop("selectedIndex", 0);
+                var region_id = $("#select_region").val();
+                $.ajax({
+type: "get",
+url: '/search/prefecture',
+dataType: "json",
+data: {region_id: region_id}
+}).done(function(json, textStatus, jqXHR) {
+  if (json) {
+  $("#select_prefecture").empty();
+  $("#select_prefecture").append('<option value="">都道府県</option>');
+  $.each(json, function(key, value) {
+    $("#select_prefecture").append('<option value="' + key + '">' + value + '</option>');
     });
   }
+  }).fail(function(jqXHR, textStatus, errorThrown) {
+    });
+}
 };
 
 var Carousel = {
-  start: function () {
-    $(window).resize(function() {
-      $("#newMarket").carouFredSel({
-        align: true,
-        scroll:{
-          items: 1,
-          duration: 300,
-          pauseDuration: 5000,
-          easing: "linear",
-          pauseOnHover: "immediate"
-        },
-        prev:{button: "#prev", key: "left"},
-        next:{button: "#next", key: "right"}
-      });
-    });
-    $(window).resize();
-  }
+start: function () {
+         $(window).resize(function() {
+             $("#newMarket").carouFredSel({
+align: true,
+scroll:{
+items: 1,
+duration: 300,
+pauseDuration: 5000,
+easing: "linear",
+pauseOnHover: "immediate"
+},
+prev:{button: "#prev", key: "left"},
+next:{button: "#next", key: "right"}
+});
+             });
+$(window).resize();
+}
 };
 
 $(function () {
-  $(".mylist_remove").click(function(){
+    $(".mylist_remove").click(function(){
       var id = $(this).attr('id');
       id = id.match(/^fleamarket_id_(\d+)/)[1];
       $.ajax({
-          type: "post",
-          url: '/favorite/delete',
-          dataType: "json",
-          data: {fleamarket_id: id}
-      }).done(function(json, textStatus, jqXHR) {
-          if(json == 'nologin' || json == 'nodata'){
-              alert(json);
-          }else if(json){
-              alert('削除しました' + id);
-              $('#mylist_' + id).remove();
-              if ($('#mylist').children('div').length == 0) {
-                  $('#mylist').append('<p>マイリストはありません</p>');
-              }
-          }else{
-              alert('失敗しました');
-          }
-      }).fail(function(jqXHR, textStatus, errorThrown) {
-          alert('失敗しました');
-      });
-  });
+type: "post",
+url: '/favorite/delete',
+dataType: "json",
+data: {fleamarket_id: id}
+}).done(function(json, textStatus, jqXHR) {
+  if(json == 'nologin' || json == 'nodata'){
+  alert(json);
+  }else if(json){
+  alert('削除しました' + id);
+  $('#mylist_' + id).remove();
+  if ($('#mylist').children('div').length == 0) {
+  $('#mylist').append('<p>マイリストはありません</p>');
+  }
+  }else{
+  alert('失敗しました');
+  }
+  }).fail(function(jqXHR, textStatus, errorThrown) {
+    alert('失敗しました');
+    });
+});
 });
 </script>
