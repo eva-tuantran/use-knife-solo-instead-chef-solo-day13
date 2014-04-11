@@ -1,6 +1,8 @@
-<?php $input  = $fieldset->input(); ?>
-<?php $errors = $fieldset->validation()->error_message(); ?>
-<?php $fields = $fieldset->field(); ?>
+<?php $entry_styles = Config::get('master.entry_styles'); ?>
+
+<?php $input  = $fieldsets['fleamarket']->input(); ?>
+<?php $errors = $fieldsets['fleamarket']->validation()->error_message(); ?>
+<?php $fields = $fieldsets['fleamarket']->field(); ?>
 
 <h3>フリマ登録</h3>
 <form action="/admin/fleamarket/thanks" method="POST" class="form-horizontal">
@@ -226,7 +228,35 @@
     <tr>
       <td><?php echo e($title); ?></td>
       <td>
-	<?php echo e($input["fleamarket_about_${id}"]); ?>
+	<?php 
+	   $input = $fieldsets['fleamarket_abouts'][$id]->input();
+	   echo e($input['description']);
+	?>
+      </td>
+    </tr>
+    <?php } ?>
+    <?php foreach ($entry_styles as $id => $entry_style) { ?>
+    <tr>
+      <td><?php echo e($entry_style); ?></td>
+      <td>
+	booth_fee
+	<?php 
+	   $input = $fieldsets['fleamarket_entry_styles'][$id]->input();
+	   echo e($input['booth_fee']);
+	?>
+	<br />
+	max_booth
+	<?php 
+	   $input = $fieldsets['fleamarket_entry_styles'][$id]->input();
+	   echo e($input['max_booth']);
+	?>
+	<br />
+	reservation_booth_limit
+	<?php 
+	   $input = $fieldsets['fleamarket_entry_styles'][$id]->input();
+	   echo e($input['reservation_booth_limit']);
+	?>
+	<br />
       </td>
     </tr>
     <?php } ?>
