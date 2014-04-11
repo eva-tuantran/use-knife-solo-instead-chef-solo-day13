@@ -1,3 +1,5 @@
+<?php $prefectures = Config::get('master.prefectures'); ?>
+
 <?php $input  = $fieldset->input(); ?>
 <?php $errors = $fieldset->validation()->error_message(); ?>
 <?php $fields = $fieldset->field(); ?>
@@ -84,6 +86,12 @@
     <tr>
       <td>都道府県</td>
       <td>
+	<select name="prefecture_id">
+	  <option value=""></option>
+	  <?php foreach ($prefectures as $id => $prefecture) { ?>
+	  <option value="<?php echo $id; ?>"<?php if ($id == $fields['prefecture_id']->value) echo ' selected=selected';?>><?php echo e($prefecture); ?></option>
+	  <?php } ?>
+	</select>
       </td>
     </tr>
     <tr>
@@ -186,28 +194,6 @@
       </td>
     </tr>
     <tr>
-      <td>mm_error_flag</td>
-      <td>
-	<input type="text" name="mm_error_flag" value="<?php echo e($fields['mm_error_flag']->value); ?>">
-	<?php
-	   if (isset($errors['mm_error_flag'])) {
-	       echo $errors['mm_error_flag'];
-    	   }
-	?>
-      </td>
-    </tr>
-    <tr>
-      <td>mobile_carrier</td>
-      <td>
-	<input type="text" name="mobile_carrier" value="<?php echo e($fields['mobile_carrier']->value); ?>">
-	<?php
-	   if (isset($errors['mobile_carrier'])) {
-	       echo $errors['mobile_carrier'];
-    	   }
-	?>
-      </td>
-    </tr>
-    <tr>
       <td>mobile_carrier</td>
       <td>
 	<input type="text" name="mobile_carrier" value="<?php echo e($fields['mobile_carrier']->value); ?>">
@@ -282,12 +268,6 @@
 	       echo $errors['last_login'];
     	   }
 	?>
-      </td>
-    </tr>
-    <tr>
-      <td></td>
-      <td>
-	<input type="text" name="" value="<?php echo e($fields['nick_name']->value); ?>">
       </td>
     </tr>
   </table>

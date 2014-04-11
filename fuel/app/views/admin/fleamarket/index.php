@@ -19,9 +19,9 @@ $(function() {
 
 <?php $entry_styles = Config::get('master.entry_styles'); ?>
 
-<?php $input  = $fieldset->input(); ?>
-<?php $errors = $fieldset->validation()->error_message(); ?>
-<?php $fields = $fieldset->field(); ?>
+<?php $input  = $fieldsets['fleamarket']->input(); ?>
+<?php $errors = $fieldsets['fleamarket']->validation()->error_message(); ?>
+<?php $fields = $fieldsets['fleamarket']->field(); ?>
 
 <h3>フリマ登録</h3>
 <form action="/admin/fleamarket/confirm" method="POST" class="form-horizontal" enctype="multipart/form-data">
@@ -347,8 +347,8 @@ $(function() {
     <tr>
       <td>register_type</td>
       <td>
-	<input type="radio" name="register_type" value="1"<?php if ($fields['display_flag']->value == 1) { echo ' checked'; } ?>>運営者
-	<input type="radio" name="register_type" value="2"<?php if ($fields['display_flag']->value == 2) { echo ' checked'; } ?>>ユーザー投稿
+	<input type="radio" name="register_type" value="1"<?php if ($fields['register_type']->value == 1) { echo ' checked'; } ?>>運営者
+	<input type="radio" name="register_type" value="2"<?php if ($fields['register_type']->value == 2) { echo ' checked'; } ?>>ユーザー投稿
 	<?php
 	   if (isset($errors['register_type'])) {
    	       echo $errors['register_type'];
@@ -450,19 +450,49 @@ $(function() {
 	<?php echo e($title); ?>
       </td>
       <td>
-	<input type="text" name="fleamarket_about_<?php echo $id ?>" value="<?php echo e($fields["fleamarket_about_${id}"]->value); ?>">
+	<input type="text" name="fleamarket_about_<?php echo $id; ?>_description" value="<?php echo e($fieldsets['fleamarket_abouts'][$id]->field('description')->value); ?>">
+	<?php $errors = $fieldsets['fleamarket_abouts'][$id]->validation()->error_message(); ?>
+	<?php 
+	   if (isset($errors['description'])) {
+   	       echo $errors['description'];
+           }
+	?>
       </td>
     </tr>
     <?php } ?>
-    <?php if ($fleamarket) {
-	  foreach ($fleamarket->fleamarket_entry_styles as $fleamarket_entry_style) { ?>
+    <?php foreach ($entry_styles as $id => $entry_style) { ?>
     <tr>
-    <td><?php echo e($entry_styles[$fleamarket_entry_style->entry_style_id]); ?></td>
-    <td>
-    </td>
+      <td>
+	<?php echo e($entry_style); ?>
+      </td>
+      <td>
+	<?php $errors = $fieldsets['fleamarket_entry_styles'][$id]->validation()->error_message(); ?>
+	booth_fee <input type="text" name="fleamarket_entry_style_<?php echo $id; ?>_booth_fee" value="<?php echo e($fieldsets['fleamarket_entry_styles'][$id]->field('booth_fee')->value); ?>">
+	<?php 
+	   if (isset($errors['booth_fee'])) {
+   	       echo $errors['booth_fee'];
+           }
+	?>
+	<br />
+	max_booth <input type="text" name="fleamarket_entry_style_<?php echo $id; ?>_max_booth" value="<?php echo e($fieldsets['fleamarket_entry_styles'][$id]->field('max_booth')->value); ?>">
+	<?php 
+	   if (isset($errors['max_booth'])) {
+   	       echo $errors['max_booth'];
+           }
+	?>
+	<br />
+	reservation_booth_limit <input type="text" name="fleamarket_entry_style_<?php echo $id; ?>_reservation_booth_limit" value="<?php echo e($fieldsets['fleamarket_entry_styles'][$id]->field('reservation_booth_limit')->value); ?>">
+	<?php 
+	   if (isset($errors['reservation_booth_limit'])) {
+   	       echo $errors['reservation_booth_limit'];
+           }
+	?>
+      </td>
     </tr>
-    <?php }} ?>
-  </table>
+    <?php } ?>
+</table>
 <input type="submit" value="登録">
-  <input type="hidden" name="fleamarket_id" value="<?php echo e(Input::param('fleamarket_id')); ?>">
+<input type="hidden" name="fleamarket_id" value="<?php echo e(Input::param('fleamarket_id')); ?>">
 </form>
+
+<a href="/admin/entry/list?fleamarket_id=<?php echo $fleamarket->fleamarket_id; ?>">予約一覧</a>
