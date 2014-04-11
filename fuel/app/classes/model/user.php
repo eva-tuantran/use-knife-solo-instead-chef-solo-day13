@@ -448,10 +448,16 @@ class Model_User extends Orm\Model_Soft
      */
     public static function _validation_unique_email($email)
     {
-        $count = self::query()->where(array(
-            'email' => $email,
-        ))->count();
-
+        if ($this->user_id) {
+            $count = self::query()->where(array(
+                array('email','=', $email),
+                array('user_id', '!=', $this->user_id),
+            ))->count();
+        }else{
+            $count = self::query()->where(array(
+                'email' => $email,
+            ))->count();
+        }
         return empty($count);
     }
 
