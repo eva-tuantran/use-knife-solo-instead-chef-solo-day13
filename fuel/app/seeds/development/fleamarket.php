@@ -87,8 +87,7 @@ $register_types = array(
 );
 
 $prefectures = \Config::get('master.prefectures');
-
-$cities = array('葛飾区' , '大田区', '品川区', '調布市', '多摩市', '西東京市', '杉並区', );
+$location_list = getLocations();
 
 $entry_styles = array(
     '1' => '手持ち出店',
@@ -105,24 +104,27 @@ $about_titles = \Model_Fleamarket_About::getAboutTitles();
 
 $event_numbers = array();
 
-for ($i = 1; $i <= 100; $i++) {
+for ($i = 1; $i <= 1000; $i++) {
     $rand = mt_rand(1, 30);
+
     $group_code = array_rand($group_codes);
     $group_code_name = $group_codes[$group_code];
 
     $register_type = array_rand($register_types);
 
     // 開催地情報
-    $prefecture_id = 13; // array_rand($prefectures);
-    $city = array_rand($event_end_list);
+    shuffle($location_list);
+    $location = each($location_list);
+    list($prefecture, $address) = getAddress($location['value']);
+    $prefecture_id = array_search($prefecture, $prefectures);
 
     $location_line = array(
         'branch_id'     => null,
-        'name'          => $group_code_name . 'の会場',
+        'name'          => $location['key'],
         'zip'           => '100-0001',
         'prefecture_id' => $prefecture_id,
-        'address'       => $prefectures[$prefecture_id] . $cities[$city],
-        'googlemap_address' => $prefectures[$prefecture_id] . $cities[$city],
+        'address'       => $address,
+        'googlemap_address' => $address['value'],
         'register_type' => $register_types[$register_type],
         'created_user'  => 0,
         'updated_user'  => null,
@@ -167,6 +169,7 @@ for ($i = 1; $i <= 100; $i++) {
     if ($register_types[$register_type] == \Model_Fleamarket::REGISTER_TYPE_USER) {
         $event_status = \Model_Fleamarket::EVENT_STATUS_SCHEDULE;
     }
+
     $fleamarket_line = array(
         'location_id'              => $location_id,
         'group_code'               => $group_code_name,
@@ -220,6 +223,8 @@ for ($i = 1; $i <= 100; $i++) {
     } elseif ($register_types[$register_type] == \Model_Fleamarket::REGISTER_TYPE_USER) {
         $entry_style_rand = 0;
     }
+
+
     if ($entry_style_rand > 0) {
         $entry_style_list = array_rand($entry_styles, $entry_style_rand);
         if (! is_array($entry_style_list)) {
@@ -227,14 +232,19 @@ for ($i = 1; $i <= 100; $i++) {
         }
 
         foreach ($entry_style_list as $entry_style_id) {
-            $booth_fee = array_rand($booth_fee_list);
+            if ($shop_fee_list[$shop_fee] == \Model_Fleamarket::SHOP_FEE_FLAG_FREE) {
+                $booth_fee = 0;
+            } else {
+                $booth_fee_key = array_rand($booth_fee_list);
+                $booth_fee = $booth_fee_list[$booth_fee_key];
+            }
             $max_booth = mt_rand(20, 100);
             $reservation_booth_limit = mt_rand(1, 10);
 
             $entry_style_line = array(
                 'fleamarket_id' => $fleamarket_id,
                 'entry_style_id' => $entry_style_id,
-                'booth_fee' => $booth_fee_list[$booth_fee],
+                'booth_fee' => $booth_fee,
                 'max_booth' => $max_booth,
                 'reservation_booth_limit' => $reservation_booth_limit,
                 'created_user' => 0,
@@ -270,4 +280,94 @@ for ($i = 1; $i <= 100; $i++) {
             \Model_Fleamarket_About::forge($about_line)->save();
         }
     }
+}
+
+/**
+ * 住所から都道府県を省く
+ *
+ * @access private
+ * @param string $address 住所
+ * @return string
+ * @author ida
+ */
+function getAddress($address)
+{
+    $address_pattern = '/(東京都|北海道|(?:京都|大阪)府|.{6,9}県)'
+                     . '((?:四日市|廿日市|野々市|かすみがうら|つくばみらい|いちき串木野)市|'
+                     . '(?:杵島郡大町|余市郡余市|高市郡高取)町|'
+                     . '.{3,12}市.{3,12}区|.{3,9}区|.{3,15}市(?=.*市)|'
+                     . '.{3,15}市|.{6,27}町(?=.*町)|.{6,27}町|'
+                     . '.{9,24}村(?=.*村)|.{9,24}村)(.*)/';
+    preg_match($address_pattern, $address, $matches);
+    $address = @$matches[2] . @$matches[3];
+
+    return array($matches[1], $address);
+}
+
+function getLocations()
+{
+    return array(
+        'としまえん園'          => '東京都練馬区向山3-25-1',
+        '川崎競馬 芝生広場'     => '神奈川県川崎市川崎区富士見1-5-1',
+        '大井競馬場'            => '東京都品川区勝島2-1-2',
+        'グランディ21'          => '宮城県宮城郡利府町菅谷字舘40-1',
+        'くりはま花の国'        => '神奈川県横須賀市神明町1',
+        '仙台大観音参道'        => '宮城県仙台市泉区実沢座中山南31-7',
+        '大島小松川公園'        => '東京都江東区大島9･江戸川区小松川1',
+        '船橋競馬場'            => '千葉県船橋市若松1-2-1',
+        '富士急ハイランド'      => '山梨県富士吉田市新西原 5丁目 6−1',
+        '出玉本舗玉五郎北見店'  => '北海道北見市中の島町1丁目7-8',
+        '夢屋新井田店'          => '青森県八戸市新井田西一丁目4番3号',
+        '扇町公園'              => '大阪府大阪市北区扇町1丁目',
+        '伊勢崎オートレース場'  => '群馬県伊勢崎市宮子町3074',
+        'ガイア那須塩原店'      => '栃木県那須塩原市一区町105-128',
+        'ガイア郡山大町店'      => '福島県郡山市大町2-3-2',
+        '日本一の芋煮会フェスティバル' => '山形県山形市馬見ヶ崎河川敷',
+        'ガイア横手Ⅰ･Ⅱ'       => '秋田県横手市安田字縄手添31',
+        'ガイア前沢店'          => '岩手県奥州市前沢区竹沢63',
+        'イオンタウン矢本'      => '宮城県東松島市小松字上浮足43番地',
+        '川越水上公園'          => '埼玉県川越市大字池辺880',
+        '西武園ゆうえんち'      => '埼玉県所沢市山口2964',
+        '幕張海浜公園'          => '千葉県千葉市美浜区ひび野2丁目116',
+        '潮田公園'              => '神奈川県横浜市鶴見区向井町2丁目71',
+        '登米市ワコーボール'    => '宮城県登米市迫町佐沼字江合1丁目2-4',
+        'ペルチ土浦店'          => '茨城県土浦市有明町1-30',
+        'ダイナム大田原店'      => '栃木県大田原市中田原737番地',
+        'ARK480'                => '群馬県高崎市箕郷町上芝281-1',
+        'さいたま上尾水上公園'  => '埼玉県上尾市日の出2丁目',
+        'SHIBUYA-AX'            => '東京都渋谷区神南2-1-1',
+        '隅田公園'              => '東京都台東区花川戸1',
+        'オゼック国分寺店'      => '東京都国分寺市東元町4丁目1−36',
+        'バリアンリゾート玉三郎新発田店' => '新潟県新発田市舟入町3-8-9',
+        'ニューラッキー古正寺店' => '新潟県長岡市古正寺123番地1',
+        '夢屋小諸店'            => '長野県小諸市御影新田2758-1',
+        '夢屋浜松店'            => '静岡県浜松市中区上島7-6-38',
+        '玉越中川店'            => '愛知県名古屋市中川区長須賀1-203',
+        '玉越浄水店'            => '愛知県豊田市浄水町155-5',
+        '玉越本店'              => '愛知県名古屋市守山区白山一丁目2301',
+        '信頼の森松阪三雲店'    => '三重県三重県松阪市市場庄町1240',
+        'クァトロブーム金沢店'  => '石川県金沢市副都心北部大河端土地区画整理事業地内1街区1番',
+        'クァトロブーム新田塚店' => '福井県福井市二の宮5丁目8-36',
+        '楽々タウン'            => '大阪府堺市西区浜寺船尾町東2-272',
+        'ウインアップ'          => '大阪府大阪市平野区長吉長原西1-1-30',
+        'キコーナ東大阪店'      => '大阪府東大阪市長田中3-1-29',
+        '楽パチや・ビバダイヤ'  => '大阪府大阪府泉佐野市鶴原1596-1',
+        'コード太秦店'          => '京都府京都府京都市右京区太秦下刑部町18',
+        'ダイナム 愛知川店 ゆったり館' => '滋賀県滋賀県愛知郡愛荘町長野24',
+        'テンイチ外川店'        => '奈良県大和郡山市外川町1-42',
+        'リゲル姫路店'          => '兵庫県姫路市西庄119',
+        '尼ぱち屋'              => '兵庫県尼崎市東難波町5丁目28-31',
+        'TAIYO88'               => '岡山県倉敷市神田1丁目6-14',
+        'ジャンボ久世店'        => '岡山県真庭市富尾235',
+        '川棚温泉'              => '山口県下関市豊浦町大字川棚6860',
+        '信頼の森善通寺店'      => '香川県香川県善通寺市弘田町894',
+        'パーラーグランド住吉店' => '徳島県徳島市住吉5-7-4',
+        '信頼の森 愛媛今治店'   => '愛媛県今治市古国分1丁目8番65号',
+        'おもちゃ倉庫 福岡本店' => '福岡県福岡市東区箱崎7-9-58',
+        'マルハン佐賀店'        => '佐賀県佐賀市巨勢町牛島760-1',
+        'NASA稲佐店'            => '長崎県長崎市旭町7-12',
+        '南大分セントラルパーク' => '大分県大分市奥田659-1',
+        '夢屋天草店'            => '熊本県天草市本渡町本戸馬場2254',
+        'ベリーズ日南店'        => '宮崎県日南市平野601番地',
+    );
 }
