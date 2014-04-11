@@ -64,7 +64,7 @@ class Controller_Fleamarket extends Controller_Base_Template
             false
         );
         $view_model->set(
-            'location_errors', $this->getErrorMessage('fleamarket'), false
+            'location_errors', $this->getErrorMessage('location'), false
         );
 
         $this->template->content = $view_model;
@@ -304,6 +304,7 @@ class Controller_Fleamarket extends Controller_Base_Template
             'event_time_start'  => $data['event_time_start'],
             'event_time_end'    => $data['event_time_end'],
             'event_status'      => \Model_Fleamarket::EVENT_STATUS_SCHEDULE,
+            'event_reservation_status' => \Model_Fleamarket::EVENT_RESERVATION_STATUS_ENOUGH,
             'headline'          => '',
             'information'       => '',
             'description'       => $data['description'],

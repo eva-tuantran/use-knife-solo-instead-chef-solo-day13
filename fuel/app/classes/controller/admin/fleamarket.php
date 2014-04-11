@@ -14,7 +14,8 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
     {
         parent::before();
         if (Input::param('fleamarket_id')) {
-            $this->fleamarket = Model_Fleamarket::find(Input::param('fleamarket_id'));
+            $this->fleamarket = 
+                Model_Fleamarket::find(Input::param('fleamarket_id'));
         }
     }
 
@@ -26,11 +27,14 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
      */
     public function action_index()
     {
+        $this->setAssets();
         $view = View::forge('admin/fleamarket/index');
         $fieldset = $this->getFieldset();
+        $view->set('locations',Model_Location::find('all'));
         $view->set('fieldset', $fieldset, false);
         $view->set('fleamarket', $this->fleamarket, false);
         $this->template->content = $view;
+
     }
     /**
      * 確認画面
@@ -44,11 +48,20 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
         Session::set_flash('admin.fleamarket.fieldset', $fieldset);
 
         if (! $fieldset->validation()->run()) {
-            return Response::redirect('admin/fleamarket');
+            return Response::redirect('admin/fleamarket/?fleamarket_id=' . Input::param('fleamarket_id',''));
+        }
+
+        $files = $this->saveUploadedImages();
+
+        if(! is_array($files)){
+            return Response::redirect('admin/fleamarket/?fleamarket_id=' . Input::param('fleamarket_id',''));
         }
 
         $view = View::forge('admin/fleamarket/confirm');
+        $view->set('locations',Model_Location::find('all'));
         $view->set('fieldset', $fieldset, false);
+        $view->set('fleamarket', $this->fleamarket, false);
+        $view->set('files', $files, false);
 
         $this->template->content = $view;
     }
@@ -68,10 +81,18 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
         $view = View::forge('admin/fleamarket/thanks');
         $this->template->content = $view;
 
+        $this->removeFleamarketImages();
+        $files = $this->moveUploadedImages();
+        
         try {
             $fleamarket = $this->registerFleamarket();
+            if ($files) {
+                $this->registerFleamarketImage($fleamarket, $files);
+            }
+            $this->registerFleamarketAbout($fleamarket);
         } catch ( Exception $e ) {
-            $view->set('error', $e, false);
+            throw $e;
+            //$view->set('error', $e, false);
         }
     }
 
@@ -81,14 +102,11 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
             $fieldset = Session::get_flash('admin.fleamarket.fieldset');
             if (! $fieldset) {
                 $fieldset = $this->createFieldset();
-                if ($this->fleamarket) {
-                    $fieldset->add_model($this->fleamarket)->populate($this->fleamarket,true);
-                }
             }
         } elseif ($this->request->action == 'confirm') {
             $fieldset = $this->createFieldset();
         } elseif ($this->request->action == 'thanks') {
-            $fieldset = Session::set_flash('admin.fleamarket.fieldset', $fieldset);
+            $fieldset = Session::get_flash('admin.fleamarket.fieldset');
         }
         return $fieldset;
     }
@@ -101,8 +119,47 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
      */
     private function createFieldset()
     {
-        $fieldset = Model_Fleamarket::createFieldset(true);
+        if ($this->fleamarket) {
+            $fieldset = Fieldset::forge('fleamarket');
+            $fieldset->add_model($this->fleamarket)->populate($this->fleamarket,true);
+
+            foreach (array('event_time_start','event_time_end') as $column) {
+                $value = $fieldset->field($column)->value;
+                $matches = array();
+                if (preg_match('/(^\d{2}:\d{2})/',$value,$matches)) {
+                    $value = $matches[1];
+                }
+                $fieldset->field($column)->set_value($value);
+            }
+            foreach (array('reservation_start','reservation_end') as $column) {
+                $value = $fieldset->field($column)->value;
+                $matches = array();
+                if (preg_match('/(^\d{4}-\d{2}-\d{2})/',$value,$matches)) {
+                    $value = $matches[1];
+                }
+                $fieldset->field($column)->set_value($value);
+            }
+        } else {
+            $fieldset = Model_Fleamarket::createFieldset(true);
+        }
+
+        $fieldset->add('fleamarket_image_id');
+
+        foreach (Model_Fleamarket_About::getAboutTitles() as $id => $title) {
+            $fieldset->add("fleamarket_about_${id}");
+        }
+
+        if ($this->fleamarket) {
+            foreach ($this->fleamarket->fleamarket_abouts as $fleamarket_about) {
+                $fieldset->field('fleamarket_about_' . $fleamarket_about->about_id)->set_value(
+                    $fleamarket_about->description
+                );
+            }
+        }
+
         $fieldset->repopulate();
+        $fieldset->validation()->add_callable('Custom_Validation');
+
         return $fieldset;
     }
 
@@ -118,10 +175,15 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
         if (! $data) {
             throw new Exception();
         } else {
-            $fleamarket = Model_Fleamarket::forge();
-            $fleamarket->set($data);
-            $fleamarket->save();
-
+            if (Input::param('fleamarket_id')) {
+                $fleamarket = Model_Fleamarket::find(Input::param('fleamarket_id'));
+            } else {
+                $fleamarket = Model_Fleamarket::forge();
+            }
+            if ($fleamarket) {
+                $fleamarket->set($data);
+                $fleamarket->save();
+            }
             return $fleamarket;
         }
     }
@@ -134,7 +196,7 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
      */
     private function getFleamarketData()
     {
-        $fieldset = Session::get_flash('admin.fleamarket.fieldset');
+        $fieldset = $this->getFieldset();
 
         if (! $fieldset) {
             return false;
@@ -142,12 +204,142 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
 
         $input = $fieldset->validation()->validated();
 
-        if ($input) {
-//            unset($input['email2']);
-//            $input['user_id'] = Auth::get_user_id();
-        }
+        $input['created_user'] = 1;
+        $input['updated_user'] = 1;
+        $input['group_code'] = '';
 
         return $input;
     }
-}
 
+    public function saveUploadedImages()
+    {
+        Upload::process(array(
+            'path' => DOCROOT . 'files/admin/fleamarket/img/',
+            'ext_whitelist' => array('jpg'),
+            'randomize'      => true,
+        ));
+
+        if (Upload::is_valid()) {
+            Upload::save();
+            $files = Upload::get_files();
+            Session::set_flash('admin.fleamarket.files', $files);
+            return $files;
+        } else {
+            foreach (Upload::get_errors() as $file) {
+                foreach ($file['errors'] as $error){
+                    if( $error['error'] != Upload::UPLOAD_ERR_NO_FILE) {
+                        return false;
+                    }
+                }
+            }
+            return array();
+        }
+    }
+
+    public function moveUploadedImages()
+    {
+        $files = Session::get_flash('admin.fleamarket.files');
+        if (! $files) {
+            return false;
+        }
+        
+        foreach ($files as $file) {
+            File::rename(
+                DOCROOT . 'files/admin/fleamarket/img/' . $file['saved_as'],
+                DOCROOT . 'files/fleamarket/img/'       . $file['saved_as']
+            );
+            $this->makeThumbnail($file['saved_as']);
+        }
+        return $files;
+    }
+
+    public function registerFleamarketImage($fleamarket, $files)
+    {
+        foreach ($files as $file) {
+            $fleamarket_image = Model_Fleamarket_Image::forge(array(
+                'fleamarket_id' => $fleamarket->fleamarket_id,
+                'file_name' => $file['saved_as'],
+                'created_user' => 1,
+                'updated_user' => 1,
+            ));
+            $fleamarket_image->save();
+        }
+    }
+
+    public function makeThumbnail($image_filename)
+    {
+        $sizes = array(
+            array('width' => 100, 'height' => 65, 'suffix' => '_small'),
+        );
+
+        foreach ($sizes as $size) {
+            $image = imagecreatefromjpeg(DOCROOT . 'files/fleamarket/img/' . $image_filename);
+            $x = imagesx($image);
+            $y = imagesy($image);
+
+            $resize = imagecreatetruecolor($size['width'], $size['height']);
+            imagecopyresampled($resize, $image, 0, 0, 0, 0, $size['width'], $size['height'], $x, $y);
+
+            $matches = array();
+            if (preg_match('/^(\w+)\.jpg$/',$image_filename,$matches)) {
+                $filename = DOCROOT . 'files/fleamarket/img/' . $matches[1] . $size['suffix'] . '.jpg';
+                imagejpeg($resize, $filename);
+            }
+            imagedestroy($image);
+            imagedestroy($resize);
+        }
+    }
+
+    public function removeFleamarketImages()
+    {
+        $input = $this->getFieldset()->input();
+        if ($input['fleamarket_image_id']) {
+            foreach ($input['fleamarket_image_id'] as $fleamarket_image_id) {
+                $query = Model_Fleamarket_Image::query()
+                    ->where('fleamarket_image_id',$fleamarket_image_id);
+                $query->delete();
+            }
+        }
+    }
+
+    public function setAssets()
+    {
+        Asset::css('jquery-ui.min.css', array(), 'add_css');
+        Asset::css('jquery-ui-timepicker.css', array(), 'add_css');
+        Asset::js('jquery-ui.min.js', array(), 'add_js');
+        Asset::js('jquery.ui.datepicker-ja.js', array(), 'add_js');
+        Asset::js('jquery-ui-timepicker.js', array(), 'add_js');
+        Asset::js('jquery-ui-timepicker-ja.js', array(), 'add_js');
+    }
+
+    public function registerFleamarketAbout($fleamarket)
+    {
+        $fieldset = $this->getFieldset();
+        $input = $fieldset->input();
+
+        foreach (Model_Fleamarket_About::getAboutTitles() as $id => $title) {
+            $fleamarket_about = Model_Fleamarket_About::find('first',array(
+                'where' => array(
+                    'fleamarket_id' => $fleamarket->fleamarket_id,
+                    'about_id' => $id
+                )
+            ));
+
+            if (! $fleamarket_about) {
+                $fleamarket_about = Model_Fleamarket_About::forge(array(
+                    'fleamarket_id' => $fleamarket->fleamarket_id,
+                    'about_id' => $id
+                ));
+            }
+
+            $fleamarket_about->set(array(
+                'title'        => $title,
+                'description'  => $input["fleamarket_about_${id}"],
+                'created_user' => 1,
+                'updated_user' => 1
+            ));
+            
+            $fleamarket_about->save();
+        }
+    }
+}

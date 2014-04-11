@@ -33,6 +33,12 @@ class View_Mypage_Index extends ViewModel
             $this->addDisplayStrings($myfleamarket);
         }
         unset($myfleamarket);
+
+        $this->flagcheck = function($flag) {
+            if (! $flag) {
+                echo "off";
+            }
+        };
     }
 
     /**

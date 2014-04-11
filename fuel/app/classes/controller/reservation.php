@@ -23,14 +23,14 @@ class Controller_Reservation extends Controller_Base_Template
 
         $this->fieldset = $this->getFieldset();
         if (! $this->fieldset) {
-            return Response::redirect('/');
+            throw new SystemException('ER00502');
         }
 
         $input = $this->fieldset->input();
         $fleamarket = Model_Fleamarket::find($input['fleamarket_id']);
 
         if (! $fleamarket) {
-            return Response::redirect('/');
+            throw new SystemException('ER00502');
         }
 
         $this->fleamarket = $fleamarket;
@@ -98,11 +98,16 @@ class Controller_Reservation extends Controller_Base_Template
 
         try {
             $entry = $this->registerEntry();
+        } catch (Exception $e) {
+            throw new SystemException('ER00501');
+        }
+
+        try {
             $this->sendMailToUser($entry);
         } catch (Exception $e) {
-            $view->set('error', $e, false);
-            throw $e;
+            throw new SystemException('ER00503');
         }
+
         $view->set('entry', $entry, false);
     }
 
@@ -161,22 +166,27 @@ class Controller_Reservation extends Controller_Base_Template
                 'fleamarket_entry_style_id' => $data['fleamarket_entry_style_id'],
             );
 
+            $fleamarket = Model_Fleamarket::findForUpdate($data['fleamarket_id']);
+
+            $data['reservation_number'] = sprintf(
+                '%05d-%05d',
+                $data['fleamarket_id'],
+                $fleamarket->reservation_serial
+            );
+
             $entry = Model_Entry::find('first',$condition);
+
             if ($entry) {
                 $entry->set($data);
-                $entry->save();
-            } else {
-                $entry = Model_Entry::find_deleted('first',$condition);
-                if ($entry) {
-                    $entry->set($data);
-                    $entry->restore();
-                } else {
-                    $entry = Model_Entry::forge($data);
-                    $entry->save();
-                }
+            }else{
+                $entry = Model_Entry::forge($data);
             }
 
-            $entry->fleamarket->updateEventReservationStatus();
+            $entry->save();
+
+            $fleamarket->incrementReservationSerial(false);
+            $fleamarket->updateEventReservationStatus(false);
+            $fleamarket->save();
 
             if (! Input::post('cancel') && 
                 $entry->fleamarket_entry_style->isOverReservationLimit()) {

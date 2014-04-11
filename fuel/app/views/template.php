@@ -89,10 +89,10 @@
 <div id="footerWrap">
   <div id="footerLink">
     <ul class="container">
-      <li class="col-sm-3"><a href="#"><i></i>フリマ開催地大募集</a></li>
-      <li class="col-sm-3"><a href="#"><i></i>フリマスタッフ大募集</a></li>
-      <li class="col-sm-3"><a href="#"><i></i>飲食出店をお考えの方</a></li>
-      <li class="col-sm-3"><a href="#"><i></i>企業出店をお考えの方</a></li>
+      <li class="col-sm-3"><a href="/info"><i></i>フリマ開催地大募集</a></li>
+      <li class="col-sm-3"><a href="/info/staff"><i></i>フリマスタッフ大募集</a></li>
+      <li class="col-sm-3"><a href="/info/food"><i></i>飲食出店をお考えの方</a></li>
+      <li class="col-sm-3"><a href="/info/corporation"><i></i>企業出店をお考えの方</a></li>
     </ul>
   </div>
   <div id="footer" class="container">
@@ -162,15 +162,12 @@
       <dd><a href="/search/1?prefecture=okinawa">沖縄</a></dd>
     </dl>
     <ul id="footerNav" class="list-inline">
-      <li><a href="">初めての方へ</a></li>
-      <li><a href="">利用規約</a></li>
-      <li><a href="">お問い合わせ</a></li>
-      <li><a href="">運営会社</a></li>
-      <li><a href="">サイトマップ</a></li>
-      <li><a href="">モバイルサイト</a></li>
-      <li><a href="">ブログ</a></li>
-      <li><a href="">プライバシーポリシー</a></li>
-      <li><a href="">リンク集</a></li>
+      <li><a href="/info/visitor">初めての方へ</a></li>
+      <li><a href="/info/agreement">利用規約</a></li>
+      <li><a href="/inquiry">お問い合わせ</a></li>
+      <li><a href="/info/manager">運営会社</a></li>
+      <li><a href="http://aucfan.com/article/">ブログ</a></li>
+      <li><a href="/info/policy">プライバシーポリシー</a></li>
     </ul>
     <div class="copyright pull-right">
       <p>&copy;楽市楽座</p>

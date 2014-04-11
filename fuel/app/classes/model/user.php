@@ -52,6 +52,8 @@ class Model_User extends Orm\Model_Soft
             'validation' => array(
                 'trim',
                 'max_length' => array(10),
+                'required',
+                'valid_kana',
             ),
             'form' => array(
                 'type' => 'text'
@@ -62,6 +64,8 @@ class Model_User extends Orm\Model_Soft
             'validation' => array(
                 'trim',
                 'max_length' => array(10),
+                'required',
+                'valid_kana',
             ),
             'form' => array(
                 'type' => 'text'
@@ -110,7 +114,9 @@ class Model_User extends Orm\Model_Soft
             'label' => '郵便番号',
             'validation' => array(
                 'trim',
-                'max_length'   => array(10),
+                'required',
+                'valid_zip',
+                'max_length' => array(10),
             ),
             'form'       => array(
                 'type'  => 'text',
@@ -124,29 +130,7 @@ class Model_User extends Orm\Model_Soft
                 'trim',
                 'numeric_min'  => array(0),
                 'numeric_max'  => array(48),
-                'valid_string' => array('numeric'),
             ),
-            'form' => array(
-                'type' => 'select',
-                'options' => array(
-                    '1'  => '北海道',
-                    '2'  => '青森県', '3'  => '岩手県', '4'  => '宮城県',
-                    '5'  => '秋田県', '6'  => '山形県', '7'  => '福島県',
-                    '8'  => '茨城県', '9'  => '栃木県', '10' => '群馬県',
-                    '11' => '埼玉県', '12' => '千葉県', '13' => '東京都', '14' => '神奈川県',
-                    '15' => '新潟県', '16' => '富山県', '17' => '石川県',
-                    '18' => '福井県', '19' => '山梨県', '20' => '長野県',
-                    '21' => '岐阜県', '22' => '静岡県', '23' => '愛知県', '24' => '三重県',
-                    '25' => '滋賀県', '26' => '京都府', '27' => '大阪府',
-                    '28' => '兵庫県', '29' => '奈良県', '30' => '和歌山県',
-                    '31' => '鳥取県', '32' => '島根県', '33' => '岡山県',
-                    '34' => '広島県', '35' => '山口県',
-                    '36' => '徳島県', '37' => '香川県', '38' => '愛媛県', '39' => '高知県',
-                    '40' => '福岡県', '41' => '佐賀県', '42' => '長崎県',
-                    '43' => '熊本県', '44' => '大分県', '45' => '宮崎県', '46' => '鹿児島県',
-                    '47' => '沖縄県',
-                )
-            )
         ),
         'address' => array(
             'label'      => '住所',
@@ -162,14 +146,16 @@ class Model_User extends Orm\Model_Soft
             'label' => '電話番号',
             'validation' => array(
                 'trim',
-                'max_length' => array(15),
+                'required',
+                'max_length' => array(20),
+                'valid_tel',
             ),
         ),
         'mobile_tel' => array(
             'label' => '携帯電話番号',
             'validation' => array(
                 'trim',
-                'max_length'    => array(10),
+                'max_length' => array(10),
             ),
         ),
         'email' => array(
@@ -354,7 +340,6 @@ class Model_User extends Orm\Model_Soft
         ),
     );
 
-
     /**
      * 登録ステータス 0:仮登録,1:本登録.2:退会,3:強制退会
      *
@@ -364,11 +349,9 @@ class Model_User extends Orm\Model_Soft
     const REGISTER_STATUS_STOPPED     = 2;
     const REGISTER_STATUS_BANNED      = 3;
 
-
     /**
      * 新しいパスワードをセットします
      * パスワードの強制的な上書きなどに利用します。
-     * ただし基本的にFuelのAuthで用意されているので、そちらを活用します。
      *
      * @param string $new_password 新パスワード
      * @access public
@@ -377,8 +360,66 @@ class Model_User extends Orm\Model_Soft
      */
     public function setPassword($new_password)
     {
-        $this->password = \Auth::hash_password($new_password);;
+        try {
+            $this->password = \Auth::hash_password($new_password);
+            $this->save();
+
+            return true;
+        } catch (Exception $e) {
+            return false;
+        }
     }
+
+
+    /**
+     * パスワード変更関数
+     *
+     * @param mixed $email
+     * @param mixed $password
+     * @param mixed $properties
+     * @static
+     * @access public
+     * @return void
+     * @author shimma
+     */
+    public function changePassword($old_password, $new_password)
+    {
+        if ($this->password == \Auth::hash_password($old_password)) {
+            return $this->setPassword($new_password);
+        }
+
+        return false;
+    }
+
+    /**
+     * createNewUser
+     *
+     * @param mixed $email
+     * @param mixed $password
+     * @param mixed $properties
+     * @static
+     * @access public
+     * @return void
+     * @author shimma
+     *
+     * @todo 日本語で書かれているExceptionを分かるように記述を変更
+     */
+    public static function createNewUser($email, $password, $properties)
+    {
+        $password = trim($password);
+        $email = filter_var(trim($email), FILTER_VALIDATE_EMAIL);
+
+        try {
+            $new_user = Model_User::forge($properties);
+            $new_user->email = $email;
+            $new_user->setPassword(trim($password));
+
+            return $new_user;
+        } catch (Exception $e) {
+            throw new SystemException('ユーザ作成に失敗しました');
+        }
+    }
+
 
     /**
      * getBaseFieldset
@@ -393,6 +434,7 @@ class Model_User extends Orm\Model_Soft
     {
         $fieldset = Fieldset::forge();
         $fieldset->validation()->add_callable('Model_User');
+        // $fieldset->validation()->add_callable('Custom_Validation');
         $fieldset->add_model('Model_User');
 
         return $fieldset;
@@ -427,16 +469,21 @@ class Model_User extends Orm\Model_Soft
      * @return bool
      * @author shimma
      *
+     * @todo 日本語のエラー表示を正しいものに変換する
      */
     public function sendmail($template_name, $params = array())
     {
-        $email = new \Model_Email();
-        $email->sendMailByParams($template_name, $params, $this->email);
+        try {
+            $email = new \Model_Email();
+            $email->sendMailByParams($template_name, $params, $this->email);
+        } catch (Exception $e) {
+            throw new SystemException('ユーザ宛のメール送信に失敗した可能性があります');
+        }
     }
 
 
     /**
-     * エントリーしたフリーマーケットの最新情報を取得します
+     * エントリーした全てのフリーマーケットの情報を取得します
      *
      * @access public
      * @return mixed
@@ -445,6 +492,18 @@ class Model_User extends Orm\Model_Soft
     public function getEntries($page = 1, $row_count = 30)
     {
         return \Model_Entry::getUserEntries($this->user_id, $page, $row_count);
+    }
+
+    /**
+     * エントリーしたフリーマーケットの最新情報を取得します
+     *
+     * @access public
+     * @return mixed
+     * @author shimma
+     */
+    public function getReservedEntries($page = 1, $row_count = 30)
+    {
+        return \Model_Entry::getUserReservedEntries($this->user_id, $page, $row_count);
     }
 
     /**
@@ -483,6 +542,20 @@ class Model_User extends Orm\Model_Soft
     {
         return \Model_Favorite::getUserFavoriteCount($this->user_id);
     }
+
+    /**
+     * フリマ参加総数を取得します
+     *
+     * @access public
+     * @return int
+     * @author shimma
+     */
+    public function getEntryCount()
+    {
+        return \Model_Entry::getUserEntryCount($this->user_id);
+    }
+
+
 
     /**
      * 対象のフリマIDのフリマ予約をキャンセルします
@@ -530,11 +603,17 @@ class Model_User extends Orm\Model_Soft
      * @access public
      * @return void
      * @author shimma
+     *
+     * @todo エラーの日本語表記を正しいエラーコードに変換する
      */
     public function activate()
     {
-        $this->register_status = self::REGISTER_STATUS_ACTIVATED;
-        $this->save();
+        try {
+            $this->register_status = self::REGISTER_STATUS_ACTIVATED;
+            $this->save();
+        } catch (Exception $e) {
+            throw new SystemException('アクティベート化に失敗しました');
+        }
     }
 
 

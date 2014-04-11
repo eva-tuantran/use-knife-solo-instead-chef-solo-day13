@@ -22,12 +22,14 @@
     <p>
     下記のメールアドレスに登録用URLを記載したメールを送信しました。
     </p>
-    <p> <?php echo $user_input['email']; ?> </p>
+    <p style="padding:20px; text-align:center;"> <?php echo $user_input['email']; ?> </p>
     <p>
     登録用URLにアクセスして、店舗情報を登録してください。
-    ※回線の混雑状況によってはメールが届かない場合もございます。
-    ※メールが届かない場合は<a href="#">コチラ</a>
     </p>
+    <ul>
+        <li>※回線の混雑状況によってはメールが届かない場合もございます。</li>
+        <li>※メールが届かない場合は<a href="#">コチラ</a></li>
+    </ul>
   </div>
   <!-- /form -->
 </div>

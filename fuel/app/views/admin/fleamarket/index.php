@@ -1,12 +1,41 @@
+<?php
+?>
+<script type="text/javascript">
+$(function() {
+  $("#inputEventDate").datepicker({
+    numberOfMonths: 3,
+    showButtonPanel: true
+  });
+  $("#inputEventTimeStart").timepicker({
+    showButtonPanel: true,
+    stepMinute: 5
+  });
+  $("#inputEventTimeEnd").timepicker({
+    showButtonPanel: true,
+    stepMinute: 5
+  });
+});
+</script>
+
+<?php $entry_styles = Config::get('master.entry_styles'); ?>
+
 <?php $input  = $fieldset->input(); ?>
 <?php $errors = $fieldset->validation()->error_message(); ?>
 <?php $fields = $fieldset->field(); ?>
 
-<?php var_dump($errors); ?>
-
-<h3></h3>
-<form action="/admin/fleamarket/confirm" method="POST" class="form-horizontal">
+<h3>フリマ登録</h3>
+<form action="/admin/fleamarket/confirm" method="POST" class="form-horizontal" enctype="multipart/form-data">
   <table>
+    <tr>
+      <td>location_id</td>
+      <td>
+	<select name="location_id">
+	<?php foreach ($locations as $location) { ?>
+	<option value="<?php echo $location->location_id; ?>"<?php if ($location->location_id == $fields['location_id']->value) { echo ' selected=selected'; } ?>><?php echo e($location->name); ?></option>
+	<?php } ?>
+	</select>
+      </td>
+    </tr>
     <tr>
       <td>フリマ名</td>
       <td>
@@ -43,7 +72,7 @@
     <tr>
       <td>開催日</td>
       <td>
-	<input type="text" name="event_date" value="<?php echo e($fields['event_date']->value); ?>">
+	<input type="text" name="event_date" value="<?php echo e($fields['event_date']->value); ?>" id="inputEventDate">
 	<?php
 	   if (isset($errors['event_date'])) {
    	       echo $errors['event_date'];
@@ -54,7 +83,7 @@
     <tr>
       <td>開催時間</td>
       <td>
-	<input type="text" name="event_time_start" value="<?php echo e($fields['event_time_start']->value); ?>">
+	<input type="text" name="event_time_start" value="<?php echo e($fields['event_time_start']->value); ?>" id="inputEventTimeStart">
 	<?php
 	   if (isset($errors['event_time_start'])) {
    	       echo $errors['event_time_start'];
@@ -65,7 +94,7 @@
     <tr>
       <td>終了時間</td>
       <td>
-	<input type="text" name="event_time_end" value="<?php echo e($fields['event_time_end']->value); ?>">
+	<input type="text" name="event_time_end" value="<?php echo e($fields['event_time_end']->value); ?>" id="inputEventTimeEnd">
 	<?php
 	   if (isset($errors['event_time_end'])) {
    	       echo $errors['event_time_end'];
@@ -74,9 +103,13 @@
       </td>
     </tr>
     <tr>
-      <td>event_status</td>
+      <td>開催状況</td>
       <td>
-	<input type="text" name="event_status" value="<?php echo e($fields['event_status']->value); ?>">
+	<input type="radio" name="event_status" value="1"<?php if ($fields['event_status']->value == 1) { echo ' checked'; } ?>>開催予定
+	<input type="radio" name="event_status" value="2"<?php if ($fields['event_status']->value == 2) { echo ' checked'; } ?>>予約受付中
+	<input type="radio" name="event_status" value="3"<?php if ($fields['event_status']->value == 3) { echo ' checked'; } ?>>受付終了
+	<input type="radio" name="event_status" value="4"<?php if ($fields['event_status']->value == 4) { echo ' checked'; } ?>>開催終了
+	<input type="radio" name="event_status" value="5"<?php if ($fields['event_status']->value == 5) { echo ' checked'; } ?>>中止
 	<?php
 	   if (isset($errors['event_status'])) {
    	       echo $errors['event_status'];
@@ -206,9 +239,10 @@
       </td>
     </tr>
     <tr>
-      <td>pickup_flag</td>
+      <td>ピックアップ</td>
       <td>
-	<input type="text" name="pickup_flag" value="<?php echo e($fields['pickup_flag']->value); ?>">
+	<input type="radio" name="pickup_flag" value="1"<?php if ($fields['pickup_flag']->value == 1) { echo ' checked'; } ?>>対象
+	<input type="radio" name="pickup_flag" value="0"<?php if ($fields['pickup_flag']->value == 0) { echo ' checked'; } ?>>対象外
 	<?php
 	   if (isset($errors['pickup_flag'])) {
    	       echo $errors['pickup_flag'];
@@ -217,9 +251,10 @@
       </td>
     </tr>
     <tr>
-      <td>shop_fee_flag</td>
+      <td>出店料</td>
       <td>
-	<input type="text" name="shop_fee_flag" value="<?php echo e($fields['shop_fee_flag']->value); ?>">
+	<input type="radio" name="shop_fee_flag" value="1"<?php if ($fields['shop_fee_flag']->value == 1) { echo ' checked'; } ?>>無料
+	<input type="radio" name="shop_fee_flag" value="0"<?php if ($fields['shop_fee_flag']->value == 0) { echo ' checked'; } ?>>有料
 	<?php
 	   if (isset($errors['shop_fee_flag'])) {
    	       echo $errors['shop_fee_flag'];
@@ -228,9 +263,10 @@
       </td>
     </tr>
     <tr>
-      <td>car_shop_flag</td>
+      <td>車出店</td>
       <td>
-	<input type="text" name="car_shop_flag" value="<?php echo e($fields['car_shop_flag']->value); ?>">
+	<input type="radio" name="car_shop_flag" value="1"<?php if ($fields['car_shop_flag']->value == 1) { echo ' checked'; } ?>>OK
+	<input type="radio" name="car_shop_flag" value="0"<?php if ($fields['car_shop_flag']->value == 0) { echo ' checked'; } ?>>NG
 	<?php
 	   if (isset($errors['car_shop_flag'])) {
    	       echo $errors['car_shop_flag'];
@@ -239,9 +275,10 @@
       </td>
     </tr>
     <tr>
-      <td>pro_shop_flag</td>
+      <td>プロ出店</td>
       <td>
-	<input type="text" name="pro_shop_flag" value="<?php echo e($fields['pro_shop_flag']->value); ?>">
+	<input type="radio" name="pro_shop_flag" value="1"<?php if ($fields['pro_shop_flag']->value == 1) { echo ' checked'; } ?>>OK
+	<input type="radio" name="pro_shop_flag" value="0"<?php if ($fields['pro_shop_flag']->value == 0) { echo ' checked'; } ?>>NG
 	<?php
 	   if (isset($errors['pro_shop_flag'])) {
    	       echo $errors['pro_shop_flag'];
@@ -250,9 +287,10 @@
       </td>
     </tr>
     <tr>
-      <td>rainy_location_flag</td>
+      <td>雨天開催会場</td>
       <td>
-	<input type="text" name="rainy_location_flag" value="<?php echo e($fields['rainy_location_flag']->value); ?>">
+	<input type="radio" name="rainy_location_flag" value="1"<?php if ($fields['rainy_location_flag']->value == 1) { echo ' checked'; } ?>>OK
+	<input type="radio" name="rainy_location_flag" value="0"<?php if ($fields['rainy_location_flag']->value == 0) { echo ' checked'; } ?>>NG
 	<?php
 	   if (isset($errors['rainy_location_flag'])) {
    	       echo $errors['rainy_location_flag'];
@@ -261,9 +299,10 @@
       </td>
     </tr>
     <tr>
-      <td>charge_parking_flag</td>
+      <td>有料駐車場</td>
       <td>
-	<input type="text" name="charge_parking_flag" value="<?php echo e($fields['charge_parking_flag']->value); ?>">
+	<input type="radio" name="charge_parking_flag" value="1"<?php if ($fields['charge_parking_flag']->value == 1) { echo ' checked'; } ?>>あり
+	<input type="radio" name="charge_parking_flag" value="0"<?php if ($fields['charge_parking_flag']->value == 0) { echo ' checked'; } ?>>なし
 	<?php
 	   if (isset($errors['charge_parking_flag'])) {
    	       echo $errors['charge_parking_flag'];
@@ -272,9 +311,10 @@
       </td>
     </tr>
     <tr>
-      <td>free_parking_flag</td>
+      <td>無料駐車場</td>
       <td>
-	<input type="text" name="free_parking_flag" value="<?php echo e($fields['free_parking_flag']->value); ?>">
+	<input type="radio" name="free_parking_flag" value="1"<?php if ($fields['free_parking_flag']->value == 1) { echo ' checked'; } ?>>あり
+	<input type="radio" name="free_parking_flag" value="0"<?php if ($fields['free_parking_flag']->value == 0) { echo ' checked'; } ?>>なし
 	<?php
 	   if (isset($errors['free_parking_flag'])) {
    	       echo $errors['free_parking_flag'];
@@ -307,7 +347,8 @@
     <tr>
       <td>register_type</td>
       <td>
-	<input type="text" name="register_type" value="<?php echo e($fields['register_type']->value); ?>">
+	<input type="radio" name="register_type" value="1"<?php if ($fields['display_flag']->value == 1) { echo ' checked'; } ?>>運営者
+	<input type="radio" name="register_type" value="2"<?php if ($fields['display_flag']->value == 2) { echo ' checked'; } ?>>ユーザー投稿
 	<?php
 	   if (isset($errors['register_type'])) {
    	       echo $errors['register_type'];
@@ -316,9 +357,10 @@
       </td>
     </tr>
     <tr>
-      <td>display_flag</td>
+      <td>表示</td>
       <td>
-	<input type="text" name="display_flag" value="<?php echo e($fields['display_flag']->value); ?>">
+	<input type="radio" name="display_flag" value="1"<?php if ($fields['display_flag']->value == 1) { echo ' checked'; } ?>>表示
+	<input type="radio" name="display_flag" value="0"<?php if ($fields['display_flag']->value == 0) { echo ' checked'; } ?>>非表示
 	<?php
 	   if (isset($errors['display_flag'])) {
    	       echo $errors['display_flag'];
@@ -367,9 +409,60 @@
       ?> 
       </td>
     </tr>
+    <?php if ($fleamarket) { ?>
+    <?php foreach ($fleamarket->fleamarket_images as $fleamarket_image) { ?>
+    <tr>
+      <td>ファイル</td>
+      <td>
+	<img src="<?php echo $fleamarket_image->Url(); ?>">
+	<input type="checkbox" name="fleamarket_image_id[]" value="<?php echo $fleamarket_image->fleamarket_image_id; ?>">削除する
+      </td>
+    </tr>
+    <?php } ?>
+    <?php } ?>
+    <tr>
+      <td>ファイル</td>
+      <td>
+	<input type="file" name="upload1">
+      </td>
+    </tr>
+    <tr>
+      <td>ファイル</td>
+      <td>
+	<input type="file" name="upload2">
+      </td>
+    </tr>
+    <tr>
+      <td>ファイル</td>
+      <td>
+	<input type="file" name="upload3">
+      </td>
+    </tr>
+    <tr>
+      <td>ファイル</td>
+      <td>
+	<input type="file" name="upload4">
+      </td>
+    </tr>
+    <?php foreach (Model_Fleamarket_About::getAboutTitles() as $id => $title) { ?>
+    <tr>
+      <td>
+	<?php echo e($title); ?>
+      </td>
+      <td>
+	<input type="text" name="fleamarket_about_<?php echo $id ?>" value="<?php echo e($fields["fleamarket_about_${id}"]->value); ?>">
+      </td>
+    </tr>
+    <?php } ?>
+    <?php if ($fleamarket) {
+	  foreach ($fleamarket->fleamarket_entry_styles as $fleamarket_entry_style) { ?>
+    <tr>
+    <td><?php echo e($entry_styles[$fleamarket_entry_style->entry_style_id]); ?></td>
+    <td>
+    </td>
+    </tr>
+    <?php }} ?>
   </table>
-  <input type="submit" value="登録">
+<input type="submit" value="登録">
   <input type="hidden" name="fleamarket_id" value="<?php echo e(Input::param('fleamarket_id')); ?>">
 </form>
-
-    

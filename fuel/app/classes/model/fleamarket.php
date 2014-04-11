@@ -73,7 +73,7 @@ class Model_Fleamarket extends \Orm\Model
     const PICKUP_FLAG_ON = 1;
 
     /**
-     * 予約状況  1. まだまだあります 2. 残り僅か！ 3. 満員
+     * 予約状況  1:まだまだあります,2:残り僅か！,3:満員
      */
     const EVENT_RESERVATION_STATUS_ENOUGH = 1;
     const EVENT_RESERVATION_STATUS_FEW    = 2;
@@ -86,7 +86,16 @@ class Model_Fleamarket extends \Orm\Model
     protected static $_has_many = array(
         'fleamarket_entry_styles' => array(
             'key_from' => 'fleamarket_id',
-        )
+        ),
+        'fleamarket_images' => array(
+            'key_from' => 'fleamarket_id',
+        ),
+        'fleamarket_abouts' => array(
+            'key_from' => 'fleamarket_id',
+        ),
+        'entries' => array(
+            'key_from' => 'fleamarket_id',
+        ),
     );
     protected static $_properties = array(
         'fleamarket_id',
@@ -122,8 +131,11 @@ class Model_Fleamarket extends \Orm\Model
             'validation' => array('valid_time')
         ),
         'event_status' => array(
-            'form'  => array('type' => false)
+            'label' => '開催状況',
+            'form'  => array('type' => false),
+            'validation' => array('required'),
         ),
+        'event_reservation_status',
         'headline' => array(
             'validation' => array(
                 'max_length' => array(100)
@@ -325,7 +337,7 @@ class Model_Fleamarket extends \Orm\Model
         $table_name = self::$_table_name;
         $query = <<<"QUERY"
 SELECT
-    DATE_FORMAT(f.event_date, '%Y-%m-%d') AS event_date
+    f.event_date
 FROM
     {$table_name} AS f
 WHERE
@@ -749,7 +761,6 @@ QUERY;
         return $rows;
     }
 
-
     /**
      * 特定のユーザの投稿したフリマ情報を取得します
      *
@@ -839,11 +850,6 @@ QUERY;
         return array();
     }
 
-
-
-
-
-
     /**
      * 検索条件を取得する
      *
@@ -870,14 +876,12 @@ QUERY;
             );
         }
 
-        if (isset($data['region']) && $data['region'] !== '') {
+        if (isset($data['prefecture']) && $data['prefecture'] !== '') {
+            $conditions[] = array('prefecture_id', '=', $data['prefecture']);
+        } else if (isset($data['region']) && $data['region'] !== '') {
             $region_prefectures = \Config::get('master.region_prefectures');
             $prefecture = $region_prefectures[$data['region']];
             $conditions[] = array('prefecture_id', 'IN', $prefecture);
-        }
-
-        if (isset($data['prefecture']) && $data['prefecture'] !== '') {
-            $conditions[] = array('prefecture_id', '=', $data['prefecture']);
         }
 
         if (isset($data['shop_fee']) && $data['shop_fee'] !== '') {
@@ -936,9 +940,9 @@ QUERY;
             );
         }
 
-        if (isset($data['date']) && $data['date']) {
+        if (isset($data['calendar']) && $data['calendar']) {
             $conditions[] = array(
-                'f.event_date', '=', $data['date']
+                'f.event_date', '=', $data['calendar']
             );
         }
 
@@ -950,7 +954,13 @@ QUERY;
 
         if (isset($data['reservation']) && $data['reservation']) {
             $conditions[] = array(
-                'f.register_type', '=', \Model_Fleamarket::REGISTER_TYPE_ADMIN
+                'f.event_date >= CURDATE()'
+            );
+            $conditions[] = array(
+                'f.event_status', '=', \Model_Fleamarket::EVENT_STATUS_RESERVATION_RECEIPT,
+            );
+            $conditions[] = array(
+                'f.register_type', '=', \Model_Fleamarket::REGISTER_TYPE_ADMIN,
             );
         }
 
@@ -1043,7 +1053,7 @@ QUERY;
      * @return
      * @author kobayasi
      */
-    public function updateEventReservationStatus()
+    public function updateEventReservationStatus($save = true)
     {
         $is_full = true;
         foreach ($this->fleamarket_entry_styles as $fleamarket_entry_style) {
@@ -1054,7 +1064,28 @@ QUERY;
         }
         if ($is_full) {
             $this->event_reservation_status = self::EVENT_RESERVATION_STATUS_FULL;
+            if ($save) {
+                $this->save();
+            }
+        }
+    }
+
+    public function incrementReservationSerial($save = true)
+    {
+        $this->reservation_serial = DB::expr('reservation_serial + 1');
+        if ($save) {
             $this->save();
         }
+    }
+
+    public static function findForUpdate($fleamarket_id)
+    {
+        $query = DB::select()
+            ->from('fleamarkets')
+            ->where('fleamarket_id',$fleamarket_id) . " FOR UPDATE";
+
+        $result = DB::query($query)->as_object('Model_Fleamarket')->execute();
+
+        return $result ? $result[0] : null;
     }
 }

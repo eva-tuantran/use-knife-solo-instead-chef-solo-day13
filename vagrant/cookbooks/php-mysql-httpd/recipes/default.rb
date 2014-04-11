@@ -2,7 +2,7 @@
   # command "yum -y groupupdate \"Development Tools\""
 # end
 
-%w{php php-mbstring php-pdo php-mysql php-xml}.each do |name|
+%w{php php-mbstring php-pdo php-mysql php-xml php-gd}.each do |name|
   package name do
     action :install
   end

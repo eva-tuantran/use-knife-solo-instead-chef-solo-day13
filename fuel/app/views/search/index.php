@@ -1,7 +1,65 @@
 <div id="contentSearch" class="row">
   <!-- searchResult -->
   <div id="searchResult" class="col-sm-9 col-sm-push-3">
-    <div id="resultTitle"><?php echo 'なにを表示？';?>◯◯◯◯◯◯のフリマ情報一覧</div>
+    <?php
+        $title = '';
+        $titles = array();
+        if ($base_conditions):
+            if (isset($base_conditions['prefecture']) && ! empty($base_conditions['prefecture'])):
+                $titles[] = $prefectures[$base_conditions['prefecture']];
+            elseif (isset($base_conditions['region']) && ! empty($base_conditions['region'])):
+                $titles[] = $regions[$base_conditions['region']];
+            endif;
+            if (isset($base_conditions['calendar']) && ! empty($base_conditions['calendar'])):
+                $titles[] = date('Y年m月d日', strtotime($base_conditions['calendar']));
+            endif;
+            if (isset($base_conditions['upcomming']) && ! empty($base_conditions['upcomming'])):
+                $titles[] = '近日開催';
+            endif;
+            if (isset($base_conditions['reservation']) && ! empty($base_conditions['reservation'])):
+                $titles[] = '出店予約可能';
+            endif;
+            if (isset($base_conditions['keyword']) && ! empty($base_conditions['keyword'])):
+                $titles[] = e($base_conditions['keyword']);
+            endif;
+            if (isset($base_conditions['shop_fee'])
+                && $base_conditions['shop_fee'] == \Model_Fleamarket::SHOP_FEE_FLAG_FREE
+            ):
+                $titles[] = '出店無料';
+            endif;
+            if (isset($base_conditions['car_shop'])
+                && $base_conditions['car_shop'] == \Model_Fleamarket::CAR_SHOP_FLAG_OK
+            ):
+                $titles[] = '車出店可';
+            endif;
+            if (isset($base_conditions['rainy_location'])
+                && $base_conditions['rainy_location'] == \Model_Fleamarket::RAINY_LOCATION_FLAG_EXIST
+            ):
+                $titles[] = '雨天開催会場';
+            endif;
+            if (isset($base_conditions['pro_shop'])
+                && $base_conditions['pro_shop'] == \Model_Fleamarket::PRO_SHOP_FLAG_OK
+            ):
+                $titles[] = 'プロ出店可';
+            endif;
+            if (isset($base_conditions['charge_parking'])
+                && $base_conditions['charge_parking'] == \Model_Fleamarket::CHARGE_PARKING_FLAG_EXIST
+            ):
+                $titles[] = '有料駐車場あり';
+            endif;
+            if (isset($base_conditions['free_parking'])
+                && $base_conditions['free_parking'] == \Model_Fleamarket::FREE_PARKING_FLAG_EXIST
+            ):
+                $titles[] = '無料駐車場あり';
+            endif;
+
+            if (! empty($titles)):
+                $title = implode('/', $titles);
+                $title .= 'の';
+            endif;
+        endif;
+    ?>
+    <div id="resultTitle"><?php echo $title;?>フリマ情報一覧</div>
     <!-- result -->
 <?php
     if (! $fleamarket_list):
@@ -120,7 +178,7 @@
         </ul>
         <ul class="rightbutton">
           <?php
-            if ($is_admin_fleamarket):
+            if ($is_admin_fleamarket && $fleamarket['event_status'] == \Model_Fleamarket::EVENT_STATUS_RESERVATION_RECEIPT):
                 $reservation_button = '出店予約をする';
                 if ($fleamarket['event_reservation_status'] == \Model_Fleamarket::EVENT_RESERVATION_STATUS_FULL):
                     $reservation_button = 'キャンセル待ちをする';
