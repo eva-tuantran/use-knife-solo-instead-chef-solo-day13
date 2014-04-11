@@ -2,7 +2,7 @@
 namespace Fuel\Tasks;
 
 /**
- * Fleamarket_Close class
+ * Fleamarket_Event_Close class
  *
  * 開催日が過ぎたフリーマーケットのevent_statusを更新する
  *
@@ -55,7 +55,10 @@ class Fleamarket_Event_Close
                     'event_date', \DB::expr('DATE_ADD(CURDATE(), INTERVAL -1 DAY)')
                 ),
                 array(
-                    'event_time_end', '<', '23:59:00',
+                    'register_type', '=', \Model_Fleamarket::REGISTER_TYPE_ADMIN,
+                ),
+                array(
+                    'event_time_end', '<=', '23:59:59',
                 ),
                 array(
                     'event_status', 'IN', $target_event_statuses,

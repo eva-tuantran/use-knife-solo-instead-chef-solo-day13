@@ -1,10 +1,24 @@
-<?php $input  = $fieldset->input(); ?>
-<?php $errors = $fieldset->validation()->error_message(); ?>
-<?php $fields = $fieldset->field(); ?>
+<?php $entry_styles = Config::get('master.entry_styles'); ?>
+
+<?php $input  = $fieldsets['fleamarket']->input(); ?>
+<?php $errors = $fieldsets['fleamarket']->validation()->error_message(); ?>
+<?php $fields = $fieldsets['fleamarket']->field(); ?>
 
 <h3>フリマ登録</h3>
 <form action="/admin/fleamarket/thanks" method="POST" class="form-horizontal">
   <table>
+    <tr>
+      <td>location_id</td>
+      <td>
+	<?php 
+	   foreach ($locations as $location) {
+	     if( $location->location_id == $input['location_id'] ){
+	       echo e($location->name);
+             }
+           }
+	?>
+      </td>
+    </tr>
     <tr>
       <td>フリマ名</td>
       <td>
@@ -117,45 +131,45 @@
       </td>
     </tr>
     <tr>
-      <td>pickup_flag</td>
+      <td>ピックアップ</td>
       <td>
-	<?php echo $input['pickup_flag'] ? 'YES' : 'NO'; ?>
+	<?php echo $input['pickup_flag'] ? '対象' : '対象外'; ?>
       </td>
     </tr>
     <tr>
-      <td>shop_fee_flag</td>
+      <td>出店料</td>
       <td>
-        <?php echo $input['shop_fee_flag'] ? 'YES' : 'NO'; ?>
+        <?php echo $input['shop_fee_flag'] ? '無料' : '有料'; ?>
       </td>
     </tr>
     <tr>
-      <td>car_shop_flag</td>
+      <td>車出店</td>
       <td>
-        <?php echo $input['car_shop_flag'] ? 'YES' : 'NO'; ?>
+        <?php echo $input['car_shop_flag'] ? 'OK' : 'NG'; ?>
       </td>
     </tr>
     <tr>
-      <td>pro_shop_flag</td>
+      <td>プロ出店</td>
       <td>
-        <?php echo $input['pro_shop_flag'] ? 'YES' : 'NO'; ?>
+        <?php echo $input['pro_shop_flag'] ? 'OK' : 'NG'; ?>
       </td>
     </tr>
     <tr>
-      <td>rainy_location_flag</td>
+      <td>雨天開催会場</td>
       <td>
-        <?php echo $input['rainy_location_flag'] ? 'YES' : 'NO'; ?>
+        <?php echo $input['rainy_location_flag'] ? 'OK' : 'NG'; ?>
       </td>
     </tr>
     <tr>
-      <td>charge_parking_flag</td>
+      <td>有料駐車場</td>
       <td>
-        <?php echo $input['charge_parking_flag'] ? 'YES' : 'NO'; ?>
+        <?php echo $input['charge_parking_flag'] ? 'あり' : 'なし'; ?>
       </td>
     </tr>
     <tr>
-      <td>free_parking_flag</td>
+      <td>無料駐車場</td>
       <td>
-        <?php echo $input['free_parking_flag'] ? 'YES' : 'NO'; ?>
+        <?php echo $input['free_parking_flag'] ? 'あり' : 'なし'; ?>
       </td>
     </tr>
     <tr>
@@ -207,6 +221,42 @@
       <td>ファイル</td>
       <td>
 	<img src="/files/admin/fleamarket/img/<?php echo $file['saved_as']; ?>">
+      </td>
+    </tr>
+    <?php } ?>
+    <?php foreach (Model_Fleamarket_About::getAboutTitles() as $id => $title) { ?>
+    <tr>
+      <td><?php echo e($title); ?></td>
+      <td>
+	<?php 
+	   $input = $fieldsets['fleamarket_abouts'][$id]->input();
+	   echo e($input['description']);
+	?>
+      </td>
+    </tr>
+    <?php } ?>
+    <?php foreach ($entry_styles as $id => $entry_style) { ?>
+    <tr>
+      <td><?php echo e($entry_style); ?></td>
+      <td>
+	booth_fee
+	<?php 
+	   $input = $fieldsets['fleamarket_entry_styles'][$id]->input();
+	   echo e($input['booth_fee']);
+	?>
+	<br />
+	max_booth
+	<?php 
+	   $input = $fieldsets['fleamarket_entry_styles'][$id]->input();
+	   echo e($input['max_booth']);
+	?>
+	<br />
+	reservation_booth_limit
+	<?php 
+	   $input = $fieldsets['fleamarket_entry_styles'][$id]->input();
+	   echo e($input['reservation_booth_limit']);
+	?>
+	<br />
       </td>
     </tr>
     <?php } ?>

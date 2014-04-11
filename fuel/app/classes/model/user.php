@@ -165,7 +165,6 @@ class Model_User extends Orm\Model_Soft
                 'trim',
                 'valid_email',
                 'max_length' => array(50),
-                'unique_email',
             ),
             'form'       => array(
                 'type'  => 'text',
@@ -433,9 +432,7 @@ class Model_User extends Orm\Model_Soft
     public static function createFieldset()
     {
         $fieldset = Fieldset::forge();
-        $fieldset->validation()->add_callable('Model_User');
-        // $fieldset->validation()->add_callable('Custom_Validation');
-        $fieldset->add_model('Model_User');
+        $fieldset->add_model(self::forge());
 
         return $fieldset;
     }
