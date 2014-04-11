@@ -97,15 +97,18 @@ class Controller_Base_Template extends Controller_Template
         Lang::load('meta');
         $this->login_user = Auth::get_user_instance();
 
-        if ($this->request->uri->get_segments()) {
-            list($dir) = $this->request->uri->get_segments();
-            $this->setMetaTag("$dir/" . $this->request->action);
+        $segments = $this->request->route->segments;
+        if ($segments) {
+            if (count($segments) == 1 ){
+                $segments[] = 'index';
+            }
+            $this->setMetaTag("$segments[0]/$segments[1]");
         } else {
             $this->setMetaTag('default');
         }
     }
 
-
+    
     public function after($response)
     {
         $this->template->meta = $this->meta;
