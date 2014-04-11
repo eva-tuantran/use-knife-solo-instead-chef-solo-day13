@@ -109,7 +109,7 @@
                   <label>
                     <input type="checkbox" name="terms" value="agree" <?php if(isset($input['terms'])):?>checked<?php endif ?>>
                     利用規約に同意する。 <br>
-                    <a href="#" target="_blank">規約の確認はコチラ（別ウィンドウで開きます）</a> </label>
+                    <a href="/info/agreement" target="_blank">規約の確認はコチラ（別ウィンドウで開きます）</a> </label>
                   </div>
                 <?php if (isset($errors['terms'])) { echo $errors['terms'];  } ?>
                 </div>

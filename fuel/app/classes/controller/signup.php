@@ -172,6 +172,7 @@ class Controller_Signup extends Controller_Base_Template
             $fieldset->add('terms', '利用規約')
                 ->add_rule('required');
 
+            $fieldset->field('email')->add_rule('unique_email');
             $fieldset->field('device')->set_type(false);
             $fieldset->field('tel')->set_type(false);
             $fieldset->field('mobile_email')->set_type(false);
