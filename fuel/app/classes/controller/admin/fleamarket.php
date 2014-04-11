@@ -11,7 +11,7 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
     protected $fleamarket              = null;
     protected $fleamarket_abouts       = array();
     protected $fleamarket_entry_styles = array();
-    protected $fieldsets = null;
+    protected $fieldsets               = null;
 
     public function before()
     {
@@ -61,36 +61,9 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
         $fieldsets = $this->getFieldsets();
         Session::set_flash('admin.fleamarket.fieldsets', $fieldsets);
 
-        $has_error = false;
-        if (! $fieldsets['fleamarket']->validation()->run()) {
-            $has_error = true;
-        }
-
-        foreach ($fieldsets['fleamarket_abouts'] as $id => $fieldset) {
-            $input = array(
-                'description' => Input::param("fleamarket_about_${id}_description"),
-            );
-            
-            if (! $fieldset->validation()->run($input)) {
-                $has_error = true;
-            }
-        }
-
-        $entry_styles = Config::get('master.entry_styles');
-        foreach ($entry_styles as $id => $entry_style) {
-            $input = array();
-            foreach (array('booth_fee', 'max_booth', 'reservation_booth_limit') as $column) {
-                $input[$column] = Input::param("fleamarket_entry_style_${id}_${column}");
-            }
-            
-            $fieldset = $fieldsets['fleamarket_entry_styles'][$id];
-
-            if (! $fieldset->validation()->run($input)) {
-                $has_error = true;
-            }
-        }
-
-        if ($has_error) {
+        if ((! $this->validate_fleamarket($fieldsets)) ||
+            (! $this->validate_fleamarket_about($fieldsets)) ||
+            (! $this->validate_fleamarket_entry_style($fieldsets)) ){
             return Response::redirect(
                 'admin/fleamarket/?fleamarket_id=' . Input::param('fleamarket_id','')
             );
@@ -113,6 +86,44 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
         $this->template->content = $view;
     }
 
+    public function validate_fleamarket($fieldsets)
+    {
+        return $fieldsets['fleamarket']->validation()->run();
+    }
+    
+    public function validate_fleamarket_about($fieldsets)
+    {
+        $is_valid = true;
+        foreach ($fieldsets['fleamarket_abouts'] as $id => $fieldset) {
+            $input = array(
+                'description' => Input::param("fleamarket_about_${id}_description"),
+            );
+            
+            if (! $fieldset->validation()->run($input)) {
+                $is_valid = false;
+            }
+        }
+        return $is_valid;
+    }
+
+    public function validate_fleamarket_entry_style($fieldsets)
+    {
+        $is_valid = true;
+        $entry_styles = Config::get('master.entry_styles');
+        foreach ($entry_styles as $id => $entry_style) {
+            $input = array();
+            foreach (array('booth_fee', 'max_booth', 'reservation_booth_limit') as $column) {
+                $input[$column] = Input::param("fleamarket_entry_style_${id}_${column}");
+            }
+            
+            $fieldset = $fieldsets['fleamarket_entry_styles'][$id];
+
+            if (! $fieldset->validation()->run($input)) {
+                $is_valid = false;
+            }
+        }
+        return $is_valid;
+    }
     /**
      * 完了画面
      *
@@ -457,31 +468,36 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
         $entry_styles = Config::get('master.entry_styles');
 
         foreach ($entry_styles as $id => $entry_style) {
-            $fieldset = $fieldsets['fleamarket_abouts'][$id];
+            $fieldset = $fieldsets['fleamarket_entry_styles'][$id];
             $input = $fieldset->input();
 
-            $fleamarket_about = Model_Fleamarket_About::find('first',array(
+            $fleamarket_entry_style = Model_Fleamarket_Entry_Style::find('first',array(
                 'where' => array(
-                    'fleamarket_id' => $fleamarket->fleamarket_id,
-                    'about_id' => $id
+                    'fleamarket_id'  => $fleamarket->fleamarket_id,
+                    'entry_style_id' => $id
                 )
             ));
 
-            if (! $fleamarket_about) {
-                $fleamarket_about = Model_Fleamarket_About::forge(array(
-                    'fleamarket_id' => $fleamarket->fleamarket_id,
-                    'about_id' => $id
+            if ($input['booth_fee']) {
+                if (! $fleamarket_entry_style) {
+                    $fleamarket_entry_style = Model_Fleamarket_Entry_Style::forge(array(
+                        'fleamarket_id' => $fleamarket->fleamarket_id,
+                        'entry_style_id'      => $id
+                    ));
+                }
+                $fleamarket_entry_style->set(array(
+                    'booth_fee'               => $input['booth_fee'],
+                    'max_booth'               => $input['max_booth'],
+                    'reservation_booth_limit' => $input['reservation_booth_limit'],
+                    'created_user'            => 1,
+                    'updated_user'            => 1
                 ));
+                $fleamarket_entry_style->save();
+            }else{
+                if ($fleamarket_entry_style) {
+                    $fleamarket_entry_style->delete();
+                }
             }
-
-            $fleamarket_about->set(array(
-                'title'        => $title,
-                'description'  => $input['description'],
-                'created_user' => 1,
-                'updated_user' => 1
-            ));
-            
-            $fleamarket_about->save();
         }
     }
 }

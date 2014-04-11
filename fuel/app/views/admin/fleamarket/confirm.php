@@ -131,45 +131,45 @@
       </td>
     </tr>
     <tr>
-      <td>pickup_flag</td>
+      <td>ピックアップ</td>
       <td>
-	<?php echo $input['pickup_flag'] ? 'YES' : 'NO'; ?>
+	<?php echo $input['pickup_flag'] ? '対象' : '対象外'; ?>
       </td>
     </tr>
     <tr>
-      <td>shop_fee_flag</td>
+      <td>出店料</td>
       <td>
-        <?php echo $input['shop_fee_flag'] ? 'YES' : 'NO'; ?>
+        <?php echo $input['shop_fee_flag'] ? '無料' : '有料'; ?>
       </td>
     </tr>
     <tr>
-      <td>car_shop_flag</td>
+      <td>車出店</td>
       <td>
-        <?php echo $input['car_shop_flag'] ? 'YES' : 'NO'; ?>
+        <?php echo $input['car_shop_flag'] ? 'OK' : 'NG'; ?>
       </td>
     </tr>
     <tr>
-      <td>pro_shop_flag</td>
+      <td>プロ出店</td>
       <td>
-        <?php echo $input['pro_shop_flag'] ? 'YES' : 'NO'; ?>
+        <?php echo $input['pro_shop_flag'] ? 'OK' : 'NG'; ?>
       </td>
     </tr>
     <tr>
-      <td>rainy_location_flag</td>
+      <td>雨天開催会場</td>
       <td>
-        <?php echo $input['rainy_location_flag'] ? 'YES' : 'NO'; ?>
+        <?php echo $input['rainy_location_flag'] ? 'OK' : 'NG'; ?>
       </td>
     </tr>
     <tr>
-      <td>charge_parking_flag</td>
+      <td>有料駐車場</td>
       <td>
-        <?php echo $input['charge_parking_flag'] ? 'YES' : 'NO'; ?>
+        <?php echo $input['charge_parking_flag'] ? 'あり' : 'なし'; ?>
       </td>
     </tr>
     <tr>
-      <td>free_parking_flag</td>
+      <td>無料駐車場</td>
       <td>
-        <?php echo $input['free_parking_flag'] ? 'YES' : 'NO'; ?>
+        <?php echo $input['free_parking_flag'] ? 'あり' : 'なし'; ?>
       </td>
     </tr>
     <tr>

@@ -347,8 +347,8 @@ $(function() {
     <tr>
       <td>register_type</td>
       <td>
-	<input type="radio" name="register_type" value="1"<?php if ($fields['display_flag']->value == 1) { echo ' checked'; } ?>>運営者
-	<input type="radio" name="register_type" value="2"<?php if ($fields['display_flag']->value == 2) { echo ' checked'; } ?>>ユーザー投稿
+	<input type="radio" name="register_type" value="1"<?php if ($fields['register_type']->value == 1) { echo ' checked'; } ?>>運営者
+	<input type="radio" name="register_type" value="2"<?php if ($fields['register_type']->value == 2) { echo ' checked'; } ?>>ユーザー投稿
 	<?php
 	   if (isset($errors['register_type'])) {
    	       echo $errors['register_type'];
