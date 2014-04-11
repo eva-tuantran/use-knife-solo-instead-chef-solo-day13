@@ -86,6 +86,9 @@ $register_types = array(
     \Model_Fleamarket::REGISTER_TYPE_USER,
 );
 
+$about_titles = \Model_Fleamarket_About::getAboutTitles();
+$abouts = getFleamarketAbouts();
+
 $prefectures = \Config::get('master.prefectures');
 $location_list = getLocations();
 
@@ -99,8 +102,6 @@ $entry_styles = array(
 $booth_fee_list = array(
     0, 500, 1000, 1500, 2000, 2500, 3000
 );
-
-$about_titles = \Model_Fleamarket_About::getAboutTitles();
 
 $event_numbers = array();
 
@@ -124,7 +125,7 @@ for ($i = 1; $i <= 1000; $i++) {
         'zip'           => '100-0001',
         'prefecture_id' => $prefecture_id,
         'address'       => $address,
-        'googlemap_address' => $address['value'],
+        'googlemap_address' => $location['value'],
         'register_type' => $register_types[$register_type],
         'created_user'  => 0,
         'updated_user'  => null,
@@ -181,9 +182,9 @@ for ($i = 1; $i <= 1000; $i++) {
         'event_time_end'           => $event_end_list[$event_end],
         'event_status'             => $event_status,
         'event_reservation_status' => $event_reservation_status,
-        'headline'                 => 'headline!' . str_repeat('テスト', $rand),
-        'information'              => 'information!' . str_repeat('テスト', $rand),
-        'description'              => 'description!' . str_repeat('テスト', $rand),
+        'headline'                 => 'headline!',
+        'information'              => 'information!',
+        'description'              => getFleamarketDescription(),
         'reservation_serial'       => 1,
         'reservation_start'        => $reservation_start,
         'reservation_end'          => $reservation_end,
@@ -257,7 +258,7 @@ for ($i = 1; $i <= 1000; $i++) {
         }
     }
 
-    // フリマ出店形態情報
+    // フリマ説明情報
     $about_rand = mt_rand(0, 7);
     if ($about_rand > 0) {
         $about_list = array_rand($about_titles, $about_rand);
@@ -270,7 +271,7 @@ for ($i = 1; $i <= 1000; $i++) {
                 'fleamarket_id' => $fleamarket_id,
                 'about_id' => $about_id,
                 'title' => $about_titles[$about_id],
-                'description' => str_repeat('テスト', $rand),
+                'description' => $abouts[$about_id],
                 'created_user' => 0,
                 'updated_user' => null,
                 'created_at' => \Date::forge()->format('mysql'),
@@ -369,5 +370,43 @@ function getLocations()
         '南大分セントラルパーク' => '大分県大分市奥田659-1',
         '夢屋天草店'            => '熊本県天草市本渡町本戸馬場2254',
         'ベリーズ日南店'        => '宮崎県日南市平野601番地',
+    );
+}
+
+function getFleamarketDescription()
+{
+    $description = <<< "DESCRIPTION"
+毎回大好評!(^^)!
+車出店しかも出店無料!!
+とっても貴重な会場で開催がまたまた決定!!(^_-)-☆
+
+会場は、地元から長年愛されている
+『○○○○ △△△△』さんの駐車場!!(^^♪
+
+国分寺駅から京王バス(府中駅行き)に乗って5分!
+『藤塚バス停』のすぐ目の前!!
+アクセスも良好な会場です(*^_^*)
+
+フリマにぴったりなこのシーズン♪♪
+休日は、家族で友人でフリマに行こう(^^)v
+
+※【ご出店者様へ】雨天時は、翌日の日曜日に順延となります。順延日もご出店が可能な方のみ、ご予約頂きますよう、宜しくお願い致します。
+-------------------------------
+※【ご来場者様へ】無料駐車場は台数に限りがありますので、満車の時はお車を駐車できないことがあります。公共交通機関のご利用にご協力下さい。
+DESCRIPTION;
+
+    return $description;
+}
+
+function getFleamarketAbouts()
+{
+    return array(
+        \Model_Fleamarket_About::ACCESS     => '国分寺駅から京王バス(府中駅行き)藤塚バス停下車すぐ目の前',
+        \Model_Fleamarket_About::EVENT_TIME => '開催時間について	9時〜14時(※搬入時間8時〜9時) ※原則出店者の途中退出はできません。',
+        \Model_Fleamarket_About::SHOP_CAUTION => '≪出品禁止物≫ プロ出店禁止(※プロ出店は家庭の不用品の域を越える荷物の方や新品商品、専門的品揃え、仕入品などの業者的な商品を販売する店舗になります) 多量の新品商品、天然石使用の手作り品、飲食物、動植物、化粧品、医薬品(酒、たばこ、法律に違反するもの)偽ブランドコピー品、複製ソフト(録画、録音、複写等)、危険な刀物類(模造刀、ナイフ、包丁、モデルガン、危険な工具類も含む)、アダルト関連(風紀を乱すもの)、 テキ屋的販売、有料くじ、盗品・法律で禁じられている物、 当 日に他のお店で買った物、骨董品関連(高額商品、不当商品等を含む)、また、販売に対してスタッフが不適応と判断した品物',
+        \Model_Fleamarket_About::SHOP_FEE   => 'チャリティフリマ ``出店料無料`` (家庭の不用品、手作り・アート出店)',
+        \Model_Fleamarket_About::SHOP_STYLE => '車出店:間口2.5×7.0m (縦だし出店*お車を含めたスペースになります)',
+        \Model_Fleamarket_About::BOOTH      => "限定60店舗(家庭の不用品・手作り品・アート出店)\n※雨天時は、翌日の日曜日に順延となります。順延日もご出店が可能な方のみ、ご予約頂きますよう、宜しくお願い致します。",
+        \Model_Fleamarket_About::PARKING    => '無料駐車場有り',
     );
 }
