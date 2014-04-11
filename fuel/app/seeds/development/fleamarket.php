@@ -105,27 +105,30 @@ $booth_fee_list = array(
 
 $event_numbers = array();
 
-for ($i = 1; $i <= 1000; $i++) {
-    $rand = mt_rand(1, 30);
+\DB::query('TRUNCATE TABLE fleamarkets')->execute();
+\DB::query('TRUNCATE TABLE fleamarket_entry_styles')->execute();
+\DB::query('TRUNCATE TABLE fleamarket_abouts')->execute();
+\DB::query('TRUNCATE TABLE locations')->execute();
 
+for ($i = 1; $i <= 1000; $i++) {
     $group_code = array_rand($group_codes);
     $group_code_name = $group_codes[$group_code];
 
     $register_type = array_rand($register_types);
 
     // 開催地情報
-    shuffle($location_list);
-    $location = each($location_list);
-    list($prefecture, $address) = getAddress($location['value']);
+    $location_name = array_rand($location_list, 1);
+    $location = $location_list[$location_name];
+    list($prefecture, $address) = getAddress($location);
     $prefecture_id = array_search($prefecture, $prefectures);
 
     $location_line = array(
         'branch_id'     => null,
-        'name'          => $location['key'],
+        'name'          => $location_name,
         'zip'           => '100-0001',
         'prefecture_id' => $prefecture_id,
         'address'       => $address,
-        'googlemap_address' => $location['value'],
+        'googlemap_address' => $location,
         'register_type' => $register_types[$register_type],
         'created_user'  => 0,
         'updated_user'  => null,
