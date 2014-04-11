@@ -94,7 +94,7 @@ class Controller_Mypage extends Controller_Base_Template
                 break;
             case 'myfleamarket':
                 $fleamarkets = $this->login_user->getMyFleamarkets($page, $item_per_page);
-                $count       = $this->login_user->getMyFleamarkets();
+                $count       = $this->login_user->getMyFleamarketCount();
                 break;
             case 'reserved':
                 $fleamarkets = $this->login_user->getReservedEntries($page, $item_per_page);
@@ -115,15 +115,15 @@ class Controller_Mypage extends Controller_Base_Template
         $view_model->set('type', $type, false);
         $view_model->set('pagination', $pagination, false);
 
+        $fleamarkets_view = array();
+        foreach ($fleamarkets as $fleamarket) {
+            $fleamarkets_view[] = ViewModel::forge('component/fleamarket')
+                ->set('fleamarket', $fleamarket)
+                ->set('type', $type);
+        };
 
-        $view_model_fleamarket = ViewModel::forge('component/fleamarket');
-
-
+        $view_model->set('fleamarkets_view', $fleamarkets_view, false);
         $view_model->set('calendar', ViewModel::forge('component/calendar'), false);
-
-        $view_model->set('fleamarkets', $fleamarkets);
-
-
         $view_model->set('calendar', ViewModel::forge('component/calendar'), false);
         $view_model->set('prefectures', Config::get('master.prefectures'), false);
         $view_model->set('regions', Config::get('master.regions'), false);

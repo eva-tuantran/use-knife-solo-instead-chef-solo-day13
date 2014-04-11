@@ -11,6 +11,7 @@ class View_Component_fleamarket extends ViewModel
     public function view()
     {
 
+        $this->fleamarket = $this->addDisplayStrings($this->fleamarket);
 
         $this->render_status = function($fleamarket) {
             if (! empty($fleamarket['event_status'])) {
@@ -76,7 +77,7 @@ class View_Component_fleamarket extends ViewModel
      * 出店予約できる出店形態ごと出店料金の文字列を生成する
      *
      * @access private
-     * @param string $style_name 出店形態名
+         * @param string $style_name 出店形態名
      * @param int $booth_fee 出店料金
      * @author ida
      * @author shimma
