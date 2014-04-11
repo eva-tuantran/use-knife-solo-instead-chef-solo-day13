@@ -2,6 +2,10 @@
 <?php
     if ($fleamarket_list):
         foreach ($fleamarket_list as $fleamarket):
+            $prefecture = '';
+            if ($fleamarket['prefecture_id'] > 0):
+                $prefecture = $prefectures[$fleamarket['prefecture_id']];
+            endif;
 ?>
   <dt><?php echo e(date('Y年n月j日', strtotime($fleamarket['event_date'])));?></dt>
   <dd>
@@ -11,7 +15,7 @@
                 echo '楽市楽座主催&nbsp;';
             endif;
             echo e($fleamarket['name']) . '&nbsp;';
-            echo $prefectures[$fleamarket['prefecture_id']] . '&nbsp;';
+            echo $prefecture . '&nbsp;';
             switch ($fleamarket['event_status']):
                 case \Model_Fleamarket::EVENT_STATUS_SCHEDULE:
                     echo '開催予定';
