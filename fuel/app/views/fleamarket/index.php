@@ -281,7 +281,7 @@ $(function() {
               <label>
                 <input type="checkbox" name="agreement" value="1">
                 利用規約に同意する。 <br>
-                <a href="#" target="_blank">規約の確認はコチラ（別ウィンドウで開きます）</a> </label>
+                <a href="/info/agreement" target="_blank">規約の確認はコチラ（別ウィンドウで開きます）</a> </label>
             </div>
           </div>
         </div>
