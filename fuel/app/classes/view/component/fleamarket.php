@@ -10,7 +10,7 @@ class View_Component_fleamarket extends ViewModel
 
     public function view()
     {
-        $this->fleamarket = $this->addDisplayStrings($fleamarket);
+
 
         $this->render_status = function($fleamarket) {
             if (! empty($fleamarket['event_status'])) {
@@ -19,7 +19,7 @@ class View_Component_fleamarket extends ViewModel
         };
 
         $this->is_official = function($fleamarket) {
-            if (! empty($fleamarket['register_type'])) {
+            if (! empty($fleamarket['register_type']) ) {
                 if ($fleamarket['register_type'] == \Model_Fleamarket::REGISTER_TYPE_ADMIN) {
                     return true;
                 }
@@ -27,10 +27,8 @@ class View_Component_fleamarket extends ViewModel
 
             return false;
         };
+
     }
-
-
-
 
     /**
      * 数字で渡ってくるパラメータを文字列に変換したものを付与します。

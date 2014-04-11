@@ -114,7 +114,16 @@ class Controller_Mypage extends Controller_Base_Template
 
         $view_model->set('type', $type, false);
         $view_model->set('pagination', $pagination, false);
+
+
+        $view_model_fleamarket = ViewModel::forge('component/fleamarket');
+
+
+        $view_model->set('calendar', ViewModel::forge('component/calendar'), false);
+
         $view_model->set('fleamarkets', $fleamarkets);
+
+
         $view_model->set('calendar', ViewModel::forge('component/calendar'), false);
         $view_model->set('prefectures', Config::get('master.prefectures'), false);
         $view_model->set('regions', Config::get('master.regions'), false);
