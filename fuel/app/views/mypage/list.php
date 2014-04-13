@@ -142,7 +142,6 @@ $('.fleamarket_cancel').click(function() {
 
 $(function() {
   Calendar.init();
-  Carousel.start();
   Search.init();
 });
 
@@ -201,26 +200,6 @@ var Search = {
       }
     }).fail(function(jqXHR, textStatus, errorThrown) {
     });
-  }
-};
-
-var Carousel = {
-  start: function () {
-    $(window).resize(function() {
-      $("#newMarket").carouFredSel({
-        align: true,
-        scroll:{
-          items: 1,
-          duration: 300,
-          pauseDuration: 5000,
-          easing: "linear",
-          pauseOnHover: "immediate"
-        },
-        prev:{button: "#prev", key: "left"},
-        next:{button: "#next", key: "right"}
-      });
-    });
-    $(window).resize();
   }
 };
 
