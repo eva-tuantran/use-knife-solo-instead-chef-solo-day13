@@ -39,12 +39,20 @@
     </ul>
     <ul class="rightbutton">
     <?php if($type == 'mylist'): ?>
-          <li class="button makeReservation"><a href="/reservation?fleamarket_id=<?php echo $fleamarket['fleamarket_id'] ?>">出店予約をする</a></li>
+          <?php if($fleamarket['event_status'] == \Model_Fleamarket::EVENT_STATUS_RESERVATION_RECEIPT): ?>
+              <?php if(@$fleamarket['event_reservation_status'] == \Model_Fleamarket::EVENT_RESERVATION_STATUS_FULL): ?>
+                <li class="button makeReservation"><a href="/reservation?fleamarket_id=<?php echo $fleamarket['fleamarket_id'] ?>">キャンセル待ち</a></li>
+              <?php else: ?>
+                <li class="button makeReservation"><a href="/reservation?fleamarket_id=<?php echo $fleamarket['fleamarket_id'] ?>">出店予約をする</a></li>
+              <?php endif; ?>
+          <?php endif; ?>
           <li class="button cancel"><a href="#" class="mylist_remove" id="fleamarket_id_<?php echo $fleamarket['fleamarket_id']; ?>"><i></i>マイリスト解除</a></li>
     <?php elseif($type == 'entry'): ?>
         <?php if ($is_official($fleamarket)): ?>
           <!-- <li class="button change makeReservation"><a href="/mypage/change?fleamarket_id=<?php echo $fleamarket['fleamarket_id'] ?>"><i></i>予約変更</a></li> -->
-          <li class="button cancel"><a href="/mypage/cancel?fleamarket_id=<?php echo $fleamarket['fleamarket_id'] ?>" class="fleamarket_cancel"><i></i>予約解除</a></li>
+          <?php if($fleamarket['event_status'] == \Model_Fleamarket::EVENT_STATUS_RESERVATION_RECEIPT): ?>
+            <li class="button cancel"><a href="/mypage/cancel?fleamarket_id=<?php echo $fleamarket['fleamarket_id'] ?>" class="fleamarket_cancel"><i></i>予約解除</a></li>
+          <?php endif; ?>
         <?php endif; ?>
     <?php elseif($type == 'myfleamarket'): ?>
           <li class="button makeReservation change"><a href="/fleamarket/<?php echo $fleamarket['fleamarket_id'] ?>"><i></i>内容変更</a></li>
