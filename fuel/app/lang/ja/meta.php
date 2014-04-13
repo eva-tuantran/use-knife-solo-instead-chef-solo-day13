@@ -146,6 +146,21 @@ return array(
         'description' => 'プライバシーポリシー',
         'keyword'     => 'プライバシーポリシー',
     ),
+    'reservation/index' => array(
+        'title'       => 'フリマ予約',
+        'description' => 'フリマ予約',
+        'keyword'     => 'フリマ予約',
+    ),
+    'reservation/confirm' => array(
+        'title'       => 'フリマ予約',
+        'description' => 'フリマ予約',
+        'keyword'     => 'フリマ予約',
+    ),
+    'reservation/thanks' => array(
+        'title'       => 'フリマ予約',
+        'description' => 'フリマ予約',
+        'keyword'     => 'フリマ予約',
+    ),
 );
 
 
