@@ -13,6 +13,7 @@ DROP TABLE IF EXISTS `rakuichi-rakuza`.`users` ;
 
 CREATE TABLE IF NOT EXISTS `rakuichi-rakuza`.`users` (
   `user_id` INT NOT NULL AUTO_INCREMENT COMMENT '10000000から採番',
+  `user_old_id` INT NULL COMMENT '旧楽市楽座のユーザID',
   `nick_name` VARCHAR(50) NOT NULL,
   `last_name` VARCHAR(50) NOT NULL COMMENT '姓',
   `first_name` VARCHAR(50) NOT NULL COMMENT '名',
@@ -20,7 +21,7 @@ CREATE TABLE IF NOT EXISTS `rakuichi-rakuza`.`users` (
   `first_name_kana` VARCHAR(50) NOT NULL COMMENT '名カナ',
   `birthday` DATE NULL COMMENT '誕生日',
   `gender` TINYINT NULL COMMENT '性別 1:男性,2:女性',
-  `zip` CHAR(7) NOT NULL COMMENT '郵便番号',
+  `zip` CHAR(10) NOT NULL COMMENT '郵便番号',
   `prefecture_id` TINYINT NOT NULL COMMENT '都道府県',
   `address` VARCHAR(255) NOT NULL COMMENT '都道府県以外の住所',
   `tel` VARCHAR(20) NULL COMMENT '自宅電話',
@@ -44,7 +45,8 @@ CREATE TABLE IF NOT EXISTS `rakuichi-rakuza`.`users` (
   `updated_at` DATETIME NULL COMMENT '更新日時',
   `deleted_at` DATETIME NULL COMMENT '削除日時',
   PRIMARY KEY (`user_id`),
-  UNIQUE INDEX `email_UNIQUE` (`email` ASC))
+  INDEX `idx_user_old_id` (`user_old_id` ASC),
+  INDEX `idx_email` (`email` ASC))
 ENGINE = InnoDB;
 
 
@@ -420,11 +422,11 @@ CREATE TABLE IF NOT EXISTS `rakuichi-rakuza`.`favorites` (
   `created_at` DATETIME NOT NULL,
   `updated_at` DATETIME NULL,
   `deleted_at` DATETIME NULL,
-  PRIMARY KEY (`favorite_id`))
+  PRIMARY KEY (`favorite_id`),
+  INDEX `idx_fleamarket_id` (`fleamarket_id` ASC))
 ENGINE = InnoDB;
 
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
-
