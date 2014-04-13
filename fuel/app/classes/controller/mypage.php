@@ -58,8 +58,6 @@ class Controller_Mypage extends Controller_Base_Template
         $fleamarkets_all['myfleamarket'] = $this->login_user->getMyFleamarkets(1, 3);
         $fleamarkets_all['reserved']     = $this->login_user->getReservedEntries(1, 3);
 
-            // var_dump($fleamarkets); exit();
-
         $fleamarkets_view = array();
         foreach ($fleamarkets_all as $type => $fleamarkets) {
             foreach ($fleamarkets as $fleamarket) {
@@ -70,7 +68,7 @@ class Controller_Mypage extends Controller_Base_Template
             }
         };
 
-        $view_model = ViewModel::forge('mypage/index');
+        $view_model = View::forge('mypage/index');
         $view_model->set('fleamarkets_view', $fleamarkets_view, false);
         $view_model->set('prefectures', Config::get('master.prefectures'), false);
         $view_model->set('regions', Config::get('master.regions'), false);
@@ -132,7 +130,7 @@ class Controller_Mypage extends Controller_Base_Template
                 ->set('type', $type);
         };
 
-        $view_model = ViewModel::forge('mypage/list');
+        $view_model = View::forge('mypage/list');
         $view_model->set('type', $type, false);
         $view_model->set('pagination', $pagination, false);
         $view_model->set('fleamarkets_view', $fleamarkets_view, false);
