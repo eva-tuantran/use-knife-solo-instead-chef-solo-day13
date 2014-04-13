@@ -187,12 +187,13 @@ class Controller_Mypage extends Controller_Base_Template
         $status_code = Session::get_flash('status_code');
         $data['info_message'] = $this->getStatusMessage($status_code);
 
-        $fieldset = Fieldset::forge()->add_model('Model_User')->populate($this->login_user);
+        $fieldset = \Model_User::createFieldset()->populate($this->login_user);
         $fieldset->field('password')->set_type(false);
         $fieldset->add('submit', '', array('type' => 'submit','value' => '保存する'));
 
         $this->template->content = View::forge('mypage/account', $data);
-        $this->template->content->set('user_account_form', $fieldset->build('/mypage/save'), false);
+        $this->template->content->set('fieldset', $fieldset, false);
+        $this->template->content->set('prefectures', Config::get('master.prefectures'), false);
     }
 
     /**
