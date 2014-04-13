@@ -6,10 +6,13 @@
       <?php echo $calendar; ?>
     </div>
 
-    <!-- <div class="box clearfix"> -->
-    <!-- <li><a href="/mypage/account">アカウント設定</a></li> -->
-    <!-- </ul> -->
-    <!-- </div> -->
+    <div class="box clearfix">
+      <h3 style="float: none; margin-bottom:5px;">オプション変更</h3>
+      <ul style="float: none">
+        <li style="margin-right: 10px;"><a href="/mypage/account">アカウント設定</a></li>
+        <li><a href="/mypage/password">パスワード変更</a></li>
+      </ul>
+    </div>
 
     <!-- ad -->
     <!-- <div class="ad clearfix"> <a href="#"><img src="http://dummyimage.com/220x150/ccc/fff.jpg" class="img-responsive"></a></div> -->

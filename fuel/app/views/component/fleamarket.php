@@ -1,5 +1,5 @@
 <!-- result -->
-<div class="<?php if (empty($no_box)) { echo 'box'; }; ?> result <?php $render_status($fleamarket); ?> <?php echo $is_official($fleamarket) ? 'resultPush' : ''; ?>  clearfix">
+<div class="<?php if (empty($no_box)) { echo 'box'; }; ?> result <?php $render_status($fleamarket); ?> <?php if (empty($no_box) && $is_official($fleamarket)) { echo 'resultPush'; } ?>  clearfix">
   <h3>
     <?php if ($is_official($fleamarket)): ?>
     <strong>楽市楽座主催</strong>
