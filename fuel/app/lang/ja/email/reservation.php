@@ -6,8 +6,6 @@ return array(
     'subject'   => '予約しました',
     'body'      => <<<'EOT'
 予約しました
-
+予約番号: ##reservation_number##
 EOT
 );
-
-

@@ -81,6 +81,16 @@ return array(
         'description' => 'マイページ',
         'keyword'     => 'マイページ',
     ),
+    'mypage/account' => array(
+        'title'       => 'アカウント変更',
+        'description' => 'アカウント変更',
+        'keyword'     => 'アカウント変更',
+    ),
+    'mypage/password' => array(
+        'title'       => 'パスワード変更',
+        'description' => 'パスワード変更',
+        'keyword'     => 'パスワード変更',
+    ),
     'mypage/list' => array(
         'title'       => 'リスト一覧',
         'description' => 'マイページ',
