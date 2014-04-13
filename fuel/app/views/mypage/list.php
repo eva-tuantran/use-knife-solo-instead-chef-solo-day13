@@ -108,19 +108,23 @@
     ?>
     </div>
 
-    <?php foreach ($fleamarkets_view as $fleamarket_view) { echo $fleamarket_view; }; ?>
-
-    <!-- pagination -->
-    <?php if ('' != ($pagnation =  $pagination->render())): ?> 
-    <?php echo $pagnation; ?>
+    <?php if(empty($fleamarkets_view)): ?>
+        <div class="box"><p>一覧はありません</p></div>
     <?php else: ?>
-    <ul class="pagination">
-        <li class="disabled"><a href="javascript:void(0);" rel="prev">«</a></li>
-        <li class="active"><a href="javascript:void(0);">1<span class="sr-only"></span></a></li>
-        <li class="disabled"><a href="javascript:void(0);" rel="next">»</a></li>
-    </ul>
+        <?php foreach ($fleamarkets_view as $fleamarket_view) { echo $fleamarket_view; }; ?>
+
+        <!-- pagination -->
+        <?php if ('' != ($pagnation =  $pagination->render())): ?> 
+        <?php echo $pagnation; ?>
+        <?php else: ?>
+        <ul class="pagination">
+            <li class="disabled"><a href="javascript:void(0);" rel="prev">«</a></li>
+            <li class="active"><a href="javascript:void(0);">1<span class="sr-only"></span></a></li>
+            <li class="disabled"><a href="javascript:void(0);" rel="next">»</a></li>
+        </ul>
+        <?php endif; ?>
+        <!-- /pagination -->
     <?php endif; ?>
-    <!-- /pagination -->
 
   </div>
   <!-- /searchResult -->
