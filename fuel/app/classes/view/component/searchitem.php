@@ -1,28 +1,16 @@
 <?php
 
 /**
- * View_Mypage_List ViewModel
+ * Base
  *
  * @author shimma
  */
-class View_Mypage_List extends ViewModel
+class View_Component_fleamarket extends ViewModel
 {
 
-    /**
-     * view method
-     *
-     * @access public
-     * @return void
-     * @author shimma
-     */
     public function view()
     {
-        $fleamarkets = array();
-        foreach ($this->fleamarkets as $fleamarket) {
-            $fleamarkets[] = $this->addDisplayStrings($fleamarket);
-        }
-        $this->fleamarkets = $fleamarkets;
-
+        $this->fleamarket = $this->addDisplayStrings($fleamarket);
 
         $this->render_status = function($fleamarket) {
             if (! empty($fleamarket['event_status'])) {
@@ -31,7 +19,7 @@ class View_Mypage_List extends ViewModel
         };
 
         $this->is_official = function($fleamarket) {
-            if (! empty($fleamarket['register_type']) ) {
+            if (! empty($fleamarket['register_type'])) {
                 if ($fleamarket['register_type'] == \Model_Fleamarket::REGISTER_TYPE_ADMIN) {
                     return true;
                 }
@@ -41,14 +29,15 @@ class View_Mypage_List extends ViewModel
         };
     }
 
+
+
+
     /**
      * 数字で渡ってくるパラメータを文字列に変換したものを付与します。
      *
      * @access private
      * @return void
      * @author shimma
-     *
-     * @todo それぞれをmethodにしてidを与えると、表示用のstgを吐いてくれるような実装に切り替えたい
      */
     public function addDisplayStrings($fleamarket)
     {
@@ -73,7 +62,7 @@ class View_Mypage_List extends ViewModel
         if (isset($fleamarket['booth_fee']) && isset($fleamarket['fleamarket_entry_style_name'])) {
             $fleamarket['booth_fee_string'] = $this->createFeeString($fleamarket['fleamarket_entry_style_name'], $fleamarket['booth_fee']);
         } else {
-            $fleamarket['booth_fee_string'] = '未設定';
+            $fleamarket['booth_fee_string'] = 'お問い合わせ';
         }
 
 
@@ -101,10 +90,14 @@ class View_Mypage_List extends ViewModel
         // $fee_string = $style_name . ':';
         $fee_string = '';
 
-        if ( $booth_fee == 0 ) {
-            $fee_string .= '無料';
+        if (! is_numeric($booth_fee) ){
+            $fee_string .= '-';
         } else {
-            $fee_string .= number_format($booth_fee) . '円';
+            if ( $booth_fee == 0 ) {
+                $fee_string .= '無料';
+            } else {
+                $fee_string .= number_format($booth_fee) . '円';
+            }
         }
 
         return $fee_string;

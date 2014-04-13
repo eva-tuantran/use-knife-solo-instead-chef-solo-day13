@@ -113,7 +113,7 @@ Map.prototype = {
         ?></p>
         <ul class="mylist">
           <li class="button addMylist"><a href="#" id="fleamarket_id_<?php echo $fleamarket['fleamarket_id'];?>"><i></i>マイリストに追加</a></li>
-          <li class="button gotoMylist"><a href="/mypage#mylist"><i></i>マイリストを見る</a></li>
+          <li class="button gotoMylist"><a href="/mypage/list?type=mylist"><i></i>マイリストを見る</a></li>
         </ul>
       </div>
       <ul class="rightbutton">
@@ -265,7 +265,7 @@ Map.prototype = {
       </dl>
       <ul class="mylist <?php if (! $is_admin_fleamarket):?>noneReservation<?php endif;?>">
         <li class="button addMylist"><a href="#" id="fleamarket_id_<?php echo $fleamarket['fleamarket_id'];?>"><i></i>マイリストに追加</a></li>
-        <li class="button gotoMylist"><a href="/mypage#mylist"><i></i>マイリストを見る</a></li>
+        <li class="button gotoMylist"><a href="/mypage/list?type=mylist"><i></i>マイリストを見る</a></li>
       </ul>
       <ul class="rightbutton">
         <?php

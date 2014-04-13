@@ -25,7 +25,7 @@
 <!-- rank<?php echo $rank;?> -->
 <div class="rank<?php echo $rank;?> clearfix"><i class="rankicon"></i>
   <div class="rankPhoto">
-      <a href="/detail/<?php echo e($fleamarket['fleamarket_id']);?>"><img src="assets/img/noimage.jpg" class="img-rounded"></a>
+      <a href="/detail/<?php echo e($fleamarket['fleamarket_id']);?>"><img src="/assets/img/noimage.jpg" class="img-rounded"></a>
   </div>
   <h3><a href="/detail/<?php echo e($fleamarket['fleamarket_id']);?>"><?php echo e($fleamarket['name']);?></a></h3>
   <dl class="col-md-4">

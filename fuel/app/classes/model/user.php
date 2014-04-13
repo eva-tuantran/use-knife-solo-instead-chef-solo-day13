@@ -552,6 +552,20 @@ class Model_User extends Orm\Model_Soft
         return \Model_Entry::getUserEntryCount($this->user_id);
     }
 
+    /**
+     * 自分で投稿したフリマの総数の取得
+     *
+     * @access public
+     * @return int
+     * @author shimma
+     *
+     * @todo ここの実装
+     */
+    public function getMyFleamarketCount()
+    {
+        return 1;
+        return \Model_Fleamarket::getUserMyFleamarkets($this->user_id, $page, $row_count);
+    }
 
 
     /**
