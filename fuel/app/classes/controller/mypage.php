@@ -52,14 +52,28 @@ class Controller_Mypage extends Controller_Base_Template
     public function action_index()
     {
         Asset::js('jquery.carouFredSel.js', array(), 'add_js');
+
+        $fleamarkets_all['entry']        = $this->login_user->getEntries(1, 3);
+        $fleamarkets_all['mylist']       = $this->login_user->getFavorites(1, 3);
+        $fleamarkets_all['myfleamarket'] = $this->login_user->getMyFleamarkets(1, 3);
+        $fleamarkets_all['reserved']     = $this->login_user->getReservedEntries(1, 3);
+
+            // var_dump($fleamarkets); exit();
+
+        $fleamarkets_view = array();
+        foreach ($fleamarkets_all as $type => $fleamarkets) {
+            foreach ($fleamarkets as $fleamarket) {
+                $fleamarkets_view[$type][] = ViewModel::forge('component/fleamarket')
+                    ->set('fleamarket', $fleamarket)
+                    ->set('type', $type)
+                    ->set('no_box', true);
+            }
+        };
+
         $view_model = ViewModel::forge('mypage/index');
+        $view_model->set('fleamarkets_view', $fleamarkets_view, false);
         $view_model->set('prefectures', Config::get('master.prefectures'), false);
         $view_model->set('regions', Config::get('master.regions'), false);
-
-        $view_model->set('entries', $this->login_user->getEntries(1, 3));
-        $view_model->set('mylists', $this->login_user->getFavorites(1, 3));
-        $view_model->set('myfleamarkets', $this->login_user->getMyFleamarkets(1, 3));
-
         $view_model->set('news_headlines', Model_News::getHeadlines());
         $view_model->set('calendar', ViewModel::forge('component/calendar'), false);
         $view_model->set('popular_ranking', ViewModel::forge('component/popular'), false);
@@ -76,10 +90,8 @@ class Controller_Mypage extends Controller_Base_Template
      */
     public function action_list()
     {
-        $view_model = ViewModel::forge('mypage/list');
-
-        $item_per_page = 10;
         $pagination_param = 'p';
+        $item_per_page = 10;
 
         $page = Input::get($pagination_param, 1);
         $type = Input::get('type');
@@ -104,16 +116,14 @@ class Controller_Mypage extends Controller_Base_Template
                 return \Response::redirect('/mypage');
         }
 
+        $num_links = 5;
         $pagination = Pagination::forge('mypage/list',
             array(
             'uri_segment'    => $pagination_param,
-            'num_links'      => 5,
+            'num_links'      => $num_links,
             'per_page'       => $item_per_page,
             'total_items'    => $count,
         ));
-
-        $view_model->set('type', $type, false);
-        $view_model->set('pagination', $pagination, false);
 
         $fleamarkets_view = array();
         foreach ($fleamarkets as $fleamarket) {
@@ -122,8 +132,10 @@ class Controller_Mypage extends Controller_Base_Template
                 ->set('type', $type);
         };
 
+        $view_model = ViewModel::forge('mypage/list');
+        $view_model->set('type', $type, false);
+        $view_model->set('pagination', $pagination, false);
         $view_model->set('fleamarkets_view', $fleamarkets_view, false);
-        $view_model->set('calendar', ViewModel::forge('component/calendar'), false);
         $view_model->set('calendar', ViewModel::forge('component/calendar'), false);
         $view_model->set('prefectures', Config::get('master.prefectures'), false);
         $view_model->set('regions', Config::get('master.regions'), false);
