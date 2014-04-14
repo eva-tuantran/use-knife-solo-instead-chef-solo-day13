@@ -34,6 +34,7 @@ class Controller_Mypage extends Controller_Base_Template
     public function before()
     {
         parent::before();
+        // throw new SystemException(\Model_Error::ER00101);
 
         if (! $this->login_user) {
             throw new SystemException('ユーザ情報が取得出来ませんでした');
@@ -62,9 +63,9 @@ class Controller_Mypage extends Controller_Base_Template
         foreach ($fleamarkets_all as $type => $fleamarkets) {
             foreach ($fleamarkets as $fleamarket) {
                 $fleamarkets_view[$type][] = ViewModel::forge('component/fleamarket')
-                    ->set('fleamarket', $fleamarket)
-                    ->set('type', $type)
-                    ->set('no_box', true);
+                ->set('fleamarket', $fleamarket)
+                ->set('type', $type)
+                ->set('no_box', true);
             }
         };
 
@@ -117,17 +118,17 @@ class Controller_Mypage extends Controller_Base_Template
         $num_links = 5;
         $pagination = Pagination::forge('mypage/list',
             array(
-            'uri_segment'    => $pagination_param,
-            'num_links'      => $num_links,
-            'per_page'       => $item_per_page,
-            'total_items'    => $count,
-        ));
+                'uri_segment'    => $pagination_param,
+                'num_links'      => $num_links,
+                'per_page'       => $item_per_page,
+                'total_items'    => $count,
+            ));
 
         $fleamarkets_view = array();
         foreach ($fleamarkets as $fleamarket) {
             $fleamarkets_view[] = ViewModel::forge('component/fleamarket')
-                ->set('fleamarket', $fleamarket)
-                ->set('type', $type);
+            ->set('fleamarket', $fleamarket)
+            ->set('type', $type);
         };
 
         $view_model = View::forge('mypage/list');
@@ -171,15 +172,13 @@ class Controller_Mypage extends Controller_Base_Template
         //処理ページを見せ1秒後にマイページにリダイレクトさせる
         $this->setLazyRedirect('/mypage');
         $this->template->content = View::forge('mypage/cancel');
-   }
+    }
     /**
      * ユーザのアカウント情報の変更ページ
      *
      * @access public
      * @return void
      * @author shimma
-     *
-     * @todo デザインがまとまりしだいfieldsetのbuildから切り替え
      */
     public function action_account()
     {
@@ -187,12 +186,12 @@ class Controller_Mypage extends Controller_Base_Template
         $status_code = Session::get_flash('status_code');
         $data['info_message'] = $this->getStatusMessage($status_code);
 
-        $fieldset = Fieldset::forge()->add_model('Model_User')->populate($this->login_user);
-        $fieldset->field('password')->set_type(false);
-        $fieldset->add('submit', '', array('type' => 'submit','value' => '保存する'));
+        $fieldset = $this->createFieldsetAccount();
+        Asset::js('http://ajaxzip3.googlecode.com/svn/trunk/ajaxzip3/ajaxzip3.js', array(), 'add_js');
 
         $this->template->content = View::forge('mypage/account', $data);
-        $this->template->content->set('user_account_form', $fieldset->build('/mypage/save'), false);
+        $this->template->content->set('fieldset', $fieldset, false);
+        $this->template->content->set('prefectures', Config::get('master.prefectures'), false);
     }
 
     /**
@@ -207,8 +206,7 @@ class Controller_Mypage extends Controller_Base_Template
      */
     public function post_save()
     {
-        $fieldset = Model_User::createFieldset();
-        $fieldset->repopulate();
+        $fieldset = $this->createFieldsetAccount();
         $validation = $fieldset->validation();
 
         if (! $validation->run()) {
@@ -282,6 +280,30 @@ class Controller_Mypage extends Controller_Base_Template
         }
     }
 
+
+
+    /**
+     * アカウント変更用のFieldset
+     *
+     * @access public
+     * @return void
+     * @author shimma
+     */
+    public function createFieldsetAccount()
+    {
+        $fieldset = Session::get_flash('mypage.fieldset');
+
+        if (! $fieldset) {
+            $fieldset = \Model_User::createFieldset()->populate($this->login_user);
+            $fieldset->field('password')->set_type(false);
+        }
+
+        $fieldset->repopulate();
+
+        return $fieldset;
+    }
+
+
     /**
      * パスワード変更用のFieldset
      *
@@ -297,16 +319,16 @@ class Controller_Mypage extends Controller_Base_Template
             $fieldset = \Fieldset::forge('mypage.password');
 
             $fieldset->add('password', 'Passowrd')
-                ->add_rule('required')
-                ->add_rule('min_length', '6')
-                ->add_rule('max_length', '50');
+            ->add_rule('required')
+            ->add_rule('min_length', '6')
+            ->add_rule('max_length', '50');
             $fieldset->add('new_password', 'New Passowrd')
-                ->add_rule('required')
-                ->add_rule('min_length', '6')
-                ->add_rule('max_length', '50');
+            ->add_rule('required')
+            ->add_rule('min_length', '6')
+            ->add_rule('max_length', '50');
             $fieldset->add('new_password2', 'New Passowrd2')
-                ->add_rule('required')
-                ->add_rule('match_field', 'new_password');
+            ->add_rule('required')
+            ->add_rule('match_field', 'new_password');
         }
 
         $fieldset->repopulate();
