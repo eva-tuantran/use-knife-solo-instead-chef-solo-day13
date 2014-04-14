@@ -13,7 +13,6 @@ DROP TABLE IF EXISTS `rakuichi-rakuza`.`users` ;
 
 CREATE TABLE IF NOT EXISTS `rakuichi-rakuza`.`users` (
   `user_id` INT NOT NULL AUTO_INCREMENT COMMENT '10000000から採番',
-  `user_old_id` INT NULL COMMENT '旧楽市楽座のユーザID',
   `nick_name` VARCHAR(50) NOT NULL,
   `last_name` VARCHAR(50) NOT NULL COMMENT '姓',
   `first_name` VARCHAR(50) NOT NULL COMMENT '名',
@@ -21,7 +20,7 @@ CREATE TABLE IF NOT EXISTS `rakuichi-rakuza`.`users` (
   `first_name_kana` VARCHAR(50) NOT NULL COMMENT '名カナ',
   `birthday` DATE NULL COMMENT '誕生日',
   `gender` TINYINT NULL COMMENT '性別 1:男性,2:女性',
-  `zip` CHAR(9) NOT NULL COMMENT '郵便番号',
+  `zip` CHAR(7) NOT NULL COMMENT '郵便番号',
   `prefecture_id` TINYINT NOT NULL COMMENT '都道府県',
   `address` VARCHAR(255) NOT NULL COMMENT '都道府県以外の住所',
   `tel` VARCHAR(20) NULL COMMENT '自宅電話',
@@ -45,8 +44,7 @@ CREATE TABLE IF NOT EXISTS `rakuichi-rakuza`.`users` (
   `updated_at` DATETIME NULL COMMENT '更新日時',
   `deleted_at` DATETIME NULL COMMENT '削除日時',
   PRIMARY KEY (`user_id`),
-  INDEX `idx_user_old_id` (`user_old_id` ASC),
-  INDEX `idx_email` (`email` ASC))
+  UNIQUE INDEX `email_UNIQUE` (`email` ASC))
 ENGINE = InnoDB;
 
 
@@ -98,7 +96,7 @@ CREATE TABLE IF NOT EXISTS `rakuichi-rakuza`.`locations` (
   `location_id` INT NOT NULL AUTO_INCREMENT,
   `branch_id` INT NULL COMMENT 'register_typeが運営者の時セット',
   `name` VARCHAR(50) NOT NULL COMMENT '開催地名',
-  `zip` CHAR(9) NOT NULL COMMENT '郵便番号',
+  `zip` CHAR(7) NOT NULL COMMENT '郵便番号',
   `prefecture_id` TINYINT NOT NULL COMMENT '都道府県',
   `address` VARCHAR(255) NOT NULL COMMENT '都道府県以外の住所',
   `googlemap_address` VARCHAR(255) NULL COMMENT '住所を入力',
@@ -196,7 +194,7 @@ CREATE TABLE IF NOT EXISTS `rakuichi-rakuza`.`companies` (
   `company_id` INT NOT NULL AUTO_INCREMENT,
   `parent_id` INT NOT NULL DEFAULT 0 COMMENT '0:本社,0以外:店舗',
   `name` VARCHAR(50) NULL COMMENT '企業名,店舗名',
-  `zip` CHAR(9) NULL COMMENT '郵便番号',
+  `zip` CHAR(7) NULL COMMENT '郵便番号',
   `prefecture_id` TINYINT NULL COMMENT '都道府県',
   `address` VARCHAR(255) NULL COMMENT '都道府県以外の住所',
   `tel` VARCHAR(20) NULL COMMENT '電話番号',
@@ -230,7 +228,7 @@ CREATE TABLE IF NOT EXISTS `rakuichi-rakuza`.`branches` (
   `branch_id` INT NOT NULL AUTO_INCREMENT,
   `company_id` INT NOT NULL,
   `name` VARCHAR(50) NOT NULL COMMENT '開催地名',
-  `zip` CHAR(9) NOT NULL COMMENT '郵便番号',
+  `zip` CHAR(7) NOT NULL COMMENT '郵便番号',
   `prefecture_id` TINYINT NOT NULL COMMENT '都道府県',
   `address` VARCHAR(255) NOT NULL COMMENT '都道府県以外の住所',
   `tel` VARCHAR(20) NULL COMMENT '電話番号',
@@ -422,36 +420,11 @@ CREATE TABLE IF NOT EXISTS `rakuichi-rakuza`.`favorites` (
   `created_at` DATETIME NOT NULL,
   `updated_at` DATETIME NULL,
   `deleted_at` DATETIME NULL,
-  PRIMARY KEY (`favorite_id`),
-  INDEX `idx_fleamarket_id` (`fleamarket_id` ASC))
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `rakuichi-rakuza`.`mail_magazines`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `rakuichi-rakuza`.`mail_magazines` ;
-
-CREATE TABLE IF NOT EXISTS `rakuichi-rakuza`.`mail_magazines` (
-  `mail_magazine_id` INT NOT NULL AUTO_INCREMENT,
-  `send_datetime` DATETIME NULL,
-  `mail_magazine_type` TINYINT NOT NULL DEFAULT 0 COMMENT 'メールマガジンタイプ 1全員,2:希望者全員,3:出店予約者',
-  `query` TEXT NOT NULL,
-  `from_email` VARCHAR(255) NOT NULL,
-  `from_name` VARCHAR(255) NOT NULL,
-  `subject` VARCHAR(255) NOT NULL,
-  `body` TEXT NOT NULL COMMENT '本文が格納されたディレクトリ',
-  `replace` TEXT NULL COMMENT 'リプレイスするパラメータをJSONで格納',
-  `send_status` TINYINT NOT NULL DEFAULT 0 COMMENT '送信ステータス 0:送信待ち,1:送信中,2:送信済,3エラー終了,9:キャンセル',
-  `created_user` INT NOT NULL COMMENT '作成したユーザID、一般ユーザ:10000000以上,管理者：10000000未満',
-  `updated_user` INT NULL COMMENT '更新したユーザID、一般ユーザ:10000000以上,管理者：10000000未満',
-  `created_at` DATETIME NOT NULL COMMENT '作成日時',
-  `updated_at` DATETIME NULL COMMENT '更新日時',
-  `deleted_at` DATETIME NULL COMMENT '削除日時',
-  PRIMARY KEY (`mail_magazine_id`))
+  PRIMARY KEY (`favorite_id`))
 ENGINE = InnoDB;
 
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
+
