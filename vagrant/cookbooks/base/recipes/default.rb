@@ -14,7 +14,7 @@ execute "Install yum epel repository" do
   not_if "rpm -qa | grep -q 'epel-release'"
 end
 
-%w{git vim-enhanced}.each do |name|
+%w{git vim-enhanced telnet}.each do |name|
   package name do
     action :install
   end
