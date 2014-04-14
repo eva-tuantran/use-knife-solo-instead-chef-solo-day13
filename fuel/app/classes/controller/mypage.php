@@ -15,7 +15,7 @@ class Controller_Mypage extends Controller_Base_Template
         'save',
         'list',
         'passwordchange',
-        );
+    );
 
     protected $_secure_actions = array(
         'index',
@@ -24,7 +24,7 @@ class Controller_Mypage extends Controller_Base_Template
         'save',
         'list',
         'passwordchange',
-        );
+    );
 
     /**
      * before
@@ -95,23 +95,23 @@ class Controller_Mypage extends Controller_Base_Template
         $type = Input::get('type');
         switch ($type) {
             case 'mylist':
-            $fleamarkets = $this->login_user->getFavorites($page, $item_per_page);
-            $count       = $this->login_user->getFavoriteCount();
-            break;
+                $fleamarkets = $this->login_user->getFavorites($page, $item_per_page);
+                $count       = $this->login_user->getFavoriteCount();
+                break;
             case 'entry':
-            $fleamarkets = $this->login_user->getEntries($page, $item_per_page);
-            $count       = $this->login_user->getEntryCount();
-            break;
+                $fleamarkets = $this->login_user->getEntries($page, $item_per_page);
+                $count       = $this->login_user->getEntryCount();
+                break;
             case 'myfleamarket':
-            $fleamarkets = $this->login_user->getMyFleamarkets($page, $item_per_page);
-            $count       = $this->login_user->getMyFleamarketCount();
-            break;
+                $fleamarkets = $this->login_user->getMyFleamarkets($page, $item_per_page);
+                $count       = $this->login_user->getMyFleamarketCount();
+                break;
             case 'reserved':
-            $fleamarkets = $this->login_user->getReservedEntries($page, $item_per_page);
-            $count       = $this->login_user->getReservedEntryCount();
-            break;
+                $fleamarkets = $this->login_user->getReservedEntries($page, $item_per_page);
+                $count       = $this->login_user->getReservedEntryCount();
+                break;
             default:
-            return \Response::redirect('/mypage');
+                return \Response::redirect('/mypage');
         }
 
         $num_links = 5;
@@ -121,7 +121,7 @@ class Controller_Mypage extends Controller_Base_Template
                 'num_links'      => $num_links,
                 'per_page'       => $item_per_page,
                 'total_items'    => $count,
-                ));
+            ));
 
         $fleamarkets_view = array();
         foreach ($fleamarkets as $fleamarket) {
@@ -164,7 +164,7 @@ class Controller_Mypage extends Controller_Base_Template
             Session::set_flash('notice', \STATUS_FLEAMARKET_CANCEL_SUCCESS);
             $email_template_params = array(
                 'nick_name' => $this->login_user->nick_name,
-                );
+            );
             $this->login_user->sendmail('common/user_cancel_fleamarket', $email_template_params);
         };
 
@@ -178,8 +178,6 @@ class Controller_Mypage extends Controller_Base_Template
      * @access public
      * @return void
      * @author shimma
-     *
-     * @todo デザインがまとまりしだいfieldsetのbuildから切り替え
      */
     public function action_account()
     {
@@ -187,10 +185,7 @@ class Controller_Mypage extends Controller_Base_Template
         $status_code = Session::get_flash('status_code');
         $data['info_message'] = $this->getStatusMessage($status_code);
 
-        $fieldset = \Model_User::createFieldset()->populate($this->login_user);
-        $fieldset->field('password')->set_type(false);
-        $fieldset->add('submit', '', array('type' => 'submit','value' => '保存する'));
-
+        $fieldset = $this->createFieldsetAccount();
         Asset::js('http://ajaxzip3.googlecode.com/svn/trunk/ajaxzip3/ajaxzip3.js', array(), 'add_js');
 
         $this->template->content = View::forge('mypage/account', $data);
@@ -210,8 +205,7 @@ class Controller_Mypage extends Controller_Base_Template
      */
     public function post_save()
     {
-        $fieldset = Model_User::createFieldset();
-        $fieldset->repopulate();
+        $fieldset = $this->createFieldsetAccount();
         $validation = $fieldset->validation();
 
         if (! $validation->run()) {
@@ -284,6 +278,30 @@ class Controller_Mypage extends Controller_Base_Template
             throw new SystemException('パスワード変更に失敗しました');
         }
     }
+
+
+
+    /**
+     * アカウント変更用のFieldset
+     *
+     * @access public
+     * @return void
+     * @author shimma
+     */
+    public function createFieldsetAccount()
+    {
+        $fieldset = Session::get_flash('mypage.fieldset');
+
+        if (! $fieldset) {
+            $fieldset = \Model_User::createFieldset()->populate($this->login_user);
+            $fieldset->field('password')->set_type(false);
+        }
+
+        $fieldset->repopulate();
+
+        return $fieldset;
+    }
+
 
     /**
      * パスワード変更用のFieldset
