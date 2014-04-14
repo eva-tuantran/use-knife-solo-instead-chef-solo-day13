@@ -55,9 +55,9 @@ QUERY;
 
         if (!is_null($users) && count($users) === 1) {
             $this->user = reset($users);
-            $this->user->last_login = Date::forge()->format('mysql');
+            // $this->user->last_login = Date::forge()->format('mysql');
             // $this->user->salt       = $this->create_salt();
-            $this->user->save();
+            // $this->user->save();
 
             return true;
         }
