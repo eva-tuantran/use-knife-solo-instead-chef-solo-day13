@@ -93,13 +93,6 @@
               ?>
             </div>
           </div>
-          <div class="form-group">
-            <label class="col-sm-2 control-label" for="inputEmail2">E-mailアドレス<br>
-              （確認用）</label>
-              <div class="col-sm-10">
-                <input type="email" class="form-control" id="inputEmail2" placeholder="確認のため、もう一度メールアドレスを入力してください">
-              </div>
-            </div>
             <div class="form-group">
               <label class="col-sm-2 control-label" for="inputNickname">ニックネーム</label>
               <div class="col-sm-10">
@@ -115,11 +108,12 @@
               <label class="col-sm-2 control-label" for="mailmagazine">メルマガ購読</label>
               <div class="col-sm-10">
                 <div>
-                  <label class="radio-inline"><input type="radio" name="mailmagazine" value="yes" hecked="checked">購読する</label>
-                  <label class="radio-inline"><input type="radio" name="mailmagazine" value="no">購読しない</label>
+                  <label class="radio-inline"><input type="radio" name="mm_flag" value="1" <?php if(e($fields['mm_flag']->value) === '1'){echo 'checked="checked"';}?> >購読する</label>
+                  <label class="radio-inline"><input type="radio" name="mm_flag" value="0" <?php if(e($fields['mm_flag']->value) === '0'){echo 'checked="checked"';}?> >購読しない</label>
                 </div>
               </div>
             </div>
+
             <div id="submitButton" class="form-group">
               <button type="submit" class="btn btn-default">変更内容登録</button>
             </div>
@@ -127,7 +121,6 @@
           </form>
         </div>
       </div>
-
 
       <input type="hidden" name="user_id" value="<?php echo e(Input::param('user_id')); ?>">
     </form>
