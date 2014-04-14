@@ -225,27 +225,15 @@ $(function() {
               ?>
             </select>
             <input id="inputAddress" type="text" class="form-control" name="l[address]" placeholder="住所を入力" value="<?php echo e($location['address']);?>">
-            <?php
-              if (isset($location_errors['zip'])):
-            ?>
+            <?php if (isset($location_errors['zip'])): ?>
               <div><?php echo $location_errors['zip'];?></div>
-            <?php
-              endif;
-            ?>
-            <?php
-              if (isset($location_errors['prefecture_id'])):
-            ?>
+            <?php endif; ?>
+            <?php if (isset($location_errors['prefecture_id'])): ?>
               <div><?php echo $location_errors['prefecture_id'];?></div>
-            <?php
-              endif;
-            ?>
-            <?php
-              if (isset($location_errors['address'])):
-            ?>
+            <?php endif; ?>
+            <?php if (isset($location_errors['address'])): ?>
               <div><?php echo $location_errors['address'];?></div>
-            <?php
-              endif;
-            ?>
+            <?php endif; ?>
           </div>
         </div>
         <div class="form-group">

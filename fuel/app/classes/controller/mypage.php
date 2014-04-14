@@ -15,7 +15,7 @@ class Controller_Mypage extends Controller_Base_Template
         'save',
         'list',
         'passwordchange',
-    );
+        );
 
     protected $_secure_actions = array(
         'index',
@@ -24,7 +24,7 @@ class Controller_Mypage extends Controller_Base_Template
         'save',
         'list',
         'passwordchange',
-    );
+        );
 
     /**
      * before
@@ -62,9 +62,9 @@ class Controller_Mypage extends Controller_Base_Template
         foreach ($fleamarkets_all as $type => $fleamarkets) {
             foreach ($fleamarkets as $fleamarket) {
                 $fleamarkets_view[$type][] = ViewModel::forge('component/fleamarket')
-                    ->set('fleamarket', $fleamarket)
-                    ->set('type', $type)
-                    ->set('no_box', true);
+                ->set('fleamarket', $fleamarket)
+                ->set('type', $type)
+                ->set('no_box', true);
             }
         };
 
@@ -95,39 +95,39 @@ class Controller_Mypage extends Controller_Base_Template
         $type = Input::get('type');
         switch ($type) {
             case 'mylist':
-                $fleamarkets = $this->login_user->getFavorites($page, $item_per_page);
-                $count       = $this->login_user->getFavoriteCount();
-                break;
+            $fleamarkets = $this->login_user->getFavorites($page, $item_per_page);
+            $count       = $this->login_user->getFavoriteCount();
+            break;
             case 'entry':
-                $fleamarkets = $this->login_user->getEntries($page, $item_per_page);
-                $count       = $this->login_user->getEntryCount();
-                break;
+            $fleamarkets = $this->login_user->getEntries($page, $item_per_page);
+            $count       = $this->login_user->getEntryCount();
+            break;
             case 'myfleamarket':
-                $fleamarkets = $this->login_user->getMyFleamarkets($page, $item_per_page);
-                $count       = $this->login_user->getMyFleamarketCount();
-                break;
+            $fleamarkets = $this->login_user->getMyFleamarkets($page, $item_per_page);
+            $count       = $this->login_user->getMyFleamarketCount();
+            break;
             case 'reserved':
-                $fleamarkets = $this->login_user->getReservedEntries($page, $item_per_page);
-                $count       = $this->login_user->getReservedEntryCount();
-                break;
+            $fleamarkets = $this->login_user->getReservedEntries($page, $item_per_page);
+            $count       = $this->login_user->getReservedEntryCount();
+            break;
             default:
-                return \Response::redirect('/mypage');
+            return \Response::redirect('/mypage');
         }
 
         $num_links = 5;
         $pagination = Pagination::forge('mypage/list',
             array(
-            'uri_segment'    => $pagination_param,
-            'num_links'      => $num_links,
-            'per_page'       => $item_per_page,
-            'total_items'    => $count,
-        ));
+                'uri_segment'    => $pagination_param,
+                'num_links'      => $num_links,
+                'per_page'       => $item_per_page,
+                'total_items'    => $count,
+                ));
 
         $fleamarkets_view = array();
         foreach ($fleamarkets as $fleamarket) {
             $fleamarkets_view[] = ViewModel::forge('component/fleamarket')
-                ->set('fleamarket', $fleamarket)
-                ->set('type', $type);
+            ->set('fleamarket', $fleamarket)
+            ->set('type', $type);
         };
 
         $view_model = View::forge('mypage/list');
@@ -164,14 +164,14 @@ class Controller_Mypage extends Controller_Base_Template
             Session::set_flash('notice', \STATUS_FLEAMARKET_CANCEL_SUCCESS);
             $email_template_params = array(
                 'nick_name' => $this->login_user->nick_name,
-            );
+                );
             $this->login_user->sendmail('common/user_cancel_fleamarket', $email_template_params);
         };
 
         //処理ページを見せ1秒後にマイページにリダイレクトさせる
         $this->setLazyRedirect('/mypage');
         $this->template->content = View::forge('mypage/cancel');
-   }
+    }
     /**
      * ユーザのアカウント情報の変更ページ
      *
@@ -190,6 +190,8 @@ class Controller_Mypage extends Controller_Base_Template
         $fieldset = \Model_User::createFieldset()->populate($this->login_user);
         $fieldset->field('password')->set_type(false);
         $fieldset->add('submit', '', array('type' => 'submit','value' => '保存する'));
+
+        Asset::js('http://ajaxzip3.googlecode.com/svn/trunk/ajaxzip3/ajaxzip3.js', array(), 'add_js');
 
         $this->template->content = View::forge('mypage/account', $data);
         $this->template->content->set('fieldset', $fieldset, false);
@@ -298,16 +300,16 @@ class Controller_Mypage extends Controller_Base_Template
             $fieldset = \Fieldset::forge('mypage.password');
 
             $fieldset->add('password', 'Passowrd')
-                ->add_rule('required')
-                ->add_rule('min_length', '6')
-                ->add_rule('max_length', '50');
+            ->add_rule('required')
+            ->add_rule('min_length', '6')
+            ->add_rule('max_length', '50');
             $fieldset->add('new_password', 'New Passowrd')
-                ->add_rule('required')
-                ->add_rule('min_length', '6')
-                ->add_rule('max_length', '50');
+            ->add_rule('required')
+            ->add_rule('min_length', '6')
+            ->add_rule('max_length', '50');
             $fieldset->add('new_password2', 'New Passowrd2')
-                ->add_rule('required')
-                ->add_rule('match_field', 'new_password');
+            ->add_rule('required')
+            ->add_rule('match_field', 'new_password');
         }
 
         $fieldset->repopulate();
