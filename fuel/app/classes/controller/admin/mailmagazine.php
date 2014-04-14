@@ -9,29 +9,20 @@
 class Controller_Admin_Mailmagazine extends Controller_Admin_Base_Template
 {
     /**
-     * メールマガジン関係のファイルを置くパス
-     *
-     * @var atring
+     * メール送信の動作チェック用ファイル名
      */
-    private $root_dir = null;
-
-    /**
-     * メール設定
-     *
-     * @var array
-     */
-    private $mail_config = array();
+    private $process_file_name = 'process_mail_magazine';
 
     public function before()
     {
         parent::before();
-        $this->root_dir = DOCROOT . DS . 'files' . DS . 'mailmagazine' . DS;
 
-        $from_name = $this->convertEncoding('楽市楽座 運営事務局');
-        $this->mail_config = array(
-            'from'      => 'info@rakuichi-rakuza.jp',
-            'from_name' => $from_name
-        );
+        // @todo テスト用
+        $user = new stdClass;
+        $user->user_id = 1;
+        $user->last_name = '楽市';
+        $user->first_name = '楽座';
+        $this->login_user = $user;
     }
 
     /**
@@ -42,11 +33,14 @@ class Controller_Admin_Mailmagazine extends Controller_Admin_Base_Template
      */
     public function action_index()
     {
-        $subject = \Session::get('mailmagazine.subject', null);
-        \Session::delete('mailmagazine.subject');
+        $input_data = $this->getInputData();
+        $errors = $this->getErrorMessage();
 
         $view = \View::forge('admin/mailmagazine/index');
-        $view->set('subject', $subject);
+        $view->set('prefectures', \Config::get('master.prefectures'), false);
+        $view->set('fleamarket_list', \Model_Fleamarket::findUpcoming(20), false);
+        $view->set('input_data', $input_data, false);
+        $view->set('errors', $errors);
 
         $this->template->content = $view;
     }
@@ -59,30 +53,62 @@ class Controller_Admin_Mailmagazine extends Controller_Admin_Base_Template
      */
     public function action_confirm()
     {
-        $subject = Input::post('subject');
+        $input_data = \Input::post();
+        $fieldset = $this->getFieldset();
 
-        $this->upload();
-        $errors = \Upload::get_errors();
-        if ($errors || $subject == '') {
-            \Session::set('mailmagazine.subject', $subject);
-            \Response::redirect('index');
+        $validation = $fieldset->validation();
+        $validation_result = $validation->run($input_data);
+
+        if (! $validation_result) {
+            $input_data = $validation->input();
+            $input_data['fleamarket_id'] = \Input::post('fleamarket_id');
+            $input_data['prefecture_id'] = \Input::post('prefecture_id');
+
+            $this->setInputData($input_data);
+            $this->setErrorMessage($validation->error_message());
+
+            \Response::redirect('admin/mailmagazine/index');
         }
 
-        $file = \Upload::get_files('body');
-        $path = $file['saved_to'] . $file['saved_as'];
-        $body = file_get_contents($path);
-
-        $replace = array('user_name' => '楽市楽座 太郎');
-        $body = $this->replaceByParam(
-            $this->convertEncoding($body, 'UTF-8'), $replace
-        );
-
-        \Session::set('mailmagazine.subject', $subject);
-        \Session::set('mailmagazine.file_path', $path);
+        $input_data = $validation->validated();
+        $input_data['fleamarket_id'] = \Input::post('fleamarket_id');
+        $input_data['prefecture_id'] = \Input::post('prefecture_id');
 
         $view = \View::forge('admin/mailmagazine/confirm');
-        $view->set('subject', $subject);
-        $view->set('body', $body);
+        $type = $input_data['mail_magazine_type'];
+        if ($type == \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_ALL) {
+            $users = \Model_User::getActiveUsers();
+            $input_data['query'] = \DB::last_query();
+            $view->set('users', $users, false);
+
+            $view->set('prefectures', \Config::get('master.prefectures'), false);
+        } elseif ($type == \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_REQUEST) {
+            $users = \Model_User::getUsersByPrefectureID(
+                $input_data['prefecture_id']
+            );
+            $input_data['query'] = \DB::last_query();
+            $view->set('users', $users, false);
+
+            $view->set('prefectures', \Config::get('master.prefectures'), false);
+        } elseif ($type == \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_RESEVED_ENTRY) {
+            $users = \Model_Entry::getEntriesByFleamarketId(
+                $input_data['fleamarket_id']
+            );
+            $input_data['query'] = \DB::last_query();
+            $view->set('users', $users, false);
+
+            $fleamarket = \Model_Fleamarket::find($input_data['fleamarket_id']);
+            $view->set('fleamarket', $fleamarket, false);
+        }
+
+        $replace = array('user_name' => $this->getLoginUserName());
+        $body = \Model_Mail_Magazine::replaceByParam(
+            $input_data['body'], $replace
+        );
+        $view->set('body', $body, false);
+        $view->set('input_data', $input_data, false);
+
+        $this->setInputData($input_data);
 
         $this->template->content = $view;
     }
@@ -98,27 +124,27 @@ class Controller_Admin_Mailmagazine extends Controller_Admin_Base_Template
         $this->template = '';
 
         $to = Input::post('deliveredTo');
-        $subject = \Session::get('mailmagazine.subject');
-        $path = \Session::get('mailmagazine.file_path');
 
-        $to = trim($to);
-        $subject = trim($subject);
+        $input_data = $this->getInputData();
 
-        $body = file_get_contents($path);
-        $replace = array(
-            'user_name' => '楽市楽座 太郎'
-        );
+        $from_email = $input_data['from_email'];
+        $from_name = $input_data['from_name'];
 
-        $body = $this->replaceByParam(
-            $this->convertEncoding($body, 'UTF-8'), $replace
-        );
-        $body = $this->convertEncoding($body, 'JIS');
+        $subject = trim($input_data['subject']);
+
+        $body = $input_data['body'];
+        $replace = array('user_name' => $this->getLoginUserName());
+
+        $body = \Model_Mail_Magazine::replaceByParam($body, $replace);
+        $body = \Model_Mail_Magazine::convertEncoding($body, 'JIS');
 
         $success = false;
         $message = '';
         if (filter_var($to, FILTER_VALIDATE_EMAIL)) {
             try {
-                $success = $this->sendMail($to, $subject, $body);
+                $success = \Model_Mail_Magazine::sendMail(
+                    $from_name, $from_email, $to, $subject, $body
+                );
             } catch (\Exception $e) {
                 $message = $e->getMessage();
                 $success = false;
@@ -143,63 +169,81 @@ class Controller_Admin_Mailmagazine extends Controller_Admin_Base_Template
      * @access public
      * @return void
      */
-    public function action_send()
+    public function action_thanks()
     {
-        set_time_limit(0);
+        $input_data = $this->getInputData();
+        $input_data['created_user'] = $this->login_user->user_id;
+        $input_data['send_status'] = \Model_Mail_Magazine::SEND_STATUS_WAITING;
 
+        $mail_magazine = \Model_Mail_Magazine::forge($input_data);
+        $mail_magazine->save();
+
+        $view = \View::forge('admin/mailmagazine/thanks');
+        $type = $input_data['mail_magazine_type'];
+        if ($type == \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_ALL) {
+            $users = \Model_User::getActiveUsers();
+            $view->set('users', $users, false);
+
+            $view->set('prefectures', \Config::get('master.prefectures'), false);
+        } elseif ($type == \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_REQUEST) {
+            $users = \Model_User::getUsersByPrefectureID(
+                $input_data['prefecture_id']
+            );
+            $view->set('users', $users, false);
+
+            $view->set('prefectures', \Config::get('master.prefectures'), false);
+        } elseif ($type == \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_RESEVED_ENTRY) {
+            $users = \Model_Entry::getEntriesByFleamarketId(
+                $input_data['fleamarket_id']
+            );
+            $view->set('users', $users, false);
+
+            $fleamarket = \Model_Fleamarket::find($input_data['fleamarket_id']);
+            $view->set('fleamarket', $fleamarket, false);
+        }
+
+        $replace = array('user_name' => $this->getLoginUserName());
+        $body = \Model_Mail_Magazine::replaceByParam(
+            $input_data['body'], $replace
+        );
+        $view->set('body', $body, false);
+
+        $view->set('input_data', $input_data, false);
+
+        // 非同期でタスク実行
+        $oil_path = realpath(APPPATH . '/../../') . DS;
+        exec('php ' . $oil_path . 'oil refine mail_magazine ' . $mail_magazine->mail_magazine_id . ' > /dev/null &');
+
+        $this->template->content = $view;
+    }
+
+    /**
+     * 送信確認
+     *
+     * @access public
+     * @return void
+     */
+    public function action_checkprocess()
+    {
         $this->template = '';
 
-        $subject = \Session::get('mailmagazine.subject');
-        $path = \Session::get('mailmagazine.file_path');
-
-        $subject = trim($subject);
-
-        $body = file_get_contents($path);
-        $body = $this->convertEncoding($body, 'UTF-8');
-
         $success = false;
-        $stop = false;
         $message = '';
-        if (($users = $this->getUsers())) {
-            try {
-                $this->processStart();
-                $logfile = $this->getLogFile();
-                foreach ($users as $user) {
-                    if (! $this->isProcess()) {
-                        $stop = true;
-                        break;
-                    }
-
-                    $to = trim($user['email']);
-                    $user_name = $user['last_name'] . ' ' . $user['first_name'];
-                    $user_name = $this->convertEncoding($user_name);
-                    $replace = array(
-                        'user_name' => '楽市楽座 太郎'
-                    );
-                    $body = $this->replaceByParam($body, $replace);
-
-                    $this->sendMail($to, $subject, $body);
-                    fwrite($logfile, $user['user_id'] . "\n");
-                }
-                $success = true;
-            } catch (\Exception $e) {
-                $message = $e->getMessage();
-                $success = false;
-            }
-            \File::close_file($logfile);
-            if (! $stop) {
-                $this->processStop();
-            }
-        } else {
-            $message = 'メールマガジン送信希望者が居ません';
+        try {
+            $is_process = \Model_Mail_Magazine::isProcess();
+            $success = true;
+        } catch (\Exception $e) {
+            $message = $e->getMessage();
             $success = false;
         }
 
         $response = array();
         if ($success) {
-            $response = array('status' => 200);
-        } elseif ($stop) {
-            $response = array('status' => 300);
+            if (! $is_process) {
+                $response = array('status' => 200);
+            } else {
+                $response = array('status' => 300);
+            }
         } else {
             $response = array('status' => 400, 'message' => $message);
         }
@@ -219,7 +263,7 @@ class Controller_Admin_Mailmagazine extends Controller_Admin_Base_Template
 
         $success = false;
         try {
-            $this->processStop();
+            \Model_Mail_Magazine::stopProcess();
             $success = true;
         } catch (\Exception $e) {
             $message = $e->getMessage();
@@ -237,186 +281,93 @@ class Controller_Admin_Mailmagazine extends Controller_Admin_Base_Template
     }
 
     /**
-     * アップロード処理
+     * fieldsetを取得する
      *
      * @access private
      * @param
+     * @return object Fieldsetオブジェクト
+     * @author ida
+     */
+    private function getFieldset()
+    {
+        return \Model_Mail_Magazine::createFieldset();
+    }
+
+    /**
+     * 入力値をセッションに保存する
+     *
+     * @access private
+     * @param object $fieldset fieldsetオブジェクト
      * @return void
      * @author ida
      */
-    private function upload()
+    private function setInputData($input)
     {
-        $config = array(
-            'path' => $this->root_dir,
-            'create_path' => true,
-            'ext_whitelist' => array('txt'),
-            'type_whitelist' => array('text'),
-        );
+        \Session::set('mailmagazine.input_data', $input);
+    }
 
-        \Upload::process($config);
-
-        if (\Upload::is_valid()) {
-            \Upload::save();
+    /**
+     * 入力値をセッションから取得する
+     *
+     * @access private
+     * @param
+     * @return object Fieldsetオブジェクト
+     * @author ida
+     */
+    private function getInputData($delete = false)
+    {
+        $input_data = \Session::get('mailmagazine.input_data');
+        if ($delete) {
+            \Session::delete('mailmagazine.input_data');
         }
+
+        if (! $input_data) {
+            $fieldset = \Model_Mail_Magazine::createFieldset();
+            $input_data = $fieldset->repopulate()->input();
+        }
+
+        return $input_data;
     }
 
     /**
-     * ファイル処理
+     * バリデーションエラーをセッションに保存
+     *
+     * @access private
+     * @param array $errors エラー
+     * @return void
+     * @author ida
+     */
+    private function setErrorMessage($errors = array())
+    {
+        \Session::set_flash('mailmagazine.errors', $errors);
+    }
+
+    /**
+     * バリデーションエラーをセッションから取得
      *
      * @access private
      * @param
-     * @return void
+     * @return array
      * @author ida
      */
-    private function getLogFile()
+    private function getErrorMessage()
     {
-        $dir = $this->root_dir;
-        $file_name = 'log' . date('YmdHis');
-        $path = $dir . $file_name;
-
-        \File::create($dir, $file_name);
-
-        return \File::open_file($path);
+        return \Session::get_flash('mailmagazine.errors');
     }
 
     /**
-     * 送信実行確認ファイル処理
-     *
-     * @access private
-     * @param　boolean $delete 削除（中止）
-     * @return void
-     * @author ida
-     */
-    private function processStart()
-    {
-        $file_name = 'process';
-        $result = \File::create($this->root_dir, $file_name);
-
-        return $result;
-    }
-
-    /**
-     * 送信実行確認ファイル処理
-     *
-     * @access private
-     * @param　boolean $delete 削除（中止）
-     * @return void
-     * @author ida
-     */
-    private function processStop($delete = false)
-    {
-        $file_name = 'process';
-        $result = \File::delete($this->root_dir . $file_name);
-
-        return $result;
-    }
-
-    /**
-     * ファイル処理
+     * ログインしているユーザの名前を取得する
      *
      * @access private
      * @param
-     * @return void
-     * @author ida
-     */
-    private function isProcess($stop = false)
-    {
-        $dir =  $this->root_dir;
-        $file_name = 'process';
-
-        return file_exists($dir . $file_name);
-    }
-
-    /**
-     * 文字コードを変換する
-     *
-     * @access private
-     * @param string $str 変換する文字列
-     * @param string $encode 変換後の文字コード
      * @return string
      * @author ida
      */
-    private function convertEncoding($str = null, $encode = 'JIS')
+    private function getLoginUserName()
     {
-        if ($str) {
-            $encoding_list = 'sjis-win, sjis, UTF-8';
-            $original_encode = mb_detect_encoding($str, $encoding_list, true);
+        $login_user = $this->login_user;
+        $user_name = $login_user->last_name . ' ' . $login_user->first_name;
 
-            $str = mb_convert_encoding($str, $encode, $original_encode);
-        }
-
-        return $str;
-    }
-
-    /**
-     * ユーザーにメールを送信
-     *
-     * @access protected
-     * @param $name メールの識別子 $params 差し込むデータ $to 送り先(指定しなければ langの値を使用)
-     * @return void
-     * @author ida
-     */
-    private function sendMail($to = null, $subject = null, $body = null) {
-        if (! $to || ! $subject || ! $body) {
-            return false;
-        }
-
-        $email = \Email::forge();
-        $email->from(
-            $this->mail_config['from'],
-            $this->mail_config['from_name']
-        );
-        $email->to($to);
-        $email->subject($subject);
-        $email->body($body);
-
-        try {
-            $email->send();
-        } catch (\Exception $e) {
-            throw $e;
-        }
-
-        return true;
-    }
-
-    /**
-     * 文字列内を指定されたパラメータで置換する
-     *
-     * @access private
-     * @param string $str 文字列
-     * @param array $params 変換パラメータ
-     * @return string
-     * @author ida
-     */
-    private function replaceByParam($str = null, $replace = array())
-    {
-        if ($str && $replace) {
-            foreach ($replace as $key => $value) {
-                $str = str_replace("##{$key}##", $value, $str);
-            }
-        }
-
-        return $str;
-    }
-
-    /**
-     * メールマガジン対象者を取得する
-     *
-     * @access private
-     * @param
-     * @return object
-     * @author ida
-     */
-    private function getUsers()
-    {
-        $users = \Model_User::find('all', array(
-            'select' => array('user_id', 'last_name', 'first_name', 'email'),
-            'where' => array(
-                array('mm_flag', 1),
-                array('register_status', \Model_User::REGISTER_STATUS_ACTIVATED),
-            ),
-        ));
-
-        return $users;
+        return $user_name;
     }
 }

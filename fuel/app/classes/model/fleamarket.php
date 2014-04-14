@@ -335,12 +335,11 @@ class Model_Fleamarket extends \Orm\Model
             ':ym' => $year . '/' . $month,
         );
 
-        $table_name = self::$_table_name;
         $query = <<<"QUERY"
 SELECT
     f.event_date
 FROM
-    {$table_name} AS f
+    fleamarkets AS f
 WHERE
     display_flag = :display_flag
     AND DATE_FORMAT(f.event_date, '%Y/%c') = :ym
@@ -379,7 +378,6 @@ QUERY;
             $limit = ' LIMIT ' . $offset . ', ' . $row_count;
         }
 
-        $table_name = self::$_table_name;
         $query = <<<"QUERY"
 SELECT
     f.fleamarket_id,
@@ -410,7 +408,7 @@ SELECT
     l.googlemap_address AS googlemap_address,
     fa.description AS about_access
 FROM
-    {$table_name} AS f
+    fleamarkets AS f
 LEFT JOIN
     locations AS l ON f.location_id = l.location_id
 LEFT JOIN
@@ -478,12 +476,11 @@ QUERY;
     {
         list($where, $placeholders) = self::buildSearchWhere($condition_list);
 
-        $table_name = self::$_table_name;
         $query = <<<"QUERY"
 SELECT
     COUNT(DISTINCT f.fleamarket_id) AS cnt
 FROM
-    {$table_name} AS f
+    fleamarkets AS f
 LEFT JOIN
     locations AS l ON f.location_id = l.location_id
 LEFT JOIN
@@ -525,7 +522,6 @@ QUERY;
             ':display_flag' => self::DISPLAY_FLAG_ON,
         );
 
-        $table_name = self::$_table_name;
         $query = <<<"QUERY"
 SELECT
     f.fleamarket_id,
@@ -555,7 +551,7 @@ SELECT
     l.address AS address,
     l.googlemap_address AS googlemap_address
 FROM
-    {$table_name} AS f
+    fleamarkets AS f
 LEFT JOIN
     locations AS l ON f.location_id = l.location_id
 WHERE
@@ -598,7 +594,6 @@ QUERY;
         }
         $limit = ' LIMIT ' . $row_count;
 
-        $table_name = self::$_table_name;
         $query = <<<"QUERY"
 SELECT
     f.fleamarket_id,
@@ -609,7 +604,7 @@ SELECT
     l.prefecture_id,
     SUM(fes.max_booth) AS max_booth
 FROM
-    {$table_name} AS f
+    fleamarkets AS f
 LEFT JOIN
     locations AS l ON f.location_id = l.location_id
 LEFT JOIN
@@ -671,11 +666,14 @@ SELECT
     f.fleamarket_id,
     f.name,
     f.event_status,
-    f.register_type,
     f.event_date,
-    l.prefecture_id AS prefecture_id
+    f.event_time_start,
+    f.event_time_end,
+    f.register_type,
+    l.prefecture_id AS prefecture_id,
+    l.name AS location_name
 FROM
-    {$table_name} AS f
+    fleamarkets AS f
 LEFT JOIN
     locations AS l ON f.location_id = l.location_id
 WHERE
@@ -723,7 +721,6 @@ QUERY;
         }
         $limit = ' LIMIT ' . $row_count;
 
-        $table_name = self::$_table_name;
         $query = <<<"QUERY"
 SELECT
     f.fleamarket_id,
@@ -737,7 +734,7 @@ SELECT
     l.name AS location_name,
     l.prefecture_id AS prefecture_id
 FROM
-    {$table_name} AS f
+    fleamarkets AS f
 LEFT JOIN
     locations AS l ON f.location_id = l.location_id
 WHERE
