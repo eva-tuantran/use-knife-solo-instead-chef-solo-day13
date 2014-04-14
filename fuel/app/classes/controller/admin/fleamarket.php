@@ -500,4 +500,11 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
             }
         }
     }
+
+    public function action_list()
+    {
+        $view = View::forge('admin/fleamarket/list');
+        $view->set('fleamarkets', Model_Fleamarket::find('all'));
+        $this->template->content = $view;
+    }
 }

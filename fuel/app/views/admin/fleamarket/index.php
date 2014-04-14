@@ -495,4 +495,3 @@ $(function() {
 <input type="hidden" name="fleamarket_id" value="<?php echo e(Input::param('fleamarket_id')); ?>">
 </form>
 
-<a href="/admin/entry/list?fleamarket_id=<?php echo $fleamarket->fleamarket_id; ?>">予約一覧</a>
