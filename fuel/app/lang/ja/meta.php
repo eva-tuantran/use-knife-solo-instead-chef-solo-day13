@@ -146,6 +146,11 @@ return array(
         'description' => 'プライバシーポリシー',
         'keyword'     => 'プライバシーポリシー',
     ),
+    'info/question' => array(
+        'title'       => 'よくある質問',
+        'description' => 'よくある質問',
+        'keyword'     => 'よくある質問',
+    ),
     'reservation/index' => array(
         'title'       => 'フリマ予約',
         'description' => 'フリマ予約',
