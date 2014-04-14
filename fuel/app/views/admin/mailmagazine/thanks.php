@@ -33,12 +33,12 @@
 
 .btn-list {
   margin: 0 auto 30px;
-  width: 100%;
   list-style: none;
 }
 
 .btn-list li {
   margin-left: 20px;
+  width: 100%;
   float: left;
 }
 
@@ -58,7 +58,7 @@
 </style>
 <div id="container">
   <div class="contents">
-    <form id="mailmagazineForm" role="form" action="/admin/mailmagazine/thanks" method="post" class="form-horizontal">
+    <form id="mailmagazineForm" role="form" action="/admin/mailmagazine/send" method="post" class="form-horizontal">
       <div class="form-group">
         <label>送信種類</label>
         <p class="mail-item"><?php
@@ -67,7 +67,7 @@
                     echo '全員';
                     break;
                 case \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_REQUEST:
-                    echo '希望者【' . $prefectures[$input_data['prefecture_id']] . '】';
+                    echo '希望者【' . $prefectures[$prefecture_id] . '】';
                     break;
                 case \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_RESEVED_ENTRY:
                     echo '出店予約者';
@@ -146,20 +146,13 @@
             ?>
           </tbody>
         </table>
+        </ul>
       </div>
       <?php
           endif;
       ?>
       <ul class="btn-list clearfix">
-        <li><a href="/admin/mailmagazine" class="btn btn-default">入力に戻る</a></li>
-        <?php
-            if (! isset($users) || (isset($users) && count($users) > 0)):
-        ?>
-        <li><button id="doTestSend" type="button" class="btn btn-success">テスト送信する</button></li>
-        <li><button id="doSend" type="button" class="btn btn-success"><input id="sendCheck"type="checkbox">送信する</button></li>
-        <?php
-            endif;
-        ?>
+        <li><button id="doStop" type="button" class="btn btn-success">送信を中止する</button></li>
       </ul>
     </form>
   </div>
@@ -197,23 +190,42 @@ $(function() {
         alert("チェックしてください");
         return false;
     }
+    if (! confirm("送信を開始してよろしいですか？")) {
+        return false;
+    }
 
     $.ajax({
       type: "post",
-      url: '/admin/mailmagazine/checkprocess',
+      url: '/admin/mailmagazine/send',
       dataType: "json"
     }).done(function(json, textStatus, jqXHR) {
       if (json.status == '200') {
-        if (confirm("送信を開始してよろしいでつか？")) {
-            $("#mailmagazineForm").submit();
-        }
-      } else if (json.status == '300') {
-        alert('他の送信処理が実行されています');
+        alert('送信しました');
       } else {
-        alert('送信確認でエラーが発生しました\n' + json.message);
+        alert('送信に失敗しました\n' + json.message);
       }
     }).fail(function(jqXHR, textStatus, errorThrown) {
-      alert('送信確認でエラーが発生しました\n' + textStatus);
+      alert('送信に失敗しました');
+    });
+  });
+
+  $("#doStop").on("click", function(evt) {
+    if (! confirm("送信を停止してよろしいですか？")) {
+        return false;
+    }
+
+    $.ajax({
+      type: "post",
+      url: '/admin/mailmagazine/stop',
+      dataType: "json"
+    }).done(function(json, textStatus, jqXHR) {
+      if (json.status == '200') {
+        alert('送信を停止しました');
+      } else {
+        alert('送信を停止できませんでした\n' + json.message);
+      }
+    }).fail(function(jqXHR, textStatus, errorThrown) {
+      alert('送信を停止できませんでした\n' + json.message);
     });
   });
 });

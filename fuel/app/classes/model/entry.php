@@ -216,6 +216,52 @@ class Model_Entry extends \Orm\Model_Soft
     }
 
     /**
+     * 特定のフリマに出店予約したユーザを取得する
+     *
+     * @access public
+     * @param int $fleamarket_id フリーマーケットID
+     * @return array
+     * @author ida
+     */
+    public static function getEntriesByFleamarketId($fleamarket_id)
+    {
+        if (! $fleamarket_id) {
+            return null;
+        }
+
+        $placeholders = array(
+            ':flearmarket_id' => $fleamarket_id,
+            ':entry_status' => Model_Entry::ENTRY_STATUS_RESERVED,
+        );
+
+        $query = <<<"QUERY"
+SELECT
+    u.user_id,
+    u.last_name,
+    u.first_name,
+    u.email
+FROM
+    entries AS e
+LEFT JOIN
+    users AS u ON e.user_id = u.user_id
+WHERE
+    e.fleamarket_id = :flearmarket_id
+    AND e.entry_status = :entry_status
+    AND e.deleted_at IS NULL
+QUERY;
+
+        $statement = \DB::query($query)->parameters($placeholders);
+        $result = $statement->execute();
+
+        $rows = null;
+        if (! empty($result)) {
+            $rows = $result->as_array();
+        }
+
+        return $rows;
+    }
+
+    /**
      * エントリスタイルごとの予約数を取得する
      *
      * @access public
@@ -424,8 +470,6 @@ QUERY;
         return $reserved_entry_count;
     }
 
-
-
     /**
      * 特定のユーザのエントリーしたフリマをキャンセルします
      *
@@ -453,8 +497,6 @@ QUERY;
 
         return true;
     }
-
-
 
     /**
      * fleamarket_entry_style_id が fleamarket_entry_styles テーブルに
