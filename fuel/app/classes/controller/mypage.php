@@ -34,6 +34,7 @@ class Controller_Mypage extends Controller_Base_Template
     public function before()
     {
         parent::before();
+        // throw new SystemException(\Model_Error::ER00101);
 
         if (! $this->login_user) {
             throw new SystemException('ユーザ情報が取得出来ませんでした');
