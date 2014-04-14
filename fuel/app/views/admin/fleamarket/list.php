@@ -23,3 +23,4 @@
   <?php } ?>
 </table>
 
+<?php echo Pagination::create_links(); ?>

@@ -504,7 +504,25 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
     public function action_list()
     {
         $view = View::forge('admin/fleamarket/list');
-        $view->set('fleamarkets', Model_Fleamarket::find('all'));
         $this->template->content = $view;
-    }
+
+        $total = Model_Fleamarket::query()->count();
+
+        Pagination::set_config(array(
+            'pagination_url' => 'admin/fleamarket/list',
+            'uri_segment'    => 4,
+            'num_links'      => 10,
+            'per_page'       => 50,
+            'total_items'    => $total,
+            'name'           => 'pagenation',
+        ));
+        
+        $fleamarkets = Model_Fleamarket::query()
+            ->order_by('fleamarket_id')
+            ->limit(Pagination::get('per_page'))
+            ->offset(Pagination::get('offset'))
+            ->get();
+        
+        $view->set('fleamarkets', $fleamarkets);
+   }
 }
