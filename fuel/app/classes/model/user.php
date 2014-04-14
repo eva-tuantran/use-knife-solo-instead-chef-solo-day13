@@ -627,7 +627,32 @@ class Model_User extends Orm\Model_Soft
         }
     }
 
+    private static function getFindByKeywordQuery($keyword)
+    {
+        $like = preg_replace('/([_%\\\\])/','\\\\${1}',$keyword);
+        $like = "%${like}%";
 
+        $query = static::query()
+            ->where(array('email', 'LIKE', $like))
+            ->or_where(array('last_name', 'LIKE', $like))
+            ->or_where(array('first_name', 'LIKE', $like))
+            ->or_where(array('last_name_kana', 'LIKE', $like))
+            ->or_where(array('first_name_kana', 'LIKE', $like));
+        
+        return $query;
+    }
 
-
+    public static function findByKeyword($keyword, $limit, $offset)
+    {
+        $query = static::getFindByKeywordQuery($keyword)
+            ->limit($limit)
+            ->offset($offset);
+        
+        return $query->get();
+    }
+    
+    public static function findByKeywordCount($keyword)
+    {
+        return static::getFindByKeywordQuery($keyword)->count();
+    }
 }

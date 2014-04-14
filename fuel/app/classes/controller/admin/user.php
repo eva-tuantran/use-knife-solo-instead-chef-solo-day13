@@ -167,4 +167,33 @@ class Controller_Admin_User extends Controller_Admin_Base_Template
         Asset::js('jquery-ui-timepicker.js', array(), 'add_js');
         Asset::js('jquery-ui-timepicker-ja.js', array(), 'add_js');
     }
+
+    public function action_list()
+    {
+        $view = View::forge('admin/user/list');
+        $this->template->content = $view;
+        
+        if (strlen(Input::param('keyword'))) {
+            $total = Model_User::findByKeywordCount(
+                Input::param('keyword')
+            );
+            
+            Pagination::set_config(array(
+                'pagination_url' => 'admin/user/list?keyword=' . urlencode(Input::param('keyword')),
+                'uri_segment'    => 4,
+                'num_links'      => 10,
+                'per_page'       => 2,
+                'total_items'    => $total,
+                'name'           => 'pagenation',
+            ));
+            
+            $users = Model_User::findByKeyword(
+                Input::param('keyword'),
+                Pagination::get('per_page'),
+                Pagination::get('offset')
+            );
+
+            $view->set('users', $users, false);
+        }
+    }
 }

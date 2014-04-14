@@ -97,6 +97,7 @@ class Model_Fleamarket extends \Orm\Model
             'key_from' => 'fleamarket_id',
         ),
     );
+
     protected static $_properties = array(
         'fleamarket_id',
         'location_id',

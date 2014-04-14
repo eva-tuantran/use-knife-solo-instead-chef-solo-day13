@@ -209,4 +209,5 @@ class Controller_Base_Template extends Controller_Template
         }
         return $response;
     }
+
 }
