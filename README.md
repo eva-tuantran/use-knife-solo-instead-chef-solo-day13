@@ -6,12 +6,23 @@ git@gitlab.aucfan.com:devs/rakuichi-rakuza.git
 git@gitlab.aucfan.com:devs/rakuichi-rakuza.wiki.git
 ```
 
-### 楽市楽座通信用API
-```
-git@gitlab.aucfan.com:devs/rakuichi-rakuza-api.git
-git@gitlab.aucfan.com:devs/rakuichi-rakuza-api.wiki.git
+### Quickstart
+
+Vagrantを起動します
+```sh
+$ cd vagrant
+$ vagrant up
+$
+$ vagrant ssh
 ```
 
+vagrantでログイン後、データベースに情報を入れます
+```
+$ cd /var/www/html/
+$ php oil r seed user
+```
 
-### Memo
-hipchat対応しました (再度)
+ブラウザで動作を確認します
+```
+http://192.168.33.101
+```

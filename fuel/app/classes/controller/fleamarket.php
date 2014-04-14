@@ -5,252 +5,454 @@
  *
  * @extends  Controller_Template
  */
-class Controller_Fleamarket extends Controller_Template
+class Controller_Fleamarket extends Controller_Base_Template
 {
-    /**
-     * 共通定義を保持
-     *
-     * @access private
-     * @author ida
-     */
-    private $app = null;
+    protected $_login_actions = array(
+        'index', 'confirm', 'thanks',
+    );
 
-    /**
-     * beforeメソッド
-     *
-     * @access public
-     * @return void
-     * @author ida
-     */
     public function before()
     {
         parent::before();
-        $this->app = Config::load('app');
     }
 
     /**
-     * フリマ登録画面
+     * フリーマーケット入力画面
      *
      * @access public
      * @return void
      * @author ida
      */
-    public function action_index()
+    public function action_index($fleamarket_id = null)
     {
-        $session_fleamark = Session::get_flash('fleamarket');
-/*
-print '<hr>';
-var_dump($session_fleamark['back']);
-print '<hr>';
-var_dump($session_fleamark['data']);
-print '<hr>';
-var_dump($session_fleamark['errors']);
-print '<hr>';
-*/
+        $user_id = $this->login_user->user_id;
+        if ($fleamarket_id) {
+            $fleamarket = \Model_Fleamarket::findByUserId(
+                $fleamarket_id, $user_id
+            );
+
+            if (! $fleamarket) {
+                \Response::redirect('errors/badrequest');
+            }
+        }
+
+        $errors = array();
+        $fleamarket = $this->getFleamarketData();
+        $fleamarket_about = $this->getFleamarketAboutData();
+        $location = $this->getLocationData();
 
         Asset::css('jquery-ui.min.css', array(), 'add_css');
-        Asset::js('jquery-1.10.2.js', array(), 'add_js');
+        Asset::css('jquery-ui-timepicker.css', array(), 'add_css');
         Asset::js('jquery-ui.min.js', array(), 'add_js');
         Asset::js('jquery.ui.datepicker-ja.js', array(), 'add_js');
+        Asset::js('jquery-ui-timepicker.js', array(), 'add_js');
+        Asset::js('jquery-ui-timepicker-ja.js', array(), 'add_js');
+        Asset::js('http://ajaxzip3.googlecode.com/svn/trunk/ajaxzip3/ajaxzip3.js', array(), 'add_js');
 
-        $fieldset = $this->create_fieldset();
-
-        $view_model = ViewModel::forge('fleamarket/index');
-        $view_model->set('config', $this->app);
-        $view_model->set('form', $fieldset->form(), false);
-        $this->template->title = 'フリーマーケット情報入力';
-
-        if ($session_fleamark['back'] === 'back') {
-            $view_model->set('errors', $session_fleamark['errors']);
-            $fieldset->populate($session_fleamark['data']);
-        }
+        $view_model = \ViewModel::forge('fleamarket/index');
+        $view_model->set('fleamarket_id', $fleamarket_id, false);
+        $view_model->set('user_id', $user_id, false);
+        $view_model->set('fleamarket', $fleamarket, false);
+        $view_model->set('fleamarket_about', $fleamarket_about, false);
+        $view_model->set('location', $location, false);
+        $view_model->set(
+            'fleamarket_errors', $this->getErrorMessage('fleamarket'), false
+        );
+        $view_model->set(
+            'fleamarket_about_errors',
+            $this->getErrorMessage('fleamarket_about'),
+            false
+        );
+        $view_model->set(
+            'location_errors', $this->getErrorMessage('location'), false
+        );
 
         $this->template->content = $view_model;
     }
 
     /**
-     * 確認画面
+     * 入力内容の確認画面
      *
      * @access public
      * @return void
      * @author ida
      */
-    public function action_confirm()
+    public function post_confirm()
     {
-        if (Input::method() != 'POST') {
-            $this->action_404();
+        $fleamarket_id      = Input::post('fleamarket_id');
+        $fleamarket         = Input::post('f');
+        $fleamarket_about_id = Input::post('fleamarket_about_id');
+        $fleamarket_about   = Input::post('fa');
+        $location_id        = Input::post('location_id');
+        $location           = Input::post('l');
+
+        $location_fieldset = $this->getLocationFieldset();
+        $fleamarket_fieldset = $this->getFleamarketFieldset();
+        $fleamarket_about_fieldset = $this->getFleamarketAboutFieldset();
+
+        $fleamarket_validation = $fleamarket_fieldset->validation();
+        $fleamarket_validation->add_callable('Custom_Validation');
+        $fleamarket_result = $fleamarket_validation->run($fleamarket);
+
+        $fleamarket_about_validation = $fleamarket_about_fieldset->validation();
+        $fleamarket_about_result = $fleamarket_about_validation->run(
+            $fleamarket_about
+        );
+
+        $location_validation = $location_fieldset->validation();
+        $location_validation->add_callable('Custom_Validation');
+        $location_result = $location_validation->run($location);
+
+        if (! ($location_result
+            && $fleamarket_result && $fleamarket_about_result)
+        ) {
+            $fleamarket = $fleamarket_validation->input();
+            $fleamarket['fleamarket_id'] = $fleamarket_id;
+            Session::set_flash('fleamarket.data', $fleamarket);
+            Session::set_flash(
+                'fleamarket.error_message',
+                $fleamarket_validation->error_message()
+            );
+
+            $fleamarket_about = $fleamarket_about_validation->input();
+            $fleamarket_about['fleamarket_about_id'] = $fleamarket_about_id;
+            Session::set_flash('fleamarket_about.data', $fleamarket_about);
+            Session::set_flash(
+                'fleamarket_about.error_message',
+                $fleamarket_about_validation->error_message()
+            );
+
+            $location = $location_validation->input();
+            $location['location_id'] = $location_id;
+            Session::set_flash('location.data', $location);
+            Session::set_flash(
+                'location.error_message',
+                $location_validation->error_message()
+            );
+
+            Response::redirect('fleamarket');
         }
 
-        $fieldset = $this->create_fieldset();
-        $fieldset->repopulate();
+        $fleamarket = $fleamarket_validation->validated();
+        $fleamarket['fleamarket_id'] = $fleamarket_id;
+        $fleamarket_about = $fleamarket_about_validation->validated();
+        $fleamarket_about['fleamarket_about_id'] = $fleamarket_about_id;
+        $location = $location_validation->validated();
+        $location['location_id'] = $location_id;
 
-        $validation = $fieldset->validation();
-        $validation->add_callable('CustomValidation');
+        Session::set_flash('fleamarket.data', $fleamarket);
+        Session::set_flash('fleamarket_about.data', $fleamarket_about);
+        Session::set_flash('location.data', $location);
 
-        if ($validation->run()) {
-            $data = $validation->validated();
+        $view_model = \ViewModel::forge('fleamarket/confirm');
+        $view_model->set('fleamarket', $fleamarket, false);
+        $view_model->set('fleamarket_about', $fleamarket_about, false);
+        $view_model->set('location', $location, false);
 
-            $this->template->title = 'フリーマーケット情報確認';
-            $view_model = ViewModel::forge('fleamarket/confirm');
-            $view_model->set('form', $fieldset->form(), false);
-            $view_model->set('data', $data, false);
-
-            $this->template->content = $view_model;
-        } else {
-            Session::set_flash('fleamarket', array(
-                'data' => Input::post(),
-                'errors' => $validation->error_message(),
-                'back' => 'back'
-            ));
-            Response::redirect('fleamarket/index');
-            // $this->action_index();
-            //return  Request::forge('fleamarket/index')->execute()->response();
-        }
+        $this->template->content = $view_model;
     }
 
     /**
      * 登録処理
      *
+     * @TODO: 登録ユーザIDの取得の実装
      * @access public
      * @return void
      * @author ida
      */
-    public function action_register()
+    public function post_thanks()
     {
-        if (Input::method() != 'POST') {
-            $this->action_404();
-        }
         if (! Security::check_token()) {
-            // エラー表示
-        } else {
-            // 正常なデータ登録
+            Response::redirect('errors/doubletransmission');
         }
 
-        $data = Session::get('fleamarket.data');
-        Session::delete('fleamarket.data');
-        $fleamarkets = Fleamarkets::forge();
-        $fleamarkets->set($data);
+        try {
+            \DB::start_transaction();
 
-        if ($fleamarkets->save()) {
-            Response::redirect('fleamarket/thanks');
-        } else {
-            $this->action_404();
+            $fleamarket_id = Input::post('fleamarket_id');
+            $fleamarket_about_id = Input::post('fleamarket_about_id');
+            $location_id = Input::post('location_id');
+            $user_id = $this->login_user->user_id;
+
+            // 開催地情報登録・更新
+            $location_data = $this->createLocation($user_id);
+            if ($location_id) {
+                $location = \Model_Location::find($location_id);
+            } else {
+                $location = \Model_Location::forge();
+            }
+            $location->set($location_data)->save();
+
+            // フリーマーケット情報登録・更新
+            $fleamarket_data = $this->createFleamarket(
+                $location->location_id, $user_id
+            );
+            if ($fleamarket_id) {
+                $fleamarket = \Model_Fleamarket::find($fleamarket_id);
+            } else {
+                $fleamarket = \Model_Fleamarket::forge();
+            }
+            $fleamarket->set($fleamarket_data)->save();
+
+            // フリーマーケット説明情報登録・更新
+            $fleamarket_about_data = $this->createFleamarketAbout(
+                $fleamarket->fleamarket_id, $user_id
+            );
+            if ($fleamarket_about_id) {
+                $fleamarket_about = \Model_Fleamarket_About::find(
+                    $fleamarket_about_id
+                );
+            } else {
+                $fleamarket_about = \Model_Fleamarket_About::forge();
+            }
+            $fleamarket_about->set($fleamarket_about_data)->save();
+
+            \DB::commit_transaction();
+        } catch (Exception $e) {
+            \DB::rollback_transaction();
+            Response::redirect('errors/index');
         }
+
+        $this->template->content = \ViewModel::forge('fleamarket/thanks');
     }
 
     /**
-     * 登録完了処理
-     *
-     * @access public
-     * @return void
-     * @author ida
-     */
-    public function action_thanks()
-    {
-        $this->template->title = 'フリマ情報登録完了';
-        $this->template->content = View::forge('fleamarket/thanks');
-    }
-
-    /**
-     * The 404 action for the application.
-     *
-     * @access  public
-     * @return  Response
-     */
-    public function action_404()
-    {
-        return Response::forge(View::forge('error/notfound'));
-    }
-
-    /**
-     *
-     * @param type $fieldset
-     * @param type $data
-     */
-    private function set_data($fieldset, $data) {
-
-    }
-
-    /**
-     * 新規登録のFieldsetオブジェクトを生成する
+     * フリーマーケット情報を取得する
      *
      * @access private
+     * @param
+     * @return array
+     * @author ida
+     */
+    private function getFleamarketData()
+    {
+        $data = Session::get_flash('fleamarket.data');
+        if (! $data) {
+            $fieldset = Session::get_flash('fleamarket.fieldset');
+            if (! $fieldset) {
+                $fieldset = \Model_Fleamarket::createFieldset();
+            }
+            $data = $fieldset->repopulate()->input();
+        }
+
+        return $data;
+    }
+
+    /**
+     * フリーマーケット説明情報を取得する
+     *
+     * @access private
+     * @param
+     * @return array
+     * @author ida
+     */
+    private function getFleamarketAboutData()
+    {
+        $data = Session::get_flash('fleamarket_about.data');
+        if (! $data) {
+            $fieldset = Session::get_flash('fleamarket_about.fieldset');
+            if (! $fieldset) {
+                $fieldset = \Model_Fleamarket_About::createFieldset();
+            }
+            $data = $fieldset->repopulate()->input();
+        }
+
+        return $data;
+    }
+
+    /**
+     * 開催地情報を取得する
+     *
+     * @access private
+     * @param
+     * @return array
+     * @author ida
+     */
+    private function getLocationData()
+    {
+        $data = Session::get_flash('location.data');
+        if (! $data) {
+            $fieldset = Session::get_flash('location.fieldset');
+            if (! $fieldset) {
+                $fieldset = \Model_Location::createFieldset();
+            }
+            $data = $fieldset->repopulate()->input();
+        }
+
+        return $data;
+    }
+
+    /**
+     * フリーマーケット情報の登録用配列を生成する
+     *
+     * @access private
+     * @param mixed $location_id 開催地ID
+     * @param mixed $user_id ユーザID
+     * @return array
+     * @author ida
+     */
+    private function createFleamarket($location_id, $user_id)
+    {
+        $data = Session::get_flash('fleamarket.data');
+        $fleamarket = array(
+            'location_id'       => $location_id,
+            'group_code'        => '',
+            'name'              => $data['name'],
+            'promoter_name'     => $data['promoter_name'],
+            'event_number'      => 1,
+            'event_date'        => $data['event_date'],
+            'event_time_start'  => $data['event_time_start'],
+            'event_time_end'    => $data['event_time_end'],
+            'event_status'      => \Model_Fleamarket::EVENT_STATUS_SCHEDULE,
+            'event_reservation_status' => \Model_Fleamarket::EVENT_RESERVATION_STATUS_ENOUGH,
+            'headline'          => '',
+            'information'       => '',
+            'description'       => $data['description'],
+            'reservation_serial'    => 0,
+            'reservation_start' => null,
+            'reservation_end'   => null,
+            'reservation_tel'   => $data['reservation_tel'],
+            'reservation_email' => $data['reservation_email'],
+            'website'           => $data['website'],
+            'item_categories'   => '',
+            'link_from_list'    => '',
+            'pickup_flag'       => 0,
+            'shop_fee_flag'     => 0,
+            'car_shop_flag'     => 0,
+            'pro_shop_flag'     => 0,
+            'charge_parking_flag'   => 0,
+            'free_parking_flag' => 0,
+            'rainy_location_flag'   => 0,
+            'donation_fee'      => 0,
+            'donation_point'    => '',
+            'register_type'     => \Model_Fleamarket::REGISTER_TYPE_USER,
+            'display_flag'      => \Model_Fleamarket::DISPLAY_FLAG_ON,
+            'created_user'      => $user_id,
+        );
+
+        return $fleamarket;
+    }
+
+    /**
+     * フリーマーケット説明情報の登録用配列を生成する
+     *
+     * @access private
+     * @param mixed $fleamarket_id フリーマーケットID
+     * @param mixed $user_id ユーザID
+     * @return array
+     * @author ida
+     */
+    private function createFleamarketAbout($fleamarket_id, $user_id)
+    {
+        $about_titles = \Model_fleamarket_About::getAboutTitles();
+        $data = Session::get_flash('fleamarket_about.data');
+        $fleamarket_about = array(
+            'fleamarket_id' => $fleamarket_id,
+            'about_id'      => \Model_Fleamarket_About::ACCESS,
+            'title'         => $about_titles[\Model_fleamarket_About::ACCESS],
+            'description'   => $data['description'],
+            'created_user'  => $user_id,
+        );
+
+        return $fleamarket_about;
+    }
+
+    /**
+     * 開催地情報の登録用配列を生成する
+     *
+     * @access private
+     * @param mixed $user_id ユーザID
+     * @return array
+     * @author ida
+     */
+    private function createLocation($user_id)
+    {
+        $data = Session::get_flash('location.data');
+        $prefectures = Config::get('master.prefectures');
+        $prefecture = $prefectures[$data['prefecture_id']];
+        $address = $prefecture . $data['address'];
+        $location = array(
+            'name'          => $data['name'],
+            'zip'           => $data['zip'],
+            'prefecture_id' => $data['prefecture_id'],
+            'address'       => $data['address'],
+            'googlemap_address' => $address,
+            'register_type' => \Model_Location::REGISTER_TYPE_USER,
+            'created_user'  => $user_id,
+        );
+
+        return $location;
+    }
+
+    /**
+     * 各モデルから
+     *
+     * @access private
+     * @param
      * @return object Fieldsetオブジェクト
      * @author ida
      */
-    private function create_fieldset()
+    private function getFleamarketFieldset()
     {
-        $fieldset = Fieldset::instance('fleamarket');
-        if (false !== $fieldset) {
-            return $fieldset;
-        } else {
-            $fieldset = Fieldset::forge('fleamarket');
+        $fieldset = Session::get_flash('fleamarket.fieldset');
+        if (! $fieldset) {
+            $fieldset = \Model_Fleamarket::createFieldset();
         }
 
-        $fieldset->add('sponsor_name', '主催者')
-            ->add_rule('required')
-            ->add_rule('max_length', 50);
+        return $fieldset;
+    }
 
-        $fieldset->add('sponsor_website', '主催者ホームページ')
-            ->add_rule('max_length', 250);
-
-        $fieldset->add('sponsor_tel1', '予約受付電話番号')
-            ->add_rule('required_tel')
-            ->add_rule('valid_tel');
-        $fieldset->add('sponsor_tel2', '予約受付電話番号');
-        $fieldset->add('sponsor_tel3', '予約受付電話番号');
-
-        $fieldset->add('sponsor_email', '予約受付メールアドレス')
-            ->add_rule('valid_email')
-            ->add_rule('max_length', 250);
-
-        $fieldset->add('event_date', '開催日')
-            ->add_rule('required')
-            ->add_rule('valid_date');
-
-        $fieldset->add('event_time_hour', '開催時間')
-            ->add_rule('array_key_exists', $this->app['hours']);
-
-        $fieldset->add('event_time_minute', '開催時間')
-            ->add_rule('array_key_exists', $this->app['minutes']);
-
-        $fieldset->add('fleamarket_name', 'フリマ・会場名')
-            ->add_rule('required')
-            ->add_rule('max_length', 50);
-
-        $fieldset->add('zip', '郵便番号')
-            ->add_rule('max_length', 7);
-
-        $fieldset->add('prefecture', '都道府県')
-            ->add_rule('array_key_exists', $this->app['prefectures']);
-
-        $fieldset->add('address', '住所')
-            ->add_rule('max_length', 50);
-
-        $fieldset->add('description', '詳細')
-            ->add_rule('max_length', 5000);
-
-        $fieldset->add('about_access', '最寄り駅または交通アクセス')
-            ->add_rule('max_length', 500);
-
-        $fieldset->add('about_event_time', '開催時間について')
-            ->add_rule('max_length', 500);
-
-        $fieldset->add('about_booth', '募集ブース数について')
-            ->add_rule('max_length', 500);
-
-        $fieldset->add('about_shop_cautions', '出店に際してのご注意')
-            ->add_rule('max_length', 500);
-
-        $fieldset->add('about_shop_style', '出店形態について')
-            ->add_rule('max_length', 500);
-
-        $fieldset->add('about_shop_fee', '出店料金について')
-            ->add_rule('max_length', 500);
-
-        $fieldset->add('about_parking', '駐車場について')
-            ->add_rule('max_length', 500);
+    /**
+     * フリーマーケット説明情報のフィールドセットを取得する
+     *
+     * @access private
+     * @param
+     * @return object Fieldsetオブジェクト
+     * @author ida
+     */
+    private function getFleamarketAboutFieldset($input = array())
+    {
+        $fieldset = Session::get_flash('fleamarket_about.fieldset');
+        if (! $fieldset) {
+            $fieldset = \Model_Fleamarket_About::createFieldset();
+        }
 
         return $fieldset;
+    }
+
+    /**
+     * 開催地情報のフィールドセットを取得する
+     *
+     * @access private
+     * @param
+     * @return object Fieldsetオブジェクト
+     * @author ida
+     */
+    private function getLocationFieldset()
+    {
+        $fieldset = Session::get_flash('location.fieldset');
+        if (! $fieldset) {
+            $fieldset = \Model_Location::createFieldset();
+        }
+
+        return $fieldset;
+    }
+
+    /**
+     * エラーメッセージを取得する
+     *
+     * @access private
+     * @param string セッション名
+     * @return array
+     * @author ida
+     */
+    private function getErrorMessage($name = null)
+    {
+        $error_message = array();
+        if (! $name) {
+            return $error_message;
+        }
+
+        return Session::get_flash($name . '.error_message', array());
     }
 }

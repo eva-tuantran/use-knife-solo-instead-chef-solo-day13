@@ -15,3 +15,7 @@ build
 /fuel/app/logs/*/*/*
 /fuel/app/cache/*/*
 /fuel/app/config/crypt.php
+/nbproject
+/public/files/fleamarket/img/*
+/public/files/admin/fleamarket/img/*
+

@@ -56,6 +56,17 @@ return array(
      */
     'caching'         => false,
     // 'cache_lifetime'  => 3600, // In Seconds
+    //
+    //
+
+    /**
+     * Settings for ssl
+     * @author shimma
+     */
+    'ssl_connection' => array(
+        'use'          => false,
+        'default_host' => 'ssl.rakuichi-rakuza.jp',
+    ),
 
     /**
      * Callback to use with ob_start(), set this to 'ob_gzhandler' for gzip encoding of output
@@ -93,7 +104,7 @@ return array(
      * server_gmt_offset	in seconds the server offset from gmt timestamp when time() is used
      * default_timezone		optional, if you want to change the server's default timezone
      */
-    'server_gmt_offset'  => 3600 * 9,
+    // 'server_gmt_offset'  => 3600 * 9,
     'default_timezone'   => 'Asia/Tokyo',
 
     /**
@@ -258,6 +269,7 @@ return array(
                      */
                     'packages'  => array(
                         'orm',
+                        'email',
                         'auth',
                     ),
 
@@ -284,7 +296,12 @@ return array(
                      * add it like 'session' => 'auth'.
                      * If you don't want the config in a group use null as groupname.
                      */
-                    // 'config'  => array(),
+
+                    'config' => array(
+            'master' => 'master',
+            'constants' => 'constants',
+                        // 'app', //@TODO: 常に読み込む必要ないかもしれない
+                    ),
 
                     /**
                      * Language files to autoload
@@ -294,7 +311,7 @@ return array(
                      * add it like 'validation' => 'forms'.
                      * If you don't want the lang in a group use null as groupname.
                      */
-                    // 'language'  => array(),
+                    //'language'  => array('meta'),
                     // ),
                 )
-                );
+            );

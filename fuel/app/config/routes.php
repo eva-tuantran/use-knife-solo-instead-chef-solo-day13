@@ -1,9 +1,14 @@
 <?php
 return array(
-    'register'   => 'register',
-    'fleamarket' => 'fleamarket',
-    'error'      => 'error',
-    '_404_'      => 'error/notfound',    // The main 404 route
-    '_root_'     => array('welcome/hello', 'name' => 'hello'),
+    '_root_'     => 'top/index',
+    '_404_'      => 'error/404',
+    'signup'     => 'signup',
+    'login'      => 'login',
+    'fleamarket/(:num)' => 'fleamarket/index/$1',
+    'search/(:num)'   => 'search/index/$1',
+    'detail/(:num)'   => 'search/detail/$1',
+    'calendar/:year/:month' => 'calendar/index',
+    'mypage'     => 'mypage',
+    'errors'     => 'errors',
+    '_404_'      => 'errors/notfound',    // The main 404 route
 );
-

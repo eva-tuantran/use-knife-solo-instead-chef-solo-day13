@@ -76,16 +76,11 @@ return array(
          * Groups as id => array(name => <string>, roles => <array>)
          */
         'groups' => array(
-            /**
-             * Examples
-             * ---
-             *
-             * -1   => array('name' => 'Banned', 'roles' => array('banned')),
-             * 0    => array('name' => 'Guests', 'roles' => array()),
-             * 1    => array('name' => 'Users', 'roles' => array('user')),
-             * 50   => array('name' => 'Moderators', 'roles' => array('user', 'moderator')),
-             * 100  => array('name' => 'Administrators', 'roles' => array('user', 'moderator', 'admin')),
-             */
+             -1   => array('name' => 'Banned', 'roles' => array('banned')),
+             0    => array('name' => 'Guests', 'roles' => array()),
+             1    => array('name' => 'Users', 'roles' => array('user')),
+             50   => array('name' => 'Moderators', 'roles' => array('user', 'moderator')),
+             100  => array('name' => 'Administrators', 'roles' => array('user', 'moderator', 'admin')),
         ),
 
         /**
@@ -120,7 +115,7 @@ return array(
         /**
          * $_POST key for login username
          */
-        'username_post_key' => 'username',
+        'username_post_key' => 'user_name',
 
         /**
          * $_POST key for login password

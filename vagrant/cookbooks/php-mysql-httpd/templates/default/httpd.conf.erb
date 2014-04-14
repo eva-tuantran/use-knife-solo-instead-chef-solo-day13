@@ -198,6 +198,8 @@ DocumentRoot "/var/www/html/public"
 <Directory /var/www/html/public>
     Options FollowSymLinks -Indexes
     AllowOverride All
+    EnableMMAP Off
+    EnableSendfile Off
 </Directory>
 
 
@@ -675,7 +677,7 @@ AddOutputFilter INCLUDES .shtml
 # copying them to /your/include/path/, even on a per-VirtualHost basis.
 #
 
-Alias /error/ "/var/www/error/"
+#Alias /error/ "/var/www/error/"
 
 <IfModule mod_negotiation.c>
 <IfModule mod_include.c>
