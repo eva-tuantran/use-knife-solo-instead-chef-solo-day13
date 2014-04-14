@@ -62,5 +62,10 @@ class Controller_Info extends Controller_Base_Template
         $this->template->content = View::forge('info/policy');
     }
 
+    public function action_question()
+    {
+        $this->template->content = View::forge('info/question');
+    }
+
 
 }

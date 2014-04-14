@@ -164,6 +164,7 @@
     <ul id="footerNav" class="list-inline">
       <li><a href="/info/visitor">初めての方へ</a></li>
       <li><a href="/info/agreement">利用規約</a></li>
+      <li><a href="/info/question">よくある質問</a></li>
       <li><a href="/inquiry">お問い合わせ</a></li>
       <li><a href="/info/manager">運営会社</a></li>
       <li><a href="http://aucfan.com/article/">ブログ</a></li>
