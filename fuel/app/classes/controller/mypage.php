@@ -52,6 +52,8 @@ class Controller_Mypage extends Controller_Base_Template
      */
     public function action_index()
     {
+        Asset::css('jquery-ui.min.css', array(), 'add_css');
+        Asset::js('jquery-ui.min.js', array(), 'add_js');
         Asset::js('jquery.carouFredSel.js', array(), 'add_js');
 
         $fleamarkets_all['entry']        = $this->login_user->getEntries(1, 3);
@@ -89,6 +91,9 @@ class Controller_Mypage extends Controller_Base_Template
      */
     public function action_list()
     {
+        Asset::css('jquery-ui.min.css', array(), 'add_css');
+        Asset::js('jquery-ui.min.js', array(), 'add_js');
+
         $pagination_param = 'p';
         $item_per_page = 10;
 

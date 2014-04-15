@@ -308,19 +308,25 @@ dataType: "json",
 data: {fleamarket_id: id}
 }).done(function(json, textStatus, jqXHR) {
   if(json == 'nologin' || json == 'nodata'){
-  alert(json);
+  $('#dialog_need_login').dialog();
   }else if(json){
-  alert('削除しました' + id);
-  $('#mylist_' + id).remove();
-  if ($('#mylist').children('div').length == 0) {
-  $('#mylist').append('<p>マイリストはありません</p>');
-  }
+  $('#dialog_success').dialog({close: function(event){ location.reload(); }});
   }else{
-  alert('失敗しました');
+  $('#dialog_fail').dialog();
   }
   }).fail(function(jqXHR, textStatus, errorThrown) {
-    alert('失敗しました');
-    });
+  $('#dialog_fail').dialog();
+  });
 });
 });
 </script>
+
+<div id="dialog_success" style="display: none;">
+マイリストを解除しました
+</div>
+<div id="dialog_fail" style="display: none;">
+マイリストを解除できませんでした
+</div>
+<div id="dialog_need_login" style="display: none;">
+マイリストを解除するためにはログインが必要です
+</div>
