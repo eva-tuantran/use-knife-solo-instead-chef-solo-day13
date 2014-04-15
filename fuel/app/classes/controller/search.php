@@ -30,6 +30,9 @@ class Controller_Search extends Controller_Base_Template
      */
     public function get_index($page = null)
     {
+        Asset::css('jquery-ui.min.css', array(), 'add_css');
+        Asset::js('jquery-ui.min.js', array(), 'add_js');
+
         if (! $page) {
             $page = 1;
         }
