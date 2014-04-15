@@ -47,7 +47,7 @@ CREATE TABLE IF NOT EXISTS `rakuichi-rakuza`.`users` (
   PRIMARY KEY (`user_id`),
   INDEX `idx_user_old_id` (`user_old_id` ASC),
   INDEX `idx_email` (`email` ASC))
-ENGINE = InnoDB;
+ENGINE = InnoDB AUTO_INCREMENT = 10000000;
 
 
 -- -----------------------------------------------------
@@ -441,7 +441,7 @@ CREATE TABLE IF NOT EXISTS `rakuichi-rakuza`.`mail_magazines` (
   `from_name` VARCHAR(255) NOT NULL,
   `subject` VARCHAR(255) NOT NULL,
   `body` TEXT NOT NULL COMMENT '本文が格納されたディレクトリ',
-  `replace` TEXT NULL COMMENT 'リプレイスするパラメータをJSONで格納',
+  `parameter` VARCHAR(255) NULL COMMENT 'メール本文に掲載する情報を取得するためのパラメータ',
   `send_status` TINYINT NOT NULL DEFAULT 0 COMMENT '送信ステータス 0:送信待ち,1:送信中,2:送信済,3エラー終了,9:キャンセル',
   `created_user` INT NOT NULL COMMENT '作成したユーザID、一般ユーザ:10000000以上,管理者：10000000未満',
   `updated_user` INT NULL COMMENT '更新したユーザID、一般ユーザ:10000000以上,管理者：10000000未満',
