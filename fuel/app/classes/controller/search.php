@@ -18,6 +18,8 @@ class Controller_Search extends Controller_Base_Template
     public function before()
     {
         parent::before();
+        Asset::css('jquery-ui.min.css', array(), 'add_css');
+        Asset::js('jquery-ui.min.js', array(), 'add_js');
     }
 
     /**

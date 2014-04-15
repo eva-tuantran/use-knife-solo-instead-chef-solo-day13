@@ -338,7 +338,7 @@ $(function() {
       $("#form_search").submit();
   });
 
-  $(".addMylist a").click(function(){
+  $(".addMylist a").click(function(evt){
       evt.preventDefault();
       var id = $(this).attr('id');
       id = id.match(/^fleamarket_id_(\d+)/)[1];
@@ -349,15 +349,25 @@ $(function() {
           data: {fleamarket_id: id}
       }).done(function(json, textStatus, jqXHR) {
           if(json == 'nologin' || json == 'nodata'){
-              alert(json);
+              $('#dialog_need_login').dialog();
           }else if(json){
-              alert('登録しました');
+              $('#dialog_success').dialog();
           }else{
-              alert('失敗しました');
+              $('#dialog_fail').dialog();
           }
       }).fail(function(jqXHR, textStatus, errorThrown) {
-          alert('失敗しました');
+          $('#dialog_fail').dialog();
       });
   });
 });
 </script>
+
+<div id="dialog_success" style="display: none;">
+マイリストに登録しました
+</div>
+<div id="dialog_fail" style="display: none;">
+マイリストに登録できませんでした
+</div>
+<div id="dialog_need_login" style="display: none;">
+マイリストに登録するためにはログインが必要です
+</div>
