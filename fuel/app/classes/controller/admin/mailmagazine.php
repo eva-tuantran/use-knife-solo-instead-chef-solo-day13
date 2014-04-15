@@ -17,12 +17,12 @@ class Controller_Admin_Mailmagazine extends Controller_Admin_Base_Template
     {
         parent::before();
 
-        // @todo テスト用
-        $user = new stdClass;
-        $user->user_id = 1;
-        $user->last_name = '楽市';
-        $user->first_name = '楽座';
-        $this->login_user = $user;
+// @todo テスト用
+$user = new stdClass;
+$user->user_id = 1;
+$user->last_name = '楽市';
+$user->first_name = '楽座';
+$this->login_user = $user;
     }
 
     /**
@@ -408,21 +408,5 @@ class Controller_Admin_Mailmagazine extends Controller_Admin_Base_Template
     private function getErrorMessage()
     {
         return \Session::get_flash('mailmagazine.errors');
-    }
-
-    /**
-     * ログインしているユーザの名前を取得する
-     *
-     * @access private
-     * @param
-     * @return string
-     * @author ida
-     */
-    private function getLoginUserName()
-    {
-        $login_user = $this->login_user;
-        $user_name = $login_user->last_name . ' ' . $login_user->first_name;
-
-        return $user_name;
     }
 }
