@@ -231,18 +231,18 @@ class Model_Entry extends \Orm\Model_Soft
 
         $placeholders = array(
             ':flearmarket_id' => $fleamarket_id,
-            ':entry_status' => Model_Entry::ENTRY_STATUS_RESERVED,
+            ':entry_status' => \Model_Entry::ENTRY_STATUS_RESERVED,
         );
 
         $query = <<<"QUERY"
 SELECT
-    u.user_id,
+    e.user_id,
     u.last_name,
     u.first_name,
     u.email
 FROM
     entries AS e
-LEFT JOIN
+INNER JOIN
     users AS u ON e.user_id = u.user_id
 WHERE
     e.fleamarket_id = :flearmarket_id

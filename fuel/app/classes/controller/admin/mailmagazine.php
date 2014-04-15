@@ -54,7 +54,7 @@ class Controller_Admin_Mailmagazine extends Controller_Admin_Base_Template
     public function action_confirm()
     {
         $input_data = \Input::post();
-        $fieldset = $this->getFieldset();
+        $fieldset = $this->getFieldset($input_data['mail_magazine_type']);
 
         $validation = $fieldset->validation();
         $validation_result = $validation->run($input_data);
@@ -73,6 +73,9 @@ class Controller_Admin_Mailmagazine extends Controller_Admin_Base_Template
         $input_data = $validation->validated();
         $input_data['fleamarket_id'] = \Input::post('fleamarket_id');
         $input_data['prefecture_id'] = \Input::post('prefecture_id');
+
+        $replace_data = array();
+        $replace_data['user'] = (array) $this->login_user;
 
         $view = \View::forge('admin/mailmagazine/confirm');
         $type = $input_data['mail_magazine_type'];
@@ -99,12 +102,17 @@ class Controller_Admin_Mailmagazine extends Controller_Admin_Base_Template
 
             $fleamarket = \Model_Fleamarket::find($input_data['fleamarket_id']);
             $view->set('fleamarket', $fleamarket, false);
+            $replace_data['fleamarket'] = $fleamarket;
         }
 
-        $replace = array('user_name' => $this->getLoginUserName());
-        $body = \Model_Mail_Magazine::replaceByParam(
-            $input_data['body'], $replace
+        $body = $input_data['body'];
+        $pattern = \Model_Mail_Magazine::getPatternParameter($type);
+
+        list($pattern, $replacement) = \Model_Mail_Magazine::createReplaceParameter(
+            $body, $pattern, $replace_data
         );
+        $body = \Model_Mail_Magazine::replaceByParam($body, $pattern, $replacement);
+
         $view->set('body', $body, false);
         $view->set('input_data', $input_data, false);
 
@@ -127,16 +135,36 @@ class Controller_Admin_Mailmagazine extends Controller_Admin_Base_Template
 
         $input_data = $this->getInputData();
 
+        $replace_data = array();
+        $replace_data['user'] = (array) $this->login_user;
+
+        $type = $input_data['mail_magazine_type'];
+        if ($type == \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_ALL) {
+            $users = \Model_User::getActiveUsers();
+        } elseif ($type == \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_REQUEST) {
+            $users = \Model_User::getUsersByPrefectureID(
+                $input_data['prefecture_id']
+            );
+        } elseif ($type == \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_RESEVED_ENTRY) {
+            $users = \Model_Entry::getEntriesByFleamarketId(
+                $input_data['fleamarket_id']
+            );
+
+            $fleamarket = \Model_Fleamarket::find($input_data['fleamarket_id']);
+            $replace_data['fleamarket'] = $fleamarket;
+        }
+
         $from_email = $input_data['from_email'];
         $from_name = $input_data['from_name'];
 
         $subject = trim($input_data['subject']);
 
         $body = $input_data['body'];
-        $replace = array('user_name' => $this->getLoginUserName());
-
-        $body = \Model_Mail_Magazine::replaceByParam($body, $replace);
-        $body = \Model_Mail_Magazine::convertEncoding($body, 'JIS');
+        $pattern = \Model_Mail_Magazine::getPatternParameter($type);
+        list($pattern, $replacement) = \Model_Mail_Magazine::createReplaceParameter(
+            $body, $pattern, $replace_data
+        );
+        $body = \Model_Mail_Magazine::replaceByParam($body, $pattern, $replacement);
 
         $success = false;
         $message = '';
@@ -171,12 +199,25 @@ class Controller_Admin_Mailmagazine extends Controller_Admin_Base_Template
      */
     public function action_thanks()
     {
+        if (! Security::check_token()) {
+            Response::redirect('errors/doubletransmission');
+        }
+
         $input_data = $this->getInputData();
         $input_data['created_user'] = $this->login_user->user_id;
         $input_data['send_status'] = \Model_Mail_Magazine::SEND_STATUS_WAITING;
+        $added_info = array(
+            'fleamarket' => array(
+                'fleamarket_id' => $input_data['fleamarket_id']
+            )
+        );
+        $input_data['additional_serialize_data'] = serialize($added_info);
 
         $mail_magazine = \Model_Mail_Magazine::forge($input_data);
         $mail_magazine->save();
+
+        $replace_data = array();
+        $replace_data['user'] = (array) $this->login_user;
 
         $view = \View::forge('admin/mailmagazine/thanks');
         $type = $input_data['mail_magazine_type'];
@@ -200,17 +241,20 @@ class Controller_Admin_Mailmagazine extends Controller_Admin_Base_Template
 
             $fleamarket = \Model_Fleamarket::find($input_data['fleamarket_id']);
             $view->set('fleamarket', $fleamarket, false);
+            $replace_data['fleamarket'] = $fleamarket;
         }
 
-        $replace = array('user_name' => $this->getLoginUserName());
-        $body = \Model_Mail_Magazine::replaceByParam(
-            $input_data['body'], $replace
+        $body = $input_data['body'];
+        $pattern = \Model_Mail_Magazine::getPatternParameter($type);
+        list($pattern, $replacement) = \Model_Mail_Magazine::createReplaceParameter(
+            $body, $pattern, $replace_data
         );
+        $body = \Model_Mail_Magazine::replaceByParam($body, $pattern, $replacement);
         $view->set('body', $body, false);
 
         $view->set('input_data', $input_data, false);
 
-        // 非同期でタスク実行
+        // タスク実行
         $oil_path = realpath(APPPATH . '/../../') . DS;
         exec('php ' . $oil_path . 'oil refine mail_magazine ' . $mail_magazine->mail_magazine_id . ' > /dev/null &');
 
@@ -284,13 +328,24 @@ class Controller_Admin_Mailmagazine extends Controller_Admin_Base_Template
      * fieldsetを取得する
      *
      * @access private
-     * @param
+     * @param mixed $mail_magazine_type メールマガジンタイプ
      * @return object Fieldsetオブジェクト
      * @author ida
      */
-    private function getFieldset()
+    private function getFieldset($mail_magazine_type = null)
     {
-        return \Model_Mail_Magazine::createFieldset();
+        $fieldset = \Model_Mail_Magazine::createFieldset();
+
+        if ($mail_magazine_type == \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_REQUEST) {
+            $fieldset->add('prefecture_id')
+                ->add_rule('valid_string', array('numeric'));
+        } else if ($mail_magazine_type == \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_RESEVED_ENTRY) {
+            $fieldset->add('fleamarket_id')
+                ->add_rule('required')
+                ->add_rule('valid_string', array('numeric'));
+        }
+
+        return $fieldset;
     }
 
     /**

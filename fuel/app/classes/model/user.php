@@ -8,6 +8,21 @@
  */
 class Model_User extends Orm\Model_Soft
 {
+
+    /**
+     * ールマガジン 0:不要,1:必要
+     */
+    const MM_FLAG_NG = 0;
+    const MM_FLAG_OK = 1;
+
+    /**
+     * 登録ステータス 0:仮登録,1:本登録.2:退会,3:強制退会
+     */
+    const REGISTER_STATUS_INACTIVATED = 0;
+    const REGISTER_STATUS_ACTIVATED   = 1;
+    const REGISTER_STATUS_STOPPED     = 2;
+    const REGISTER_STATUS_BANNED      = 3;
+
     protected static $_table_name = 'users';
 
     protected static $_primary_key = array('user_id');
@@ -337,15 +352,6 @@ class Model_User extends Orm\Model_Soft
     );
 
     /**
-     * 登録ステータス 0:仮登録,1:本登録.2:退会,3:強制退会
-     *
-     */
-    const REGISTER_STATUS_INACTIVATED = 0;
-    const REGISTER_STATUS_ACTIVATED   = 1;
-    const REGISTER_STATUS_STOPPED     = 2;
-    const REGISTER_STATUS_BANNED      = 3;
-
-    /**
      * 登録ステータスが本登録のユーザを取得する
      *
      * $_soft_deleteを削除する場合、whereに以下を追記
@@ -400,9 +406,16 @@ QUERY;
     public static function getUsersByPrefectureId($prefecture_id)
     {
         $placeholders = array(
-            ':prefecture_id' => $prefecture_id,
+            ':mm_flag' => self::MM_FLAG_OK,
             ':register_status' => self::REGISTER_STATUS_ACTIVATED,
         );
+
+        $where = '';
+        if ($prefecture_id != '99') {
+            $placeholders[':prefecture_id'] = $prefecture_id;
+            $where = ' AND prefecture_id = :prefecture_id';
+
+        }
 
         $query = <<<"QUERY"
 SELECT
@@ -413,9 +426,10 @@ SELECT
 FROM
     users
 WHERE
-    prefecture_id = :prefecture_id
+    mm_flag = :mm_flag
     AND register_status = :register_status
     AND deleted_at IS NULL
+    {$where}
 QUERY;
 
         $statement = \DB::query($query)->parameters($placeholders);
