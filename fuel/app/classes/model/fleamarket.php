@@ -98,6 +98,12 @@ class Model_Fleamarket extends \Orm\Model
         ),
     );
 
+    protected static $_belongs_to = array(
+        'location' => array(
+            'key_to' => 'location_id',
+        ),
+    );
+
     protected static $_properties = array(
         'fleamarket_id',
         'location_id',
