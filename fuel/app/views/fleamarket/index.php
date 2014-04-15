@@ -14,11 +14,6 @@ $(function() {
   });
 });
 </script>
-<?php
-var_dump($fleamarket_errors);
-var_dump($fleamarket_about_errors);
-var_dump($location_errors);
-?>
 <div id="contentForm" class="row">
   <!-- flow -->
   <div id="flow" class="row hidden-xs">
