@@ -271,6 +271,13 @@ $(function() {
                 利用規約に同意する。 <br>
                 <a href="/info/agreement" target="_blank">規約の確認はコチラ（別ウィンドウで開きます）</a> </label>
             </div>
+            <?php
+              if (isset($fleamarket_errors['agreement'])):
+            ?>
+              <div><?php echo $fleamarket_errors['agreement'];?></div>
+            <?php
+              endif;
+            ?>
           </div>
         </div>
         <div id="submitButton" class="form-group">

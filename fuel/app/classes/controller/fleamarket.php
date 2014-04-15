@@ -92,6 +92,7 @@ class Controller_Fleamarket extends Controller_Base_Template
 
         $fleamarket_validation = $fleamarket_fieldset->validation();
         $fleamarket_validation->add_callable('Custom_Validation');
+        $fleamarket['event_status'] = \Model_Fleamarket::EVENT_STATUS_SCHEDULE;
         $fleamarket_result = $fleamarket_validation->run($fleamarket);
 
         $fleamarket_about_validation = $fleamarket_about_fieldset->validation();
@@ -198,14 +199,16 @@ class Controller_Fleamarket extends Controller_Base_Template
             $fleamarket_about_data = $this->createFleamarketAbout(
                 $fleamarket->fleamarket_id, $user_id
             );
-            if ($fleamarket_about_id) {
-                $fleamarket_about = \Model_Fleamarket_About::find(
-                    $fleamarket_about_id
-                );
-            } else {
-                $fleamarket_about = \Model_Fleamarket_About::forge();
+            if ($fleamarket_about_data) {
+                if ($fleamarket_about_id) {
+                    $fleamarket_about = \Model_Fleamarket_About::find(
+                        $fleamarket_about_id
+                    );
+                } else {
+                    $fleamarket_about = \Model_Fleamarket_About::forge();
+                }
+                $fleamarket_about->set($fleamarket_about_data)->save();
             }
-            $fleamarket_about->set($fleamarket_about_data)->save();
 
             \DB::commit_transaction();
         } catch (Exception $e) {
@@ -303,7 +306,7 @@ class Controller_Fleamarket extends Controller_Base_Template
             'event_date'        => $data['event_date'],
             'event_time_start'  => $data['event_time_start'],
             'event_time_end'    => $data['event_time_end'],
-            'event_status'      => \Model_Fleamarket::EVENT_STATUS_SCHEDULE,
+            'event_status'      => $data['event_status'],
             'event_reservation_status' => \Model_Fleamarket::EVENT_RESERVATION_STATUS_ENOUGH,
             'headline'          => '',
             'information'       => '',
@@ -344,15 +347,19 @@ class Controller_Fleamarket extends Controller_Base_Template
      */
     private function createFleamarketAbout($fleamarket_id, $user_id)
     {
-        $about_titles = \Model_fleamarket_About::getAboutTitles();
         $data = Session::get_flash('fleamarket_about.data');
-        $fleamarket_about = array(
-            'fleamarket_id' => $fleamarket_id,
-            'about_id'      => \Model_Fleamarket_About::ACCESS,
-            'title'         => $about_titles[\Model_fleamarket_About::ACCESS],
-            'description'   => $data['description'],
-            'created_user'  => $user_id,
-        );
+
+        $fleamarket_about = array();
+        if (! empty($data['description'])) {
+            $about_titles = \Model_fleamarket_About::getAboutTitles();
+            $fleamarket_about = array(
+                'fleamarket_id' => $fleamarket_id,
+                'about_id'      => \Model_Fleamarket_About::ACCESS,
+                'title'         => $about_titles[\Model_fleamarket_About::ACCESS],
+                'description'   => $data['description'],
+                'created_user'  => $user_id,
+            );
+        }
 
         return $fleamarket_about;
     }
@@ -397,6 +404,7 @@ class Controller_Fleamarket extends Controller_Base_Template
         $fieldset = Session::get_flash('fleamarket.fieldset');
         if (! $fieldset) {
             $fieldset = \Model_Fleamarket::createFieldset();
+            $fieldset->add('agreement', '利用規約')->add_rule('required');
         }
 
         return $fieldset;
