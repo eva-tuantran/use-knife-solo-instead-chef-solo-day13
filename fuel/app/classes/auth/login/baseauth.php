@@ -55,9 +55,9 @@ QUERY;
 
         if (!is_null($users) && count($users) === 1) {
             $this->user = reset($users);
-            $this->user->last_login = Date::forge()->format('mysql');
+            // $this->user->last_login = Date::forge()->format('mysql');
             // $this->user->salt       = $this->create_salt();
-            $this->user->save();
+            // $this->user->save();
 
             return true;
         }
@@ -244,6 +244,17 @@ QUERY;
         return $this->user;
     }
 
+
+    /**
+     * ユーザが予約したフリマ総数
+     *
+     * @access public
+     * @return int
+     */
+    public function getEntryCount()
+    {
+        return $this->user->getEntryCount();
+    }
 
     /**
      * ユーザが予約しているフリマの予約数

@@ -53,19 +53,24 @@ class Controller_Inquiry extends Controller_Base_Template
     public function post_thanks()
     {
         if (! Security::check_token()) {
-            return Response::redirect('errors/doubletransmission');
+            throw new SystemException('ER00602');
         }
 
         $view = View::forge('inquiry/thanks');
         $this->setMetaTag('inquiry/thanks');
-
+        
         $this->template->content = $view;
-
+        
         try {
             $contact = $this->registerContact();
+        } catch ( Exception $e ) {
+            throw new SystemException('ER00601');
+        }
+        
+        try{
             $this->sendMailToUserAndAdmin($contact);
         } catch ( Exception $e ) {
-            $view->set('error', $e, false);
+            throw new SystemException('ER00602');
         }
     }
 

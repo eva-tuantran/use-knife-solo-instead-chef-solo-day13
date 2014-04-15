@@ -1,0 +1,3 @@
+# 開催日を過ぎたフリマの開催状況(event_status)を開催終了に更新する
+5 0 * * * apache php /var/www/html/oil refine fleamarket_event_close
+

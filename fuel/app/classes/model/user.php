@@ -165,7 +165,6 @@ class Model_User extends Orm\Model_Soft
                 'trim',
                 'valid_email',
                 'max_length' => array(50),
-                'unique_email',
             ),
             'form'       => array(
                 'type'  => 'text',
@@ -350,6 +349,90 @@ class Model_User extends Orm\Model_Soft
     const REGISTER_STATUS_BANNED      = 3;
 
     /**
+     * 登録ステータスが本登録のユーザを取得する
+     *
+     * $_soft_deleteを削除する場合、whereに以下を追記
+     *  'deleted_at' => NULL
+     *
+     * @access public
+     * @param
+     * @return array
+     * @author ida
+     */
+    public static function getActiveUsers()
+    {
+        $placeholders = array(
+            ':register_status' => self::REGISTER_STATUS_ACTIVATED,
+        );
+
+        $query = <<<"QUERY"
+SELECT
+    user_id,
+    last_name,
+    first_name,
+    email
+FROM
+    users
+WHERE
+    register_status = :register_status
+    AND deleted_at IS NULL
+QUERY;
+
+        $statement = \DB::query($query)->parameters($placeholders);
+        $result = $statement->execute();
+
+        $rows = null;
+        if (! empty($result)) {
+            $rows = $result->as_array();
+        }
+
+        return $rows;
+    }
+
+    /**
+     * 特定の都道府県のユーザを取得する
+     *
+     * $_soft_deleteを削除する場合、whereに以下を追記
+     *  'deleted_at' => NULL
+     *
+     * @access public
+     * @param mixed $prefecture_id 都道府県ID
+     * @return array
+     * @author ida
+     */
+    public static function getUsersByPrefectureId($prefecture_id)
+    {
+        $placeholders = array(
+            ':prefecture_id' => $prefecture_id,
+            ':register_status' => self::REGISTER_STATUS_ACTIVATED,
+        );
+
+        $query = <<<"QUERY"
+SELECT
+    user_id,
+    last_name,
+    first_name,
+    email
+FROM
+    users
+WHERE
+    prefecture_id = :prefecture_id
+    AND register_status = :register_status
+    AND deleted_at IS NULL
+QUERY;
+
+        $statement = \DB::query($query)->parameters($placeholders);
+        $result = $statement->execute();
+
+        $rows = null;
+        if (! empty($result)) {
+            $rows = $result->as_array();
+        }
+
+        return $rows;
+    }
+
+    /**
      * 新しいパスワードをセットします
      * パスワードの強制的な上書きなどに利用します。
      *
@@ -420,7 +503,6 @@ class Model_User extends Orm\Model_Soft
         }
     }
 
-
     /**
      * getBaseFieldset
      *
@@ -433,13 +515,10 @@ class Model_User extends Orm\Model_Soft
     public static function createFieldset()
     {
         $fieldset = Fieldset::forge();
-        $fieldset->validation()->add_callable('Model_User');
-        $fieldset->validation()->add_callable('Custom_Validation');
-        $fieldset->add_model('Model_User');
+        $fieldset->add_model(self::forge());
 
         return $fieldset;
     }
-
 
     /**
      * emailアドレスがユニークかどうか調査します
@@ -457,7 +536,6 @@ class Model_User extends Orm\Model_Soft
 
         return empty($count);
     }
-
 
     /**
      * ユーザにテンプレートのメールを送信します
@@ -481,9 +559,8 @@ class Model_User extends Orm\Model_Soft
         }
     }
 
-
     /**
-     * エントリーしたフリーマーケットの最新情報を取得します
+     * エントリーした全てのフリーマーケットの情報を取得します
      *
      * @access public
      * @return mixed
@@ -492,6 +569,18 @@ class Model_User extends Orm\Model_Soft
     public function getEntries($page = 1, $row_count = 30)
     {
         return \Model_Entry::getUserEntries($this->user_id, $page, $row_count);
+    }
+
+    /**
+     * エントリーしたフリーマーケットの最新情報を取得します
+     *
+     * @access public
+     * @return mixed
+     * @author shimma
+     */
+    public function getReservedEntries($page = 1, $row_count = 30)
+    {
+        return \Model_Entry::getUserReservedEntries($this->user_id, $page, $row_count);
     }
 
     /**
@@ -518,7 +607,6 @@ class Model_User extends Orm\Model_Soft
         return \Model_Entry::getUserReservedEntryCount($this->user_id);
     }
 
-
     /**
      * マイリスト(お気に入り)数を取得します
      *
@@ -530,6 +618,34 @@ class Model_User extends Orm\Model_Soft
     {
         return \Model_Favorite::getUserFavoriteCount($this->user_id);
     }
+
+    /**
+     * フリマ参加総数を取得します
+     *
+     * @access public
+     * @return int
+     * @author shimma
+     */
+    public function getEntryCount()
+    {
+        return \Model_Entry::getUserEntryCount($this->user_id);
+    }
+
+    /**
+     * 自分で投稿したフリマの総数の取得
+     *
+     * @access public
+     * @return int
+     * @author shimma
+     *
+     * @todo ここの実装
+     */
+    public function getMyFleamarketCount()
+    {
+        return 1;
+        return \Model_Fleamarket::getUserMyFleamarkets($this->user_id, $page, $row_count);
+    }
+
 
     /**
      * 対象のフリマIDのフリマ予約をキャンセルします
@@ -544,7 +660,6 @@ class Model_User extends Orm\Model_Soft
         return \Model_Entry::cancelUserEntry($this->user_id, $fleamarket_id);
     }
 
-
     /**
      * ユーザのお気に入り情報を取得します
      *
@@ -557,7 +672,6 @@ class Model_User extends Orm\Model_Soft
         return \Model_Favorite::getUserFavorites($this->user_id, $page, $row_count);
     }
 
-
     /**
      * ユーザの投稿したフリマの詳細情報を取得します
      *
@@ -569,7 +683,6 @@ class Model_User extends Orm\Model_Soft
     {
         return \Model_Fleamarket::getUserFleamarkets($this->user_id, $page, $row_count);
     }
-
 
     /**
      * 現在のユーザをアクティベートさせ正規に利用できるユーザにします
@@ -590,7 +703,32 @@ class Model_User extends Orm\Model_Soft
         }
     }
 
+    private static function getFindByKeywordQuery($keyword)
+    {
+        $like = preg_replace('/([_%\\\\])/','\\\\${1}',$keyword);
+        $like = "%${like}%";
 
+        $query = static::query()
+            ->where(array('email', 'LIKE', $like))
+            ->or_where(array('last_name', 'LIKE', $like))
+            ->or_where(array('first_name', 'LIKE', $like))
+            ->or_where(array('last_name_kana', 'LIKE', $like))
+            ->or_where(array('first_name_kana', 'LIKE', $like));
 
+        return $query;
+    }
 
+    public static function findByKeyword($keyword, $limit, $offset)
+    {
+        $query = static::getFindByKeywordQuery($keyword)
+            ->limit($limit)
+            ->offset($offset);
+
+        return $query->get();
+    }
+
+    public static function findByKeywordCount($keyword)
+    {
+        return static::getFindByKeywordQuery($keyword)->count();
+    }
 }

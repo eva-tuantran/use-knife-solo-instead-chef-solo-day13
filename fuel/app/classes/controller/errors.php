@@ -39,7 +39,7 @@ class Controller_Errors extends Controller_Template
         $this->template->title = 'アクセスが許可されておりません';
         $this->template->content = View::forge(
             'errors/content',
-            array('message' => 'アクセスが許可されておりません')
+            array('error_code' => '', 'message' => 'アクセスが許可されておりません')
         );
     }
 
@@ -55,7 +55,7 @@ class Controller_Errors extends Controller_Template
         $this->template->title = '該当ページが見つかりませんでした';
         $this->template->content = View::forge(
             'errors/content',
-            array('message' => '該当ページが見つかりませんでした')
+            array('error_code' => '', 'error_message' => '該当ページが見つかりませんでした')
         );
     }
 
@@ -71,7 +71,7 @@ class Controller_Errors extends Controller_Template
         $this->template->title = '不正なアクセスです';
         $this->template->content = View::forge(
             'errors/content',
-            array('message' => '不正なアクセスです')
+            array('error_code' => '', 'error_message' => '不正なアクセスです')
         );
     }
 
@@ -87,7 +87,7 @@ class Controller_Errors extends Controller_Template
         $this->template->title = '2重投稿です';
         $this->template->content = View::forge(
             'errors/content',
-            array('message' => '2重投稿です')
+            array('error_code' => '', 'error_message' => '2重投稿です')
         );
     }
 }
