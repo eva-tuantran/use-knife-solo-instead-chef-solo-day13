@@ -478,7 +478,7 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
                 )
             ));
 
-            if ($input['booth_fee']) {
+            if (strlen($input['booth_fee'])) {
                 if (! $fleamarket_entry_style) {
                     $fleamarket_entry_style = Model_Fleamarket_Entry_Style::forge(array(
                         'fleamarket_id' => $fleamarket->fleamarket_id,
