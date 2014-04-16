@@ -106,6 +106,10 @@ class Controller_Search extends Controller_Base_Template
         }
 
         $fleamarket = \Model_Fleamarket::findDetail($fleamarket_id);
+        if (! $fleamarket) {
+            Response::redirect('errors/notfound');
+        }
+
         $fleamarket_abouts = \Model_Fleamarket_About::findByFleamarketId(
             $fleamarket_id
         );
