@@ -60,7 +60,7 @@ class Model_Token extends Orm\Model_Soft
     public static function generate($user_id)
     {
         if (! Model_User::find($user_id)) {
-            throw new SystemException('該当ユーザが見つかりません');
+            throw new SystemException('ER00402');
         }
 
         $unique_hash = self::getUniqueHash($user_id);
@@ -74,7 +74,7 @@ class Model_Token extends Orm\Model_Soft
             $new_token = self::forge($data);
             $new_token->save();
         } catch (Exception $e) {
-            throw new SystemException('トークン作成に失敗しました');
+            throw new SystemException('ER00403');
         }
 
         return $new_token;
@@ -117,11 +117,11 @@ class Model_Token extends Orm\Model_Soft
         ));
 
         if (! $token) {
-            throw new SystemException('該当ユーザのトークンが発行されておりません');
+            throw new SystemException('ER00404');
         }
 
         if ($token->expired_at < Date::forge()->format('mysql')) {
-            throw new SystemException('トークンが有効期限切れです');
+            throw new SystemException('ER00405');
         }
 
         return $token;
@@ -147,11 +147,11 @@ class Model_Token extends Orm\Model_Soft
         ));
 
         if (! $token) {
-            throw new SystemException('トークンが存在しておりません');
+            throw new SystemException('ER00406');
         }
 
         if ($token->expired_at < Date::forge()->format('mysql')) {
-            throw new SystemException('トークンが有効期限切れです');
+            throw new SystemException('ER00405');
         }
 
         return $token;

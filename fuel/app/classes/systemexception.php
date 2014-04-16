@@ -15,7 +15,7 @@ class SystemException extends \FuelException
     public function response()
 	{
         $error_code = $this->getMessage();
-        $error_list = Lang::load('error', $error_code);
+        $error_list = Lang::load('error/user', $error_code);
 
         if (! isset($error_list[$error_code])) {
             $error_code = 0;

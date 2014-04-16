@@ -58,15 +58,15 @@ class Controller_Inquiry extends Controller_Base_Template
 
         $view = View::forge('inquiry/thanks');
         $this->setMetaTag('inquiry/thanks');
-        
+
         $this->template->content = $view;
-        
+
         try {
             $contact = $this->registerContact();
         } catch ( Exception $e ) {
             throw new SystemException('ER00601');
         }
-        
+
         try{
             $this->sendMailToUserAndAdmin($contact);
         } catch ( Exception $e ) {
@@ -112,7 +112,7 @@ class Controller_Inquiry extends Controller_Base_Template
     {
         $data = $this->getContactData();
         if (! $data) {
-            throw new Exception();
+            throw new Exception('ER00603');
         } else {
             $contact = Model_Contact::forge();
             $contact->set($data);

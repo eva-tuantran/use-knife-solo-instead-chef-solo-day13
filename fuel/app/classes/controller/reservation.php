@@ -23,14 +23,14 @@ class Controller_Reservation extends Controller_Base_Template
 
         $this->fieldset = $this->getFieldset();
         if (! $this->fieldset) {
-            throw new SystemException('ER00502');
+            throw new SystemException('ER00601');
         }
 
         $input = $this->fieldset->input();
         $fleamarket = Model_Fleamarket::find($input['fleamarket_id']);
 
         if (! $fleamarket) {
-            throw new SystemException('ER00502');
+            throw new SystemException('ER00601');
         }
 
         $this->fleamarket = $fleamarket;
@@ -59,7 +59,7 @@ class Controller_Reservation extends Controller_Base_Template
     public function post_confirm()
     {
         Session::set_flash('reservation.fieldset',$this->fieldset);
-        
+
         if (! $this->fieldset->validation()->run() ||
             $this->is_duplicate() ){
             return Response::redirect('reservation');
@@ -75,7 +75,7 @@ class Controller_Reservation extends Controller_Base_Template
         $view = View::forge('reservation/confirm');
         $view->set('fieldset', $this->fieldset, false);
         $view->set('fleamarket_entry_style',$fleamarket_entry_style);
-        
+
         $this->template->content = $view;
     }
 
@@ -93,7 +93,7 @@ class Controller_Reservation extends Controller_Base_Template
         if ($this->is_duplicate() ){
             return Response::redirect('reservation');
         }
-        
+
         $view = View::forge('reservation/thanks');
 
         $this->template->content = $view;
@@ -101,15 +101,14 @@ class Controller_Reservation extends Controller_Base_Template
         try {
             $entry = $this->registerEntry();
         } catch (Exception $e) {
-            throw new SystemException('ER00501');
+            throw new SystemException('ER00603');
         }
 
         if ($entry) {
-            try {
-                $this->sendMailToUser($entry);
-            } catch (Exception $e) {
-                throw new SystemException('ER00503');
-            }
+        try {
+            $this->sendMailToUser($entry);
+        } catch (Exception $e) {
+            throw new SystemException('ER00604');
         }
 
         $view->set('entry', $entry, false);
@@ -148,7 +147,7 @@ class Controller_Reservation extends Controller_Base_Template
         $fieldset->repopulate();
         return $fieldset;
     }
-    
+
     /**
      * entries テーブルへの登録
      *
@@ -159,7 +158,7 @@ class Controller_Reservation extends Controller_Base_Template
     {
         $data = $this->getEntryData();
         if (! $data) {
-            throw new Exception();
+            throw new Exception('ER00605');
         } else {
             $db = Database_Connection::instance();
             $db->start_transaction();
@@ -190,7 +189,7 @@ class Controller_Reservation extends Controller_Base_Template
             $fleamarket->updateEventReservationStatus(false);
             $fleamarket->save();
 
-            if (! Input::post('cancel') && 
+            if (! Input::post('cancel') &&
                 $entry->fleamarket_entry_style->isOverReservationLimit()) {
                 $db->rollback_transaction();
                 return false;
@@ -266,7 +265,7 @@ class Controller_Reservation extends Controller_Base_Template
                 $params["fleamarket_about_${id}.description"] = '';
             }
         }
-        
+
         foreach ($objects as $name => $obj) {
             foreach (array_keys($obj->properties()) as $column) {
                 $params["${name}.${column}"] = $obj->get($column);
@@ -274,19 +273,19 @@ class Controller_Reservation extends Controller_Base_Template
         }
 
         $entry_styles = Config::get('master.entry_styles');
-        $params['fleamarket_entry_style.entry_style_name'] 
+        $params['fleamarket_entry_style.entry_style_name']
             = $entry_styles[$entry->fleamarket_entry_style->entry_style_id];
- 
+
         $params['fleamarket_entry_styles.entry_style_name']
             = implode('/',array_map(function($obj) use ($entry_styles){
                         return $entry_styles[$obj->entry_style_id];
                     },$entry->fleamarket->fleamarket_entry_styles));
-        
+
         $params['fleamarket_entry_styles.fee']
             = implode('/',array_map(function($obj) use ($entry_styles){
                         return sprintf('%s:%d円',$entry_styles[$obj->entry_style_id],$obj->booth_fee);
                     },$entry->fleamarket->fleamarket_entry_styles));
-        
+
         foreach (array('fleamarket.event_time_start','fleamarket.event_time_end') as $column) {
             $params[$column] = substr($params[$column],0,5);
         }
@@ -303,7 +302,7 @@ class Controller_Reservation extends Controller_Base_Template
                 'fleamarket_id' => $input['fleamarket_id']
             ))
             ->count();
-        
+
         return $count > 0;
     }
 }

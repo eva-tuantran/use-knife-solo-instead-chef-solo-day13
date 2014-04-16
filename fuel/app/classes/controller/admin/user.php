@@ -1,6 +1,6 @@
 <?php
 /**
- * 
+ *
  *
  * @extends  Controller_Base_Template
  * @author Hiroyuki Kobayashi
@@ -14,7 +14,7 @@ class Controller_Admin_User extends Controller_Admin_Base_Template
     {
         parent::before();
         if (Input::param('user_id')) {
-            $this->user = 
+            $this->user =
                 Model_User::find(Input::param('user_id'));
         }
     }
@@ -124,7 +124,7 @@ class Controller_Admin_User extends Controller_Admin_Base_Template
     {
         $data = $this->getUserData();
         if (! $data) {
-            throw new Exception();
+            throw new Exception('ER00402');
         } else {
             if (Input::param('user_id')) {
                 $user = Model_User::find(Input::param('user_id'));
@@ -172,12 +172,12 @@ class Controller_Admin_User extends Controller_Admin_Base_Template
     {
         $view = View::forge('admin/user/list');
         $this->template->content = $view;
-        
+
         if (strlen(Input::param('keyword'))) {
             $total = Model_User::findByKeywordCount(
                 Input::param('keyword')
             );
-            
+
             Pagination::set_config(array(
                 'pagination_url' => 'admin/user/list?keyword=' . urlencode(Input::param('keyword')),
                 'uri_segment'    => 4,
@@ -186,7 +186,7 @@ class Controller_Admin_User extends Controller_Admin_Base_Template
                 'total_items'    => $total,
                 'name'           => 'pagenation',
             ));
-            
+
             $users = Model_User::findByKeyword(
                 Input::param('keyword'),
                 Pagination::get('per_page'),
