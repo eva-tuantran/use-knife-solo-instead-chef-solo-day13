@@ -18,7 +18,7 @@
   <!-- form -->
   <div id="form" class="container">
     <div class="box clearfix">
-      <h3>フリマ登録情報入力欄</h3>
+      <h3>フリマ予約情報入力欄</h3>
       <form action="/reservation/thanks" method="post" class="form-horizontal">
 	<div class="form-group">
 	  <label class="col-sm-2 control-label">出店方法</label>
