@@ -17,7 +17,7 @@ class Model_Token extends Orm\Model_Soft
         'hash',
         'expired_at',
         'created_at',
-        'updated_a',
+        'updated_at',
         'deleted_at',
     );
 
