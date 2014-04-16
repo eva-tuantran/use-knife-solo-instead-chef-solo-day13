@@ -32,7 +32,7 @@
       <?php if (count($fleamarket->fleamarket_entry_styles) == 0){ ?>
       現在予約することが出来ません
       <?php }elseif ($is_duplicate) { ?>
-      既に予約済みです。予約変更の場合マイページから変更を行って下さい。
+      既に予約済みです。キャンセルの場合、マイページにてキャンセルを行って下さい。
       <?php }else{ ?>
       <form action="/reservation/confirm" method="POST" class="form-horizontal">
     <div class="form-group">
