@@ -719,6 +719,7 @@ QUERY;
             ':event_status' => self::EVENT_STATUS_RECEIPT_END,
             ':display_flag' => self::DISPLAY_FLAG_ON,
             ':register_status' => self::REGISTER_TYPE_ADMIN,
+            ':pickup_flag' => self::PICKUP_FLAG_ON,
         );
 
         $limit = '';
@@ -748,6 +749,7 @@ WHERE
     AND f.register_type = :register_status
     AND f.event_status <= :event_status
     AND DATE_FORMAT(f.event_date, '%Y-%m-%d') >= CURDATE()
+    AND f.pickup_flag = :pickup_flag
     AND f.deleted_at IS NULL
 ORDER BY
     f.event_date
