@@ -35,14 +35,13 @@
       <ul>
         <?php if(Auth::check()): ?>
             <li class="user">ようこそ、<?php echo Auth::get_screen_name(); ?> さん</li>
-            <li><a href="/mypage">マイページ</a></li>
-            <li><a href="/login/out">ログアウト</a></li>
+            <li class="login"><a href="/login/out"><i></i>ログアウト</a></li>
         <?php else: ?>
             <li class="user">ようこそ、ゲストさん</li>
-            <li><a href="/login">ログイン</a></li>
-            <li><a href="/signup">会員登録</a></li>
+            <li class="login"><a href="/login"><i></i>ログイン</a></li>
+            <li class="regist"><a href="/signup"><i></i>会員登録</a></li>
         <?php endif; ?>
-        <li class="guide hidden-xs"><a href="/guide"><i></i>初めての方へ</a></li>
+        <li class="guide hidden-xs"><a href="/info/visitor"><i></i>初めての方へ</a></li>
         <li class="inquiry hidden-xs"><a href="/inquiry"><i></i>お問い合せ</a></li>
       </ul>
     </div>
@@ -50,32 +49,40 @@
   <!-- /headerBar -->
   <!-- globalNav -->
   <nav class="navbar navbar-default">
-  <div id="globalNavBar" class="container">
-    <h1><a href="/"><img src="/assets/img/logo.png" alt="楽市楽座" width="180" height="29"></a></h1>
-    <button class="navbar-toggle" data-toggle="collapse" data-target=".target"> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span> </button>
-    <div class="collapse navbar-collapse target">
-      <ul id="globalNav">
-        <li class="market"><a href="/search/1"><i></i>フリマ会場一覧</a></li>
-        <li class="reservation"><a href="/search?reservation=1"><i></i>出店予約</a></li>
-        <li class="reservation"><a href="/fleamarket"><i></i>フリマ投稿</a></li>
-        <!-- <li class="news"><a href="/news"><i></i>新着情報</a></li> -->
-        <li class="blog"><a href="http://aucfan.com/article/" target="_blank"><i></i>新着ブログ(仮)</a></li>
-        <li class="mypage"><a href="/mypage"><i></i>マイページ</a></li>
-        <li class="guide visible-xs"><a href="/guide">初めての方へ</a></li>
-        <li class="inquiry visible-xs"><a href="/inquiry">お問い合せ</a></li>
-      </ul>
-      <!-- globalNavBottom -->
-      <div id="globalNavBottom">
-        <ul class="breadcrumb hidden-xs">
-          <li><a href="/">ホーム</a></li>
-          <li class="active"><?php echo $title; ?></li>
+    <div id="globalNavBar" class="container">
+      <h1><a href="/"><img src="/assets/img/logo.png" alt="楽市楽座" width="240" height="40"></a></h1>
+      <button class="navbar-toggle" data-toggle="collapse" data-target=".target"> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span> </button>
+      <div class="collapse navbar-collapse target">
+        <ul id="globalNav">
+          <li class="market"><a href="/search/1"><i></i>フリマ会場一覧</a></li>
+          <li class="reservation"><a href="/search?reservation=1"><i></i>出店予約</a></li>
+          <li class="post"><a href="/fleamarket"><i></i>フリマ投稿</a></li>
+          <!-- <li class="news"><a href="/news"><i></i>新着情報</a></li> -->
+          <li class="blog"><a href="http://aucfan.com/article/" target="_blank"><i></i>新着ブログ(仮)</a></li>
+          <li class="mypage"><a href="/mypage"><i></i>マイページ</a></li>
+          <li class="guide visible-xs"><a href="/guide">初めての方へ</a></li>
+          <li class="inquiry visible-xs"><a href="/inquiry">お問い合せ</a></li>
         </ul>
-        <form><input type="text" class="form-control hidden-xs" id="keywordInput"></form>
+        <?php
+            if (! $is_top):
+        ?>
+        <!-- globalNavBottom -->
+        <div id="globalNavBottom">
+          <ul class="breadcrumb hidden-xs">
+            <li><a href="/">ホーム</a></li>
+            <li class="active"><?php echo $title; ?></li>
+          </ul>
+          <form>
+            <input type="text" class="form-control hidden-xs" id="keywordInput">
+          </form>
+        </div>
+        <!-- /globalNavBottom -->
+        <?php
+            endif;
+        ?>
       </div>
-      <!-- /globalNavBottom -->
     </div>
-  </div>
-</div>
+  </nav>
 <!-- /globalNav -->
 </div>
 <!-- /header -->

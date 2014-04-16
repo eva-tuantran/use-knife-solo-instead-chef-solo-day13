@@ -7,7 +7,7 @@
                 $prefecture = $prefectures[$fleamarket['prefecture_id']];
             endif;
 ?>
-  <dt><?php echo e(date('Y年n月j日', strtotime($fleamarket['event_date'])));?></dt>
+  <dt><?php echo e(date('Y年n月j日', strtotime($fleamarket['event_date'])));?>(<?php echo $week_list[date('w', strtotime($fleamarket['event_date']))];?>)</dt>
   <dd>
       <a href="/detail/<?php echo e($fleamarket['fleamarket_id']);?>">
           <?php

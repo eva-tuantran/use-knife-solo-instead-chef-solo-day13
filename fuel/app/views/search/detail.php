@@ -101,7 +101,11 @@ Map.prototype = {
   <div id="title" class="container">
     <div class="box clearfix">
       <div class="titleLeft">
-        <h2><?php if ($is_admin_fleamarket):?><strong>楽市楽座主催</strong>&nbsp;<?php endif;?><?php echo e($fleamarket['name']);?></h2>
+        <h2>
+          <?php if ($is_admin_fleamarket):?>
+          <strong><img src="/assets/img/resultPush.png" alt="楽市楽座主催" width="78" height="14"></strong>
+          <?php endif;?><?php echo e($fleamarket['name']);?>
+        </h2>
         <p class="date"><?php
             echo e(date('Y年n月j日', strtotime($fleamarket['event_date'])));
             echo '(' . $week_list[date('w', strtotime($fleamarket['event_date']))] . ')';
@@ -136,13 +140,27 @@ Map.prototype = {
   <!-- image -->
   <div id="image" class="col-sm-6">
     <h3>開催イメージ</h3>
-    <div class="mainPhoto"><img src="http://dummyimage.com/460x300/00bfff/fff.jpg" alt="" width="460px" height="300px" class="img-responsive"></div>
+    <?php
+        if (count($image_files) > 0):
+            $first_image_name = $image_files[0];
+    ?>
+    <div class="mainPhoto"><img src="/files/fleamarket/img/<?php echo e($first_image_name);?>" alt="" width="460px" height="300px" class="img-responsive"></div>
     <ul class="thumbnailPhoto">
-      <li><img src="http://dummyimage.com/100x65/00bfff/fff.jpg" alt="" width="100"></li>
-      <li><img src="http://dummyimage.com/100x65/32cd32/fff.jpg" alt="" width="100"></li>
-      <li><img src="http://dummyimage.com/100x65/ffd700/fff.jpg" alt="" width="100"></li>
-      <li><img src="http://dummyimage.com/100x65/4b0082/fff.jpg" alt="" width="100"></li>
+    <?php
+            foreach ($image_files as $image_file_name):
+    ?>
+      <li><img src="/files/fleamarket/img/<?php echo e($image_file_name);?>" alt="" width="100"></li>
+    <?php
+            endforeach;
+    ?>
     </ul>
+    <?php
+        else:
+    ?>
+    <div class="mainPhoto"><img src="/assets/img/noimage.jpg" alt="" width="460px" height="300px" class="img-responsive"></div>
+    <?php
+        endif;
+    ?>
   </div>
   <!-- /image -->
   <!-- map -->
@@ -153,13 +171,13 @@ Map.prototype = {
   <!-- /map -->
   <!-- text -->
   <div id="text" class="col-sm-12">
-<!--  <div id="text" class="container"> -->
+  <!--  <div id="text" class="container"> -->
     <div class="box clearfix"><?php echo nl2br(e($fleamarket['description']));?></div>
   </div>
   <!-- /text -->
   <!-- table -->
   <div id="table" class="col-sm-12">
-<!--  <div id="table" class="container"> -->
+  <!--  <div id="table" class="container"> -->
     <div class="box clearfix">
       <h3>開催情報</h3>
       <dl class="dl-horizontal">

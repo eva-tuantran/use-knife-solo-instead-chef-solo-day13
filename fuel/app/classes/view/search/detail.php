@@ -21,6 +21,21 @@ class View_Search_Detail extends ViewModel
         $this->fleamarket = $fleamarket;
         $this->week_list = \Config::get('master.week');
         $this->entry_styles = \Config::get('master.entry_styles');
+        $this->image_files = $this->createFileNames($this->fleamarket_images);
+    }
+
+    private function createFileNames($images)
+    {
+        $result = array();
+        if (! $images) {
+            return $result;
+        }
+
+        foreach ($images as $image) {
+            $result[] = $image['file_name'];
+        }
+
+        return $result;
     }
 
     /**

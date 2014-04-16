@@ -1,3 +1,25 @@
+<script type='text/javascript'>
+var googletag = googletag || {};
+googletag.cmd = googletag.cmd || [];
+(function() {
+var gads = document.createElement('script');
+gads.async = true;
+gads.type = 'text/javascript';
+var useSSL = 'https:' == document.location.protocol;
+gads.src = (useSSL ? 'https:' : 'http:') +
+'//www.googletagservices.com/tag/js/gpt.js';
+var node = document.getElementsByTagName('script')[0];
+node.parentNode.insertBefore(gads, node);
+})();
+</script>
+
+<script type='text/javascript'>
+googletag.cmd.push(function() {
+googletag.defineSlot('/64745063/(楽市楽座)検索結果_フッターバナー_728x90', [728, 90], 'div-gpt-ad-1397113960029-0').addService(googletag.pubads());
+googletag.pubads().enableSingleRequest();
+googletag.enableServices();
+});
+</script>
 <div id="contentSearch" class="row">
   <!-- searchResult -->
   <div id="searchResult" class="col-sm-9 col-sm-push-3">
@@ -59,7 +81,7 @@
             endif;
         endif;
     ?>
-    <div id="resultTitle"><?php echo $title;?>フリマ情報一覧</div>
+    <div id="resultTitle"><?php echo $title;?>フリマ会場一覧</div>
     <!-- result -->
 <?php
     if (! $fleamarket_list):
@@ -110,11 +132,13 @@
 ?>
     <div class="box result <?php echo $status_class;?> <?php echo $resultPush;?> clearfix">
       <h3>
-          <?php if ($is_admin_fleamarket):?><strong>楽市楽座主催</strong>&nbsp;<?php endif;?>
-          <a href="/detail/<?php echo e($fleamarket['fleamarket_id']);?>">
-              <?php echo e(date('Y年n月j日', strtotime($fleamarket['event_date'])));?>(<?php echo $week_list[date('w', strtotime($fleamarket['event_date']))];?>)&nbsp;
-              <?php echo e($fleamarket['name']);?>
-          </a>
+        <?php if ($is_admin_fleamarket):?>
+        <strong><img src="/assets/img/resultPush.png" alt="楽市楽座主催" width="78" height="14"></strong>
+        <?php endif;?>
+        <a href="/detail/<?php echo e($fleamarket['fleamarket_id']);?>">
+          <?php echo e(date('Y年n月j日', strtotime($fleamarket['event_date'])));?>(<?php echo $week_list[date('w', strtotime($fleamarket['event_date']))];?>)&nbsp;
+          <?php echo e($fleamarket['name']);?>
+        </a>
       </h3>
       <div class="resultPhoto"><a href="/detail/<?php echo e($fleamarket_id);?>"><img src="/assets/img/noimage.jpg" class="img-rounded"></a></div>
       <div class="resultDetail">
@@ -308,7 +332,13 @@
 </div>
 <!-- /searchSelecter -->
 <!-- ad -->
-<div class="ad"><img src="/assets/img/ad/test.jpg" alt="test" width="970" height="150" class="img-responsive"></div>
+<div class="ad">
+<!-- (楽市楽座)検索結果_フッターバナー_728x90 -->
+<div id="div-gpt-ad-1397113960029-0" class="ad"　style="width: 728px; height: 90px;">
+<script type="text/javascript">
+googletag.cmd.push(function() { googletag.display("div-gpt-ad-1397113960029-0"); });
+</script>
+</div>
 <!-- /ad -->
 <!-- pagination -->
 <?php

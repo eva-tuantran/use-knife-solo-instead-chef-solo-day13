@@ -1,11 +1,14 @@
 @charset "UTF-8";
 /* body */
+
 body {
 	color: #4b4b4b;
 	font-family: Helvetica, Arial, Verdana, "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro", Osaka, "メイリオ", Meiryo, "ＭＳ Ｐゴシック", "MS PGothic", sans-serif;
 	text-align: center;
 	font-size: 13px;
-	background: #b2e366 url(../img/bg.gif) center top no-repeat;
+	background: #b2e366 url(../img/bg.gif) center top repeat-x!important;
+	zoom: 1;
+position: relative;
 }
 /* anchor */
 a:link {
@@ -43,6 +46,9 @@ a:active {
 .nav-pills {
 	padding-bottom: 5px;
 }
+.nav-pills .badge {
+	background-color: #f90;
+}
 .nav-pills>li {
 	margin-right: 15px
 }
@@ -75,6 +81,10 @@ dl dt {
 	background-color: #78bd36;
 	color: #fff;
 	border: none;
+}
+#searchButton button:hover,
+#submitButton button:hover {
+  background-color: #b7d316;
 }
 label {
 	font-weight: normal;
@@ -361,10 +371,10 @@ h2 i {
 	margin-top: 10px;
 }
 #globalNavBar #keywordInput {
-	width: 200px;
+	width: 400px;
 	float: right;
 	border: 1px #dedede solid;
-	background: #fafafa url(../img/icon_search.png) 170px center no-repeat;
+	background: #fafafa url(../img/icon_search.png) 370px center no-repeat;
 	;
 }
 #search h2 i {
@@ -416,6 +426,15 @@ li.inquiry i {
 }
 #ranking h2 i {
 	background-position: -105px 0;
+}
+#soon h2 i {
+	background-position: -135px 0;
+}
+#contentHome #map h2 i {
+	background-position: -150px 0;
+}
+#contentHome #calendar h2 i {
+	background-position: -165px 0;
 }
 /* footer */
 #footerWrap {
@@ -552,6 +571,7 @@ li.inquiry i {
 	height: auto;
 	max-width: 100%;
 	width: auto;
+	margin: 5px 0 6px 0;
 }
 /* calendar */
 #calendar h2 {
@@ -621,6 +641,9 @@ li.inquiry i {
   background-position:-52px -15px;
 }
 /* search */
+#contentHome #search {
+  clear: both;
+}
 #contentHome #search h2 {
 	margin-bottom: 10px;
 }
@@ -809,19 +832,21 @@ li.inquiry i {
 #contentDetail #image h3,
 #contentDetail #map h3 {
 	text-align: left;
-	color: #fff;
-	font-weight: bold;
-	padding: 15px 0 5px 0;
+	padding: 7px 10px;
+	margin-top: 15px;
+	background-color: #fff;
+	display: inline-block;
+	float: left;
+	-moz-border-radius: 5px 5px 0px 0px;
+  -webkit-border-radius: 5px 5px 0px 0px;
+  border-radius: 5px 5px 0px 0px;
 }
 #contentDetail #image ul {
 	padding-top: 20px;
 }
-#contentDetail #image .mainPhoto {
-	background-color: #fff;
-}
 #contentDetail #image ul li {
 	float: left;
-	margin-right:18px;
+	margin-right:17px;
 	background-color: #fff;
 }
 #contentDetail #image ul li:last-child {
@@ -829,6 +854,9 @@ li.inquiry i {
 }
 #contentDetail #image ul li img {
 	cursor: pointer;
+}
+#contentDetail #text {
+  clear: both;
 }
 #contentDetail #text .box {
 	line-height: 1.6;
@@ -849,6 +877,15 @@ li.inquiry i {
 #contentDetail #table .noneReservation {
 	margin: 0 auto;
 	float: right;
+}
+
+/* --------------------contentList-------------------- */
+#contentList .box {
+	margin-bottom: 20px;
+}
+#contentList .result .resultDetail {
+	float: right;
+	width: 670px;
 }
 
 /* --------------------contentSearch-------------------- */
@@ -900,6 +937,11 @@ li.inquiry i {
 	text-align: left;
 	padding-bottom: 15px;
 }
+#resultDescription {
+	color: #fff;
+	text-align: left;
+	padding-bottom: 15px;
+}
 #contentWrap .ad {
   padding:10px 0 30px 0;
 }
@@ -943,13 +985,13 @@ li.inquiry i {
 }
 .resultPush strong {
 	background-color: #b7d316;
-	color: #fff;
-	font-size: 85%;
-	padding: 3px;
+	padding: 0 3px 5px 3px;
+	height: 14px;
 	margin-right: 5px;
 	border-radius: 2px;
 	-webkit-border-radius: 2px;
 	-moz-border-radius: 2px;
+	line-height: 0;
 }
 .result .detailLink {
 	clear: left;
@@ -1110,6 +1152,14 @@ li.inquiry i {
   font-size: 12px;
 }
 
+#contentMypage #option {
+	color: #999;
+}
+#contentMypage #option dd {
+  margin: 10px 0 0 1em;
+}
+
+
 /* --------------------contentError-------------------- */
 #contentError #error {
 	margin-bottom: 20px;
@@ -1126,16 +1176,24 @@ li.inquiry i {
   text-align: center;
 }
 #loginForm form input {
-  margin-bottom: 15px;
+  margin-bottom: 13px;
 }
-
+#loginForm strong {
+  color: #cc0000;
+  height: 1em;
+  margin-bottom: 10px;
+  display: block;
+}
 #loginForm form button {
   background-color: #78bd36;
   color: #fff;
   border: none;
 }
+#loginForm form button:hover {
+  background-color: #b7d316;
+}
 #loginForm ul {
-  padding-top: 15px;
+  padding-top: 5px;
 }
 #loginForm ul li {
   margin-top: 5px;
@@ -1320,6 +1378,7 @@ li.inquiry i {
 .result .facilitys li {
 	margin-bottom: 5px;
 }
+#contentList .result .resultDetail,
 .result .resultDetail {
 	padding: 15px 0 20px 0;
 	float: none;

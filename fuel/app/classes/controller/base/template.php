@@ -98,6 +98,11 @@ class Controller_Base_Template extends Controller_Template
         $this->login_user = Auth::get_user_instance();
 
         $segments = $this->request->route->segments;
+        $this->template->is_top = false;
+        if (! isset($segments[0]) || $segments[0] == 'top') {
+            $this->template->is_top = true;
+        }
+
         if ($segments) {
             if (count($segments) == 1 ){
                 $segments[] = 'index';
