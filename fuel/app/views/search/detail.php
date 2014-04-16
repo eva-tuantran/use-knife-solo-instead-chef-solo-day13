@@ -171,6 +171,14 @@ Map.prototype = {
                 echo '-';
             endif;
         ?></dd>
+<?php
+    if (! $is_admin_fleamarket):
+?>
+        <dt>主催者ホームページ</dt>
+        <dd><a href="<?php echo e($fleamarket['website']);?>" target="_blank"><?php echo e($fleamarket['website']);?></a></dd>
+<?php
+    endif;
+?>
         <dt>開催日程</dt>
         <dd><?php
             if ($fleamarket['event_date']):

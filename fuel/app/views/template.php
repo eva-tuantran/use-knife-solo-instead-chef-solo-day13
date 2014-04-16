@@ -20,8 +20,8 @@
 <link href="/assets/css/base.css" rel="stylesheet">
 <script src="/assets/js/jquery.min.js"></script>
 <script src="/assets/js/bootstrap.min.js"></script>
-<?php echo Asset::render('add_css', true);?>
-<?php echo Asset::render('add_js', true);?>
+<?php echo Asset::render('add_css', false);?>
+<?php echo Asset::render('add_js', false);?>
 </head>
 <body>
 <!-- header -->
@@ -164,6 +164,7 @@
     <ul id="footerNav" class="list-inline">
       <li><a href="/info/visitor">初めての方へ</a></li>
       <li><a href="/info/agreement">利用規約</a></li>
+      <li><a href="/info/question">よくある質問</a></li>
       <li><a href="/inquiry">お問い合わせ</a></li>
       <li><a href="/info/manager">運営会社</a></li>
       <li><a href="http://aucfan.com/article/">ブログ</a></li>

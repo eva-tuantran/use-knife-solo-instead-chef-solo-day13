@@ -42,8 +42,8 @@
               }
               ?>
             </div>
-
           </div>
+
           <div class="form-group form-address">
             <label class="col-sm-2 control-label" for="inputAddress">ご住所</label>
             <div class="col-sm-10">
@@ -54,9 +54,9 @@
                 echo $errors['zip'];
               }
               ?>
-              <button type="submit" class="btn btn-default" onclick="AjaxZip3.zip2addr('zip','','form-control','address'); return false;">住所を検索</button>
+              <button type="submit" class="btn btn-default" onclick="AjaxZip3.zip2addr('zip','','prefecture_id','address'); return false;">住所を検索</button>
 
-              <select name="form-control" class="form-control">
+              <select name="prefecture_id" class="form-control">
                 <?php foreach ($prefectures as $id => $prefecture) { ?>
                 <option value="<?php echo $id; ?>"<?php if ($id == $fields['prefecture_id']->value) echo ' selected=selected';?>><?php echo e($prefecture); ?></option>
                 <?php } ?>
