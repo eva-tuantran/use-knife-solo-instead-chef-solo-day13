@@ -10,6 +10,10 @@
 class Model_Mail_Magazine extends \Orm\Model
 {
     /**
+     * メールマガジン関連ファイルディレクトリ
+     */
+    const ROOT_DIR = '/var/www/html/public/files/mailmagazine/';
+    /**
      * メールマガジンタイプ 1全員,2:希望者全員,3:出店予約者
      */
     const MAIL_MAGAZINE_TYPE_ALL = 1;
@@ -17,13 +21,13 @@ class Model_Mail_Magazine extends \Orm\Model
     const MAIL_MAGAZINE_TYPE_RESEVED_ENTRY = 3;
 
     /**
-     * 送信ステータス 0:送信待ち,1:送信中,2:正常終了,9エラー終了
+     * 送信ステータス 0:送信待ち,1:送信中,2:正常終了,3エラー終了,9:キャンセル
      */
     const SEND_STATUS_WAITING = 0;
     const SEND_STATUS_PROGRESS = 1;
     const SEND_STATUS_NORMAL_END = 2;
     const SEND_STATUS_ERROR_END = 3;
-    const SEND_STATUS_ERROR_CANCEL = 9;
+    const SEND_STATUS_CANCEL = 9;
 
     protected static $_table_name = 'mail_magazines';
 
@@ -66,6 +70,9 @@ class Model_Mail_Magazine extends \Orm\Model
                 'required', 'max_length' => array(250),
             ),
         ),
+        'additional_serialize_data' => array(
+            'form'  => array('type' => false)
+        ),
         'send_status' => array(
             'form'  => array('type' => false)
         ),
@@ -99,19 +106,91 @@ class Model_Mail_Magazine extends \Orm\Model
         ),
     );
 
-    /*
-     * Fieldsetオブジェクトの生成
+    /**
+     * 本文で置換するパラメータを取得する
+     *
+     * メールマガジン種別ごと
      *
      * @access public
+     * @param mixed $mail_magazine_type メールマガジンタイプ
      * @return array
      * @author ida
      */
-    public static function createFieldset()
+    public static function getPatternParameter($mail_magazine_type)
     {
-        $fieldset = \Fieldset::forge('mail_magazine');
-        $fieldset->add_model(self::forge());
+        if ($mail_magazine_type == \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_ALL) {
+            $param = array('user_name');
+        } elseif ($mail_magazine_type == \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_REQUEST) {
+            $param = array('user_name');
+        } elseif ($mail_magazine_type == \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_RESEVED_ENTRY) {
+            $param = array(
+                'user_name',
+                'fleamarket_name',
+                'event_date',
+                'start_time',
+                'end_time',
+            );
+        }
 
-        return $fieldset;
+        return $param;
+    }
+
+    /**
+     * 本文で置換するパラメータを取得する
+     *
+     * メールマガジン種別ごと
+     *
+     * @access public
+     * @param string $str メール本文
+     * @param array $pattern_list 置換パラメータ
+     * @param array $options 置換情報
+     * @return array
+     * @author ida
+     */
+    public static function createReplaceParameter(
+        $str, $pattern_list, $options
+    ) {
+        if (! $str || ! $pattern_list || ! $options) {
+            return false;
+        }
+
+        if (isset($options['user'])) {
+            $user = $options['user'];
+        }
+        if (isset($options['fleamarket'])) {
+            $fleamarket = $options['fleamarket'];
+        }
+
+        $pattern = array();
+        $replacement = array();
+        foreach ($pattern_list as $p) {
+            $pattern[] = '##' . $p . '##';
+            switch ($p) {
+                case 'user_name':
+                    $replacement[] = $user['last_name'] . ' ' . $user['first_name'];
+                    break;
+                case 'fleamarket_name':
+                    $replacement[] = $fleamarket['name'];
+                    break;
+                case 'event_date':
+                    $event_date = strtotime($fleamarket['event_date']);
+                    $replacement[] = date('Y年m月d日', $event_date);
+                    break;
+                case 'start_time':
+                    $event_time_start = strtotime($fleamarket['event_time_start']);
+                    $replacement[] = date('H:i', $event_time_start);
+                    break;
+                case 'end_time':
+                    $event_time_end = strtotime($fleamarket['event_time_end']);
+                    $replacement[] = date('H:i', $event_time_end);
+                    break;
+                default:
+                    $replacement[] = '';
+                    break;
+            }
+        }
+
+        return array($pattern, $replacement);
     }
 
     /**
@@ -119,16 +198,16 @@ class Model_Mail_Magazine extends \Orm\Model
      *
      * @access private
      * @param string $str 文字列
-     * @param array $params 変換パラメータ
+     * @param array $pattern 検索パターン
+     * @param array $replacement 置換パラメータ
      * @return string
      * @author ida
      */
-    public static function replaceByParam($str = null, $replace = array())
-    {
-        if ($str && $replace) {
-            foreach ($replace as $key => $value) {
-                $str = str_replace("##{$key}##", $value, $str);
-            }
+    public static function replaceByParam(
+        $str = null, $pattern = array(), $replacement = array()
+    ) {
+        if ($str && $pattern && $replacement) {
+            $str = str_replace($pattern, $replacement, $str);
         }
 
         return $str;
@@ -177,7 +256,7 @@ class Model_Mail_Magazine extends \Orm\Model
         $email->from($from_email, $from_name);
         $email->to($to);
         $email->subject($subject);
-        $email->body($body);
+        $email->body(self::convertEncoding($body));
 
         try {
             $email->send();
@@ -193,7 +272,7 @@ class Model_Mail_Magazine extends \Orm\Model
      *
      * 処理ファイルを確認
      *
-     * @TODO: ディレクトリ設定を移動する
+     * @TODO: ファイル名、ディレクトリの設定を移動する
      *
      * @access private
      * @param
@@ -203,15 +282,14 @@ class Model_Mail_Magazine extends \Orm\Model
     public static function isProcess()
     {
         $process_file_name = 'process_mail_magazine';
-        $root_dir = DOCROOT . 'public' . DS . 'files' . DS . 'mailmagazine' . DS;
 
-        return file_exists($root_dir . $process_file_name);
+        return file_exists(self::ROOT_DIR . $process_file_name);
     }
 
     /**
      * 送信実行確認ファイル処理
      *
-     * @TODO: ディレクトリ設定を移動する
+     * @TODO: ファイル名、ディレクトリの設定を移動する
      *
      * @access private
      * @param　boolean $delete 削除（中止）
@@ -221,8 +299,7 @@ class Model_Mail_Magazine extends \Orm\Model
     public static function startProcess()
     {
         $process_file_name = 'process_mail_magazine';
-        $root_dir = DOCROOT . 'public' . DS . 'files' . DS . 'mailmagazine' . DS;
-        $result = \File::create($root_dir, $process_file_name);
+        $result = \File::create(self::ROOT_DIR, $process_file_name);
 
         return $result;
     }
@@ -230,7 +307,7 @@ class Model_Mail_Magazine extends \Orm\Model
     /**
      * 送信実行確認ファイル処理
      *
-     * @TODO: ディレクトリ設定を移動する
+     * @TODO: ファイル名、ディレクトリの設定を移動する
      *
      * @access private
      * @param　boolean $delete 削除（中止）
@@ -240,9 +317,23 @@ class Model_Mail_Magazine extends \Orm\Model
     public static function stopProcess()
     {
         $process_file_name = 'process_mail_magazine';
-        $root_dir = DOCROOT . 'public' . DS . 'files' . DS . 'mailmagazine' . DS;
-        $result = \File::delete($root_dir . $process_file_name);
+        $result = \File::delete(self::ROOT_DIR . $process_file_name);
 
         return $result;
+    }
+
+    /*
+     * Fieldsetオブジェクトの生成
+     *
+     * @access public
+     * @return array
+     * @author ida
+     */
+    public static function createFieldset()
+    {
+        $fieldset = \Fieldset::forge('mail_magazine');
+        $fieldset->add_model(self::forge());
+
+        return $fieldset;
     }
 }
