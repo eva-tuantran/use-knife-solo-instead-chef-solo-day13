@@ -401,7 +401,7 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
 
             $matches = array();
             if (preg_match('/^(\w+)\.jpg$/',$image_filename,$matches)) {
-                $filename = DOCROOT . 'files/fleamarket/img/' . $size['suffix'] . $matches[1] . '.jpg';
+                $filename = DOCROOT . 'files/fleamarket/img/' . $size['prefix'] . $matches[1] . '.jpg';
                 imagejpeg($resize, $filename);
             }
             imagedestroy($image);
