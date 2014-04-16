@@ -16,6 +16,9 @@ class Model_User extends Orm\Model_Soft
         'favorites' => array(
             'key_from' => 'user_id',
         ),
+        'entries' => array(
+            'key_from' => 'user_id',
+        ),
     );
 
     protected static $_properties = array(
@@ -339,6 +342,7 @@ class Model_User extends Orm\Model_Soft
         ),
     );
 
+    protected $_has_entry = array();
     /**
      * 登録ステータス 0:仮登録,1:本登録.2:退会,3:強制退会
      *
@@ -730,5 +734,25 @@ QUERY;
     public static function findByKeywordCount($keyword)
     {
         return static::getFindByKeywordQuery($keyword)->count();
+    }
+
+    /**
+     * 予約済みか
+     *
+     * @access public
+     * @param mixed $fleamarket_id 
+     * @return bool
+     * @author kobayasi
+     */
+    public function hasEntry($fleamarket_id)
+    {
+        if (! $this->_has_entry) {
+            $_has_entry = array();
+            foreach ($this->entries as $entry) {
+                $_has_entry[$entry->fleamarket_id] = 1;
+            }
+            $this->_has_entry = $_has_entry;
+        }
+        return isset($this->_has_entry[$fleamarket_id]);
     }
 }
