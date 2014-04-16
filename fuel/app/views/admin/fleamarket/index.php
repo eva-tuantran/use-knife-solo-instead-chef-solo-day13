@@ -27,7 +27,7 @@ $(function() {
 <form action="/admin/fleamarket/confirm" method="POST" class="form-horizontal" enctype="multipart/form-data">
   <table>
     <tr>
-      <td>location_id</td>
+      <td>開催地</td>
       <td>
 	<select name="location_id">
 	<?php foreach ($locations as $location) { ?>
@@ -58,6 +58,7 @@ $(function() {
 	?>
       </td>
     </tr>
+<!--
     <tr>
       <td>event_number</td>
       <td>
@@ -69,6 +70,7 @@ $(function() {
 	?>
       </td>
     </tr>
+-->
     <tr>
       <td>開催日</td>
       <td>
@@ -117,6 +119,7 @@ $(function() {
 	?>
       </td>
     </tr>
+<!--
     <tr>
       <td>headline</td>
       <td>
@@ -139,10 +142,14 @@ $(function() {
 	?>
       </td>
     </tr>
+-->
     <tr>
       <td>内容</td>
       <td>
-	<input type="text" name="description" value="<?php echo e($fields['description']->value); ?>">
+	
+	<textarea name="description" cols=50 rows=10>
+	  <?php echo e($fields['description']->value); ?>
+	</textarea>
 	<?php
 	   if (isset($errors['description'])) {
    	       echo $errors['description'];
@@ -150,6 +157,7 @@ $(function() {
 	?>
       </td>
     </tr>
+<!--
     <tr>
       <td>reservation_serial</td>
       <td>
@@ -161,6 +169,7 @@ $(function() {
 	?>
       </td>
     </tr>
+-->
     <tr>
       <td>予約受付開始日</td>
       <td>
@@ -228,7 +237,7 @@ $(function() {
       </td>
     </tr>
     <tr>
-      <td>link_from_list</td>
+      <td>導線</td>
       <td>
 	<input type="text" name="link_from_list" value="<?php echo e($fields['link_from_list']->value); ?>">
 	<?php
@@ -369,9 +378,11 @@ $(function() {
       </td>
     </tr>
     <tr>
-      <td>event_reservation_status</td>
+      <td>予約状況</td>
       <td>
-	<input type="text" name="event_reservation_status" value="<?php echo e($fields['event_reservation_status']->value); ?>">
+	<input type="radio" name="event_reservation_status" value="1"<?php if ($fields['event_reservation_status']->value == 1) { echo ' checked'; } ?>>まだまだあります
+	<input type="radio" name="event_reservation_status" value="2"<?php if ($fields['event_reservation_status']->value == 2) { echo ' checked'; } ?>>残り僅か！
+	<input type="radio" name="event_reservation_status" value="3"<?php if ($fields['event_reservation_status']->value == 3) { echo ' checked'; } ?>>満員
 	<?php
 	   if (isset($errors['event_reservation_status'])) {
    	       echo $errors['event_reservation_status'];
@@ -399,6 +410,7 @@ $(function() {
       ?> 
       </td>
     </tr>
+<!--
     <tr>
       <td>deleted_at</td>
       <td>
@@ -409,6 +421,7 @@ $(function() {
       ?> 
       </td>
     </tr>
+-->
     <?php if ($fleamarket) { ?>
     <?php foreach ($fleamarket->fleamarket_images as $fleamarket_image) { ?>
     <tr>
@@ -467,26 +480,33 @@ $(function() {
       </td>
       <td>
 	<?php $errors = $fieldsets['fleamarket_entry_styles'][$id]->validation()->error_message(); ?>
-	booth_fee <input type="text" name="fleamarket_entry_style_<?php echo $id; ?>_booth_fee" value="<?php echo e($fieldsets['fleamarket_entry_styles'][$id]->field('booth_fee')->value); ?>">
+	<table>
+	  <tr>
+	    <td>出店料</td><td><input type="text" name="fleamarket_entry_style_<?php echo $id; ?>_booth_fee" value="<?php echo e($fieldsets['fleamarket_entry_styles'][$id]->field('booth_fee')->value); ?>">
+	  </tr>
 	<?php 
 	   if (isset($errors['booth_fee'])) {
    	       echo $errors['booth_fee'];
            }
-	?>
-	<br />
-	max_booth <input type="text" name="fleamarket_entry_style_<?php echo $id; ?>_max_booth" value="<?php echo e($fieldsets['fleamarket_entry_styles'][$id]->field('max_booth')->value); ?>">
+	?></td>
+	<tr>
+	  <td>最大ブース数</td><td><input type="text" name="fleamarket_entry_style_<?php echo $id; ?>_max_booth" value="<?php echo e($fieldsets['fleamarket_entry_styles'][$id]->field('max_booth')->value); ?>">
 	<?php 
 	   if (isset($errors['max_booth'])) {
    	       echo $errors['max_booth'];
            }
-	?>
-	<br />
-	reservation_booth_limit <input type="text" name="fleamarket_entry_style_<?php echo $id; ?>_reservation_booth_limit" value="<?php echo e($fieldsets['fleamarket_entry_styles'][$id]->field('reservation_booth_limit')->value); ?>">
+	?></td>
+	</tr>
+	<tr>
+	  <td>ユーザー毎ブース数上限</td><td><input type="text" name="fleamarket_entry_style_<?php echo $id; ?>_reservation_booth_limit" value="<?php echo e($fieldsets['fleamarket_entry_styles'][$id]->field('reservation_booth_limit')->value); ?>">
 	<?php 
 	   if (isset($errors['reservation_booth_limit'])) {
    	       echo $errors['reservation_booth_limit'];
            }
 	?>
+	  </td>
+	</tr>
+	</table>
       </td>
     </tr>
     <?php } ?>
