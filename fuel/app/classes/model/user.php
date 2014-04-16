@@ -499,7 +499,7 @@ QUERY;
 
             return $new_user;
         } catch (Exception $e) {
-            throw new SystemException('ER00304');
+            throw new SystemException(\Model_Error::ER00304);
         }
     }
 
@@ -555,7 +555,7 @@ QUERY;
             $email = new \Model_Email();
             $email->sendMailByParams($template_name, $params, $this->email);
         } catch (Exception $e) {
-            throw new SystemException('ER00303');
+            throw new SystemException(\Model_Error::ER00303);
         }
     }
 
@@ -699,7 +699,7 @@ QUERY;
             $this->register_status = self::REGISTER_STATUS_ACTIVATED;
             $this->save();
         } catch (Exception $e) {
-            throw new SystemException('ER00305');
+            throw new SystemException(\Model_Error::ER00305);
         }
     }
 

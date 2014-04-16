@@ -124,7 +124,7 @@ class Controller_Admin_User extends Controller_Admin_Base_Template
     {
         $data = $this->getUserData();
         if (! $data) {
-            throw new Exception('ER00402');
+            throw new Exception(\Model_Error::ER00402);
         } else {
             if (Input::param('user_id')) {
                 $user = Model_User::find(Input::param('user_id'));

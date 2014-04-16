@@ -341,7 +341,7 @@ QUERY;
 
             return true;
         } catch (Exception $e) {
-            throw new SystemException('ER00401');
+            throw new SystemException(\Model_Error::ER00401);
         }
 
         return false;
@@ -364,13 +364,13 @@ QUERY;
         $email = filter_var(trim($email), FILTER_VALIDATE_EMAIL);
 
         if (empty($username) or empty($password) or empty($email)) {
-            throw new Exception('ER00302');
+            throw new Exception(\Model_Error::ER00302);
         }
 
         try {
             Model_User::createNewUser($email, $password, $properties);
         } catch (Exception $e) {
-            throw new Exception('ER00304');
+            throw new Exception(\Model_Error::ER00304);
         }
 
         return 1;

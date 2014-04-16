@@ -23,14 +23,14 @@ class Controller_Reservation extends Controller_Base_Template
 
         $this->fieldset = $this->getFieldset();
         if (! $this->fieldset) {
-            throw new SystemException('ER00601');
+            throw new SystemException(\Model_Error::ER00601);
         }
 
         $input = $this->fieldset->input();
         $fleamarket = Model_Fleamarket::find($input['fleamarket_id']);
 
         if (! $fleamarket) {
-            throw new SystemException('ER00601');
+            throw new SystemException(\Model_Error::ER00601);
         }
 
         $this->fleamarket = $fleamarket;
@@ -101,14 +101,14 @@ class Controller_Reservation extends Controller_Base_Template
         try {
             $entry = $this->registerEntry();
         } catch (Exception $e) {
-            throw new SystemException('ER00603');
+            throw new SystemException(\Model_Error::ER00603);
         }
 
         if ($entry) {
         try {
             $this->sendMailToUser($entry);
         } catch (Exception $e) {
-            throw new SystemException('ER00604');
+            throw new SystemException(\Model_Error::ER00604);
         }
 
         $view->set('entry', $entry, false);
@@ -158,7 +158,7 @@ class Controller_Reservation extends Controller_Base_Template
     {
         $data = $this->getEntryData();
         if (! $data) {
-            throw new Exception('ER00605');
+            throw new Exception(\Model_Error::ER00605);
         } else {
             $db = Database_Connection::instance();
             $db->start_transaction();

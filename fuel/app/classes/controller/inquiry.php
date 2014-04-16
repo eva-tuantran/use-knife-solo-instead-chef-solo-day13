@@ -53,7 +53,7 @@ class Controller_Inquiry extends Controller_Base_Template
     public function post_thanks()
     {
         if (! Security::check_token()) {
-            throw new SystemException('ER00602');
+            throw new SystemException(\Model_Error::ER00602);
         }
 
         $view = View::forge('inquiry/thanks');
@@ -64,13 +64,13 @@ class Controller_Inquiry extends Controller_Base_Template
         try {
             $contact = $this->registerContact();
         } catch ( Exception $e ) {
-            throw new SystemException('ER00601');
+            throw new SystemException(\Model_Error::ER00601);
         }
 
         try{
             $this->sendMailToUserAndAdmin($contact);
         } catch ( Exception $e ) {
-            throw new SystemException('ER00602');
+            throw new SystemException(\Model_Error::ER00602);
         }
     }
 
@@ -112,7 +112,7 @@ class Controller_Inquiry extends Controller_Base_Template
     {
         $data = $this->getContactData();
         if (! $data) {
-            throw new Exception('ER00603');
+            throw new Exception(\Model_Error::ER00603);
         } else {
             $contact = Model_Contact::forge();
             $contact->set($data);

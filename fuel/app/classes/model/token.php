@@ -17,7 +17,7 @@ class Model_Token extends Orm\Model_Soft
         'hash',
         'expired_at',
         'created_at',
-        'updated_at',
+        'updated_a',
         'deleted_at',
     );
 
@@ -60,7 +60,7 @@ class Model_Token extends Orm\Model_Soft
     public static function generate($user_id)
     {
         if (! Model_User::find($user_id)) {
-            throw new SystemException('ER00402');
+            throw new SystemException(\Model_Error::ER00402);
         }
 
         $unique_hash = self::getUniqueHash($user_id);
@@ -74,7 +74,7 @@ class Model_Token extends Orm\Model_Soft
             $new_token = self::forge($data);
             $new_token->save();
         } catch (Exception $e) {
-            throw new SystemException('ER00403');
+            throw new SystemException(\Model_Error::ER00403);
         }
 
         return $new_token;
@@ -117,11 +117,11 @@ class Model_Token extends Orm\Model_Soft
         ));
 
         if (! $token) {
-            throw new SystemException('ER00404');
+            throw new SystemException(\Model_Error::ER00404);
         }
 
         if ($token->expired_at < Date::forge()->format('mysql')) {
-            throw new SystemException('ER00405');
+            throw new SystemException(\Model_Error::ER00405);
         }
 
         return $token;
@@ -147,11 +147,11 @@ class Model_Token extends Orm\Model_Soft
         ));
 
         if (! $token) {
-            throw new SystemException('ER00406');
+            throw new SystemException(\Model_Error::ER00406);
         }
 
         if ($token->expired_at < Date::forge()->format('mysql')) {
-            throw new SystemException('ER00405');
+            throw new SystemException(\Model_Error::ER00405);
         }
 
         return $token;

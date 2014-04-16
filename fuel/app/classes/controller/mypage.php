@@ -37,7 +37,7 @@ class Controller_Mypage extends Controller_Base_Template
         // throw new SystemException(\Model_Error::ER00101);
 
         if (! $this->login_user) {
-            throw new SystemException('ER00702');
+            throw new SystemException(\Model_Error::ER00702);
         }
     }
 
@@ -281,7 +281,7 @@ class Controller_Mypage extends Controller_Base_Template
                 return \Response::redirect('/mypage');
             }
         } catch (Exception $e) {
-            throw new SystemException('ER00701');
+            throw new SystemException(\Model_Error::ER00701);
         }
     }
 

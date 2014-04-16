@@ -286,7 +286,7 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
     {
         $data = $this->getFleamarketData();
         if (! $data) {
-            throw new Exception('ER00502');
+            throw new Exception(\Model_Error::ER00502);
         } else {
             if (Input::param('fleamarket_id')) {
                 $fleamarket = Model_Fleamarket::find(Input::param('fleamarket_id'));
