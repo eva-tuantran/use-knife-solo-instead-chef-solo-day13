@@ -108,7 +108,7 @@ class Controller_Base_Template extends Controller_Template
         }
     }
 
-    
+
     public function after($response)
     {
         $this->template->meta = $this->meta;
@@ -194,7 +194,7 @@ class Controller_Base_Template extends Controller_Template
     /**
      * JSON で返却 $send が true だと send して exit します
      *
-     * @param $data 返却する値 $send 
+     * @param $data 返却する値 $send
      * @access protected
      * @return Response
      * @author kobayasi
