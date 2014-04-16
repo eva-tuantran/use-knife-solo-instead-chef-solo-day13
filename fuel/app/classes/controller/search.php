@@ -113,6 +113,10 @@ class Controller_Search extends Controller_Base_Template
             $fleamarket_id
         );
 
+        $fleamarket_images = \Model_Fleamarket_Image::findByFleamarketId(
+            $fleamarket_id
+        );
+
         $entry_styles = \Model_Fleamarket_Entry_Style::findByFleamarketId(
             $fleamarket_id
         );
@@ -124,6 +128,7 @@ class Controller_Search extends Controller_Base_Template
 
         $view_model = ViewModel::forge('search/detail');
         $view_model->set('fleamarket', $fleamarket, false);
+        $view_model->set('fleamarket_images', $fleamarket_images, false);
         $view_model->set('fleamarket_abouts', $fleamarket_abouts, false);
         $view_model->set(
             'fleamarket_entry_styles', $entry_styles, false
