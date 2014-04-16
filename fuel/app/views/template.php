@@ -42,7 +42,7 @@
             <li><a href="/login">ログイン</a></li>
             <li><a href="/signup">会員登録</a></li>
         <?php endif; ?>
-        <li class="guide hidden-xs"><a href="/guide"><i></i>初めての方へ</a></li>
+        <li class="guide hidden-xs"><a href="/info/visitor"><i></i>初めての方へ</a></li>
         <li class="inquiry hidden-xs"><a href="/inquiry"><i></i>お問い合せ</a></li>
       </ul>
     </div>
