@@ -8,11 +8,58 @@ Vagrant.configure("2") do |config|
 
   config.vm.define :web1 do |web|
     web.vm.network :private_network, ip: "192.168.33.101"
+    web.vm.network :private_network, ip: "192.168.133.101"
+    web.vm.hostname = 'nrt01-WEB01'
+    web.vm.provision :chef_solo do |chef|
+      chef.add_recipe "base"
+      chef.add_recipe "php-mysql-httpd"
+      chef.add_recipe "memcached"
+      chef.add_recipe "composer"
+      chef.add_recipe "rakuichi-rakuza"
+      chef.json = {
+        :composer => {
+          :install_path => "/usr/local/bin"
+        }
+      }
+    end
   end
 
   config.vm.define :web2 do |web|
     web.vm.network :private_network, ip: "192.168.33.102"
+    web.vm.network :private_network, ip: "192.168.133.102"
+    web.vm.hostname = 'ceb01-WEB02'
+    web.vm.provision :chef_solo do |chef|
+      chef.add_recipe "base"
+      chef.add_recipe "php-mysql-httpd"
+      chef.add_recipe "memcached"
+      chef.add_recipe "composer"
+      chef.add_recipe "rakuichi-rakuza"
+      chef.json = {
+        :composer => {
+          :install_path => "/usr/local/bin"
+        }
+      }
+    end
   end
+
+  config.vm.define :web3 do |web|
+    web.vm.network :private_network, ip: "192.168.33.103"
+    web.vm.network :private_network, ip: "192.168.133.103"
+    web.vm.hostname = 'ceb02-LVS01'
+    web.vm.provision :chef_solo do |chef|
+      chef.add_recipe "base"
+    end
+  end
+
+  config.vm.define :web4 do |web|
+    web.vm.network :private_network, ip: "192.168.33.104"
+    web.vm.network :private_network, ip: "192.168.133.104"
+    web.vm.hostname = 'nrt02-LVS02'
+    web.vm.provision :chef_solo do |chef|
+      chef.add_recipe "base"
+    end
+  end
+
 
   config.vm.synced_folder "../", "/var/www/html", :create => true, :owner=> 'vagrant', :group=>'vagrant', :mount_options => ['dmode=777,fmode=777']
 
@@ -22,16 +69,5 @@ Vagrant.configure("2") do |config|
     vb.customize ["modifyvm", :id, "--natdnsproxy1", "on"]
   end
 
-  config.vm.provision :chef_solo do |chef|
-    chef.add_recipe "base"
-    chef.add_recipe "php-mysql-httpd"
-    chef.add_recipe "memcached"
-    chef.add_recipe "composer"
-    chef.add_recipe "rakuichi-rakuza"
-    chef.json = {
-      :composer => {
-        :install_path => "/usr/local/bin"
-      }
-    }
-  end
+
 end
