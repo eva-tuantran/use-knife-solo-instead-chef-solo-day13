@@ -499,7 +499,7 @@ QUERY;
 
             return $new_user;
         } catch (Exception $e) {
-            throw new SystemException('ユーザ作成に失敗しました');
+            throw new SystemException(\Model_Error::ER00304);
         }
     }
 
@@ -555,7 +555,7 @@ QUERY;
             $email = new \Model_Email();
             $email->sendMailByParams($template_name, $params, $this->email);
         } catch (Exception $e) {
-            throw new SystemException('ユーザ宛のメール送信に失敗した可能性があります');
+            throw new SystemException(\Model_Error::ER00303);
         }
     }
 
@@ -699,7 +699,7 @@ QUERY;
             $this->register_status = self::REGISTER_STATUS_ACTIVATED;
             $this->save();
         } catch (Exception $e) {
-            throw new SystemException('アクティベート化に失敗しました');
+            throw new SystemException(\Model_Error::ER00305);
         }
     }
 

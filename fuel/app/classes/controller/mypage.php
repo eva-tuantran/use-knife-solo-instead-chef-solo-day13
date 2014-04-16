@@ -37,7 +37,7 @@ class Controller_Mypage extends Controller_Base_Template
         // throw new SystemException(\Model_Error::ER00101);
 
         if (! $this->login_user) {
-            throw new SystemException('ユーザ情報が取得出来ませんでした');
+            throw new SystemException(\Model_Error::ER00702);
         }
     }
 
@@ -281,7 +281,7 @@ class Controller_Mypage extends Controller_Base_Template
                 return \Response::redirect('/mypage');
             }
         } catch (Exception $e) {
-            throw new SystemException('パスワード変更に失敗しました');
+            throw new SystemException(\Model_Error::ER00701);
         }
     }
 
