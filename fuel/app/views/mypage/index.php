@@ -207,117 +207,119 @@
 <script>
 
 $('.fleamarket_cancel').click(function() {
-    if (!confirm('フリーマーケットをキャンセルします\nよろしいですか？')) {
+  if (!confirm('フリーマーケットをキャンセルします\nよろしいですか？')) {
     return false;
-    }
-    });
+  }
+});
 
 
 $(function() {
-    Calendar.init();
-    Carousel.start();
-    Search.init();
-    });
+  Calendar.init();
+  Carousel.start();
+  Search.init();
+});
 
 var Calendar = {
-init: function() {
-        $(document).on("click", ".calendar_nav a", function(evt) {
-            evt.preventDefault();
+  init: function() {
+    $(document).on("click", ".calendar_nav a", function(evt) {
+      evt.preventDefault();
 
-            var url = $(this).attr("href");
-            Calendar.get(url);
+      var url = $(this).attr("href");
+      Calendar.get(url);
 
-            return false;
-            });
-      },
-get: function(url) {
-       if (url == "" || typeof url === "undefined") {
-         url = "/calendar/";
-       }
+      return false;
+    });
+  },
+  get: function(url) {
+    if (url == "" || typeof url === "undefined") {
+      url = "/calendar/";
+    }
 
-       $.ajax({
-type: "get",
-url: url,
-dataType: "html"
-}).done(function(html, textStatus, jqXHR) {
-  // $("#calendar").empty();
-  // $("#calendar").html(html);
-  $("#calendar-search").empty();
-  $("#calendar-search").html(html);
-  }).fail(function(jqXHR, textStatus, errorThrown) {
+    $.ajax({
+      type: "get",
+      url: url,
+      dataType: "html"
+    }).done(function(html, textStatus, jqXHR) {
+      // $("#calendar").empty();
+      // $("#calendar").html(html);
+      $("#calendar-search").empty();
+      $("#calendar-search").html(html);
+    }).fail(function(jqXHR, textStatus, errorThrown) {
     }).always(function() {
-      });
-}
+    });
+  }
 };
 
 var Search = {
-init: function() {
-        $("#select_region").on("change", function(evt) {
-            Search.changeRegion();
-            });
-      },
-changeRegion: function() {
-                $("#select_prefecture").prop("selectedIndex", 0);
-                var region_id = $("#select_region").val();
-                $.ajax({
-type: "get",
-url: '/search/prefecture',
-dataType: "json",
-data: {region_id: region_id}
-}).done(function(json, textStatus, jqXHR) {
-  if (json) {
-  $("#select_prefecture").empty();
-  $("#select_prefecture").append('<option value="">都道府県</option>');
-  $.each(json, function(key, value) {
-    $("#select_prefecture").append('<option value="' + key + '">' + value + '</option>');
+  init: function() {
+    $("#select_region").on("change", function(evt) {
+      Search.changeRegion();
     });
+  },
+  changeRegion: function() {
+    $("#select_prefecture").prop("selectedIndex", 0);
+      var region_id = $("#select_region").val();
+
+      $.ajax({
+        type: "get",
+        url: '/search/prefecture',
+        dataType: "json",
+        data: {region_id: region_id}
+      }).done(function(json, textStatus, jqXHR) {
+        if (json) {
+          $("#select_prefecture").empty();
+          $("#select_prefecture").append('<option value="">都道府県</option>');
+          $.each(json, function(key, value) {
+            $("#select_prefecture").append('<option value="' + key + '">' + value + '</option>');
+          });
+        }
+      }).fail(function(jqXHR, textStatus, errorThrown) {
+      });
   }
-  }).fail(function(jqXHR, textStatus, errorThrown) {
-    });
-}
 };
 
 var Carousel = {
-start: function () {
-         $(window).resize(function() {
-             $("#newMarket").carouFredSel({
-align: true,
-scroll:{
-items: 1,
-duration: 300,
-pauseDuration: 5000,
-easing: "linear",
-pauseOnHover: "immediate"
-},
-prev:{button: "#prev", key: "left"},
-next:{button: "#next", key: "right"}
-});
-             });
-$(window).resize();
-}
+  start: function () {
+    $(window).resize(function() {
+      $("#newMarket").carouFredSel({
+        align: true,
+        scroll:{
+          items: 1,
+          duration: 300,
+          pauseDuration: 2000,
+          easing: "linear",
+          pauseOnHover: "immediate"
+        },
+        prev:{button: "#prev", key: "left"},
+        next:{button: "#next", key: "right"}
+      });
+    });
+    $(window).resize();
+  }
 };
 
 $(function () {
-    $(".mylist_remove").click(function(){
-      var id = $(this).attr('id');
-      id = id.match(/^fleamarket_id_(\d+)/)[1];
-      $.ajax({
-type: "post",
-url: '/favorite/delete',
-dataType: "json",
-data: {fleamarket_id: id}
-}).done(function(json, textStatus, jqXHR) {
-  if(json == 'nologin' || json == 'nodata'){
-  $('#dialog_need_login').dialog();
-  }else if(json){
-  $('#dialog_success').dialog({close: function(event){ location.reload(); }});
-  }else{
-  $('#dialog_fail').dialog();
-  }
-  }).fail(function(jqXHR, textStatus, errorThrown) {
-  $('#dialog_fail').dialog();
+  $(".mylist_remove").click(function(){
+    var id = $(this).attr('id');
+    id = id.match(/^fleamarket_id_(\d+)/)[1];
+
+    $.ajax({
+      type: "post",
+      url: '/favorite/delete',
+      dataType: "json",
+      data: {fleamarket_id: id}
+    }).done(function(json, textStatus, jqXHR) {
+      if (json == 'nologin' || json == 'nodata') {
+        $('#dialog_need_login').dialog();
+      } else if (json) {
+        $('#dialog_success').dialog({close: function(event){ location.reload(); }});
+      } else {
+        $('#dialog_fail').dialog();
+      }
+    }).fail(function(jqXHR, textStatus, errorThrown) {
+      $('#dialog_fail').dialog();
+    });
   });
-});
 });
 </script>
 

@@ -101,7 +101,11 @@ Map.prototype = {
   <div id="title" class="container">
     <div class="box clearfix">
       <div class="titleLeft">
-        <h2><?php if ($is_admin_fleamarket):?><strong>楽市楽座主催</strong>&nbsp;<?php endif;?><?php echo e($fleamarket['name']);?></h2>
+        <h2>
+          <?php if ($is_admin_fleamarket):?>
+          <strong><img src="/assets/img/resultPush.png" alt="楽市楽座主催" width="78" height="14"></strong>
+          <?php endif;?><?php echo e($fleamarket['name']);?>
+        </h2>
         <p class="date"><?php
             echo e(date('Y年n月j日', strtotime($fleamarket['event_date'])));
             echo '(' . $week_list[date('w', strtotime($fleamarket['event_date']))] . ')';
