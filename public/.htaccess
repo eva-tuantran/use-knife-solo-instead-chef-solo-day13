@@ -7,16 +7,6 @@
 	Options +FollowSymLinks -Indexes
 	RewriteEngine on
 
-	# DoCoMo
-	RewriteCond %{HTTP_USER_AGENT} DoCoMo [NC]
-	# SoftBank
-	RewriteCond %{HTTP_USER_AGENT} J-PHONE [NC,OR]
-	RewriteCond %{HTTP_USER_AGENT} Vodafone [NC,OR]
-	RewriteCond %{HTTP_USER_AGENT} SoftBank [NC,OR]
-	# au
-	RewriteCond %{HTTP_USER_AGENT} UP.Browser [NC,OR]
-	RewriteRule ^(.*)$ http://www.rakuichi-rakuza.jp/$1 [P,L,QSA]
-
 	# NOTICE: If you get a 404 play with combinations of the following commented out lines
 	#AllowOverride All
 	#RewriteBase /wherever/fuel/is
