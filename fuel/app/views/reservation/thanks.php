@@ -15,7 +15,7 @@
   <!-- form -->
   <div id="form" class="container">
     <div class="box clearfix">
-      <h3>フリマ登録情報入力欄</h3>
+      <h3>フリマ予約情報入力欄</h3>
       <?php if (! $entry){ ?>
       予約の最大数に達したため、エントリーできませんでした
       <?php } else { ?>
