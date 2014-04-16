@@ -13,10 +13,10 @@ class Controller_Reservation extends Controller_Base_Template
         'confirm',
         'thanks',
     );
-
+    
     private $fleamarket = null;
     private $fieldset = null;
-
+    
     public function before()
     {
         parent::before();
@@ -93,7 +93,7 @@ class Controller_Reservation extends Controller_Base_Template
         if ($this->is_duplicate() ){
             return Response::redirect('reservation');
         }
-
+        
         $view = View::forge('reservation/thanks');
 
         $this->template->content = $view;
@@ -103,14 +103,14 @@ class Controller_Reservation extends Controller_Base_Template
         } catch (Exception $e) {
             throw new SystemException(\Model_Error::ER00603);
         }
-
+        
         if ($entry) {
-        try {
-            $this->sendMailToUser($entry);
-        } catch (Exception $e) {
-            throw new SystemException(\Model_Error::ER00604);
+            try {
+                $this->sendMailToUser($entry);
+            } catch (Exception $e) {
+                throw new SystemException(\Model_Error::ER00604);
+            }
         }
-
         $view->set('entry', $entry, false);
     }
 
