@@ -388,7 +388,7 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
     public function makeThumbnail($image_filename)
     {
         $sizes = array(
-            array('width' => 100, 'height' => 65, 'suffix' => '_small'),
+            array('width' => 100, 'height' => 65, 'prefix' => 's_'),
         );
 
         foreach ($sizes as $size) {
@@ -401,7 +401,7 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
 
             $matches = array();
             if (preg_match('/^(\w+)\.jpg$/',$image_filename,$matches)) {
-                $filename = DOCROOT . 'files/fleamarket/img/' . $matches[1] . $size['suffix'] . '.jpg';
+                $filename = DOCROOT . 'files/fleamarket/img/' . $size['suffix'] . $matches[1] . '.jpg';
                 imagejpeg($resize, $filename);
             }
             imagedestroy($image);
