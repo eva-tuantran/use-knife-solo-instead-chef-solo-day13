@@ -358,6 +358,10 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
             return false;
         }
 
+        if(! file_exists(DOCROOT . 'files/fleamarket/img/') ){
+            mkdir(DOCROOT . 'files/fleamarket/img/', 0777, true);
+        }
+
         foreach ($files as $file) {
             File::rename(
                 DOCROOT . 'files/admin/fleamarket/img/' . $file['saved_as'],

@@ -105,10 +105,11 @@ class Controller_Reservation extends Controller_Base_Template
         }
 
         if ($entry) {
-        try {
-            $this->sendMailToUser($entry);
-        } catch (Exception $e) {
-            throw new SystemException(\Model_Error::ER00604);
+            try {
+                $this->sendMailToUser($entry);
+            } catch (Exception $e) {
+                throw new SystemException(\Model_Error::ER00604);
+            }
         }
 
         $view->set('entry', $entry, false);

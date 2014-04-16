@@ -574,7 +574,7 @@ QUERY;
             $rows = $result->as_array();
         }
 
-        return $rows[0];
+        return isset($rows[0]) ? $rows[0] : null;
     }
 
     /**
@@ -720,8 +720,8 @@ QUERY;
             ':display_flag' => self::DISPLAY_FLAG_ON,
             ':register_status' => self::REGISTER_TYPE_ADMIN,
             ':pickup_flag' => self::PICKUP_FLAG_ON,
+            ':about_access_id' => \Model_Fleamarket_About::ACCESS,
         );
-
         $limit = '';
         if (! is_int($row_count)) {
             $row_count = 10;
@@ -739,11 +739,15 @@ SELECT
     f.headline,
     f.event_date,
     l.name AS location_name,
-    l.prefecture_id AS prefecture_id
+    l.prefecture_id AS prefecture_id,
+    fa.description AS about_access
 FROM
     fleamarkets AS f
 LEFT JOIN
     locations AS l ON f.location_id = l.location_id
+LEFT JOIN
+    fleamarket_abouts AS fa ON f.fleamarket_id = fa.fleamarket_id
+    AND fa.about_id = :about_access_id
 WHERE
     f.display_flag = :display_flag
     AND f.register_type = :register_status
@@ -763,7 +767,6 @@ QUERY;
         if (! empty($result)) {
             $rows = $result->as_array();
         }
-
         return $rows;
     }
 
