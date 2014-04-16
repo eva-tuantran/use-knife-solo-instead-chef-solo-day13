@@ -48,6 +48,7 @@ Vagrant.configure("2") do |config|
     web.vm.hostname = 'ceb02-LVS01'
     web.vm.provision :chef_solo do |chef|
       chef.add_recipe "base"
+      chef.add_recipe "keepalived"
     end
   end
 

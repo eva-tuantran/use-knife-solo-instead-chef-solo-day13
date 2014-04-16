@@ -7,10 +7,6 @@ service "memcached" do
   action [:start, :enable]
 end
 
-# template "/etc/php.d/memcache.ini" do
-  # source "memcache.ini.erb"
-# end
-
 service "httpd" do
   action [:restart]
 end
