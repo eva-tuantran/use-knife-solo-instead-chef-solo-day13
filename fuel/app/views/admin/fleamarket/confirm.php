@@ -31,12 +31,14 @@
 	<?php echo e($input['promoter_name']); ?>
       </td>
     </tr>
+<!--
     <tr>
       <td>event_number</td>
       <td>
 	<?php echo e($input['event_number']); ?>
       </td>
     </tr>
+-->
     <tr>
       <td>開催日</td>
       <td>
@@ -56,7 +58,7 @@
       </td>
     </tr>
     <tr>
-      <td>event_status</td>
+      <td>開催状況</td>
       <td>
 	<?php 
 	   $statuses = Model_Fleamarket::getEventStatuses();
@@ -64,6 +66,7 @@
         ?>
       </td>
     </tr>
+<!--
     <tr>
       <td>headline</td>
       <td>
@@ -76,18 +79,21 @@
 	<?php echo e($input['information']); ?>
       </td>
     </tr>
+-->
     <tr>
       <td>内容</td>
       <td>
 	<?php echo e($input['description']); ?>
       </td>
     </tr>
+<!--
     <tr>
       <td>reservation_serial</td>
       <td>
    	<?php echo e($input['reservation_serial']); ?>
       </td>
     </tr>
+-->
     <tr>
       <td>予約受付開始日</td>
       <td>
@@ -125,7 +131,7 @@
       </td>
     </tr>
     <tr>
-      <td>link_from_list</td>
+      <td>導線</td>
       <td>
 	<?php echo e($input['link_from_list']); ?>
       </td>
@@ -199,9 +205,12 @@
       </td>
     </tr>
     <tr>
-      <td>event_reservation_status</td>
+      <td>予約状況</td>
       <td>
-	<?php echo e($input['event_reservation_status']); ?>
+	<?php      if($input['event_reservation_status'] == Model_Fleamarket::EVENT_RESERVATION_STATUS_ENOUGH)  { echo 'まだまだあります'; }
+	      else if($input['event_reservation_status'] == Model_Fleamarket::EVENT_RESERVATION_STATUS_FEW) { echo '残り僅か！'; }
+	      else if($input['event_reservation_status'] == Model_Fleamarket::EVENT_RESERVATION_STATUS_FEW) { echo '満員'; }
+	      ?>
       </td>
     </tr>
     <?php if ($fleamarket && $input['fleamarket_image_id']) { ?>
@@ -239,19 +248,19 @@
     <tr>
       <td><?php echo e($entry_style); ?></td>
       <td>
-	booth_fee
+	出店料
 	<?php 
 	   $input = $fieldsets['fleamarket_entry_styles'][$id]->input();
 	   echo e($input['booth_fee']);
 	?>
 	<br />
-	max_booth
+	最大ブース数
 	<?php 
 	   $input = $fieldsets['fleamarket_entry_styles'][$id]->input();
 	   echo e($input['max_booth']);
 	?>
 	<br />
-	reservation_booth_limit
+	ユーザー毎ブース数上限
 	<?php 
 	   $input = $fieldsets['fleamarket_entry_styles'][$id]->input();
 	   echo e($input['reservation_booth_limit']);
