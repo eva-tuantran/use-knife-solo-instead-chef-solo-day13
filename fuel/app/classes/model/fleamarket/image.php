@@ -51,7 +51,6 @@ class Model_Fleamarket_Image extends Model_Base
             ),
             'where' => array(
                 array('fleamarket_id', $fleamarket_id),
-                array('deleted_at', null),
             ),
         ));
 
