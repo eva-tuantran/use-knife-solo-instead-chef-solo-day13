@@ -1,6 +1,6 @@
 <?php
 
-class Model_Fleamarket_Image extends \Orm\Model_Soft
+class Model_Fleamarket_Image extends Model_Base
 {
     protected static $_table_name = 'fleamarket_images';
 

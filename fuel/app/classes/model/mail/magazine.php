@@ -7,7 +7,7 @@
  *
  * @author ida
  */
-class Model_Mail_Magazine extends \Orm\Model
+class Model_Mail_Magazine extends Model_Base
 {
     /**
      * メールマガジン関連ファイルディレクトリ

@@ -7,7 +7,7 @@
  *
  * @author kobayasi
  */
-class Model_Favorite extends \Orm\Model_Soft
+class Model_Favorite extends Model_Base
 {
     /**
      * テーブル名

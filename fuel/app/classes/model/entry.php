@@ -7,7 +7,7 @@
  *
  * @author ida
  */
-class Model_Entry extends \Orm\Model_Soft
+class Model_Entry extends Model_Base
 {
     /**
      * エントリーステータス 1:エントリ,2:キャンセル待ち,3:キャンセル
