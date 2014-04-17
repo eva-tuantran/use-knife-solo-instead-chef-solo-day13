@@ -11,6 +11,7 @@
   <body>
     <a href="/admin/user/list">ユーザー</a>
     <a href="/admin/fleamarket/list">開催</a>
+    <a href="/admin/logout">ログアウト</a>
     <hr>
     <?php echo $content; ?>
   </body>

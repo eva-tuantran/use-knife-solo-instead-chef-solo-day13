@@ -2,9 +2,19 @@
 
 class Controller_Admin_Base_Template extends Controller_Template
 {
+    protected $administrator = null;
+
     public function before()
     {
         $this->template = 'admin/template';
+
+        if ($this->request->action != 'login') {
+            $this->administrator = Session::get('admin.administrator');
+            if (! $this->administrator) {
+                return Response::redirect('admin/login');
+            }
+        }
+
         parent::before();
     }
 
