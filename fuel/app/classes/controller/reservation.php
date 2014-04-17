@@ -101,6 +101,7 @@ class Controller_Reservation extends Controller_Base_Template
         try {
             $entry = $this->registerEntry();
         } catch (Exception $e) {
+            throw $e;
             throw new SystemException(\Model_Error::ER00603);
         }
         
@@ -160,7 +161,7 @@ class Controller_Reservation extends Controller_Base_Template
         if (! $data) {
             throw new Exception(\Model_Error::ER00605);
         } else {
-            $db = Database_Connection::instance();
+            $db = Database_Connection::instance('master');
             $db->start_transaction();
 
             $condition = array(
@@ -169,7 +170,7 @@ class Controller_Reservation extends Controller_Base_Template
                 'fleamarket_entry_style_id' => $data['fleamarket_entry_style_id'],
             );
 
-            $fleamarket = Model_Fleamarket::findForUpdate($data['fleamarket_id']);
+            $fleamarket = Model_Fleamarket::find($data['fleamarket_id']);
 
             if ($this->is_duplicate() ){
                 $db->rollback_transaction();
@@ -296,6 +297,7 @@ class Controller_Reservation extends Controller_Base_Template
     private function is_duplicate()
     {
         $input = $this->fieldset->input();
+
         $count = Model_Entry::query()
             ->where(array(
                 'user_id'       => $this->login_user->user_id,
