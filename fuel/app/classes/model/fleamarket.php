@@ -7,7 +7,7 @@
  *
  * @author ida
  */
-class Model_Fleamarket extends \Orm\Model
+class Model_Fleamarket extends Model_Base
 {
     /**
      * 開催状況 1:開催予定,2:予約受付中,3:受付終了,4:開催終了,5:中止
@@ -1112,16 +1112,5 @@ QUERY;
         if ($save) {
             $this->save();
         }
-    }
-
-    public static function findForUpdate($fleamarket_id)
-    {
-        $query = DB::select()
-            ->from('fleamarkets')
-            ->where('fleamarket_id',$fleamarket_id) . " FOR UPDATE";
-
-        $result = DB::query($query)->as_object('Model_Fleamarket')->execute();
-
-        return $result ? $result[0] : null;
     }
 }

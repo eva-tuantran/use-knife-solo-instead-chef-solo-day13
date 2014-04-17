@@ -5,7 +5,7 @@
  *
  * @author shimma
  */
-class Model_Token extends Orm\Model_Soft
+class Model_Token extends Model_Base
 {
     protected static $_table_name = 'user_tokens';
 

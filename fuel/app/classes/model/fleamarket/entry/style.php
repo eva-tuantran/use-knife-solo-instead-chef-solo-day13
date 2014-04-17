@@ -7,7 +7,7 @@
  *
  * @author ida
  */
-class Model_Fleamarket_Entry_Style extends \Orm\Model
+class Model_Fleamarket_Entry_Style extends Model_Base
 {
     /**
      * テーブル名

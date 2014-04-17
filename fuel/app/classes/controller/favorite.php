@@ -26,7 +26,7 @@ class Controller_Favorite  extends Controller_Base_Template
         
         $this->input = array(
             'user_id'       => Auth::get_user_id(),
-            'fleamarket_id' => Input::param('fleamarket_id',1)
+            'fleamarket_id' => Input::param('fleamarket_id')
         );
         
         $this->favorite = Model_Favorite::query()

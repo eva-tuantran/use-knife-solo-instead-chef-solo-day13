@@ -319,8 +319,11 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
 
         $input = $fieldset->validation()->validated();
 
-        $input['created_user'] = 1;
-        $input['updated_user'] = 1;
+        if (isset($input['fleamarket_id'])) {
+            $input['updated_user'] = $this->administrator->administrator_id;
+        }else{
+            $input['created_user'] = $this->administrator->administrator_id;
+        }
         $input['group_code'] = '';
 
         return $input;

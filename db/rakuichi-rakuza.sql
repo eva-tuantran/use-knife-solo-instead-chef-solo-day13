@@ -262,7 +262,7 @@ CREATE TABLE IF NOT EXISTS `rakuichi-rakuza`.`administrators` (
   `mobile_tel` VARCHAR(20) NULL COMMENT '携帯電話番号',
   `email` VARCHAR(255) NULL COMMENT 'メールアドレス',
   `mobile_email` VARCHAR(255) NULL COMMENT '携帯メールアドレス',
-  `password` CHAR(40) NULL COMMENT 'sha1で登録',
+  `password` CHAR(50) NULL COMMENT 'sha1で登録',
   `created_user` INT NOT NULL COMMENT '作成したユーザID、一般ユーザ:10000000以上,管理者：10000000未満',
   `updated_user` INT NULL COMMENT '更新したユーザID、一般ユーザ:10000000以上,管理者：10000000未満',
   `created_at` DATETIME NOT NULL COMMENT '作成日時',

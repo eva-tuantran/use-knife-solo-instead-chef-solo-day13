@@ -7,7 +7,7 @@
  *
  * @author ida
  */
-class Model_Location extends \Orm\Model
+class Model_Location extends Model_Base
 {
     /**
      * 登録タイプ 1:運営者,2:ユーザ投稿

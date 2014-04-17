@@ -6,7 +6,7 @@
  * @author shimma
  *
  */
-class Model_User extends Orm\Model_Soft
+class Model_User extends Model_Base
 {
 
     /**

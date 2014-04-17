@@ -64,7 +64,7 @@
           <li class="inquiry visible-xs"><a href="/inquiry">お問い合せ</a></li>
         </ul>
         <?php
-            if (! $is_top):
+	   if (! isset($is_top) || ! $is_top):
         ?>
         <!-- globalNavBottom -->
         <div id="globalNavBottom">
