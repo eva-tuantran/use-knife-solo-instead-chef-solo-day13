@@ -8,10 +8,39 @@
 
 return array(
     'default' => array(
+        'type' => 'mysqli',
         'connection'  => array(
-            'dsn'        => 'mysql:host=localhost;dbname=rakuichi-rakuza',
+            'hostname' => 'localhost',
+            'database' => 'rakuichi-rakuza',
+            'username'   => 'readonly',
+            'password'   => '',
+        ),
+        'identifier'     => '`',
+        'table_prefix'   => '',
+        'charset'        => 'utf8',
+    ),
+    'master' => array(
+        'type' => 'mysqli',
+        'connection'  => array(
+            'hostname' => 'localhost',
+            'database' => 'rakuichi-rakuza',
             'username'   => 'root',
             'password'   => '',
         ),
+        'identifier'     => '`',
+        'table_prefix'   => '',
+        'charset'        => 'utf8',
+    ),
+    'slave' => array(
+        'type' => 'mysqli',
+        'connection'  => array(
+            'hostname' => 'localhost',
+            'database' => 'rakuichi-rakuza',
+            'username'   => 'readonly',
+            'password'   => '',
+        ),
+        'identifier'     => '`',
+        'table_prefix'   => '',
+        'charset'        => 'utf8',
     ),
 );

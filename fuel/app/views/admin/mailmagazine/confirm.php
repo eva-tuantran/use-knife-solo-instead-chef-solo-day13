@@ -59,6 +59,9 @@
 <div id="container">
   <div class="contents">
     <form id="mailmagazineForm" role="form" action="/admin/mailmagazine/thanks" method="post" class="form-horizontal">
+      <?php
+          echo Form::hidden(Config::get('security.csrf_token_key'), Security::fetch_token());
+      ?>
       <div class="form-group">
         <label>送信種類</label>
         <p class="mail-item"><?php
@@ -67,7 +70,11 @@
                     echo '全員';
                     break;
                 case \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_REQUEST:
-                    echo '希望者【' . $prefectures[$input_data['prefecture_id']] . '】';
+                    $pref_name = 'すべて';
+                    if ($input_data['prefecture_id'] != '99'):
+                        $pref_name = $prefectures[$input_data['prefecture_id']];
+                    endif;
+                    echo '希望者【' . $pref_name . '】';
                     break;
                 case \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_RESEVED_ENTRY:
                     echo '出店予約者';
@@ -100,7 +107,7 @@
       ?>
       <div class="form-group">
         <label>都道府県</label>
-        <p class="mail-item"><?php echo $prefectures[$input_data['prefecture_id']];?></p>
+        <p class="mail-item"><?php echo $pref_name;?></p>
       </div>
       <?php
               elseif ($type == \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_RESEVED_ENTRY):

@@ -1,3 +1,25 @@
+<script type='text/javascript'>
+var googletag = googletag || {};
+googletag.cmd = googletag.cmd || [];
+(function() {
+var gads = document.createElement('script');
+gads.async = true;
+gads.type = 'text/javascript';
+var useSSL = 'https:' == document.location.protocol;
+gads.src = (useSSL ? 'https:' : 'http:') +
+'//www.googletagservices.com/tag/js/gpt.js';
+var node = document.getElementsByTagName('script')[0];
+node.parentNode.insertBefore(gads, node);
+})();
+</script>
+
+<script type='text/javascript'>
+googletag.cmd.push(function() {
+googletag.defineSlot('/64745063/(楽市楽座)検索結果_フッターバナー_728x90', [728, 90], 'div-gpt-ad-1397113960029-0').addService(googletag.pubads());
+googletag.pubads().enableSingleRequest();
+googletag.enableServices();
+});
+</script>
 <div id="contentSearch" class="row">
   <!-- searchResult -->
   <div id="searchResult" class="col-sm-9 col-sm-push-3">
@@ -59,7 +81,7 @@
             endif;
         endif;
     ?>
-    <div id="resultTitle"><?php echo $title;?>フリマ情報一覧</div>
+    <div id="resultTitle"><?php echo $title;?>フリマ会場一覧</div>
     <!-- result -->
 <?php
     if (! $fleamarket_list):
@@ -72,14 +94,14 @@
         foreach ($fleamarket_list as $fleamarket):
             $fleamarket_id = $fleamarket['fleamarket_id'];
 
-            $is_admin_fleamarket = false;
+            $is_official = false;
             if ($fleamarket['register_type'] == \Model_Fleamarket::REGISTER_TYPE_ADMIN):
-                $is_admin_fleamarket = true;
+                $is_official = true;
             endif;
 
             $status_class = '';
             $resultPush = '';
-            if ($is_admin_fleamarket):
+            if ($is_official):
                 $status_class = 'status' . $fleamarket['event_status'];
                 $resultPush = 'resultPush';
             endif;
@@ -97,32 +119,33 @@
                     $entry_style_string .= $entry_styles[$entry_type_id];
 
                     $shop_fee_string .= $shop_fee_string != '' ? '/' : '';
-                    $shop_fee_string .= $entry_styles[$entry_type_id];
                     $booth_fee = $entry_style['booth_fee'];
                     if ($booth_fee > 0):
                         $booth_fee = number_format($booth_fee) . '円';
                     else:
                         $booth_fee = '無料';
                     endif;
-                    $shop_fee_string .= '：' . $booth_fee;
+                    $shop_fee_string .= $booth_fee;
                 endforeach;
             endif;
 ?>
     <div class="box result <?php echo $status_class;?> <?php echo $resultPush;?> clearfix">
       <h3>
-          <?php if ($is_admin_fleamarket):?><strong>楽市楽座主催</strong>&nbsp;<?php endif;?>
-          <a href="/detail/<?php echo e($fleamarket['fleamarket_id']);?>">
-              <?php echo e(date('Y年n月j日', strtotime($fleamarket['event_date'])));?>(<?php echo $week_list[date('w', strtotime($fleamarket['event_date']))];?>)&nbsp;
-              <?php echo e($fleamarket['name']);?>
-          </a>
+        <?php if ($is_official):?>
+        <strong><img src="/assets/img/resultPush.png" alt="楽市楽座主催" width="78" height="14"></strong>
+        <?php endif;?>
+        <a href="/detail/<?php echo e($fleamarket['fleamarket_id']);?>">
+          <?php echo e(date('Y年n月j日', strtotime($fleamarket['event_date'])));?>(<?php echo $week_list[date('w', strtotime($fleamarket['event_date']))];?>)&nbsp;
+          <?php echo e($fleamarket['name']);?>
+        </a>
       </h3>
       <div class="resultPhoto"><a href="/detail/<?php echo e($fleamarket_id);?>"><img src="/assets/img/noimage.jpg" class="img-rounded"></a></div>
       <div class="resultDetail">
         <dl class="col-md-6">
-          <dt>出店数</dt>
+          <dt>出店ブース数</dt>
           <dd><?php
             if ($total_booth > 0):
-                echo e($total_booth . '店');
+                echo e($total_booth . 'ブース');
             else:
                 echo '-';
             endif;
@@ -178,7 +201,7 @@
         </ul>
         <ul class="rightbutton">
           <?php
-            if ($is_admin_fleamarket && $fleamarket['event_status'] == \Model_Fleamarket::EVENT_STATUS_RESERVATION_RECEIPT):
+            if ($is_official && $fleamarket['event_status'] == \Model_Fleamarket::EVENT_STATUS_RESERVATION_RECEIPT):
                 $reservation_button = '出店予約をする';
                 if ($fleamarket['event_reservation_status'] == \Model_Fleamarket::EVENT_RESERVATION_STATUS_FULL):
                     $reservation_button = 'キャンセル待ちをする';
@@ -308,7 +331,13 @@
 </div>
 <!-- /searchSelecter -->
 <!-- ad -->
-<div class="ad"><img src="/assets/img/ad/test.jpg" alt="test" width="970" height="150" class="img-responsive"></div>
+<div class="ad">
+<!-- (楽市楽座)検索結果_フッターバナー_728x90 -->
+<div id="div-gpt-ad-1397113960029-0" class="ad"　style="width: 728px; height: 90px;">
+<script type="text/javascript">
+googletag.cmd.push(function() { googletag.display("div-gpt-ad-1397113960029-0"); });
+</script>
+</div>
 <!-- /ad -->
 <!-- pagination -->
 <?php
@@ -338,7 +367,7 @@ $(function() {
       $("#form_search").submit();
   });
 
-  $(".addMylist a").click(function(){
+  $(".addMylist a").click(function(evt){
       evt.preventDefault();
       var id = $(this).attr('id');
       id = id.match(/^fleamarket_id_(\d+)/)[1];
@@ -349,15 +378,25 @@ $(function() {
           data: {fleamarket_id: id}
       }).done(function(json, textStatus, jqXHR) {
           if(json == 'nologin' || json == 'nodata'){
-              alert(json);
+              $('#dialog_need_login').dialog();
           }else if(json){
-              alert('登録しました');
+              $('#dialog_success').dialog();
           }else{
-              alert('失敗しました');
+              $('#dialog_fail').dialog();
           }
       }).fail(function(jqXHR, textStatus, errorThrown) {
-          alert('失敗しました');
+          $('#dialog_fail').dialog();
       });
   });
 });
 </script>
+
+<div id="dialog_success" style="display: none;">
+マイリストに登録しました
+</div>
+<div id="dialog_fail" style="display: none;">
+マイリストに登録できませんでした
+</div>
+<div id="dialog_need_login" style="display: none;">
+マイリストに登録するためにはログインが必要です
+</div>

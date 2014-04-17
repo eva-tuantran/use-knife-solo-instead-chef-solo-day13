@@ -13,24 +13,24 @@ class Controller_Reservation extends Controller_Base_Template
         'confirm',
         'thanks',
     );
-
+    
     private $fleamarket = null;
     private $fieldset = null;
-
+    
     public function before()
     {
         parent::before();
 
         $this->fieldset = $this->getFieldset();
         if (! $this->fieldset) {
-            throw new SystemException('ER00502');
+            throw new SystemException(\Model_Error::ER00601);
         }
 
         $input = $this->fieldset->input();
         $fleamarket = Model_Fleamarket::find($input['fleamarket_id']);
 
         if (! $fleamarket) {
-            throw new SystemException('ER00502');
+            throw new SystemException(\Model_Error::ER00601);
         }
 
         $this->fleamarket = $fleamarket;
@@ -59,7 +59,7 @@ class Controller_Reservation extends Controller_Base_Template
     public function post_confirm()
     {
         Session::set_flash('reservation.fieldset',$this->fieldset);
-        
+
         if (! $this->fieldset->validation()->run() ||
             $this->is_duplicate() ){
             return Response::redirect('reservation');
@@ -75,7 +75,7 @@ class Controller_Reservation extends Controller_Base_Template
         $view = View::forge('reservation/confirm');
         $view->set('fieldset', $this->fieldset, false);
         $view->set('fleamarket_entry_style',$fleamarket_entry_style);
-        
+
         $this->template->content = $view;
     }
 
@@ -101,15 +101,16 @@ class Controller_Reservation extends Controller_Base_Template
         try {
             $entry = $this->registerEntry();
         } catch (Exception $e) {
-            throw new SystemException('ER00501');
+            throw new SystemException(\Model_Error::ER00603);
         }
-
-        try {
-            $this->sendMailToUser($entry);
-        } catch (Exception $e) {
-            throw new SystemException('ER00503');
+        
+        if ($entry) {
+            try {
+                $this->sendMailToUser($entry);
+            } catch (Exception $e) {
+                throw new SystemException(\Model_Error::ER00604);
+            }
         }
-
         $view->set('entry', $entry, false);
     }
 
@@ -146,7 +147,7 @@ class Controller_Reservation extends Controller_Base_Template
         $fieldset->repopulate();
         return $fieldset;
     }
-    
+
     /**
      * entries テーブルへの登録
      *
@@ -157,9 +158,9 @@ class Controller_Reservation extends Controller_Base_Template
     {
         $data = $this->getEntryData();
         if (! $data) {
-            throw new Exception();
+            throw new Exception(\Model_Error::ER00605);
         } else {
-            $db = Database_Connection::instance();
+            $db = Database_Connection::instance('master');
             $db->start_transaction();
 
             $condition = array(
@@ -168,7 +169,7 @@ class Controller_Reservation extends Controller_Base_Template
                 'fleamarket_entry_style_id' => $data['fleamarket_entry_style_id'],
             );
 
-            $fleamarket = Model_Fleamarket::findForUpdate($data['fleamarket_id']);
+            $fleamarket = Model_Fleamarket::find($data['fleamarket_id']);
 
             if ($this->is_duplicate() ){
                 $db->rollback_transaction();
@@ -188,7 +189,7 @@ class Controller_Reservation extends Controller_Base_Template
             $fleamarket->updateEventReservationStatus(false);
             $fleamarket->save();
 
-            if (! Input::post('cancel') && 
+            if (! Input::post('cancel') &&
                 $entry->fleamarket_entry_style->isOverReservationLimit()) {
                 $db->rollback_transaction();
                 return false;
@@ -243,22 +244,66 @@ class Controller_Reservation extends Controller_Base_Template
     private function sendMailToUser($entry)
     {
         $params = array();
-        foreach (array_keys($entry->properties()) as $column) {
-            $params[$column] = $entry->get($column);
+
+        $objects = array(
+            'entry'                  => $entry,
+            'fleamarket'             => $entry->fleamarket,
+            'fleamarket_entry_style' => $entry->fleamarket_entry_style,
+            'user'                   => $entry->user,
+            'location'               => $entry->fleamarket->location,
+        );
+
+        $fleamarket_abouts = array();
+        foreach ($entry->fleamarket->fleamarket_abouts as $fleamarket_about) {
+            $fleamarket_abouts[$fleamarket_about->about_id] = $fleamarket_about;
         }
+
+        foreach (Model_Fleamarket_About::getAboutTitles() as $id => $title){
+            if (isset($fleamarket_abouts[$id])) {
+                $objects["fleamarket_about_${id}"] = $fleamarket_abouts[$id];
+            }else{
+                $params["fleamarket_about_${id}.description"] = '';
+            }
+        }
+
+        foreach ($objects as $name => $obj) {
+            foreach (array_keys($obj->properties()) as $column) {
+                $params["${name}.${column}"] = $obj->get($column);
+            }
+        }
+
+        $entry_styles = Config::get('master.entry_styles');
+        $params['fleamarket_entry_style.entry_style_name']
+            = $entry_styles[$entry->fleamarket_entry_style->entry_style_id];
+
+        $params['fleamarket_entry_styles.entry_style_name']
+            = implode('/',array_map(function($obj) use ($entry_styles){
+                        return $entry_styles[$obj->entry_style_id];
+                    },$entry->fleamarket->fleamarket_entry_styles));
+
+        $params['fleamarket_entry_styles.fee']
+            = implode('/',array_map(function($obj) use ($entry_styles){
+                        return sprintf('%s:%d円',$entry_styles[$obj->entry_style_id],$obj->booth_fee);
+                    },$entry->fleamarket->fleamarket_entry_styles));
+
+        foreach (array('fleamarket.event_time_start','fleamarket.event_time_end') as $column) {
+            $params[$column] = substr($params[$column],0,5);
+        }
+
         $this->login_user->sendmail("reservation" , $params);
     }
 
     private function is_duplicate()
     {
         $input = $this->fieldset->input();
+
         $count = Model_Entry::query()
             ->where(array(
                 'user_id'       => $this->login_user->user_id,
                 'fleamarket_id' => $input['fleamarket_id']
             ))
             ->count();
-        
+
         return $count > 0;
     }
 }

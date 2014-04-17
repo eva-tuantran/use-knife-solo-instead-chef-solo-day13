@@ -98,6 +98,11 @@ class Controller_Base_Template extends Controller_Template
         $this->login_user = Auth::get_user_instance();
 
         $segments = $this->request->route->segments;
+        $this->template->is_top = false;
+        if (! isset($segments[0]) || $segments[0] == 'top') {
+            $this->template->is_top = true;
+        }
+
         if ($segments) {
             if (count($segments) == 1 ){
                 $segments[] = 'index';
@@ -108,7 +113,7 @@ class Controller_Base_Template extends Controller_Template
         }
     }
 
-    
+
     public function after($response)
     {
         $this->template->meta = $this->meta;
@@ -194,7 +199,7 @@ class Controller_Base_Template extends Controller_Template
     /**
      * JSON で返却 $send が true だと send して exit します
      *
-     * @param $data 返却する値 $send 
+     * @param $data 返却する値 $send
      * @access protected
      * @return Response
      * @author kobayasi

@@ -6,14 +6,32 @@
  * @author shimma
  *
  */
-class Model_User extends Orm\Model_Soft
+class Model_User extends Model_Base
 {
+
+    /**
+     * ールマガジン 0:不要,1:必要
+     */
+    const MM_FLAG_NG = 0;
+    const MM_FLAG_OK = 1;
+
+    /**
+     * 登録ステータス 0:仮登録,1:本登録.2:退会,3:強制退会
+     */
+    const REGISTER_STATUS_INACTIVATED = 0;
+    const REGISTER_STATUS_ACTIVATED   = 1;
+    const REGISTER_STATUS_STOPPED     = 2;
+    const REGISTER_STATUS_BANNED      = 3;
+
     protected static $_table_name = 'users';
 
     protected static $_primary_key = array('user_id');
 
     protected static $_has_many = array(
         'favorites' => array(
+            'key_from' => 'user_id',
+        ),
+        'entries' => array(
             'key_from' => 'user_id',
         ),
     );
@@ -339,15 +357,7 @@ class Model_User extends Orm\Model_Soft
         ),
     );
 
-    /**
-     * 登録ステータス 0:仮登録,1:本登録.2:退会,3:強制退会
-     *
-     */
-    const REGISTER_STATUS_INACTIVATED = 0;
-    const REGISTER_STATUS_ACTIVATED   = 1;
-    const REGISTER_STATUS_STOPPED     = 2;
-    const REGISTER_STATUS_BANNED      = 3;
-
+    protected $_has_entry = array();
     /**
      * 登録ステータスが本登録のユーザを取得する
      *
@@ -403,9 +413,16 @@ QUERY;
     public static function getUsersByPrefectureId($prefecture_id)
     {
         $placeholders = array(
-            ':prefecture_id' => $prefecture_id,
+            ':mm_flag' => self::MM_FLAG_OK,
             ':register_status' => self::REGISTER_STATUS_ACTIVATED,
         );
+
+        $where = '';
+        if ($prefecture_id != '99') {
+            $placeholders[':prefecture_id'] = $prefecture_id;
+            $where = ' AND prefecture_id = :prefecture_id';
+
+        }
 
         $query = <<<"QUERY"
 SELECT
@@ -416,9 +433,10 @@ SELECT
 FROM
     users
 WHERE
-    prefecture_id = :prefecture_id
+    mm_flag = :mm_flag
     AND register_status = :register_status
     AND deleted_at IS NULL
+    {$where}
 QUERY;
 
         $statement = \DB::query($query)->parameters($placeholders);
@@ -499,7 +517,7 @@ QUERY;
 
             return $new_user;
         } catch (Exception $e) {
-            throw new SystemException('ユーザ作成に失敗しました');
+            throw new SystemException(\Model_Error::ER00304);
         }
     }
 
@@ -541,9 +559,9 @@ QUERY;
      * ユーザにテンプレートのメールを送信します
      * lang/ja/email配下のテンプレートを利用します。
      *
+     * @access public
      * @param string $subject
      * @param string $body
-     * @access public
      * @return bool
      * @author shimma
      *
@@ -555,44 +573,35 @@ QUERY;
             $email = new \Model_Email();
             $email->sendMailByParams($template_name, $params, $this->email);
         } catch (Exception $e) {
-            throw new SystemException('ユーザ宛のメール送信に失敗した可能性があります');
+            throw new SystemException(\Model_Error::ER00303);
         }
-    }
-
-    /**
-     * エントリーした全てのフリーマーケットの情報を取得します
-     *
-     * @access public
-     * @return mixed
-     * @author shimma
-     */
-    public function getEntries($page = 1, $row_count = 30)
-    {
-        return \Model_Entry::getUserEntries($this->user_id, $page, $row_count);
-    }
-
-    /**
-     * エントリーしたフリーマーケットの最新情報を取得します
-     *
-     * @access public
-     * @return mixed
-     * @author shimma
-     */
-    public function getReservedEntries($page = 1, $row_count = 30)
-    {
-        return \Model_Entry::getUserReservedEntries($this->user_id, $page, $row_count);
     }
 
     /**
      * これまで参加したフリマの数を取得します
      *
      * @access public
+     * @param
      * @return int
      * @author shimma
      */
     public function getFinishedEntryCount()
     {
         return \Model_Entry::getUserFinishedEntryCount($this->user_id);
+    }
+
+    /**
+     * エントリーしたフリーマーケットの最新情報を取得します
+     *
+     * @access public
+     * @param int $page ページ
+     * @param int $row_count 1ページの件数
+     * @return mixed
+     * @author shimma
+     */
+    public function getReservedEntries($page = 1, $row_count = 30)
+    {
+        return \Model_Entry::getUserReservedEntries($this->user_id, $page, $row_count);
     }
 
     /**
@@ -608,9 +617,24 @@ QUERY;
     }
 
     /**
+     * ユーザのお気に入り情報を取得します
+     *
+     * @access public
+     * @param int $page ページ
+     * @param int $row_count 1ページの件数
+     * @return mixed $favorites
+     * @author shimma
+     */
+    public function getFavorites($page = 1, $row_count = 30)
+    {
+        return \Model_Favorite::getUserFavorites($this->user_id, $page, $row_count);
+    }
+
+    /**
      * マイリスト(お気に入り)数を取得します
      *
      * @access public
+     * @param
      * @return int
      * @author shimma
      */
@@ -620,9 +644,24 @@ QUERY;
     }
 
     /**
+     * エントリーした全てのフリーマーケットの情報を取得します
+     *
+     * @access public
+     * @param int $page ページ
+     * @param int $row_count 1ページの件数
+     * @return mixed
+     * @author shimma
+     */
+    public function getEntries($page = 1, $row_count = 30)
+    {
+        return \Model_Entry::getUserEntries($this->user_id, $page, $row_count);
+    }
+
+    /**
      * フリマ参加総数を取得します
      *
      * @access public
+     * @param
      * @return int
      * @author shimma
      */
@@ -632,20 +671,32 @@ QUERY;
     }
 
     /**
+     * ユーザの投稿したフリマの詳細情報を取得します
+     *
+     * @access public
+     * @param int $page ページ
+     * @param int $row_count 1ページの件数
+     * @return mixed
+     * @author shimma
+     */
+    public function getMyFleamarkets($page = 1, $row_count = 30)
+    {
+        return \Model_Fleamarket::getUserFleamarkets($this->user_id, $page, $row_count);
+    }
+
+    /**
      * 自分で投稿したフリマの総数の取得
      *
      * @access public
+     * @param
      * @return int
      * @author shimma
-     *
-     * @todo ここの実装
+     * @author ida
      */
     public function getMyFleamarketCount()
     {
-        return 1;
-        return \Model_Fleamarket::getUserMyFleamarkets($this->user_id, $page, $row_count);
+        return \Model_Fleamarket::getUserMyFleamarketCount($this->user_id);
     }
-
 
     /**
      * 対象のフリマIDのフリマ予約をキャンセルします
@@ -658,30 +709,6 @@ QUERY;
     public function cancelEntry($fleamarket_id)
     {
         return \Model_Entry::cancelUserEntry($this->user_id, $fleamarket_id);
-    }
-
-    /**
-     * ユーザのお気に入り情報を取得します
-     *
-     * @access public
-     * @return mixed $favorites
-     * @author shimma
-     */
-    public function getFavorites($page = 1, $row_count = 30)
-    {
-        return \Model_Favorite::getUserFavorites($this->user_id, $page, $row_count);
-    }
-
-    /**
-     * ユーザの投稿したフリマの詳細情報を取得します
-     *
-     * @access public
-     * @return mixed $favorites
-     * @author shimma
-     */
-    public function getMyFleamarkets($page = 1, $row_count = 30)
-    {
-        return \Model_Fleamarket::getUserFleamarkets($this->user_id, $page, $row_count);
     }
 
     /**
@@ -699,7 +726,7 @@ QUERY;
             $this->register_status = self::REGISTER_STATUS_ACTIVATED;
             $this->save();
         } catch (Exception $e) {
-            throw new SystemException('アクティベート化に失敗しました');
+            throw new SystemException(\Model_Error::ER00305);
         }
     }
 
@@ -730,5 +757,25 @@ QUERY;
     public static function findByKeywordCount($keyword)
     {
         return static::getFindByKeywordQuery($keyword)->count();
+    }
+
+    /**
+     * 予約済みか
+     *
+     * @access public
+     * @param mixed $fleamarket_id
+     * @return bool
+     * @author kobayasi
+     */
+    public function hasEntry($fleamarket_id)
+    {
+        if (! $this->_has_entry) {
+            $_has_entry = array();
+            foreach ($this->entries as $entry) {
+                $_has_entry[$entry->fleamarket_id] = 1;
+            }
+            $this->_has_entry = $_has_entry;
+        }
+        return isset($this->_has_entry[$fleamarket_id]);
     }
 }

@@ -26,3 +26,18 @@ $ php oil r seed user
 ```
 http://192.168.33.101
 ```
+
+### トランザクションについて
+
+```
+ $db = Database_Connection::instance();
+```
+
+のように引数なしだと slave 側に接続してしまうため、
+master へのトランザクションは、
+
+```
+ $db = Database_Connection::instance('master');
+```
+
+のように明示的に指定してください。

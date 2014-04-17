@@ -7,7 +7,7 @@
  *
  * @author ida
  */
-class Model_Fleamarket extends \Orm\Model
+class Model_Fleamarket extends Model_Base
 {
     /**
      * 開催状況 1:開催予定,2:予約受付中,3:受付終了,4:開催終了,5:中止
@@ -95,6 +95,12 @@ class Model_Fleamarket extends \Orm\Model
         ),
         'entries' => array(
             'key_from' => 'fleamarket_id',
+        ),
+    );
+
+    protected static $_belongs_to = array(
+        'location' => array(
+            'key_to' => 'location_id',
         ),
     );
 
@@ -568,7 +574,7 @@ QUERY;
             $rows = $result->as_array();
         }
 
-        return $rows[0];
+        return isset($rows[0]) ? $rows[0] : null;
     }
 
     /**
@@ -713,8 +719,9 @@ QUERY;
             ':event_status' => self::EVENT_STATUS_RECEIPT_END,
             ':display_flag' => self::DISPLAY_FLAG_ON,
             ':register_status' => self::REGISTER_TYPE_ADMIN,
+            ':pickup_flag' => self::PICKUP_FLAG_ON,
+            ':about_access_id' => \Model_Fleamarket_About::ACCESS,
         );
-
         $limit = '';
         if (! is_int($row_count)) {
             $row_count = 10;
@@ -732,16 +739,21 @@ SELECT
     f.headline,
     f.event_date,
     l.name AS location_name,
-    l.prefecture_id AS prefecture_id
+    l.prefecture_id AS prefecture_id,
+    fa.description AS about_access
 FROM
     fleamarkets AS f
 LEFT JOIN
     locations AS l ON f.location_id = l.location_id
+LEFT JOIN
+    fleamarket_abouts AS fa ON f.fleamarket_id = fa.fleamarket_id
+    AND fa.about_id = :about_access_id
 WHERE
     f.display_flag = :display_flag
     AND f.register_type = :register_status
     AND f.event_status <= :event_status
     AND DATE_FORMAT(f.event_date, '%Y-%m-%d') >= CURDATE()
+    AND f.pickup_flag = :pickup_flag
     AND f.deleted_at IS NULL
 ORDER BY
     f.event_date
@@ -755,7 +767,6 @@ QUERY;
         if (! empty($result)) {
             $rows = $result->as_array();
         }
-
         return $rows;
     }
 
@@ -767,11 +778,12 @@ QUERY;
      * @param int $fleamarket_id
      * @return bool
      * @author shimma
-     *
+     * @author ida
      * @todo: こちらの実装がお気に入りから取得になっているので修正
      */
-    public static function getUserFleamarkets($user_id, $page = 0, $row_count = 0)
-    {
+    public static function getUserFleamarkets(
+        $user_id, $page = 0, $row_count = 0
+    ) {
         $placeholders = array(
             'user_id'         => $user_id,
             'about_access_id' => \Model_Fleamarket_About::ACCESS,
@@ -789,10 +801,9 @@ SELECT
     f.fleamarket_id,
     f.name,
     f.promoter_name,
-    e.fleamarket_entry_style_id,
-    DATE_FORMAT(f.event_date, '%Y年%m月%d日') AS event_date,
-    DATE_FORMAT(f.event_time_start, '%k時%i分') AS event_time_start,
-    DATE_FORMAT(f.event_time_end, '%k時%i分') AS event_time_end,
+    event_date,
+    event_time_start,
+    event_time_end,
     f.event_status,
     f.description,
     f.reservation_start,
@@ -812,27 +823,18 @@ SELECT
     l.prefecture_id AS prefecture_id,
     l.address AS address,
     l.googlemap_address AS googlemap_address,
-    fa.description AS about_access,
-    fes.booth_fee AS booth_fee
+    fa.description AS about_access
 FROM
-    favorites AS fav
-LEFT JOIN
-    entries AS e ON
-    fav.fleamarket_id = e.fleamarket_id
-LEFT JOIN
-    fleamarkets AS f ON
-    fav.fleamarket_id = f.fleamarket_id
+    fleamarkets AS f
 LEFT JOIN
     locations AS l ON f.location_id = l.location_id
 LEFT JOIN
     fleamarket_abouts AS fa ON f.fleamarket_id = fa.fleamarket_id
     AND fa.about_id = :about_access_id
-LEFT JOIN
-    fleamarket_entry_styles AS fes ON f.fleamarket_id = fes.fleamarket_id
 WHERE
-    fav.user_id = :user_id AND
+    f.created_user = :user_id AND
     f.display_flag = :display_flag AND
-    fav.deleted_at IS NULL
+    f.deleted_at IS NULL
 ORDER BY
     f.event_date DESC,
     f.event_time_start
@@ -846,6 +848,42 @@ QUERY;
         }
 
         return array();
+    }
+
+    /**
+     * 特定のユーザの投稿したフリマ情報をカウントを取得します
+     *
+     * @access public
+     * @param int $user_id
+     * @param int $fleamarket_id
+     * @return bool
+     * @author shimma
+     * @author ida
+     */
+    public static function getUserMyFleamarketCount($user_id)
+    {
+        $placeholders = array(
+            'user_id'         => $user_id,
+            'display_flag'    => \Model_Fleamarket::DISPLAY_FLAG_ON,
+        );
+
+        $query = <<<QUERY
+SELECT
+    COUNT(f.fleamarket_id) AS my_fleamarket_count
+FROM
+    fleamarkets AS f
+WHERE
+    f.created_user = :user_id AND
+    f.display_flag = :display_flag AND
+    f.deleted_at IS NULL
+ORDER BY
+    f.event_date DESC,
+    f.event_time_start
+QUERY;
+
+        $count = \DB::query($query)->parameters($placeholders)->execute()->get('my_fleamarket_count');
+
+        return $count;
     }
 
     /**
@@ -1074,16 +1112,5 @@ QUERY;
         if ($save) {
             $this->save();
         }
-    }
-
-    public static function findForUpdate($fleamarket_id)
-    {
-        $query = DB::select()
-            ->from('fleamarkets')
-            ->where('fleamarket_id',$fleamarket_id) . " FOR UPDATE";
-
-        $result = DB::query($query)->as_object('Model_Fleamarket')->execute();
-
-        return $result ? $result[0] : null;
     }
 }

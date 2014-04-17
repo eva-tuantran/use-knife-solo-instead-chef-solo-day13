@@ -2,7 +2,7 @@
   <!-- soon -->
   <div id="soon" class="container">
     <div class="box clearfix">
-      <h2>近日開催のフリーマーケット</h2>
+      <h2><i></i>近日開催のフリーマーケット</h2>
       <?php echo $upcomming;?>
     </div>
   </div>
@@ -10,19 +10,19 @@
   <!-- map -->
   <div id="map" class="col-sm-7">
     <div class="box">
-      <h2>地図から探す</h2>
+      <h2><i></i>地図から探す</h2>
       <div class="map">
-        <img src="assets/img/map.jpg" alt="地図" width="397" height="255" border="0" usemap="#mapSearch">
+        <img src="assets/img/map_normal.jpg" alt="地図" width="397" height="255" border="0" usemap="#mapSearch">
         <map name="mapSearch">
-          <area shape="rect" coords="299,1,397,65" href="#">
-          <area shape="poly" coords="375,76,299,76,299,124,322,124,322,169,375,168" href="#">
-          <area shape="poly" coords="376,175,298,175,298,200,314,200,315,238,356,239,357,251,376,251" href="#">
-          <area shape="poly" coords="316,131,300,131,300,139,219,139,220,169,240,170,241,211,219,211,218,250,240,250,241,239,308,239,307,208,292,206,292,170,316,169" href="#">
-          <area shape="poly" coords="212,139,160,139,160,195,175,195,175,251,212,251,213,205,236,204,236,176,211,176" href="#">
-          <area shape="rect" coords="81,138,155,195" href="#">
-          <area shape="rect" coords="82,205,166,253" href="#">
-          <area shape="poly" coords="71,139,2,139,2,195,19,195,19,251,71,252" href="#">
-          <area shape="rect" coords="46,60,102,92" href="#">
+          <area shape="rect" coords="299,1,397,65" href="#" id="map_1">
+          <area shape="poly" coords="375,76,299,76,299,124,322,124,322,169,375,168" href="#" id="map_2">
+          <area shape="poly" coords="376,175,298,175,298,200,314,200,315,238,356,239,357,251,376,251" href="#" id="map_3">
+          <area shape="poly" coords="316,131,300,131,300,139,219,139,220,169,240,170,241,211,219,211,218,250,240,250,241,239,308,239,307,208,292,206,292,170,316,169" href="#" id="map_4">
+          <area shape="poly" coords="212,139,160,139,160,195,175,195,175,251,212,251,213,205,236,204,236,176,211,176" href="#" id="map_5">
+          <area shape="rect" coords="81,138,155,195" href="#" id="map_6">
+          <area shape="rect" coords="82,205,166,253" href="#" id="map_7">
+          <area shape="poly" coords="71,139,2,139,2,195,19,195,19,251,71,252" href="#" id="map_8">
+          <area shape="rect" coords="46,60,102,92" href="#" id="map_9">
         </map>
         <div id="regions">
           <div class="region" id="region_01">
@@ -143,7 +143,7 @@
   <!-- calendar -->
   <div id="calendar" class="col-sm-5">
     <div class="box">
-      <h2>カレンダーで探す</h2>
+      <h2><i></i>カレンダーで探す</h2>
       <div id="calendar-search"><?php echo $calendar;?></div>
     </div>
   </div>
