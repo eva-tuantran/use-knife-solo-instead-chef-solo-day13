@@ -11,14 +11,13 @@
                     $entry_style_string .= $entry_styles[$entry_type_id];
 
                     $shop_fee_string .= $shop_fee_string != '' ? '/' : '';
-                    $shop_fee_string .= $entry_styles[$entry_type_id];
                     $booth_fee = $entry_style['booth_fee'];
                     if ($booth_fee > 0):
                         $booth_fee = number_format($booth_fee) . '円';
                     else:
                         $booth_fee = '無料';
                     endif;
-                    $shop_fee_string .= '：' . $booth_fee;
+                    $shop_fee_string .= $booth_fee;
                 endforeach;
             endif;
 ?>
@@ -30,7 +29,7 @@
   <h3><a href="/detail/<?php echo e($fleamarket['fleamarket_id']);?>"><?php echo e($fleamarket['name']);?></a></h3>
   <dl class="col-md-4">
     <dt>開催日</dt>
-    <dd><?php echo e(date('n月j日', strtotime($fleamarket['event_date'])));?>(<?php echo $week_list[date('w', strtotime($fleamarket['event_date']))];?>)</dd>
+    <dd><?php echo e(date('n月j日', strtotime($fleamarket['event_date'])));?>(<?php echo $week_list[date('w', strtotime($fleamarket['event_date']))];?>)&nbsp;</dd>
   </dl>
   <dl class="col-md-4">
     <dt>出店形態</dt>

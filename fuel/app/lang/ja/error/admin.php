@@ -1,6 +1,6 @@
 <?php
 
-return array(,
+return array(
 
     \Model_Error::ER00101 => 'DB接続エラー',
 

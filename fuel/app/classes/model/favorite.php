@@ -1,7 +1,7 @@
 <?php
 
 /**
- * 
+ *
  *
  * マイリストテーブル
  *
@@ -69,8 +69,9 @@ class Model_Favorite extends \Orm\Model_Soft
      * @return bool
      * @author shimma
      */
-    public static function getUserfavorites($user_id, $page = 0, $row_count = 0)
-    {
+    public static function getUserFavorites(
+        $user_id, $page = 0, $row_count = 0
+    ) {
         $placeholders = array(
             'user_id' => $user_id,
             'about_access_id' => \Model_Fleamarket_About::ACCESS,
@@ -89,9 +90,9 @@ SELECT
     f.name,
     f.promoter_name,
     e.fleamarket_entry_style_id,
-    DATE_FORMAT(f.event_date, '%Y年%m月%d日') AS event_date,
-    DATE_FORMAT(f.event_time_start, '%k時%i分') AS event_time_start,
-    DATE_FORMAT(f.event_time_end, '%k時%i分') AS event_time_end,
+    f.event_date,
+    f.event_time_start,
+    f.event_time_end,
     f.event_status,
     f.description,
     f.reservation_start,
@@ -111,8 +112,7 @@ SELECT
     l.prefecture_id AS prefecture_id,
     l.address AS address,
     l.googlemap_address AS googlemap_address,
-    fa.description AS about_access,
-    fes.booth_fee AS booth_fee
+    fa.description AS about_access
 FROM
     favorites AS fav
 LEFT JOIN
@@ -131,6 +131,7 @@ LEFT JOIN
 WHERE
     fav.user_id = :user_id AND
     f.display_flag = :display_flag AND
+    fa.about_id = :about_access_id AND
     fav.deleted_at IS NULL
 ORDER BY
     f.event_date DESC,

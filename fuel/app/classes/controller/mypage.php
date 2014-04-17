@@ -59,7 +59,8 @@ class Controller_Mypage extends Controller_Base_Template
         $fleamarkets_all['entry']        = $this->login_user->getEntries(1, 3);
         $fleamarkets_all['mylist']       = $this->login_user->getFavorites(1, 3);
         $fleamarkets_all['myfleamarket'] = $this->login_user->getMyFleamarkets(1, 3);
-        $fleamarkets_all['reserved']     = $this->login_user->getReservedEntries(1, 3);
+//        $fleamarkets_all['reserved']     = $this->login_user->getReservedEntries(1, 3);
+
 
         $fleamarkets_view = array();
         foreach ($fleamarkets_all as $type => $fleamarkets) {
@@ -340,5 +341,4 @@ class Controller_Mypage extends Controller_Base_Template
 
         return $fieldset;
     }
-
 }
