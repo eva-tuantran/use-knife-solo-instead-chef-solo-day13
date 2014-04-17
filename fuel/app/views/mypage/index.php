@@ -5,7 +5,6 @@
     <div class="box clearfix" id="calendar-search">
       <?php echo $calendar; ?>
     </div>
-
     <div class="box clearfix">
       <h3 style="float: none; margin-bottom:5px;">オプション変更</h3>
       <ul style="float: none">

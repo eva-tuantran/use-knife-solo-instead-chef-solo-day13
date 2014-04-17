@@ -343,9 +343,9 @@ SELECT
     f.name,
     f.promoter_name,
     e.fleamarket_entry_style_id,
-    DATE_FORMAT(f.event_date, '%Y年%m月%d日') AS event_date,
-    DATE_FORMAT(f.event_time_start, '%k時%i分') AS event_time_start,
-    DATE_FORMAT(f.event_time_end, '%k時%i分') AS event_time_end,
+    f.event_date,
+    f.event_time_start,
+    f.event_time_end,
     f.event_status,
     f.description,
     f.reservation_start,
@@ -365,8 +365,7 @@ SELECT
     l.prefecture_id AS prefecture_id,
     l.address AS address,
     l.googlemap_address AS googlemap_address,
-    fa.description AS about_access,
-    fes.booth_fee AS booth_fee
+    fa.description AS about_access
 FROM
     entries AS e
 LEFT JOIN
@@ -377,8 +376,6 @@ LEFT JOIN
 LEFT JOIN
     fleamarket_abouts AS fa ON f.fleamarket_id = fa.fleamarket_id
     AND fa.about_id = :about_access_id
-LEFT JOIN
-    fleamarket_entry_styles AS fes ON f.fleamarket_id = fes.fleamarket_id
 WHERE
     e.user_id = :user_id AND
     e.entry_status = :entry_status AND

@@ -94,14 +94,14 @@ googletag.enableServices();
         foreach ($fleamarket_list as $fleamarket):
             $fleamarket_id = $fleamarket['fleamarket_id'];
 
-            $is_admin_fleamarket = false;
+            $is_official = false;
             if ($fleamarket['register_type'] == \Model_Fleamarket::REGISTER_TYPE_ADMIN):
-                $is_admin_fleamarket = true;
+                $is_official = true;
             endif;
 
             $status_class = '';
             $resultPush = '';
-            if ($is_admin_fleamarket):
+            if ($is_official):
                 $status_class = 'status' . $fleamarket['event_status'];
                 $resultPush = 'resultPush';
             endif;
@@ -119,20 +119,19 @@ googletag.enableServices();
                     $entry_style_string .= $entry_styles[$entry_type_id];
 
                     $shop_fee_string .= $shop_fee_string != '' ? '/' : '';
-                    $shop_fee_string .= $entry_styles[$entry_type_id];
                     $booth_fee = $entry_style['booth_fee'];
                     if ($booth_fee > 0):
                         $booth_fee = number_format($booth_fee) . '円';
                     else:
                         $booth_fee = '無料';
                     endif;
-                    $shop_fee_string .= '：' . $booth_fee;
+                    $shop_fee_string .= $booth_fee;
                 endforeach;
             endif;
 ?>
     <div class="box result <?php echo $status_class;?> <?php echo $resultPush;?> clearfix">
       <h3>
-        <?php if ($is_admin_fleamarket):?>
+        <?php if ($is_official):?>
         <strong><img src="/assets/img/resultPush.png" alt="楽市楽座主催" width="78" height="14"></strong>
         <?php endif;?>
         <a href="/detail/<?php echo e($fleamarket['fleamarket_id']);?>">
@@ -143,10 +142,10 @@ googletag.enableServices();
       <div class="resultPhoto"><a href="/detail/<?php echo e($fleamarket_id);?>"><img src="/assets/img/noimage.jpg" class="img-rounded"></a></div>
       <div class="resultDetail">
         <dl class="col-md-6">
-          <dt>出店数</dt>
+          <dt>出店ブース数</dt>
           <dd><?php
             if ($total_booth > 0):
-                echo e($total_booth . '店');
+                echo e($total_booth . 'ブース');
             else:
                 echo '-';
             endif;
@@ -202,7 +201,7 @@ googletag.enableServices();
         </ul>
         <ul class="rightbutton">
           <?php
-            if ($is_admin_fleamarket && $fleamarket['event_status'] == \Model_Fleamarket::EVENT_STATUS_RESERVATION_RECEIPT):
+            if ($is_official && $fleamarket['event_status'] == \Model_Fleamarket::EVENT_STATUS_RESERVATION_RECEIPT):
                 $reservation_button = '出店予約をする';
                 if ($fleamarket['event_reservation_status'] == \Model_Fleamarket::EVENT_RESERVATION_STATUS_FULL):
                     $reservation_button = 'キャンセル待ちをする';

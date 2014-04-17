@@ -5,11 +5,13 @@
     <div class="box clearfix" id="calendar-search">
       <?php echo $calendar; ?>
     </div>
-
-    <!-- <div class="box clearfix"> -->
-    <!-- <li><a href="/mypage/account">アカウント設定</a></li> -->
-    <!-- </ul> -->
-    <!-- </div> -->
+    <div class="box clearfix">
+      <h3 style="float: none; margin-bottom:5px;">オプション変更</h3>
+      <ul style="float: none">
+        <li style="margin-right: 10px;"><a href="/mypage/account">アカウント設定</a></li>
+        <li><a href="/mypage/password">パスワード変更</a></li>
+      </ul>
+    </div>
   </div>
   <!-- /mypageProfile -->
 
@@ -96,10 +98,13 @@
                 echo "マイリスト";
                 break;
             case 'entry':
-                echo "出店したフリマ";
+                echo "出店予約したフリマ一覧";
                 break;
             case 'myfleamarket':
-                echo "投稿したフリマ";
+                echo "開催投稿したフリマ一覧";
+                break;
+            case 'reserved';
+                echo "出店予約フリマ一覧";
                 break;
             default:
                 echo "フリマ一覧";
@@ -114,7 +119,7 @@
         <?php foreach ($fleamarkets_view as $fleamarket_view) { echo $fleamarket_view; }; ?>
 
         <!-- pagination -->
-        <?php if ('' != ($pagnation =  $pagination->render())): ?> 
+        <?php if ('' != ($pagnation =  $pagination->render())): ?>
         <?php echo $pagnation; ?>
         <?php else: ?>
         <ul class="pagination">
