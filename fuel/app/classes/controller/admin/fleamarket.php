@@ -142,7 +142,7 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
         $this->removeFleamarketImages();
         $files = $this->moveUploadedImages();
 
-        $db = Database_Connection::instance();
+        $db = Database_Connection::instance('master');
         $db->start_transaction();
 
         try {
