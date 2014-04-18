@@ -214,7 +214,7 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
         }
 
         $fieldset->validation()->add_callable('Custom_Validation');
-        $fieldset->add('fleamarket_image_id');
+        $fieldset->add('delete_priorities');
         $fieldset->repopulate();
 
         return $fieldset;
@@ -340,8 +340,15 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
         if (Upload::is_valid()) {
             Upload::save();
             $files = Upload::get_files();
-            Session::set_flash('admin.fleamarket.files', $files);
-            return $files;
+            $files_array = array();
+
+            foreach ($files as $file) {
+                $files_array[$file['field']] = $file;
+            }
+
+            Session::set_flash('admin.fleamarket.files', $files_array);
+
+            return $files_array;
         } else {
             foreach (Upload::get_errors() as $file) {
                 foreach ($file['errors'] as $error){
@@ -378,13 +385,29 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
     public function registerFleamarketImage($fleamarket, $files)
     {
         foreach ($files as $file) {
-            $fleamarket_image = Model_Fleamarket_Image::forge(array(
-                'fleamarket_id' => $fleamarket->fleamarket_id,
-                'file_name' => $file['saved_as'],
-                'created_user' => 1,
-                'updated_user' => 1,
-            ));
-            $fleamarket_image->save();
+            $matches = array();
+            if (preg_match('/^upload(\d+)$/',$file['field'], $matches)) {
+                $priority = $matches[1];
+                $data = array(
+                    'fleamarket_id' => $fleamarket->fleamarket_id,
+                    'file_name' => $file['saved_as'],
+                    'priority' => $priority
+                );
+
+                $fleamarket_image = Model_Fleamarket_Image::query()
+                    ->where('fleamarket_id', $fleamarket->fleamarket_id)
+                    ->where('priority', $priority)
+                    ->get_one();
+                
+                if ($fleamarket_image) {
+                    $fleamarket_image->set($data);
+                    $fleamarket_image->updated_user = $this->administrator->administrator_id;
+                }else{
+                    $fleamarket_image = Model_Fleamarket_Image::forge($data);
+                    $fleamarket_image->created_user = $this->administrator->administrator_id;
+                }
+                $fleamarket_image->save();
+            }
         }
     }
 
@@ -417,11 +440,13 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
         $fieldsets = $this->getFieldsets();
         $fieldset  = $fieldsets['fleamarket'];
         $input = $fieldset->input();
-        if ($input['fleamarket_image_id']) {
-            foreach ($input['fleamarket_image_id'] as $fleamarket_image_id) {
+
+        if ($input['delete_priorities']) {
+            foreach ($input['delete_priorities'] as $priority) {
                 $query = Model_Fleamarket_Image::query()
-                    ->where('fleamarket_image_id',$fleamarket_image_id);
-                $query->delete();
+                    ->where('fleamarket_id', Input::param('fleamarket_id'))
+                    ->where('priority', $priority)
+                    ->delete();
             }
         }
     }

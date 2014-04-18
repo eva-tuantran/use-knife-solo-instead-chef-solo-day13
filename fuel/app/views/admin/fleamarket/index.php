@@ -390,7 +390,7 @@ $(function() {
 	?>
       </td>
     </tr>
-    <tr>
+<tr>
       <td>created_at</td>
       <td>
       <?php
@@ -422,41 +422,18 @@ $(function() {
       </td>
     </tr>
 -->
-    <?php if ($fleamarket) { ?>
-    <?php foreach ($fleamarket->fleamarket_images as $fleamarket_image) { ?>
+    <?php foreach (range(1,4) as $priority) { ?>
     <tr>
-      <td>ファイル</td>
+      <td>ファイル<?php echo $priority; ?></td>
       <td>
-	<img src="<?php echo $fleamarket_image->Url(); ?>">
-	<input type="checkbox" name="fleamarket_image_id[]" value="<?php echo $fleamarket_image->fleamarket_image_id; ?>">削除する
+	<?php if ($fleamarket && $fleamarket->fleamarket_image($priority)) { ?>
+	<img src="<?php echo $fleamarket->fleamarket_image($priority)->Url(); ?>">
+	<input type="checkbox" name="delete_priorities[]" value="<?php echo $priority; ?>">削除する
+	<?php } ?>
+	<input type="file" name="upload<?php echo $priority; ?>">
       </td>
     </tr>
     <?php } ?>
-    <?php } ?>
-    <tr>
-      <td>ファイル</td>
-      <td>
-	<input type="file" name="upload1">
-      </td>
-    </tr>
-    <tr>
-      <td>ファイル</td>
-      <td>
-	<input type="file" name="upload2">
-      </td>
-    </tr>
-    <tr>
-      <td>ファイル</td>
-      <td>
-	<input type="file" name="upload3">
-      </td>
-    </tr>
-    <tr>
-      <td>ファイル</td>
-      <td>
-	<input type="file" name="upload4">
-      </td>
-    </tr>
     <?php foreach (Model_Fleamarket_About::getAboutTitles() as $id => $title) { ?>
     <tr>
       <td>

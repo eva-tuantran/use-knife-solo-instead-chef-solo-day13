@@ -1,6 +1,6 @@
 <form action="/admin/user/list" method="GET">
   <input type="text" name="keyword" size=80 value="<?php echo e(Input::param('keyword','')); ?>">
-  <input type="submit" value="検索">
+  <input type="submit" value="search">
 </form>
 
 <table>
@@ -13,6 +13,7 @@
       </a>
     </td>
     <td><?php echo e($user->email); ?></td>
+    <td><a href="/admin/user/force_login?user_id=<?php echo $user->user_id; ?>">login</a></td>
   </tr>
   <?php }} ?>
 </table>
