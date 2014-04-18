@@ -13,7 +13,8 @@
       </a>
     </td>
     <td><?php echo e($user->email); ?></td>
-    <td><a href="/admin/user/force_login?user_id=<?php echo $user->user_id; ?>">login</a></td>
+    <td><a href="/admin/user/force_login?user_id=<?php echo $user->user_id; ?>">login(予約確認メールあり)</a></td>
+    <td><a href="/admin/user/force_login?user_id=<?php echo $user->user_id; ?>&nomail=1">login(予約確認メールなし)</a></td>
   </tr>
   <?php }} ?>
 </table>

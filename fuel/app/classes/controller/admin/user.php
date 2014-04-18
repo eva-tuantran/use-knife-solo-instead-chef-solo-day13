@@ -200,6 +200,7 @@ class Controller_Admin_User extends Controller_Admin_Base_Template
     public function action_force_login()
     {
         Auth::force_login(Input::param('user_id'));
+        Session::set('admin.user.nomail', (bool)Input::param('nomail'));
         return Response::redirect('/');
     }
 }
