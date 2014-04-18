@@ -28,13 +28,10 @@ class Controller_Admin_Entry extends Controller_Admin_Base_Template
         foreach ($fleamarket->entries as $entry) {
             $array = $entry->to_array();
 
-            foreach (array(       
-                'nick_name',
-                'last_name',
-                'first_name',
-                'email',
-            ) as $column) {
-                $array[$column] = $entry->user->get($column);
+            if ($entry->user) {
+                foreach (array('nick_name','last_name','first_name','email') as $column) {
+                    $array[$column] = $entry->user->get($column);
+                }
             }
             $data[] = $array;
         }
