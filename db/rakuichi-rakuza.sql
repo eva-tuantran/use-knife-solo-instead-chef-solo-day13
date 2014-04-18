@@ -47,7 +47,8 @@ CREATE TABLE IF NOT EXISTS `rakuichi-rakuza`.`users` (
   PRIMARY KEY (`user_id`),
   INDEX `idx_user_old_id` (`user_old_id` ASC),
   INDEX `idx_email` (`email` ASC))
-ENGINE = InnoDB;
+ENGINE = InnoDB
+AUTO_INCREMENT = 10000000;
 
 
 -- -----------------------------------------------------
