@@ -1,7 +1,7 @@
 <?php $input  = $fieldset->input(); ?>
 <?php $errors = $fieldset->validation()->error_message(); ?>
 <?php $entry_styles = Config::get('master.entry_styles'); ?>
-
+<?php $nomail = Session::get('admin.user.nomail'); ?>
 <?php
    $input_genres = array();
    if ($input['item_genres']) {
@@ -107,7 +107,7 @@
     </div>
     <input type="hidden" name="fleamarket_id" value="<?php echo e($input['fleamarket_id']); ?>">
         <div id="submitButton" class="form-group">
-          <button type="submit" class="btn btn-default">内容を確認する</button>
+          <button type="submit" class="btn btn-default">内容を確認する<?php if(isset($nomail) && $nomail) {echo '(メール送信なし)';} ?></button>
         </div>
       </form>
       <?php } ?>
