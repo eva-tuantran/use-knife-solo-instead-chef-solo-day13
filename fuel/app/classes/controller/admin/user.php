@@ -196,4 +196,10 @@ class Controller_Admin_User extends Controller_Admin_Base_Template
             $view->set('users', $users, false);
         }
     }
+
+    public function action_force_login()
+    {
+        Auth::force_login(Input::param('user_id'));
+        return Response::redirect('/');
+    }
 }

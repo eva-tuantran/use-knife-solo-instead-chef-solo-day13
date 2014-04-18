@@ -53,4 +53,10 @@ class Controller_Admin_Entry extends Controller_Admin_Base_Template
 
         return $response;
     }
+
+    public function action_index()
+    {
+        $view = View::forge('admin/entry/index');
+        $this->template->content = $view;
+    }
 }
