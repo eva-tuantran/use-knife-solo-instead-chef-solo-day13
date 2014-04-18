@@ -735,12 +735,16 @@ QUERY;
         $like = preg_replace('/([_%\\\\])/','\\\\${1}',$keyword);
         $like = "%${like}%";
 
-        $query = static::query()
-            ->where(array('email', 'LIKE', $like))
-            ->or_where(array('last_name', 'LIKE', $like))
-            ->or_where(array('first_name', 'LIKE', $like))
-            ->or_where(array('last_name_kana', 'LIKE', $like))
-            ->or_where(array('first_name_kana', 'LIKE', $like));
+        if (strlen($keyword)) {
+            $query = static::query()
+                ->where(array('email', 'LIKE', $like))
+                ->or_where(array('last_name', 'LIKE', $like))
+                ->or_where(array('first_name', 'LIKE', $like))
+                ->or_where(array('last_name_kana', 'LIKE', $like))
+                ->or_where(array('first_name_kana', 'LIKE', $like));
+        }else{
+            $query = static::query();
+        }
 
         return $query;
     }
