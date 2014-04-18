@@ -6,16 +6,16 @@
  * @author Hiroyuki Kobayashi
  */
 
-class Controller_Admin_User extends Controller_Admin_Base_Template
+class Controller_Admin_Location extends Controller_Admin_Base_Template
 {
-    protected $user = null;
+    protected $location = null;
 
     public function before()
     {
         parent::before();
-        if (Input::param('user_id')) {
-            $this->user =
-                Model_User::find(Input::param('user_id'));
+        if (Input::param('location_id')) {
+            $this->location =
+                Model_Location::find(Input::param('location_id'));
         }
     }
 
@@ -28,10 +28,10 @@ class Controller_Admin_User extends Controller_Admin_Base_Template
     public function action_index()
     {
         $this->setAssets();
-        $view = View::forge('admin/user/index');
+        $view = View::forge('admin/location/index');
         $fieldset = $this->getFieldset();
         $view->set('fieldset', $fieldset, false);
-        $view->set('user', $this->user, false);
+        $view->set('location', $this->location, false);
         $this->template->content = $view;
     }
     /**
@@ -43,15 +43,15 @@ class Controller_Admin_User extends Controller_Admin_Base_Template
     public function post_confirm()
     {
         $fieldset = $this->getFieldset();
-        Session::set_flash('admin.user.fieldset', $fieldset);
+        Session::set_flash('admin.location.fieldset', $fieldset);
 
         if (! $fieldset->validation()->run()) {
-            return Response::redirect('admin/user/?user_id=' . Input::param('user_id',''));
+            return Response::redirect('admin/location/?location_id=' . Input::param('location_id',''));
         }
 
-        $view = View::forge('admin/user/confirm');
+        $view = View::forge('admin/location/confirm');
         $view->set('fieldset', $fieldset, false);
-        $view->set('user', $this->user, false);
+        $view->set('location', $this->location, false);
 
         $this->template->content = $view;
     }
@@ -68,11 +68,11 @@ class Controller_Admin_User extends Controller_Admin_Base_Template
             return Response::redirect('errors/doubletransmission');
         }
 
-        $view = View::forge('admin/user/thanks');
+        $view = View::forge('admin/location/thanks');
         $this->template->content = $view;
 
         try {
-            $user = $this->registerUser();
+            $location = $this->registerLocation();
         } catch ( Exception $e ) {
             throw $e;
             //$view->set('error', $e, false);
@@ -82,14 +82,14 @@ class Controller_Admin_User extends Controller_Admin_Base_Template
     private function getFieldset()
     {
         if ($this->request->action == 'index') {
-            $fieldset = Session::get_flash('admin.user.fieldset');
+            $fieldset = Session::get_flash('admin.location.fieldset');
             if (! $fieldset) {
                 $fieldset = $this->createFieldset();
             }
         } elseif ($this->request->action == 'confirm') {
             $fieldset = $this->createFieldset();
         } elseif ($this->request->action == 'thanks') {
-            $fieldset = Session::get_flash('admin.user.fieldset');
+            $fieldset = Session::get_flash('admin.location.fieldset');
         }
         return $fieldset;
     }
@@ -102,11 +102,11 @@ class Controller_Admin_User extends Controller_Admin_Base_Template
      */
     private function createFieldset()
     {
-        if ($this->user) {
-            $fieldset = Fieldset::forge('user');
-            $fieldset->add_model($this->user)->populate($this->user,true);
+        if ($this->location) {
+            $fieldset = Fieldset::forge('location');
+            $fieldset->add_model($this->location)->populate($this->location,true);
         } else {
-            $fieldset = Model_User::createFieldset(true);
+            $fieldset = Model_Location::createFieldset(true);
         }
 
         $fieldset->repopulate();
@@ -115,37 +115,43 @@ class Controller_Admin_User extends Controller_Admin_Base_Template
     }
 
     /**
-     * users テーブルへの登録
+     * locations テーブルへの登録
      *
      * @access private
-     * @return Model_Userオブジェクト
+     * @return Model_Locationオブジェクト
      */
-    private function registerUser()
+    private function registerLocation()
     {
-        $data = $this->getUserData();
+        $data = $this->getLocationData();
         if (! $data) {
             throw new Exception(\Model_Error::ER00402);
         } else {
-            if (Input::param('user_id')) {
-                $user = Model_User::find(Input::param('user_id'));
+            if (Input::param('location_id')) {
+                $location = Model_Location::find(Input::param('location_id'));
+                $data['updated_user'] = $this->administrator->administrator_id;
             } else {
-                $user = Model_User::forge();
+                $location = Model_Location::forge();
+                $data['created_user'] = $this->administrator->administrator_id;
+                $data['updated_user'] = $this->administrator->administrator_id;
             }
-            if ($user) {
-                $user->set($data);
-                $user->save();
+
+            $data['register_type'] = Model_Location::REGISTER_TYPE_ADMIN;
+
+            if ($location) {
+                $location->set($data);
+                $location->save();
             }
-            return $user;
+            return $location;
         }
     }
 
     /**
-     * セッションからuserのデータを取得、整形
+     * セッションからlocationのデータを取得、整形
      *
      * @access private
-     * @return array userのデータ
+     * @return array locationのデータ
      */
-    private function getUserData()
+    private function getLocationData()
     {
         $fieldset = $this->getFieldset();
 
@@ -170,40 +176,9 @@ class Controller_Admin_User extends Controller_Admin_Base_Template
 
     public function action_list()
     {
-        $view = View::forge('admin/user/list');
+        $view = View::forge('admin/location/list');
         $this->template->content = $view;
-
-        $total = Model_User::findByKeywordCount(
-            Input::all()
-        );
-        
-        $query_string = '';
-        foreach (array('name', 'address','email','tel','user_old_id') as $field) {
-            $query_string = $query_string . "&${field}=" . urlencode(Input::param($field));
-        }
-        
-        Pagination::set_config(array(
-            'pagination_url' => "admin/user/list?$query_string",
-            'uri_segment'    => 4,
-            'num_links'      => 10,
-            'per_page'       => 2,
-            'total_items'    => $total,
-            'name'           => 'pagenation',
-        ));
-
-        $users = Model_User::findByKeyword(
-            Input::all(),
-            Pagination::get('per_page'),
-            Pagination::get('offset')
-        );
-        
-        $view->set('users', $users, false);
-    }
-
-    public function action_force_login()
-    {
-        Auth::force_login(Input::param('user_id'));
-        Session::set('admin.user.nomail', (bool)Input::param('nomail'));
-        return Response::redirect('/');
+        $locations = Model_Location::find('all');
+        $view->set('locations', $locations, false);
     }
 }

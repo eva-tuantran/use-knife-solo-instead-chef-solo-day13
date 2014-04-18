@@ -40,14 +40,6 @@
 	<?php echo e($input['promoter_name']); ?>
       </td>
     </tr>
-<!--
-    <tr>
-      <td>event_number</td>
-      <td>
-	<?php echo e($input['event_number']); ?>
-      </td>
-    </tr>
--->
     <tr>
       <td>開催日</td>
       <td>
@@ -75,34 +67,12 @@
         ?>
       </td>
     </tr>
-<!--
-    <tr>
-      <td>headline</td>
-      <td>
-	<?php echo e($input['headline']); ?>
-      </td>
-    </tr>
-    <tr>
-      <td>information</td>
-      <td>
-	<?php echo e($input['information']); ?>
-      </td>
-    </tr>
--->
     <tr>
       <td>内容</td>
       <td>
 	<?php echo e($input['description']); ?>
       </td>
     </tr>
-<!--
-    <tr>
-      <td>reservation_serial</td>
-      <td>
-   	<?php echo e($input['reservation_serial']); ?>
-      </td>
-    </tr>
--->
     <tr>
       <td>予約受付開始日</td>
       <td>
@@ -185,18 +155,6 @@
       <td>無料駐車場</td>
       <td>
         <?php echo $input['free_parking_flag'] ? 'あり' : 'なし'; ?>
-      </td>
-    </tr>
-    <tr>
-      <td>寄付金</td>
-      <td>
-	<?php echo e($input['donation_fee']); ?>
-      </td>
-    </tr>
-    <tr>
-      <td>寄付先</td>
-      <td>
-	<?php echo e($input['donation_point']); ?>
       </td>
     </tr>
     <tr>

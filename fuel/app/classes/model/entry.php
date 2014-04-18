@@ -658,4 +658,38 @@ QUERY;
         $fieldset->add_model($entry);
         return $fieldset;
     }
+
+    private static function getFindByKeywordQuery($input)
+    {
+        $query = static::query();
+
+        foreach (array('reservation_number','user_id','fleamarket_id') as $field) {
+            if(! empty($input[$field])){
+                $query->where($field, 'LIKE', static::makeLikeValue($input[$field]));
+            }
+        }
+
+        return $query;
+    }
+
+    private static function makeLikeValue($word)
+    {
+        $like = preg_replace('/([_%\\\\])/','\\\\${1}',$word);
+        $like = "%${like}%";
+        return $like;
+    }
+
+    public static function findByKeyword($input, $limit, $offset)
+    {
+        $query = static::getFindByKeywordQuery($input)
+            ->limit($limit)
+            ->offset($offset);
+
+        return $query->get();
+    }
+
+    public static function findByKeywordCount($input)
+    {
+        return static::getFindByKeywordQuery($input)->count();
+    }
 }

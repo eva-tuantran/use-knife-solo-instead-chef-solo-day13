@@ -414,7 +414,10 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
     public function makeThumbnail($image_filename)
     {
         $sizes = array(
-            array('width' => 100, 'height' => 65, 'prefix' => 's_'),
+            array('width' => 100, 'height' =>  65, 'prefix' => 'ss_'),
+            array('width' => 180, 'height' => 135, 'prefix' => 's_'),
+            array('width' => 200, 'height' => 150, 'prefix' => 'm_'),
+            array('width' => 460, 'height' => 300, 'prefix' => 'l_'),
         );
 
         foreach ($sizes as $size) {
