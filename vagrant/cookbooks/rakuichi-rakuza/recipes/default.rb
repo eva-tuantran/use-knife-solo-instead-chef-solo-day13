@@ -7,5 +7,5 @@ execute "seed rakuichi-rakuza database" do
 end
 
 execute "grant readonly user" do
-  command "echo 'grant select on *.* to readonly;' | mysql -uroot"
+  command "echo 'grant select on *.* to readonly@localhost;' | mysql -uroot"
 end
