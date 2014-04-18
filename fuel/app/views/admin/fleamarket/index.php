@@ -6,6 +6,14 @@ $(function() {
     numberOfMonths: 3,
     showButtonPanel: true
   });
+  $("#inputReservationStart").datepicker({
+    numberOfMonths: 3,
+    showButtonPanel: true
+  });
+  $("#inputReservationEnd").datepicker({
+    numberOfMonths: 3,
+    showButtonPanel: true
+  });
   $("#inputEventTimeStart").timepicker({
     showButtonPanel: true,
     stepMinute: 5
@@ -173,7 +181,7 @@ $(function() {
     <tr>
       <td>予約受付開始日</td>
       <td>
-	<input type="text" name="reservation_start" value="<?php echo e($fields['reservation_start']->value); ?>">
+	<input type="text" name="reservation_start" value="<?php echo e($fields['reservation_start']->value); ?>" id="inputReservationStart">
 	<?php
 	   if (isset($errors['reservation_start'])) {
    	       echo $errors['reservation_start'];
@@ -184,7 +192,7 @@ $(function() {
     <tr>
       <td>予約受付終了日</td>
       <td>
-	<input type="text" name="reservation_end" value="<?php echo e($fields['reservation_end']->value); ?>">
+	<input type="text" name="reservation_end" value="<?php echo e($fields['reservation_end']->value); ?>" id="inputReservationEnd">
 	<?php
 	   if (isset($errors['reservation_end'])) {
    	       echo $errors['reservation_end'];
@@ -440,7 +448,9 @@ $(function() {
 	<?php echo e($title); ?>
       </td>
       <td>
-	<input type="text" name="fleamarket_about_<?php echo $id; ?>_description" value="<?php echo e($fieldsets['fleamarket_abouts'][$id]->field('description')->value); ?>">
+	<textarea name="fleamarket_about_<?php echo $id; ?>_description" cols=50 rows=10>
+	  <?php echo e($fieldsets['fleamarket_abouts'][$id]->field('description')->value); ?>
+	</textarea>
 	<?php $errors = $fieldsets['fleamarket_abouts'][$id]->validation()->error_message(); ?>
 	<?php 
 	   if (isset($errors['description'])) {
