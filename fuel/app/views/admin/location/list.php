@@ -1,4 +1,5 @@
-<a href="/admin/location/"></a>
+<a href="/admin/location/">新規登録</a>
+<br><br>
 <table>
   <?php if (isset($locations)) { ?>
   <?php foreach ($locations as $location) { ?>
