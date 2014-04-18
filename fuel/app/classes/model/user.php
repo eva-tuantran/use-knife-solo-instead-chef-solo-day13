@@ -730,37 +730,45 @@ QUERY;
         }
     }
 
-    private static function getFindByKeywordQuery($keyword)
+    private static function getFindByKeywordQuery($input)
     {
-        $like = preg_replace('/([_%\\\\])/','\\\\${1}',$keyword);
-        $like = "%${like}%";
+        $query = static::query();
 
-        if (strlen($keyword)) {
-            $query = static::query()
-                ->where(array('email', 'LIKE', $like))
-                ->or_where(array('last_name', 'LIKE', $like))
-                ->or_where(array('first_name', 'LIKE', $like))
-                ->or_where(array('last_name_kana', 'LIKE', $like))
-                ->or_where(array('first_name_kana', 'LIKE', $like));
-        }else{
-            $query = static::query();
+        if(! empty($input['name'])){
+            $query->and_where_open();
+            $query->where('first_name', 'LIKE', static::makeLikeValue($input['name']));
+            $query->or_where('last_name', 'LIKE', static::makeLikeValue($input['name']));
+            $query->and_where_close();
+        }
+
+        foreach (array('address', 'email', 'tel', 'user_old_id') as $field) {
+            if(! empty($input[$field])){
+                $query->where($field, 'LIKE', static::makeLikeValue($input[$field]));
+            }
         }
 
         return $query;
     }
 
-    public static function findByKeyword($keyword, $limit, $offset)
+    private static function makeLikeValue($word)
     {
-        $query = static::getFindByKeywordQuery($keyword)
+        $like = preg_replace('/([_%\\\\])/','\\\\${1}',$word);
+        $like = "%${like}%";
+        return $like;
+    }
+
+    public static function findByKeyword($input, $limit, $offset)
+    {
+        $query = static::getFindByKeywordQuery($input)
             ->limit($limit)
             ->offset($offset);
 
         return $query->get();
     }
 
-    public static function findByKeywordCount($keyword)
+    public static function findByKeywordCount($input)
     {
-        return static::getFindByKeywordQuery($keyword)->count();
+        return static::getFindByKeywordQuery($input)->count();
     }
 
     /**

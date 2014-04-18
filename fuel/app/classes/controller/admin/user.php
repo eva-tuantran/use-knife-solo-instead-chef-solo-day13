@@ -174,7 +174,7 @@ class Controller_Admin_User extends Controller_Admin_Base_Template
         $this->template->content = $view;
 
         $total = Model_User::findByKeywordCount(
-            Input::param('keyword')
+            Input::all()
         );
         
         Pagination::set_config(array(
@@ -185,9 +185,9 @@ class Controller_Admin_User extends Controller_Admin_Base_Template
             'total_items'    => $total,
             'name'           => 'pagenation',
         ));
-        
+
         $users = Model_User::findByKeyword(
-            Input::param('keyword'),
+            Input::all(),
             Pagination::get('per_page'),
             Pagination::get('offset')
         );
