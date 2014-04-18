@@ -18,6 +18,7 @@ class seed
                 'entry',
                 'fleamarket',
                 'favorite',
+                'administrator',
             );
         }
 
