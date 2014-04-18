@@ -33,25 +33,6 @@ log "crt copy"
   end
 end
 
-##
-#
-#cookbook_file "/etc/httpd/ssl/20240414.self-signed-certificate.crt" do
-#    source "20240414.self-signed-certificate.crt"
-#    owner "root"
-#    group "root"
-#    action :create_if_missing
-#end
-#
-#cookbook_file "/etc/httpd/ssl/20240414.self-signed-certificate.key" do
-#    source "20240414.self-signed-certificate.key"
-#    owner "root"
-#    group "root"
-#    action :create_if_missing
-#end
-#
-
-
-
 service "httpd" do
   action [:restart]
 end
