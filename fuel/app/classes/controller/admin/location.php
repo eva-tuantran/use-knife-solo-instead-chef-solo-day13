@@ -178,20 +178,7 @@ class Controller_Admin_Location extends Controller_Admin_Base_Template
     {
         $view = View::forge('admin/location/list');
         $this->template->content = $view;
-
         $locations = Model_Location::find('all');
-        $total = count($locations);
-
-        Pagination::set_config(array(
-            'pagination_url' => 'admin/location/list?keyword=' . urlencode(Input::param('keyword')),
-            'uri_segment'    => 4,
-            'num_links'      => 10,
-            'per_page'       => 2,
-            'total_items'    => $total,
-            'name'           => 'pagenation',
-        ));
-        
-        
         $view->set('locations', $locations, false);
     }
 }
