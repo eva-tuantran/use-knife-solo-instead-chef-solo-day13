@@ -28,13 +28,21 @@
   <!-- form -->
   <div id="form" class="container">
     <div class="box clearfix">
-      <h3>フリマ登録情報入力欄</h3>
+      <h3>フリマ予約情報入力欄</h3>
       <?php if (count($fleamarket->fleamarket_entry_styles) == 0){ ?>
       現在予約することが出来ません
       <?php }elseif ($is_duplicate) { ?>
-      既に予約済みです。予約変更の場合マイページから変更を行って下さい。
+      既に予約済みです。キャンセルの場合、<a href="/mypage">マイページにてキャンセル</a>を行って下さい。
       <?php }else{ ?>
       <form action="/reservation/confirm" method="POST" class="form-horizontal">
+
+    <div class="form-group">
+      <label class="col-sm-2 control-label">フリマ開催名</label>
+      <div class="col-sm-10">
+	<label class="control-label"><?php echo e($fleamarket->name); ?></label>
+      </div>
+    </div>
+
     <div class="form-group">
       <label class="col-sm-2 control-label">出店方法</label>
       <div class="col-sm-10">

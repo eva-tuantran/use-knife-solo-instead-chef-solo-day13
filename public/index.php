@@ -50,7 +50,11 @@ try
 }
 catch (SystemException $e)
 {
-    $response = $e->response();
+    if (Fuel::$env == Fuel::DEVELOPMENT) {
+        throw $e;
+    }else{
+        $response = $e->response();
+    }
 }
 catch (HttpNotFoundException $e)
 {

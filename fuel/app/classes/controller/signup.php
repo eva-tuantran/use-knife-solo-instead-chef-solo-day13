@@ -77,7 +77,7 @@ class Controller_Signup extends Controller_Base_Template
     public function post_verify()
     {
         if (! Security::check_token()) {
-            throw new SystemException('E00002');
+            throw new SystemException(\Model_Error::ER00301);
         }
 
         $fieldset = self::createFieldset();

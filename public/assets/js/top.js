@@ -5,6 +5,13 @@ $(function() {
 
   Map.init();
   Search.init();
+
+  var $mapimage = $("#map img");
+  $('#map area').hover(function(){
+    $($mapimage).attr('src', $($mapimage).attr('src').replace('map_normal', $(this).attr("id")));
+  }, function(){
+    $($mapimage).attr('src', $($mapimage).attr('src').replace($(this).attr("id"), 'map_normal'));
+  });
 });
 
 var Map = {
@@ -80,7 +87,7 @@ var Carousel = {
         scroll:{
           items: 1,
           duration: 300,
-          pauseDuration: 5000,
+          pauseDuration: 2000,
           easing: "linear",
           pauseOnHover: "immediate"
         },

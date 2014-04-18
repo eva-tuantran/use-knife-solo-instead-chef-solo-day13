@@ -105,10 +105,10 @@ $booth_fee_list = array(
 
 $event_numbers = array();
 
-\DB::query('TRUNCATE TABLE fleamarkets')->execute();
-\DB::query('TRUNCATE TABLE fleamarket_entry_styles')->execute();
-\DB::query('TRUNCATE TABLE fleamarket_abouts')->execute();
-\DB::query('TRUNCATE TABLE locations')->execute();
+// \DB::query('TRUNCATE TABLE fleamarkets')->execute();
+// \DB::query('TRUNCATE TABLE fleamarket_entry_styles')->execute();
+// \DB::query('TRUNCATE TABLE fleamarket_abouts')->execute();
+// \DB::query('TRUNCATE TABLE locations')->execute();
 
 for ($i = 1; $i <= 1000; $i++) {
     $group_code = array_rand($group_codes);

@@ -40,7 +40,7 @@ ul {
       <div class="form-group type type2">
         <label for="selectPrefecture" class="col-sm-3">都道府県</label>
         <select id="selectPrefecture" name="prefecture_id">
-            <option value="">全国</option>
+            <option value="99">すべて</option>
             <?php
                 foreach ($prefectures as $prefecture_id => $prefecture):
                     $selected = '';
@@ -138,7 +138,10 @@ ul {
         ?>
       </div>
       <div class="form-group">
-        <ul class="help-block type type1 type2">
+        <ul class="help-block type type1">
+          <li>ユーザ名を記載する箇所に「##user_name##」を記述してください<li>
+        </ul>
+        <ul class="help-block type type2">
           <li>ユーザ名を記載する箇所に「##user_name##」を記述してください<li>
         </ul>
         <ul class="help-block type type3">

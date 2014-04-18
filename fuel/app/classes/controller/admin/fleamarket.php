@@ -1,6 +1,6 @@
 <?php
 /**
- * 
+ *
  *
  * @extends  Controller_Base_Template
  * @author Hiroyuki Kobayashi
@@ -17,16 +17,16 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
     {
         parent::before();
         if (Input::param('fleamarket_id')) {
-            $this->fleamarket = 
+            $this->fleamarket =
                 Model_Fleamarket::find(Input::param('fleamarket_id'));
 
             if ($this->fleamarket) {
                 foreach ($this->fleamarket->fleamarket_abouts as $fleamarket_about){
-                    $this->fleamarket_abouts[$fleamarket_about->about_id] 
+                    $this->fleamarket_abouts[$fleamarket_about->about_id]
                         = $fleamarket_about;
                 }
                 foreach ($this->fleamarket->fleamarket_entry_styles as $fleamarket_entry_style){
-                    $this->fleamarket_entry_styles[$fleamarket_entry_style->entry_style_id] 
+                    $this->fleamarket_entry_styles[$fleamarket_entry_style->entry_style_id]
                         = $fleamarket_entry_style;
                 }
             }
@@ -90,7 +90,7 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
     {
         return $fieldsets['fleamarket']->validation()->run();
     }
-    
+
     public function validate_fleamarket_about($fieldsets)
     {
         $is_valid = true;
@@ -98,7 +98,7 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
             $input = array(
                 'description' => Input::param("fleamarket_about_${id}_description"),
             );
-            
+
             if (! $fieldset->validation()->run($input)) {
                 $is_valid = false;
             }
@@ -115,7 +115,7 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
             foreach (array('booth_fee', 'max_booth', 'reservation_booth_limit') as $column) {
                 $input[$column] = Input::param("fleamarket_entry_style_${id}_${column}");
             }
-            
+
             $fieldset = $fieldsets['fleamarket_entry_styles'][$id];
 
             if (! $fieldset->validation()->run($input)) {
@@ -141,10 +141,10 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
 
         $this->removeFleamarketImages();
         $files = $this->moveUploadedImages();
- 
-        $db = Database_Connection::instance();
+
+        $db = Database_Connection::instance('master');
         $db->start_transaction();
-       
+
         try {
             $fleamarket = $this->registerFleamarket();
             if ($files) {
@@ -286,7 +286,7 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
     {
         $data = $this->getFleamarketData();
         if (! $data) {
-            throw new Exception();
+            throw new Exception(\Model_Error::ER00502);
         } else {
             if (Input::param('fleamarket_id')) {
                 $fleamarket = Model_Fleamarket::find(Input::param('fleamarket_id'));
@@ -319,8 +319,11 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
 
         $input = $fieldset->validation()->validated();
 
-        $input['created_user'] = 1;
-        $input['updated_user'] = 1;
+        if (isset($input['fleamarket_id'])) {
+            $input['updated_user'] = $this->administrator->administrator_id;
+        }else{
+            $input['created_user'] = $this->administrator->administrator_id;
+        }
         $input['group_code'] = '';
 
         return $input;
@@ -357,7 +360,11 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
         if (! $files) {
             return false;
         }
-        
+
+        if(! file_exists(DOCROOT . 'files/fleamarket/img/') ){
+            mkdir(DOCROOT . 'files/fleamarket/img/', 0777, true);
+        }
+
         foreach ($files as $file) {
             File::rename(
                 DOCROOT . 'files/admin/fleamarket/img/' . $file['saved_as'],
@@ -384,7 +391,7 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
     public function makeThumbnail($image_filename)
     {
         $sizes = array(
-            array('width' => 100, 'height' => 65, 'suffix' => '_small'),
+            array('width' => 100, 'height' => 65, 'prefix' => 's_'),
         );
 
         foreach ($sizes as $size) {
@@ -397,7 +404,7 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
 
             $matches = array();
             if (preg_match('/^(\w+)\.jpg$/',$image_filename,$matches)) {
-                $filename = DOCROOT . 'files/fleamarket/img/' . $matches[1] . $size['suffix'] . '.jpg';
+                $filename = DOCROOT . 'files/fleamarket/img/' . $size['prefix'] . $matches[1] . '.jpg';
                 imagejpeg($resize, $filename);
             }
             imagedestroy($image);
@@ -457,7 +464,7 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
                 'created_user' => 1,
                 'updated_user' => 1
             ));
-            
+
             $fleamarket_about->save();
         }
     }
@@ -478,7 +485,7 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
                 )
             ));
 
-            if ($input['booth_fee']) {
+            if (strlen($input['booth_fee'])) {
                 if (! $fleamarket_entry_style) {
                     $fleamarket_entry_style = Model_Fleamarket_Entry_Style::forge(array(
                         'fleamarket_id' => $fleamarket->fleamarket_id,
@@ -516,13 +523,13 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
             'total_items'    => $total,
             'name'           => 'pagenation',
         ));
-        
+
         $fleamarkets = Model_Fleamarket::query()
             ->order_by('fleamarket_id')
             ->limit(Pagination::get('per_page'))
             ->offset(Pagination::get('offset'))
             ->get();
-        
+
         $view->set('fleamarkets', $fleamarkets);
    }
 }

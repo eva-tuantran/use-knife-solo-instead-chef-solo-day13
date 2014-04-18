@@ -1,6 +1,6 @@
 <?php
 
-class Model_Contact extends \Orm\Model
+class Model_Contact extends Model_Base
 {
     protected static $_primary_key = array('contact_id');
 

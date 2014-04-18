@@ -37,7 +37,7 @@ class Controller_Mypage extends Controller_Base_Template
         // throw new SystemException(\Model_Error::ER00101);
 
         if (! $this->login_user) {
-            throw new SystemException('ユーザ情報が取得出来ませんでした');
+            throw new SystemException(\Model_Error::ER00702);
         }
     }
 
@@ -52,12 +52,15 @@ class Controller_Mypage extends Controller_Base_Template
      */
     public function action_index()
     {
+        Asset::css('jquery-ui.min.css', array(), 'add_css');
+        Asset::js('jquery-ui.min.js', array(), 'add_js');
         Asset::js('jquery.carouFredSel.js', array(), 'add_js');
 
         $fleamarkets_all['entry']        = $this->login_user->getEntries(1, 3);
         $fleamarkets_all['mylist']       = $this->login_user->getFavorites(1, 3);
         $fleamarkets_all['myfleamarket'] = $this->login_user->getMyFleamarkets(1, 3);
-        $fleamarkets_all['reserved']     = $this->login_user->getReservedEntries(1, 3);
+//        $fleamarkets_all['reserved']     = $this->login_user->getReservedEntries(1, 3);
+
 
         $fleamarkets_view = array();
         foreach ($fleamarkets_all as $type => $fleamarkets) {
@@ -89,6 +92,9 @@ class Controller_Mypage extends Controller_Base_Template
      */
     public function action_list()
     {
+        Asset::css('jquery-ui.min.css', array(), 'add_css');
+        Asset::js('jquery-ui.min.js', array(), 'add_js');
+
         $pagination_param = 'p';
         $item_per_page = 10;
 
@@ -276,7 +282,7 @@ class Controller_Mypage extends Controller_Base_Template
                 return \Response::redirect('/mypage');
             }
         } catch (Exception $e) {
-            throw new SystemException('パスワード変更に失敗しました');
+            throw new SystemException(\Model_Error::ER00701);
         }
     }
 
@@ -335,5 +341,4 @@ class Controller_Mypage extends Controller_Base_Template
 
         return $fieldset;
     }
-
 }

@@ -12,7 +12,7 @@
 <tr>
   <td>
     <a href="/admin/user/?user_id=<?php echo $entry->user_id; ?>">
-      <?php echo e($entry->user->last_name . ' ' . $entry->user->first_name); ?>
+      <?php if ($entry->user) echo e($entry->user->last_name . ' ' . $entry->user->first_name); ?>
     </a>
   </td>
   <td><?php echo e($entry->reservation_number); ?></td>

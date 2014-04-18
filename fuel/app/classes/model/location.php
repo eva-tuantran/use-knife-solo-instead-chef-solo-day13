@@ -7,7 +7,7 @@
  *
  * @author ida
  */
-class Model_Location extends \Orm\Model
+class Model_Location extends Model_Base
 {
     /**
      * 登録タイプ 1:運営者,2:ユーザ投稿
@@ -35,9 +35,7 @@ class Model_Location extends \Orm\Model
         'zip' => array(
             'label' => '郵便番号',
             'validation' => array(
-                'required',
-                'valid_string' => array(array('numeric' => 'utf8')),
-                'max_length' => array(7)
+                'required', 'valid_zip', 'max_length' => array(8)
             ),
         ),
         'prefecture_id' => array(

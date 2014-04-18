@@ -7,7 +7,7 @@
  *
  * @author ida
  */
-class Model_Fleamarket_About extends \Orm\Model
+class Model_Fleamarket_About extends Model_Base
 {
     /**
      * 説明区分
