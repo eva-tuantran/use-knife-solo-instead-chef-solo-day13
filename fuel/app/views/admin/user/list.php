@@ -1,3 +1,5 @@
+<a href="/admin/user/">新規登録</a>
+<br><br>
 <form action="/admin/user/list" method="GET">
   <table>
     <tr>

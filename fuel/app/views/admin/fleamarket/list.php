@@ -1,5 +1,7 @@
 
 <h2>開催一覧</h2>
+<a href="/admin/fleamarket/">新規登録</a>
+<br><br>
 
 <table>
   <?php foreach ($fleamarkets as $fleamarket) { ?>
