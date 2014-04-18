@@ -142,13 +142,25 @@ Map.prototype = {
     <?php
         if (count($image_files) > 0):
             $first_image_name = $image_files[0];
+            $first_image = '/files/fleamarket/img/l_' . $first_image_name;
+
+            if (! file_exists('.' . $first_image)):
+                $first_image ='/assets/img/noimage.jpg';
+            endif;
     ?>
-    <div class="mainPhoto"><img src="/files/fleamarket/img/<?php echo e($first_image_name);?>" alt="" width="460px" height="300px" class="img-responsive"></div>
+    <div class="mainPhoto">
+      <img src="<?php echo $first_image;?>" style="width: 460px; height: 300px;" class="img-responsive">
+    </div>
     <ul class="thumbnailPhoto">
     <?php
             foreach ($image_files as $image_file_name):
+                $image_file = '/files/fleamarket/img/ss_' . $image_file_name;
+
+                if (! file_exists('.' . $image_file)):
+                    $image_file ='/assets/img/noimage_s.jpg';
+                endif;
     ?>
-      <li><img src="/files/fleamarket/img/<?php echo e($image_file_name);?>" alt="" width="100"></li>
+      <li><img src="<?php echo $image_file;?>" style="width: 100px; height: 65px;"></li>
     <?php
             endforeach;
     ?>
@@ -156,7 +168,9 @@ Map.prototype = {
     <?php
         else:
     ?>
-    <div class="mainPhoto"><img src="/assets/img/noimage.jpg" alt="" width="460px" height="300px" class="img-responsive"></div>
+    <div class="mainPhoto">
+      <img src="/assets/img/noimage.jpg" alt="" width="460px" height="300px" class="img-responsive">
+    </div>
     <?php
         endif;
     ?>

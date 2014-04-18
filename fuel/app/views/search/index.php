@@ -139,7 +139,21 @@ googletag.enableServices();
           <?php echo e($fleamarket['name']);?>
         </a>
       </h3>
-      <div class="resultPhoto"><a href="/detail/<?php echo e($fleamarket_id);?>"><img src="/assets/img/noimage.jpg" class="img-rounded"></a></div>
+      <div class="resultPhoto">
+        <?php
+            $image_path = '/assets/img/noimage.jpg';
+            if (isset($fleamarket['file_name']) && $fleamarket['file_name'] != ''):
+                $image_path = '/files/fleamarket/img/m_' . $fleamarket['file_name'];
+
+                if (! file_exists('.' . $image_path)):
+                    $image_path ='/assets/img/noimage.jpg';
+                endif;
+            endif;
+        ?>
+        <a href="/detail/<?php echo e($fleamarket_id);?>">
+          <img src="<?php echo $image_path;?>" class="img-rounded" style="width: 200px; height: 150px;">
+        </a>
+      </div>
       <div class="resultDetail">
         <dl class="col-md-6">
           <dt>出店ブース数</dt>
