@@ -64,8 +64,8 @@ return array(
      * @author shimma
      */
     'ssl_connection' => array(
-        'use'          => false,
-        'default_host' => 'ssl.rakuichi-rakuza.jp',
+        'use'          => true,
+        'default_host' => '',
     ),
 
     /**

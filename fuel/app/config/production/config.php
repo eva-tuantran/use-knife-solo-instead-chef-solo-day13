@@ -65,7 +65,8 @@ return array(
      */
     'ssl_connection' => array(
         'use'          => true,
-        'default_host' => 'www.rakuichi-rakuza.jp',
+        // 'default_host' => 'www.rakuichi-rakuza.jp',
+        'default_host' => '',
     ),
 
     /**
