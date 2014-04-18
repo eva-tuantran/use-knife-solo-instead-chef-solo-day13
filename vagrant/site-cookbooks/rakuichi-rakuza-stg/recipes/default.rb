@@ -6,6 +6,9 @@ execute "seed rakuichi-rakuza database" do
   command "cd /deploy/rakuichi-rakuza; php oil refine seed;"
 end
 
+execute "grant readonly user" do
+  command "echo 'grant select on *.* to readonly@localhost;' | mysql -uroot"
+end
 
 log "deploy httpd.conf"
 cookbook_file "/etc/httpd/conf.d/www.rakuichi-rakuza.jp.conf" do
