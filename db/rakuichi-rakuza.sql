@@ -108,7 +108,8 @@ CREATE TABLE IF NOT EXISTS `rakuichi-rakuza`.`locations` (
   `created_at` DATETIME NOT NULL COMMENT '作成日時',
   `updated_at` DATETIME NULL COMMENT '更新日時',
   `deleted_at` DATETIME NULL COMMENT '削除日時',
-  PRIMARY KEY (`location_id`))
+  PRIMARY KEY (`location_id`),
+  INDEX `idx_locations_01` (`location_id` ASC, `prefecture_id` ASC))
 ENGINE = InnoDB;
 
 
@@ -156,7 +157,8 @@ CREATE TABLE IF NOT EXISTS `rakuichi-rakuza`.`fleamarkets` (
   `created_at` DATETIME NOT NULL COMMENT '作成日時',
   `updated_at` DATETIME NULL COMMENT '更新日時',
   `deleted_at` DATETIME NULL COMMENT '削除日時',
-  PRIMARY KEY (`fleamarket_id`))
+  PRIMARY KEY (`fleamarket_id`),
+  INDEX `idx_fleamarkets_01` (`event_date` ASC, `deleted_at` ASC))
 ENGINE = InnoDB;
 
 
@@ -330,7 +332,8 @@ CREATE TABLE IF NOT EXISTS `rakuichi-rakuza`.`fleamarket_entry_styles` (
   `created_at` DATETIME NOT NULL COMMENT '作成日時',
   `updated_at` DATETIME NULL COMMENT '更新日時',
   `deleted_at` DATETIME NULL COMMENT '削除日時',
-  PRIMARY KEY (`fleamarket_entry_style_id`))
+  PRIMARY KEY (`fleamarket_entry_style_id`),
+  INDEX `idx_fleamarket_entry_styles_01` (`fleamarket_id` ASC, `entry_style_id` ASC))
 ENGINE = InnoDB;
 
 
@@ -369,7 +372,8 @@ CREATE TABLE IF NOT EXISTS `rakuichi-rakuza`.`fleamarket_abouts` (
   `created_at` DATETIME NOT NULL COMMENT '作成日時',
   `updated_at` DATETIME NULL COMMENT '更新日時',
   `deleted_at` DATETIME NULL COMMENT '削除日時',
-  PRIMARY KEY (`fleamarket_about_id`))
+  PRIMARY KEY (`fleamarket_about_id`),
+  INDEX `idx_fleamarket_abouts_01` (`fleamarket_id` ASC, `about_id` ASC))
 ENGINE = InnoDB;
 
 
@@ -400,6 +404,7 @@ DROP TABLE IF EXISTS `rakuichi-rakuza`.`fleamarket_images` ;
 CREATE TABLE IF NOT EXISTS `rakuichi-rakuza`.`fleamarket_images` (
   `fleamarket_image_id` INT NOT NULL AUTO_INCREMENT,
   `fleamarket_id` INT NOT NULL,
+  `priority` TINYINT NOT NULL,
   `file_name` VARCHAR(255) NULL,
   `created_user` INT NOT NULL COMMENT '作成したユーザID、一般ユーザ:10000000以上,管理者：10000000未満',
   `updated_user` INT NULL COMMENT '更新したユーザID、一般ユーザ:10000000以上,管理者：10000000未満',
