@@ -216,7 +216,7 @@ class Controller_Reservation extends Controller_Base_Template
                 return $item_genres_define[$value];
             };
 
-            $user_id = Auth::get_user_id();
+            $user_id = $this->get_user_id();
 
             $input_other = array_merge($input,array(
                 'user_id'            => $user_id,
@@ -299,11 +299,16 @@ class Controller_Reservation extends Controller_Base_Template
 
         $count = Model_Entry::query()
             ->where(array(
-                'user_id'       => $this->login_user->user_id,
+                'user_id'       => $this->get_user_id(),
                 'fleamarket_id' => $input['fleamarket_id']
             ))
             ->count();
 
         return $count > 0;
+    }
+
+    private function get_user_id()
+    {
+        return Auth::get_user_id();
     }
 }
