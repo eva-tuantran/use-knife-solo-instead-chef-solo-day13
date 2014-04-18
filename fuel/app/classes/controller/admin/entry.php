@@ -26,7 +26,7 @@ class Controller_Admin_Entry extends Controller_Admin_Base_Template
             'pagination_url' => "admin/entry/list?$query_string",
             'uri_segment'    => 4,
             'num_links'      => 10,
-            'per_page'       => 3,
+            'per_page'       => 50,
             'total_items'    => $total,
             'name'           => 'pagenation',
         ));
