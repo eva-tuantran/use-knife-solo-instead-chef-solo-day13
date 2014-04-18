@@ -30,6 +30,7 @@
     <th>メールアドレス</th>
     <th>電話番号</th>
     <th>login</th>
+    <th>予約</th>
   </tr>
   <?php if (isset($users)) { ?>
   <?php foreach ($users as $user) { ?>
@@ -44,6 +45,9 @@
     <td>
       <a href="/admin/user/force_login?user_id=<?php echo $user->user_id; ?>">login(予約確認メールあり)</a>
       <a href="/admin/user/force_login?user_id=<?php echo $user->user_id; ?>&nomail=1">login(予約確認メールなし)</a>
+    </td>
+    <td>
+      <a href="/admin/entry/list?user_id=<?php echo $user->user_id; ?>">予約</a>
     </td>
   </tr>
   <?php }} ?>
