@@ -3,6 +3,15 @@
 <?php $input  = $fieldsets['fleamarket']->input(); ?>
 <?php $errors = $fieldsets['fleamarket']->validation()->error_message(); ?>
 <?php $fields = $fieldsets['fleamarket']->field(); ?>
+<?php 
+   $is_delete = array();
+
+   if(isset($input['delete_priorities'])){
+       foreach ($input['delete_priorities'] as $priority){
+           $is_delete[$priority] = 1;
+       } 
+   }
+?>
 
 <h3>フリマ登録</h3>
 <form action="/admin/fleamarket/thanks" method="POST" class="form-horizontal">
@@ -213,26 +222,21 @@
 	      ?>
       </td>
     </tr>
-    <?php if ($fleamarket && $input['fleamarket_image_id']) { ?>
-    <?php foreach ($fleamarket->fleamarket_images as $fleamarket_image) { ?>
-    <?php foreach ($input['fleamarket_image_id'] as $fleamarket_image_id) { ?>
-    <?php if ($fleamarket_image->fleamarket_image_id == $fleamarket_image_id) { ?>
+    <?php foreach (range(1,4) as $priority) { ?>
     <tr>
-      <td>ファイル</td>
-      <td><img src="<?php echo $fleamarket_image->Url(); ?>">を削除</td>
-    </tr>
-    <?php } ?>
-    <?php } ?>
-    <?php } ?>
-    <?php } ?>
-    <?php foreach ($files as $file) { ?>
-    <tr>
-      <td>ファイル</td>
+      <td>ファイル<?php echo($priority); ?></td>
       <td>
-	<img src="/files/admin/fleamarket/img/<?php echo $file['saved_as']; ?>">
+	<?php if(isset($is_delete[$priority])){ ?>
+	<img src="<?php echo $fleamarket->fleamarket_image($priority)->Url(); ?>">(削除)
+	<?php }elseif(isset($files["upload${priority}"])) { ?>
+	<img src="/files/admin/fleamarket/img/<?php echo $files["upload${priority}"]['saved_as']; ?>">(更新)
+	<?php }elseif( $fleamarket && $fleamarket->fleamarket_image($priority) ){ ?>
+	<img src="<?php echo $fleamarket->fleamarket_image($priority)->Url(); ?>">
+	<?php } ?>
       </td>
     </tr>
     <?php } ?>
+
     <?php foreach (Model_Fleamarket_About::getAboutTitles() as $id => $title) { ?>
     <tr>
       <td><?php echo e($title); ?></td>

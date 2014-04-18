@@ -142,10 +142,15 @@ class Model_Fleamarket extends Model_Base
             'form'  => array('type' => false),
             'validation' => array('required'),
         ),
-        'event_reservation_status',
+        'event_reservation_status' => array(
+            'label' => '予約状況',
+            'validation' => array(
+                'required',
+            )
+        ),
         'headline' => array(
             'validation' => array(
-                'max_length' => array(100)
+                'max_length' => array(100),
             )
         ),
         'information' => array(
@@ -241,9 +246,6 @@ class Model_Fleamarket extends Model_Base
             'form'  => array('type' => false)
         ),
         'display_flag' => array(
-            'form'  => array('type' => false)
-        ),
-        'event_reservation_status' => array(
             'form'  => array('type' => false)
         ),
         'created_user' => array(
@@ -1112,5 +1114,15 @@ QUERY;
         if ($save) {
             $this->save();
         }
+    }
+
+    public function fleamarket_image($n)
+    {
+        foreach ($this->fleamarket_images as $fleamarket_image) {
+            if ($fleamarket_image->priority == $n) {
+                return $fleamarket_image;
+            }
+        }
+        return null;
     }
 }
