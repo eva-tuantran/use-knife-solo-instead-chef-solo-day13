@@ -89,7 +89,6 @@ SELECT
     f.fleamarket_id,
     f.name,
     f.promoter_name,
-    e.fleamarket_entry_style_id,
     f.event_date,
     f.event_time_start,
     f.event_time_end,
@@ -112,12 +111,10 @@ SELECT
     l.prefecture_id AS prefecture_id,
     l.address AS address,
     l.googlemap_address AS googlemap_address,
-    fa.description AS about_access
+    fa.description AS about_access,
+    fi.file_name
 FROM
     favorites AS fav
-LEFT JOIN
-    entries AS e ON
-    fav.fleamarket_id = e.fleamarket_id
 LEFT JOIN
     fleamarkets AS f ON
     fav.fleamarket_id = f.fleamarket_id
@@ -127,7 +124,8 @@ LEFT JOIN
     fleamarket_abouts AS fa ON f.fleamarket_id = fa.fleamarket_id
     AND fa.about_id = :about_access_id
 LEFT JOIN
-    fleamarket_entry_styles AS fes ON f.fleamarket_id = fes.fleamarket_id
+    fleamarket_images AS fi ON
+    f.fleamarket_id = fi.fleamarket_id AND priority = 1
 WHERE
     fav.user_id = :user_id AND
     f.display_flag = :display_flag AND

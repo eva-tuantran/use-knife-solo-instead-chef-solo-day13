@@ -414,7 +414,8 @@ SELECT
     l.prefecture_id AS prefecture_id,
     l.address AS address,
     l.googlemap_address AS googlemap_address,
-    fa.description AS about_access
+    fa.description AS about_access,
+    fi.file_name
 FROM
     fleamarkets AS f
 LEFT JOIN
@@ -424,6 +425,9 @@ LEFT JOIN
     AND fa.about_id = :about_access_id
 LEFT JOIN
     fleamarket_entry_styles AS fes ON f.fleamarket_id = fes.fleamarket_id
+LEFT JOIN
+    fleamarket_images AS fi ON
+    f.fleamarket_id = fi.fleamarket_id AND priority = 1
 WHERE
     f.display_flag = :display_flag
     AND f.deleted_at IS NULL
@@ -610,13 +614,14 @@ SELECT
     f.event_date,
     l.name AS location_name,
     l.prefecture_id,
-    SUM(fes.max_booth) AS max_booth
+    fi.file_name
 FROM
     fleamarkets AS f
 LEFT JOIN
     locations AS l ON f.location_id = l.location_id
 LEFT JOIN
-    fleamarket_entry_styles AS fes ON f.fleamarket_id = fes.fleamarket_id
+    fleamarket_images AS fi ON
+    f.fleamarket_id = fi.fleamarket_id AND priority = 1
 WHERE
     f.display_flag = :display_flag
     AND f.register_type = :register_status
@@ -742,7 +747,8 @@ SELECT
     f.event_date,
     l.name AS location_name,
     l.prefecture_id AS prefecture_id,
-    fa.description AS about_access
+    fa.description AS about_access,
+    fi.file_name
 FROM
     fleamarkets AS f
 LEFT JOIN
@@ -750,6 +756,9 @@ LEFT JOIN
 LEFT JOIN
     fleamarket_abouts AS fa ON f.fleamarket_id = fa.fleamarket_id
     AND fa.about_id = :about_access_id
+LEFT JOIN
+    fleamarket_images AS fi ON
+    f.fleamarket_id = fi.fleamarket_id AND priority = 1
 WHERE
     f.display_flag = :display_flag
     AND f.register_type = :register_status
@@ -825,7 +834,8 @@ SELECT
     l.prefecture_id AS prefecture_id,
     l.address AS address,
     l.googlemap_address AS googlemap_address,
-    fa.description AS about_access
+    fa.description AS about_access,
+    fi.file_name
 FROM
     fleamarkets AS f
 LEFT JOIN
@@ -833,6 +843,9 @@ LEFT JOIN
 LEFT JOIN
     fleamarket_abouts AS fa ON f.fleamarket_id = fa.fleamarket_id
     AND fa.about_id = :about_access_id
+LEFT JOIN
+    fleamarket_images AS fi ON
+    f.fleamarket_id = fi.fleamarket_id AND priority = 1
 WHERE
     f.created_user = :user_id AND
     f.display_flag = :display_flag AND
