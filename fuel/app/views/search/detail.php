@@ -1,3 +1,18 @@
+<style type="text/css">
+.reserved {
+  padding: 1em 0;
+  width: 200px;
+  font-size: 116%;
+  background-color: #f59000;
+  color: #fff;
+  border: none;
+  border-radius: 3px;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  text-align: center;
+  cursor: default;
+}
+</style>
 <script type='text/javascript' src='http://maps.google.com/maps/api/js?sensor=false'></script>
 <script type="text/javascript">
 $(function() {
@@ -65,12 +80,6 @@ Map.prototype = {
     if ($fleamarket['register_type'] == \Model_Fleamarket::REGISTER_TYPE_ADMIN):
         $is_official = true;
     endif;
-    if ($is_official):
-        $reservation_button = '出店予約をする';
-        if ($fleamarket['event_reservation_status'] == \Model_Fleamarket::EVENT_RESERVATION_STATUS_FULL):
-            $reservation_button = 'キャンセル待ちをする';
-        endif;
-    endif;
 
     $total_booth = 0;
     $entry_style_string = '';
@@ -121,7 +130,13 @@ Map.prototype = {
       </div>
       <ul class="rightbutton">
         <?php
-            if ($is_official && $fleamarket['event_status'] == \Model_Fleamarket::EVENT_STATUS_RESERVATION_RECEIPT):
+            if ($user && $user->hasEntry($fleamarket['fleamarket_id'])):
+        ?>
+        <li class="button reserved">出店予約中</li>
+        <?php
+            elseif ($is_official
+                && $fleamarket['event_status'] == \Model_Fleamarket::EVENT_STATUS_RESERVATION_RECEIPT
+            ):
                 $reservation_button = '出店予約をする';
                 if ($fleamarket['event_reservation_status'] == \Model_Fleamarket::EVENT_RESERVATION_STATUS_FULL):
                     $reservation_button = 'キャンセル待ちをする';
@@ -308,7 +323,13 @@ Map.prototype = {
       </ul>
       <ul class="rightbutton">
         <?php
-            if ($is_official && $fleamarket['event_status'] == \Model_Fleamarket::EVENT_STATUS_RESERVATION_RECEIPT):
+            if ($user && $user->hasEntry($fleamarket['fleamarket_id'])):
+        ?>
+        <li class="button reserved">出店予約中</li>
+        <?php
+            elseif ($is_official
+                && $fleamarket['event_status'] == \Model_Fleamarket::EVENT_STATUS_RESERVATION_RECEIPT
+            ):
                 $reservation_button = '出店予約をする';
                 if ($fleamarket['event_reservation_status'] == \Model_Fleamarket::EVENT_RESERVATION_STATUS_FULL):
                     $reservation_button = 'キャンセル待ちをする';

@@ -37,7 +37,6 @@ class Controller_Search extends Controller_Base_Template
             $page = 1;
         }
 
-
         list($conditions, $add_conditions) = $this->getCondition();
 
         // 検索条件から表示するフリーマーケット情報の取得
@@ -59,8 +58,9 @@ class Controller_Search extends Controller_Base_Template
         $view_model = ViewModel::forge('search/index');
         $view_model->set('conditions', $conditions, false);
         $view_model->set('add_conditions', $add_conditions, false);
-        $view_model->set('pagination', $pagination, false);
         $view_model->set('fleamarket_list', $fleamarket_list, false);
+        $view_model->set('pagination', $pagination, false);
+        $view_model->set('user', $this->login_user, false);
 
         $this->setMetaTag('search/index');
         $this->template->content = $view_model;
@@ -113,6 +113,7 @@ class Controller_Search extends Controller_Base_Template
         $view_model->set(
             'prefectures', \Config::get('master.prefectures'), false
         );
+        $view_model->set('user', $this->login_user, false);
 
         $this->setMetaTag('search/detail');
         $this->template->content = $view_model;
