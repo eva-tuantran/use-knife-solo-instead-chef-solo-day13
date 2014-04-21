@@ -1,0 +1,3 @@
+# フリマキャンセル待ちユーザ一への通知メール
+FUEL_ENV=production
+0 8 * * * apache (cd /deploy/rakuichi-rakuza ; /usr/bin/php oil refine send_mail_to_user_waiting_reservation)

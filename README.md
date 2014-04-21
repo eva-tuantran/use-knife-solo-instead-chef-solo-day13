@@ -28,14 +28,14 @@ virtualhostは特になしでも動作しますが、ブログ(wordpress)のみU
 完全なサイトを再現するためにはwww.rakuichi-rakuza.jpをhostsとして設定してください。
 
 
-## トランザクションについて
+## データベースの接続について
 
 ```
  $db = Database_Connection::instance();
 ```
 
 のように引数なしだと slave 側に接続してしまうため、
-master へのトランザクションは、
+master へのトランザクションをはるときなどは、
 
 ```
  $db = Database_Connection::instance('master');

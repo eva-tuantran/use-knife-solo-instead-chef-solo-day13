@@ -3,7 +3,7 @@ execute "import rakuichi-rakuza database" do
 end
 
 execute "seed rakuichi-rakuza database" do
-  command "cd /deploy/rakuichi-rakuza; php oil refine seed;"
+  command "cd /deploy/rakuichi-rakuza; php composer.phar update; php oil refine seed;"
 end
 
 execute "grant readonly user" do
