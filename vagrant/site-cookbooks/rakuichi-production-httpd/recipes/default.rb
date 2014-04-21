@@ -3,9 +3,12 @@
 # Recipe:: default
 #
 # 楽市楽座のWebサーバの基本的な設定をコピーします
+# - DB等はまだ作成されておりません
+# - 基本的には冪等性を担保しているはずなので、何回実行しても大丈夫です。
+# - 色々力技で作業しているので、後々これらを分割して作業したい
 #
 #
-# Copyright 2014, YOUR_COMPANY_NAME
+# Copyright 2014, Aucfan.co.ltd.,
 #
 # All rights reserved - Do Not Redistribute
 #
@@ -59,15 +62,14 @@ log "ssl crtificate file copy"
   end
 end
 
+execute "git clone rakuichi production files" do
+  command "cd /deploy; git clone git@gitlab.aucfan.com:devs/rakuichi-rakuza.git"
+  not_if { File.exists?("/deploy/rakuichi-rakuza") }
+end
+
 service "httpd" do
   action [:restart]
 end
-
-
-# execute "git clone rakuichi production files" do
-  # command "cd /deploy; git clone "
-# end
-
 
 # todo: db系は本番で上書きしないようにするなど、要設定
 # execute "import rakuichi-rakuza database" do
@@ -81,4 +83,3 @@ end
 # execute "grant readonly user" do
   # command "echo 'grant select on *.* to readonly@localhost;' | mysql -uroot"
 # end
-
