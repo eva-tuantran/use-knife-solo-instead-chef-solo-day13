@@ -71,8 +71,8 @@
             <li><a href="/">ホーム</a></li>
             <li class="active"><?php echo $title; ?></li>
           </ul>
-          <form>
-            <input type="text" class="form-control hidden-xs" id="keywordInput">
+          <form id="form_search_calendar" action="/search/1" method="get">
+            <input type="text" class="form-control" id="keywordInput" placeholder="キーワードを入力" name="c[keyword]">
           </form>
         </div>
         <!-- /globalNavBottom -->
