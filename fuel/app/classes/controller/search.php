@@ -44,21 +44,11 @@ class Controller_Search extends Controller_Base_Template
         $condition_list = \Model_Fleamarket::createSearchCondition(
             array_merge($conditions, $add_conditions)
         );
-$start = microtime(true);
-echo "<hr>";
+
         $total_count = \Model_Fleamarket::getCountBySearch($condition_list);
         $fleamarket_list = \Model_Fleamarket::findBySearch(
             $condition_list, $page, $this->search_result_per_page
         );
-
-var_dump(\DB::last_query());
-echo "<hr>";
-$end = microtime(true);
-$cpu_time = $end - $start;
-
-echo "search time > ";
-var_dump($cpu_time);
-echo "<hr>";
 
         // ページネーション設定
         $pagination = Pagination::forge(
