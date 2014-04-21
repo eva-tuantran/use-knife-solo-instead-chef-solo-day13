@@ -9,6 +9,7 @@ class Model_Fleamarket_Image extends Model_Base
     protected static $_properties = array(
         'fleamarket_image_id',
         'fleamarket_id',
+        'priority',
         'file_name',
         'created_user',
         'updated_user',

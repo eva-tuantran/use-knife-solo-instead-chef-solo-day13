@@ -5,6 +5,7 @@ class Model_Administrator extends Model_Base
     protected static $_primary_key = array('administrator_id');
 
     protected static $_properties = array(
+        'administrator_id',
         'last_name',
         'first_name',
         'last_name_kana',

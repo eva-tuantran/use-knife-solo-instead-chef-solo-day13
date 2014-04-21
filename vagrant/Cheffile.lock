@@ -1,0 +1,8 @@
+SITE
+  remote: http://community.opscode.com/api/v1
+  specs:
+    selinux (0.7.2)
+
+DEPENDENCIES
+  selinux (>= 0)
+

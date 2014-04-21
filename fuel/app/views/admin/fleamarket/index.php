@@ -6,6 +6,14 @@ $(function() {
     numberOfMonths: 3,
     showButtonPanel: true
   });
+  $("#inputReservationStart").datepicker({
+    numberOfMonths: 3,
+    showButtonPanel: true
+  });
+  $("#inputReservationEnd").datepicker({
+    numberOfMonths: 3,
+    showButtonPanel: true
+  });
   $("#inputEventTimeStart").timepicker({
     showButtonPanel: true,
     stepMinute: 5
@@ -58,19 +66,6 @@ $(function() {
 	?>
       </td>
     </tr>
-<!--
-    <tr>
-      <td>event_number</td>
-      <td>
-	<input type="text" name="event_number" value="<?php echo e($fields['event_number']->value); ?>">
-	<?php
-	   if (isset($errors['event_number'])) {
-   	       echo $errors['event_number'];
-           }
-	?>
-      </td>
-    </tr>
--->
     <tr>
       <td>開催日</td>
       <td>
@@ -119,30 +114,6 @@ $(function() {
 	?>
       </td>
     </tr>
-<!--
-    <tr>
-      <td>headline</td>
-      <td>
-	<input type="text" name="headline" value="<?php echo e($fields['headline']->value); ?>">
-	<?php
-	   if (isset($errors['headline'])) {
-   	       echo $errors['headline'];
-           }
-	?>
-      </td>
-    </tr>
-    <tr>
-      <td>information</td>
-      <td>
-	<input type="text" name="information" value="<?php echo e($fields['information']->value); ?>">
-	<?php
-	   if (isset($errors['information'])) {
-   	       echo $errors['information'];
-           }
-	?>
-      </td>
-    </tr>
--->
     <tr>
       <td>内容</td>
       <td>
@@ -157,23 +128,10 @@ $(function() {
 	?>
       </td>
     </tr>
-<!--
-    <tr>
-      <td>reservation_serial</td>
-      <td>
-	<input type="text" name="reservation_serial" value="<?php echo e($fields['reservation_serial']->value); ?>">
-	<?php
-	   if (isset($errors['reservation_serial'])) {
-   	       echo $errors['reservation_serial'];
-           }
-	?>
-      </td>
-    </tr>
--->
     <tr>
       <td>予約受付開始日</td>
       <td>
-	<input type="text" name="reservation_start" value="<?php echo e($fields['reservation_start']->value); ?>">
+	<input type="text" name="reservation_start" value="<?php echo e($fields['reservation_start']->value); ?>" id="inputReservationStart">
 	<?php
 	   if (isset($errors['reservation_start'])) {
    	       echo $errors['reservation_start'];
@@ -184,7 +142,7 @@ $(function() {
     <tr>
       <td>予約受付終了日</td>
       <td>
-	<input type="text" name="reservation_end" value="<?php echo e($fields['reservation_end']->value); ?>">
+	<input type="text" name="reservation_end" value="<?php echo e($fields['reservation_end']->value); ?>" id="inputReservationEnd">
 	<?php
 	   if (isset($errors['reservation_end'])) {
    	       echo $errors['reservation_end'];
@@ -332,28 +290,6 @@ $(function() {
       </td>
     </tr>
     <tr>
-      <td>寄付金</td>
-      <td>
-	<input type="text" name="donation_fee" value="<?php echo e($fields['donation_fee']->value); ?>">
-	<?php
-	   if (isset($errors['donation_fee'])) {
-   	       echo $errors['donation_fee'];
-           }
-	?>
-      </td>
-    </tr>
-    <tr>
-      <td>寄付先</td>
-      <td>
-	<input type="text" name="donation_point" value="<?php echo e($fields['donation_point']->value); ?>">
-	<?php
-	   if (isset($errors['donation_point'])) {
-   	       echo $errors['donation_point'];
-           }
-	?>
-      </td>
-    </tr>
-    <tr>
       <td>register_type</td>
       <td>
 	<input type="radio" name="register_type" value="1"<?php if ($fields['register_type']->value == 1) { echo ' checked'; } ?>>運営者
@@ -390,7 +326,7 @@ $(function() {
 	?>
       </td>
     </tr>
-    <tr>
+<tr>
       <td>created_at</td>
       <td>
       <?php
@@ -410,60 +346,27 @@ $(function() {
       ?> 
       </td>
     </tr>
-<!--
+    <?php foreach (range(1,4) as $priority) { ?>
     <tr>
-      <td>deleted_at</td>
+      <td>ファイル<?php echo $priority; ?></td>
       <td>
-      <?php
-	 if (isset($fleamarket)) {
-             echo e($fleamarket->deleted_at);
-         }
-      ?> 
-      </td>
-    </tr>
--->
-    <?php if ($fleamarket) { ?>
-    <?php foreach ($fleamarket->fleamarket_images as $fleamarket_image) { ?>
-    <tr>
-      <td>ファイル</td>
-      <td>
-	<img src="<?php echo $fleamarket_image->Url(); ?>">
-	<input type="checkbox" name="fleamarket_image_id[]" value="<?php echo $fleamarket_image->fleamarket_image_id; ?>">削除する
+	<?php if ($fleamarket && $fleamarket->fleamarket_image($priority)) { ?>
+	<img src="<?php echo $fleamarket->fleamarket_image($priority)->Url(); ?>">
+	<input type="checkbox" name="delete_priorities[]" value="<?php echo $priority; ?>">削除する
+	<?php } ?>
+	<input type="file" name="upload<?php echo $priority; ?>">
       </td>
     </tr>
     <?php } ?>
-    <?php } ?>
-    <tr>
-      <td>ファイル</td>
-      <td>
-	<input type="file" name="upload1">
-      </td>
-    </tr>
-    <tr>
-      <td>ファイル</td>
-      <td>
-	<input type="file" name="upload2">
-      </td>
-    </tr>
-    <tr>
-      <td>ファイル</td>
-      <td>
-	<input type="file" name="upload3">
-      </td>
-    </tr>
-    <tr>
-      <td>ファイル</td>
-      <td>
-	<input type="file" name="upload4">
-      </td>
-    </tr>
     <?php foreach (Model_Fleamarket_About::getAboutTitles() as $id => $title) { ?>
     <tr>
       <td>
 	<?php echo e($title); ?>
       </td>
       <td>
-	<input type="text" name="fleamarket_about_<?php echo $id; ?>_description" value="<?php echo e($fieldsets['fleamarket_abouts'][$id]->field('description')->value); ?>">
+	<textarea name="fleamarket_about_<?php echo $id; ?>_description" cols=50 rows=10>
+	  <?php echo e($fieldsets['fleamarket_abouts'][$id]->field('description')->value); ?>
+	</textarea>
 	<?php $errors = $fieldsets['fleamarket_abouts'][$id]->validation()->error_message(); ?>
 	<?php 
 	   if (isset($errors['description'])) {

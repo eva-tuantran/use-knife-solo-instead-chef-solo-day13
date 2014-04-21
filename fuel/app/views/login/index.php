@@ -1,7 +1,11 @@
 <div id="contentLogin" class="row">
   <!-- ad -->
   <div id="ad" class="col-sm-7">
-    <a href="#"><img src="http://dummyimage.com/535x250/ccc/fff.jpg"  class="img-responsive"></a>
+    <div id="login_left">
+  	  <img src="/assets/img/regist_bg02.png" alt="フリーマーケット参加者募集" width="100%">
+	  <a href="/signup"><img src="/assets/img/regist_btn_off.png" id="login_left_btn02" alt="登録する" width="66%"></a>
+	</div>
+<!--    <a href="#"><img src="http://dummyimage.com/535x250/ccc/fff.jpg"  class="img-responsive"></a> -->
   </div>
   <!-- /ad -->
   <!-- loginForm -->

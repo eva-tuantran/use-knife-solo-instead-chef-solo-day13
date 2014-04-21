@@ -78,6 +78,10 @@ class Controller_Base_Template extends Controller_Template
         $use_ssl          = \Config::get('ssl_connection.use');
         if (! $this->_ssl_host) {
             $this->_ssl_host = \Config::get('ssl_connection.default_host');
+
+            if (! $this->_ssl_host) {
+                $this->_ssl_host = $_SERVER['HTTP_HOST'];
+            }
         }
 
         if ($should_be_secure && ! $is_secure && $use_ssl) {

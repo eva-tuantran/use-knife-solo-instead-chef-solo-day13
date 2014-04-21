@@ -3,6 +3,15 @@
 <?php $input  = $fieldsets['fleamarket']->input(); ?>
 <?php $errors = $fieldsets['fleamarket']->validation()->error_message(); ?>
 <?php $fields = $fieldsets['fleamarket']->field(); ?>
+<?php 
+   $is_delete = array();
+
+   if(isset($input['delete_priorities'])){
+       foreach ($input['delete_priorities'] as $priority){
+           $is_delete[$priority] = 1;
+       } 
+   }
+?>
 
 <h3>フリマ登録</h3>
 <form action="/admin/fleamarket/thanks" method="POST" class="form-horizontal">
@@ -31,14 +40,6 @@
 	<?php echo e($input['promoter_name']); ?>
       </td>
     </tr>
-<!--
-    <tr>
-      <td>event_number</td>
-      <td>
-	<?php echo e($input['event_number']); ?>
-      </td>
-    </tr>
--->
     <tr>
       <td>開催日</td>
       <td>
@@ -66,34 +67,12 @@
         ?>
       </td>
     </tr>
-<!--
-    <tr>
-      <td>headline</td>
-      <td>
-	<?php echo e($input['headline']); ?>
-      </td>
-    </tr>
-    <tr>
-      <td>information</td>
-      <td>
-	<?php echo e($input['information']); ?>
-      </td>
-    </tr>
--->
     <tr>
       <td>内容</td>
       <td>
 	<?php echo e($input['description']); ?>
       </td>
     </tr>
-<!--
-    <tr>
-      <td>reservation_serial</td>
-      <td>
-   	<?php echo e($input['reservation_serial']); ?>
-      </td>
-    </tr>
--->
     <tr>
       <td>予約受付開始日</td>
       <td>
@@ -179,18 +158,6 @@
       </td>
     </tr>
     <tr>
-      <td>寄付金</td>
-      <td>
-	<?php echo e($input['donation_fee']); ?>
-      </td>
-    </tr>
-    <tr>
-      <td>寄付先</td>
-      <td>
-	<?php echo e($input['donation_point']); ?>
-      </td>
-    </tr>
-    <tr>
       <td>register_type</td>
       <td>
 	<?php if ($input['register_type'] == Model_Fleamarket::REGISTER_TYPE_ADMIN) { echo '運営者'; }
@@ -213,26 +180,21 @@
 	      ?>
       </td>
     </tr>
-    <?php if ($fleamarket && $input['fleamarket_image_id']) { ?>
-    <?php foreach ($fleamarket->fleamarket_images as $fleamarket_image) { ?>
-    <?php foreach ($input['fleamarket_image_id'] as $fleamarket_image_id) { ?>
-    <?php if ($fleamarket_image->fleamarket_image_id == $fleamarket_image_id) { ?>
+    <?php foreach (range(1,4) as $priority) { ?>
     <tr>
-      <td>ファイル</td>
-      <td><img src="<?php echo $fleamarket_image->Url(); ?>">を削除</td>
-    </tr>
-    <?php } ?>
-    <?php } ?>
-    <?php } ?>
-    <?php } ?>
-    <?php foreach ($files as $file) { ?>
-    <tr>
-      <td>ファイル</td>
+      <td>ファイル<?php echo($priority); ?></td>
       <td>
-	<img src="/files/admin/fleamarket/img/<?php echo $file['saved_as']; ?>">
+	<?php if(isset($is_delete[$priority])){ ?>
+	<img src="<?php echo $fleamarket->fleamarket_image($priority)->Url(); ?>">(削除)
+	<?php }elseif(isset($files["upload${priority}"])) { ?>
+	<img src="/files/admin/fleamarket/img/<?php echo $files["upload${priority}"]['saved_as']; ?>">(更新)
+	<?php }elseif( $fleamarket && $fleamarket->fleamarket_image($priority) ){ ?>
+	<img src="<?php echo $fleamarket->fleamarket_image($priority)->Url(); ?>">
+	<?php } ?>
       </td>
     </tr>
     <?php } ?>
+
     <?php foreach (Model_Fleamarket_About::getAboutTitles() as $id => $title) { ?>
     <tr>
       <td><?php echo e($title); ?></td>

@@ -47,7 +47,8 @@ CREATE TABLE IF NOT EXISTS `rakuichi-rakuza`.`users` (
   PRIMARY KEY (`user_id`),
   INDEX `idx_user_old_id` (`user_old_id` ASC),
   INDEX `idx_email` (`email` ASC))
-ENGINE = InnoDB;
+ENGINE = InnoDB
+AUTO_INCREMENT = 10000000;
 
 
 -- -----------------------------------------------------
@@ -108,7 +109,8 @@ CREATE TABLE IF NOT EXISTS `rakuichi-rakuza`.`locations` (
   `created_at` DATETIME NOT NULL COMMENT '作成日時',
   `updated_at` DATETIME NULL COMMENT '更新日時',
   `deleted_at` DATETIME NULL COMMENT '削除日時',
-  PRIMARY KEY (`location_id`))
+  PRIMARY KEY (`location_id`),
+  INDEX `idx_locations_01` (`location_id` ASC, `prefecture_id` ASC))
 ENGINE = InnoDB;
 
 
@@ -156,7 +158,8 @@ CREATE TABLE IF NOT EXISTS `rakuichi-rakuza`.`fleamarkets` (
   `created_at` DATETIME NOT NULL COMMENT '作成日時',
   `updated_at` DATETIME NULL COMMENT '更新日時',
   `deleted_at` DATETIME NULL COMMENT '削除日時',
-  PRIMARY KEY (`fleamarket_id`))
+  PRIMARY KEY (`fleamarket_id`),
+  INDEX `idx_fleamarkets_01` (`event_date` DESC, `deleted_at` ASC, `event_status` ASC))
 ENGINE = InnoDB;
 
 
@@ -183,7 +186,7 @@ CREATE TABLE IF NOT EXISTS `rakuichi-rakuza`.`entries` (
   `updated_at` DATETIME NULL COMMENT '更新日時',
   `deleted_at` DATETIME NULL COMMENT '削除日時',
   PRIMARY KEY (`entry_id`),
-  UNIQUE INDEX `user_id_fleamarket_id_fleamarket_entry_style_id_idx` (`user_id` ASC, `fleamarket_id` ASC, `fleamarket_entry_style_id` ASC))
+  UNIQUE INDEX `idx_entries_01` (`user_id` ASC, `fleamarket_id` ASC, `fleamarket_entry_style_id` ASC))
 ENGINE = InnoDB;
 
 
@@ -330,7 +333,8 @@ CREATE TABLE IF NOT EXISTS `rakuichi-rakuza`.`fleamarket_entry_styles` (
   `created_at` DATETIME NOT NULL COMMENT '作成日時',
   `updated_at` DATETIME NULL COMMENT '更新日時',
   `deleted_at` DATETIME NULL COMMENT '削除日時',
-  PRIMARY KEY (`fleamarket_entry_style_id`))
+  PRIMARY KEY (`fleamarket_entry_style_id`),
+  INDEX `idx_fleamarket_entry_styles_01` (`fleamarket_id` ASC, `entry_style_id` ASC))
 ENGINE = InnoDB;
 
 
@@ -369,7 +373,8 @@ CREATE TABLE IF NOT EXISTS `rakuichi-rakuza`.`fleamarket_abouts` (
   `created_at` DATETIME NOT NULL COMMENT '作成日時',
   `updated_at` DATETIME NULL COMMENT '更新日時',
   `deleted_at` DATETIME NULL COMMENT '削除日時',
-  PRIMARY KEY (`fleamarket_about_id`))
+  PRIMARY KEY (`fleamarket_about_id`),
+  INDEX `idx_fleamarket_abouts_01` (`fleamarket_id` ASC, `about_id` ASC))
 ENGINE = InnoDB;
 
 
@@ -400,13 +405,15 @@ DROP TABLE IF EXISTS `rakuichi-rakuza`.`fleamarket_images` ;
 CREATE TABLE IF NOT EXISTS `rakuichi-rakuza`.`fleamarket_images` (
   `fleamarket_image_id` INT NOT NULL AUTO_INCREMENT,
   `fleamarket_id` INT NOT NULL,
+  `priority` TINYINT NOT NULL,
   `file_name` VARCHAR(255) NULL,
   `created_user` INT NOT NULL COMMENT '作成したユーザID、一般ユーザ:10000000以上,管理者：10000000未満',
   `updated_user` INT NULL COMMENT '更新したユーザID、一般ユーザ:10000000以上,管理者：10000000未満',
   `created_at` DATETIME NOT NULL COMMENT '作成日時',
   `updated_at` DATETIME NULL COMMENT '更新日時',
   `deleted_at` DATETIME NULL COMMENT '削除日時',
-  PRIMARY KEY (`fleamarket_image_id`))
+  PRIMARY KEY (`fleamarket_image_id`),
+  INDEX `idx_fleamarket_images_01` (`fleamarket_id` ASC, `priority` ASC))
 ENGINE = InnoDB;
 
 
@@ -423,7 +430,7 @@ CREATE TABLE IF NOT EXISTS `rakuichi-rakuza`.`favorites` (
   `updated_at` DATETIME NULL,
   `deleted_at` DATETIME NULL,
   PRIMARY KEY (`favorite_id`),
-  INDEX `idx_fleamarket_id` (`fleamarket_id` ASC))
+  INDEX `idx_favorites_01` (`fleamarket_id` ASC, `user_id` ASC))
 ENGINE = InnoDB;
 
 
