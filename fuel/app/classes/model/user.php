@@ -10,7 +10,7 @@ class Model_User extends Model_Base
 {
 
     /**
-     * ールマガジン 0:不要,1:必要
+     * メールマガジン 0:不要,1:必要
      */
     const MM_FLAG_NG = 0;
     const MM_FLAG_OK = 1;
@@ -352,12 +352,13 @@ class Model_User extends Model_Base
         ),
     );
 
-    protected static $_conditions = array(
-        'where' => array(
-        ),
-    );
+    /**
+     * ユーザが出店予約したフリマ
+     *
+     * @var array
+     */
+    protected $has_entry = array();
 
-    protected $_has_entry = array();
     /**
      * 登録ステータスが本登録のユーザを取得する
      *
@@ -781,13 +782,17 @@ QUERY;
      */
     public function hasEntry($fleamarket_id)
     {
-        if (! $this->_has_entry) {
-            $_has_entry = array();
+        if (! $this->has_entry) {
+            $has_entry = array();
             foreach ($this->entries as $entry) {
-                $_has_entry[$entry->fleamarket_id] = 1;
+                if ($entry->entry_status == \Model_Entry::ENTRY_STATUS_CANCELED) {
+                    continue;
+                }
+                $has_entry[] = $entry->fleamarket_id;
             }
-            $this->_has_entry = $_has_entry;
+            $this->has_entry = $has_entry;
         }
-        return isset($this->_has_entry[$fleamarket_id]);
+
+        return in_array($fleamarket_id, $this->has_entry);
     }
 }

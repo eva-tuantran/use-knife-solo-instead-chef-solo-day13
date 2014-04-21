@@ -1,3 +1,19 @@
+<style type="text/css">
+.reserved {
+  margin: 0 5px 0 5px;
+  padding: 10px 0;
+  width: 130px;
+  font-size: 100%;
+  background-color: #f59000;
+  color: #fff;
+  border: none;
+  border-radius: 3px;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  text-align: center;
+  cursor: default;
+}
+</style>
 <script type='text/javascript'>
 var googletag = googletag || {};
 googletag.cmd = googletag.cmd || [];
@@ -218,7 +234,13 @@ googletag.enableServices();
         </ul>
         <ul class="rightbutton">
           <?php
-            if ($is_official && $fleamarket['event_status'] == \Model_Fleamarket::EVENT_STATUS_RESERVATION_RECEIPT):
+            if ($user && $user->hasEntry($fleamarket['fleamarket_id'])):
+          ?>
+          <li class="button reserved">出店予約中</li>
+          <?php
+            elseif ($is_official
+                && $fleamarket['event_status'] == \Model_Fleamarket::EVENT_STATUS_RESERVATION_RECEIPT
+            ):
                 $reservation_button = '出店予約をする';
                 if ($fleamarket['event_reservation_status'] == \Model_Fleamarket::EVENT_RESERVATION_STATUS_FULL):
                     $reservation_button = 'キャンセル待ちをする';

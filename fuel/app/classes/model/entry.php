@@ -82,25 +82,10 @@ class Model_Entry extends Model_Base
         self::ITEM_GENRES_COMMIC   => 'コミック、アニメグッズ',
     );
 
-    /**
-     * テーブル名
-     *
-     * @var string $table_name
-     */
     protected static $_table_name = 'entries';
 
-    /**
-     * プライマリーキー
-     *
-     * @var string $_primary_key
-     */
     protected static $_primary_key  = array('entry_id');
 
-    /**
-     * 外部結合設定
-     *
-     * @var array
-     */
     protected static $_belongs_to = array(
         'fleamarket' => array(
             'key_to' => 'fleamarket_id',
@@ -113,11 +98,6 @@ class Model_Entry extends Model_Base
         ),
     );
 
-    /**
-     * フィールド設定
-     *
-     * @var array
-     */
     protected static $_properties = array(
         'entry_id',
         'user_id',
@@ -163,21 +143,11 @@ class Model_Entry extends Model_Base
         'deleted_at',
     );
 
-    /**
-     * 論理削除設定
-     *
-     * @var array
-     */
     protected static $_soft_delete = array(
         'deleted_field'   => 'deleted_at',
         'mysql_timestamp' => true,
     );
 
-    /**
-     * オブサーバ設定
-     *
-     * @var array
-     */
     protected static $_observers = array(
         'Orm\\Observer_CreatedAt' => array(
             'events'          => array('before_insert'),
@@ -559,7 +529,6 @@ QUERY;
         return $reserved_entry_count;
     }
 
-
     /**
      * 特定のユーザのエントリーしたフリマの総数を取得します
      *
@@ -594,12 +563,8 @@ QUERY;
         return $entry_count;
     }
 
-
-
-
-
     /**
-     * 特定のユーザのエントリーしたフリマをキャンセルします
+     * 特定のユーザの出店予約をキャンセルします
      *
      * @access public
      * @param int $user_id
@@ -624,6 +589,23 @@ QUERY;
         }
 
         return true;
+    }
+
+    /**
+     * 指定された条件で出店予約情報を取得する
+     *
+     * @access public
+     * @param array $condition 検索条件
+     * @return array
+     * @author ida
+     */
+    public static function findBy($condition)
+    {
+        if (! $condition) {
+            return false;
+        }
+
+        return self::find('first', array('where' => $condition));
     }
 
     /**

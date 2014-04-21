@@ -214,7 +214,7 @@ class Controller_Fleamarket extends Controller_Base_Template
             \DB::commit_transaction();
         } catch (Exception $e) {
             \DB::rollback_transaction();
-            Response::redirect('errors/index');
+            throw new SystemException(\Model_Error::ER00905);
         }
 
         $this->template->content = \ViewModel::forge('fleamarket/thanks');
