@@ -110,7 +110,7 @@ $event_numbers = array();
 // \DB::query('TRUNCATE TABLE fleamarket_abouts')->execute();
 // \DB::query('TRUNCATE TABLE locations')->execute();
 
-for ($i = 1; $i <= 1000; $i++) {
+for ($i = 1; $i <= 2000; $i++) {
     $group_code = array_rand($group_codes);
     $group_code_name = $group_codes[$group_code];
 

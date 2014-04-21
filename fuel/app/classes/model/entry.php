@@ -365,7 +365,8 @@ SELECT
     l.prefecture_id AS prefecture_id,
     l.address AS address,
     l.googlemap_address AS googlemap_address,
-    fa.description AS about_access
+    fa.description AS about_access,
+    fi.file_name
 FROM
     entries AS e
 LEFT JOIN
@@ -376,6 +377,9 @@ LEFT JOIN
 LEFT JOIN
     fleamarket_abouts AS fa ON f.fleamarket_id = fa.fleamarket_id
     AND fa.about_id = :about_access_id
+LEFT JOIN
+    fleamarket_images AS fi ON
+    e.fleamarket_id = fi.fleamarket_id AND priority = 1
 WHERE
     e.user_id = :user_id AND
     e.entry_status = :entry_status AND

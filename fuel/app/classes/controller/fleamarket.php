@@ -168,6 +168,7 @@ class Controller_Fleamarket extends Controller_Base_Template
         }
 
         try {
+            $db = Database_Connection::instance('master');
             \DB::start_transaction();
 
             $fleamarket_id = Input::post('fleamarket_id');
