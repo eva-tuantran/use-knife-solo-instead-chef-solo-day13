@@ -48,6 +48,9 @@ FROM
 WHERE
     user_id = :user_id AND
     deleted_at IS NULL
+ORDER
+    BY user_id DESC
+LIMIT 1
 QUERY;
 
         //1段階強化するのであれば、salt =:salt AND を入れて、2つのキーから内容をチェックする
