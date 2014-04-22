@@ -63,7 +63,7 @@ log "ssl crtificate file copy"
 end
 
 execute "git clone rakuichi production files" do
-  command "cd /deploy; git clone git@gitlab.aucfan.com:devs/rakuichi-rakuza.git"
+  command "cd /deploy; git clone git@gitlab.aucfan.com:devs/rakuichi-rakuza.git; git submodule update --init"
   not_if { File.exists?("/deploy/rakuichi-rakuza") }
 end
 
