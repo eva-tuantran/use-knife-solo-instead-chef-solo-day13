@@ -222,7 +222,7 @@ class Controller_Reservation extends Controller_Base_Template
     {
         if ($this->request->action == 'index') {
             $fieldset = Session::get_flash('reservation.fieldset');
-            if (! $fieldset) {
+            if (! $fieldset || (! $fieldset->validation()->error())) {
                 $fieldset = $this->createFieldset();
             }
         } elseif ($this->request->action == 'confirm') {
