@@ -186,7 +186,7 @@ class Controller_Admin_User extends Controller_Admin_Base_Template
             'pagination_url' => "admin/user/list?$query_string",
             'uri_segment'    => 4,
             'num_links'      => 10,
-            'per_page'       => 2,
+            'per_page'       => 100,
             'total_items'    => $total,
             'name'           => 'pagenation',
         ));
