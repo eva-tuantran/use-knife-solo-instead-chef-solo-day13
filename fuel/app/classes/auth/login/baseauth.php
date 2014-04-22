@@ -289,6 +289,16 @@ QUERY;
         return $this->user->getFavoriteCount();
     }
 
+    /**
+     * ユーザがキャンセル待ちしているフリマの予約数
+     *
+     * @access public
+     * @return int
+     */
+    public function getWaitingEntryCount()
+    {
+        return $this->user->getWaitingEntryCount();
+    }
 
 
     /**

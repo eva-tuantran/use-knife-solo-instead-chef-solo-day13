@@ -238,6 +238,10 @@ googletag.enableServices();
           ?>
           <li class="button reserved">出店予約中</li>
           <?php
+            elseif ($user && $user->hasWaiting($fleamarket['fleamarket_id'])):
+          ?>
+          <li class="button reserved">キャンセル待ち中</li>
+          <?php
             elseif ($is_official
                 && $fleamarket['event_status'] == \Model_Fleamarket::EVENT_STATUS_RESERVATION_RECEIPT
             ):
