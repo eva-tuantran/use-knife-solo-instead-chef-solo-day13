@@ -21,6 +21,7 @@
     <ul class="nav nav-pills">
       <li><a href="/mypage/list?type=entry">これまで参加したフリマ <span class="badge"><?php echo e(Auth::getFinishedEntryCount()); ?>件</span></a></li>
       <li><a href="/mypage/list?type=reserved">出店予約中のフリマ <span class="badge"><?php echo e(Auth::getReservedEntryCount()); ?>件</span></a></li>
+      <li><a href="/mypage/list?type=waiting">キャンセル待ちのフリマ <span class="badge"><?php echo e(Auth::getWaitingEntryCount()); ?>件</span></a></li>
       <li><a href="/mypage/list?type=mylist">マイリスト <span class="badge"><?php echo e(Auth::getFavoriteCount()); ?>件</span></a></li>
     </ul>
     <!-- /pills -->

@@ -57,6 +57,7 @@ class Controller_Mypage extends Controller_Base_Template
         Asset::js('jquery.carouFredSel.js', array(), 'add_js');
 
         $fleamarkets_all['entry']        = $this->login_user->getEntries(1, 3);
+        $fleamarkets_all['waiting']        = $this->login_user->getWaitingEntries(1, 3);
         $fleamarkets_all['mylist']       = $this->login_user->getFavorites(1, 3);
         $fleamarkets_all['myfleamarket'] = $this->login_user->getMyFleamarkets(1, 3);
 //        $fleamarkets_all['reserved']     = $this->login_user->getReservedEntries(1, 3);
@@ -116,6 +117,10 @@ class Controller_Mypage extends Controller_Base_Template
             case 'reserved':
                 $fleamarkets = $this->login_user->getReservedEntries($page, $item_per_page);
                 $count       = $this->login_user->getReservedEntryCount();
+                break;
+            case 'waiting':
+                $fleamarkets = $this->login_user->getWaitingEntries($page, $item_per_page);
+                $count       = $this->login_user->getWaitingEntryCount();
                 break;
             default:
                 return \Response::redirect('/mypage');
