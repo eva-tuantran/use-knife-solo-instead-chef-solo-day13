@@ -48,17 +48,19 @@ class Fleamarket_Event_Close
             \Model_Fleamarket::EVENT_STATUS_RESERVATION_RECEIPT,
             \Model_Fleamarket::EVENT_STATUS_RECEIPT_END
         );
+
+        $target_date = \date::forge(strtotime('- 1 day'))->format('mysql');
         $fleamarkets = \Model_Fleamarket::find('all', array(
             'select' => array('fleamarket_id', 'event_status'),
             'where' => array(
                 array(
-                    'event_date', \DB::expr('DATE_ADD(CURDATE(), INTERVAL -1 DAY)')
+                    'event_date', '<=', $target_date,
                 ),
                 array(
                     'register_type', '=', \Model_Fleamarket::REGISTER_TYPE_ADMIN,
                 ),
                 array(
-                    'event_time_end', '<=', '23:59:59',
+                    'event_time_end', '<=', \DB::expr('CURRENT_TIME()'),
                 ),
                 array(
                     'event_status', 'IN', $target_event_statuses,
