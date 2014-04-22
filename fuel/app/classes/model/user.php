@@ -10,7 +10,7 @@ class Model_User extends Model_Base
 {
 
     /**
-     * ールマガジン 0:不要,1:必要
+     * メールマガジン 0:不要,1:必要
      */
     const MM_FLAG_NG = 0;
     const MM_FLAG_OK = 1;
@@ -352,12 +352,20 @@ class Model_User extends Model_Base
         ),
     );
 
-    protected static $_conditions = array(
-        'where' => array(
-        ),
-    );
+    /**
+     * ユーザが出店予約したフリマ
+     *
+     * @var array
+     */
+    protected $has_entry = array();
 
-    protected $_has_entry = array();
+    /**
+     * ユーザがキャンセル中のフリマ
+     *
+     * @var array
+     */
+    protected $has_waiting = array();
+
     /**
      * 登録ステータスが本登録のユーザを取得する
      *
@@ -617,6 +625,18 @@ QUERY;
     }
 
     /**
+     * 現在キャンセル待ちのフリマの数を取得します
+     *
+     * @access public
+     * @return int
+     * @author shimma
+     */
+    public function getWaitingEntryCount()
+    {
+        return \Model_Entry::getUserWaitingEntryCount($this->user_id);
+    }
+
+    /**
      * ユーザのお気に入り情報を取得します
      *
      * @access public
@@ -655,6 +675,20 @@ QUERY;
     public function getEntries($page = 1, $row_count = 30)
     {
         return \Model_Entry::getUserEntries($this->user_id, $page, $row_count);
+    }
+
+    /**
+     * キャンセル待ちした全てのフリーマーケットの情報を取得します
+     *
+     * @access public
+     * @param int $page ページ
+     * @param int $row_count 1ページの件数
+     * @return mixed
+     * @author kobayasi
+     */
+    public function getWaitingEntries($page = 1, $row_count = 30)
+    {
+        return \Model_Entry::getUserWaitingEntries($this->user_id, $page, $row_count);
     }
 
     /**
@@ -781,13 +815,31 @@ QUERY;
      */
     public function hasEntry($fleamarket_id)
     {
-        if (! $this->_has_entry) {
-            $_has_entry = array();
+        if (! $this->has_entry) {
+            $has_entry = array();
             foreach ($this->entries as $entry) {
-                $_has_entry[$entry->fleamarket_id] = 1;
+                if ($entry->entry_status == Model_Entry::ENTRY_STATUS_RESERVED) {
+                    $has_entry[] = $entry->fleamarket_id;
+                }
             }
-            $this->_has_entry = $_has_entry;
+            $this->has_entry = $has_entry;
         }
-        return isset($this->_has_entry[$fleamarket_id]);
+
+        return in_array($fleamarket_id, $this->has_entry);
+    }
+
+    public function hasWaiting($fleamarket_id)
+    {
+        if (! $this->has_waiting) {
+            $has_waiting = array();
+            foreach ($this->entries as $entry) {
+                if ($entry->entry_status == Model_Entry::ENTRY_STATUS_WAITING) {
+                    $has_waiting[] = $entry->fleamarket_id;
+                }
+            }
+            $this->has_waiting = $has_waiting;
+        }
+
+        return in_array($fleamarket_id, $this->has_waiting);
     }
 }

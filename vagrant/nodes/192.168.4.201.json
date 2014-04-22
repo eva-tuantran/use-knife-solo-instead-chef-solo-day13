@@ -1,0 +1,1 @@
+{  "host_name" : "nrt02",  "run_list":[    "recipe[base]",    "recipe[nameserver]",    "recipe[httpd-php]",    "recipe[composer]",    "recipe[mysql]",    "recipe[memcached]",    "recipe[selinux::disabled]",    "recipe[rakuichi-production-httpd]"  ]}

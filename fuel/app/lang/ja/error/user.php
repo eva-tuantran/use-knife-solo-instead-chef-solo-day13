@@ -28,5 +28,6 @@ return array(
     \Model_Error::ER00701 => 'パスワード変更ができませんでした。',
     \Model_Error::ER00702 => 'ログインしてください。',
 
-    );
+    \Model_Error::ER00905 => 'フリマ登録に失敗しました。',
+);
 

@@ -30,9 +30,11 @@
     <div class="box clearfix">
       <h3>フリマ予約情報入力欄</h3>
       <?php if (count($fleamarket->fleamarket_entry_styles) == 0){ ?>
-      現在予約することが出来ません
-      <?php }elseif ($is_duplicate) { ?>
+      現在予約することが出来ませんxxx
+      <?php }elseif ($user->hasEntry($fleamarket->fleamarket_id)) { ?>
       既に予約済みです。キャンセルの場合、<a href="/mypage">マイページにてキャンセル</a>を行って下さい。
+      <?php }elseif ($user->hasWaiting($fleamarket->fleamarket_id)) { ?>
+      既にキャンセル待ち済みです。
       <?php }else{ ?>
       <form action="/reservation/confirm" method="POST" class="form-horizontal">
 
