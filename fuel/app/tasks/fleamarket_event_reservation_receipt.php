@@ -46,12 +46,12 @@ class Fleamarket_Event_Reservation_Receipt
             \Model_Fleamarket::EVENT_STATUS_SCHEDULE,
         );
 
-        $target_date = \date::forge(strtotime('- 1 day'))->format('mysql');
+        $date = \Date::forge(strtotime('- 1 day'));
         $fleamarkets = \Model_Fleamarket::find('all', array(
             'select' => array('fleamarket_id', 'event_status'),
             'where' => array(
                 array(
-                    'reservation_start', '<=', $target_date
+                    'reservation_start', '<=', $date->format('mysql')
                 ),
                 array(
                     'event_status', 'IN', $target_event_statuses,
