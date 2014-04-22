@@ -188,7 +188,7 @@ CREATE TABLE IF NOT EXISTS `rakuichi-rakuza`.`entries` (
   `updated_at` DATETIME NULL COMMENT '更新日時',
   `deleted_at` DATETIME NULL COMMENT '削除日時',
   PRIMARY KEY (`entry_id`),
-  UNIQUE INDEX `idx_entries_01` (`user_id` ASC, `fleamarket_id` ASC, `fleamarket_entry_style_id` ASC))
+  INDEX `idx_entries_01` (`user_id` ASC, `fleamarket_id` ASC, `fleamarket_entry_style_id` ASC))
 ENGINE = InnoDB;
 
 
