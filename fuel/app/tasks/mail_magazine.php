@@ -133,7 +133,8 @@ class Mail_Magazine
      */
     private function openLog($mail_magazine_id)
     {
-        $dir = realpath(APPPATH . '/../../') . DS . 'public' . DS . 'files' . DS . 'mailmagazine' . DS;
+//        $dir = realpath(APPPATH . '/../../') . DS . 'public' . DS . 'files' . DS . 'mailmagazine' . DS;
+        $dir = '/tmp/';
         $file_name = 'log' . '_' . $mail_magazine_id . '_' . date('YmdHis');
         \File::create($dir, $file_name);
 
