@@ -144,11 +144,19 @@
 <script>
 
 $('.fleamarket_cancel').click(function() {
-    if (!confirm('フリーマーケットをキャンセルします\nよろしいですか？')) {
-    return false;
+  var href = $(this).attr('href');
+  $('#dialog_confirm').dialog({
+    buttons: {
+      "はい": function(event){
+         location.href = href;
+       },
+      "いいえ": function(event){
+        $(this).dialog("close");
+       }
     }
+  });
+  return false;
 });
-
 
 $(function() {
   Calendar.init();
@@ -247,4 +255,7 @@ $(function () {
 </div>
 <div id="dialog_need_login" style="display: none;">
 マイリストを解除するためにはログインが必要です
+</div>
+<div id="dialog_confirm" style="display: none;">
+フリーマーケットをキャンセルします。よろしいですか？
 </div>
