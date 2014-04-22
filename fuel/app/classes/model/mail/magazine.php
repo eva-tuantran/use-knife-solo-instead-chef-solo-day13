@@ -67,7 +67,7 @@ class Model_Mail_Magazine extends Model_Base
         'body' => array(
             'label' => '本文',
             'validation' => array(
-                'required', 'max_length' => array(250),
+                'required', 'max_length' => array(60000),
             ),
         ),
         'additional_serialize_data' => array(
