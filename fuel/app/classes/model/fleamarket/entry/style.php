@@ -166,6 +166,18 @@ QUERY;
     }
 
     /**
+     * 予約ブース数の残数を取得
+     *
+     * @access public
+     * @return int
+     * @author kobayasi
+     */
+    public function remainBooth()
+    {
+        return $this->max_booth - $this->sumReservedBooth();
+    }
+
+    /**
      * 予約ブース数の最大数を超えてしまったかどうか
      *
      * @access public
@@ -175,20 +187,20 @@ QUERY;
      */
     public function isOverReservationLimit()
     {
-        return $this->max_booth < $this->sumReservedBooth();
+        return $this->remainBooth() < 0;
     }
 
     /**
-     * キャンセル待ちが必要かどうか
+     * キャンセル待ちかどうか
      *
      * @access public
      * @param  int
      * @return bool
      * @author kobayasi
      */
-    public function isNeedWaiting()
+    public function isFullBooth()
     {
-        return $this->max_booth <= $this->sumReservedBooth();
+        return $this->remainBooth() <= 0;
     }
 
     /**
