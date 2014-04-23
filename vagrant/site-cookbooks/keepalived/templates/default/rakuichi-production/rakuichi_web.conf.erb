@@ -20,8 +20,13 @@ vrrp_instance VI_1 {
 
 virtual_server_group aucfan_web_servers {
   103.249.200.5 80
+}
+
+
+virtual_server_group aucfan_web_servers_https {
   103.249.200.5 443
 }
+
 
 virtual_server group aucfan_web_servers {
   delay_loop   5
@@ -32,7 +37,7 @@ virtual_server group aucfan_web_servers {
   #sorry_server 192.168.31.102 80
 
   ## nrt01 - rakuichi 001
-  real_server  103.249.200.3 {
+  real_server  103.249.200.3 80 {
     weight 100
     inhibit_on_failure
     HTTP_GET {
@@ -48,7 +53,49 @@ virtual_server group aucfan_web_servers {
   }
 
   ## ceb01 - rakuichi 002
-  real_server  103.249.200.4 {
+  real_server  103.249.200.4 80 {
+    weight 100
+    inhibit_on_failure
+    HTTP_GET {
+      url {
+        path /
+        status_code 200
+      }
+      connect_port 80
+      connect_timeout 3
+      retry 5
+      delay_before_retry 3
+    }
+  }
+
+}
+
+virtual_server group aucfan_web_servers_https {
+  delay_loop   5
+  lvs_sched    wlc
+  lvs_method   DR
+  protocol     TCP
+  #virtualhost  www.rakuichi-rakuza.jp
+  #sorry_server 192.168.31.102 80
+
+  ## nrt01 - rakuichi 001
+  real_server  103.249.200.3 443 {
+    weight 100
+    inhibit_on_failure
+    HTTP_GET {
+      url {
+        path /
+        status_code 200
+      }
+      connect_port 80
+      connect_timeout 3
+      retry 5
+      delay_before_retry 3
+    }
+  }
+
+  ## ceb01 - rakuichi 002
+  real_server  103.249.200.4 443 {
     weight 100
     inhibit_on_failure
     HTTP_GET {
