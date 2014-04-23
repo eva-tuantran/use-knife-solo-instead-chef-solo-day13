@@ -12,6 +12,17 @@
   text-align: center;
   cursor: default;
 }
+
+.titleLeft strong {
+  background-color: #b7d316;
+  padding: 0 3px 5px 3px;
+  height: 14px;
+  margin-right: 5px;
+  border-radius: 2px;
+  -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
+  line-height: 0;
+}
 </style>
 <script type='text/javascript' src='http://maps.google.com/maps/api/js?sensor=false'></script>
 <script type="text/javascript">
