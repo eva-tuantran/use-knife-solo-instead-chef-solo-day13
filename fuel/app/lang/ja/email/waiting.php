@@ -3,7 +3,7 @@
 return array(
     'from'      => 'info@rakuichi-rakuza.jp',
     'from_name' => '楽市楽座 運営事務局',
-    'subject'   => '【自動返信】出店予約キャンセル待ちメール',
+    'subject'   => '【自動返信】キャンセル待ち予約完了メール',
     'body'      => <<<'EOT'
 
 
@@ -12,7 +12,7 @@ return array(
 
 楽市楽座運営事務局 です。
 
-この度は、フリーマーケット楽市楽座へのご出店予約キャンセル待ちをいただき、
+この度は、フリーマーケット楽市楽座へのご出店予約をいただき、
 ありがとうございました。
 
 このメールは、ご予約内容に関する大切なメールです。
@@ -24,15 +24,16 @@ return array(
 ##user.last_name####user.first_name## 様
 
 会員番号： ##user.user_id##
-予約番号： ##entry.reservation_number##
 
 
 ●ご予約内容------------------------
 
-　・予約番号： ##entry.reservation_number##
+　・予約ステータス： キャンセル待ち
 　・イベント： ##fleamarket.name##
 　・出店形式： ##fleamarket_entry_style.entry_style_name##
-　・ブース数： ##entry.reserved_booth##ブース
+
+★キャンセルが発生して、空き出店枠が出た際には、再度
+　メールにてその旨を通知いたします★
 　
 ●開催情報-------------------------
 

@@ -48,13 +48,14 @@ class send_mail_to_user_waiting_reservation
      */
     private function sendMailByFleamarketEntryStyle($fleamarket, $fleamarket_entry_style)
     {
-        if (! $fleamarket_entry_style->isNeedWaiting()) {
+        if (! $fleamarket_entry_style->isFullBooth()) {
             $entries = $fleamarket_entry_style->getWaitingEntry();
             foreach ($entries as $entry) {
                 $this->sendMailToUser(array(
                     'fleamarket'             => $fleamarket, 
                     'fleamarket_entry_style' => $fleamarket_entry_style,
-                    'entry'                  => $entry
+                    'entry'                  => $entry,
+                    'user'                   => $entry->user,
                 ));
             }
         }
@@ -77,6 +78,16 @@ class send_mail_to_user_waiting_reservation
                 $params["{$key}.{$column}"] = $value->get($column);
             }
         }
+
+        $entry = $args['entry'];
+        $entry_styles = Config::get('master.entry_styles');
+        $params['fleamarket_entry_style.entry_style_name']
+            = $entry_styles[$entry->fleamarket_entry_style->entry_style_id];
+
+        $params['fleamarket_entry_styles.entry_style_name']
+            = implode('/',array_map(function($obj) use ($entry_styles){
+                        return $entry_styles[$obj->entry_style_id];
+                    },$entry->fleamarket->fleamarket_entry_styles));
 
         try {
             $email->sendMailByParams(
