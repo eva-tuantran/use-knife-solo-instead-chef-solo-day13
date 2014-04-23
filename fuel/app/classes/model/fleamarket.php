@@ -131,11 +131,11 @@ class Model_Fleamarket extends Model_Base
         ),
         'event_time_start' => array(
             'label' => '開始時間',
-            'validation' => array('valid_time')
+//            'validation' => array('valid_time')
         ),
         'event_time_end' => array(
             'label' => '終了時間',
-            'validation' => array('valid_time')
+//            'validation' => array('valid_time')
         ),
         'event_status' => array(
             'label' => '開催状況',
@@ -177,7 +177,7 @@ class Model_Fleamarket extends Model_Base
         ),
         'reservation_tel' => array(
             'label' => '予約受付電話番号',
-            'validation' => array('valid_tel')
+//            'validation' => array('valid_tel')
         ),
         'reservation_email' => array(
             'label' => '予約受付E-mailアドレス',
