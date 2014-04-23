@@ -31,7 +31,7 @@ node.parentNode.insertBefore(gads, node);
 
 <script type='text/javascript'>
 googletag.cmd.push(function() {
-googletag.defineSlot('/64745063/(楽市楽座)検索結果_フッターバナー_728x90', [728, 90], 'div-gpt-ad-1397113960029-0').addService(googletag.pubads());
+googletag.defineSlot('/64745063/(楽市楽座)検索結果_フッターバナー_728x90', [auto, 90], 'div-gpt-ad-1397113960029-0').addService(googletag.pubads());
 googletag.pubads().enableSingleRequest();
 googletag.enableServices();
 });
@@ -153,7 +153,7 @@ googletag.enableServices();
         <?php if ($is_official):?>
         <strong><img src="/assets/img/resultPush.png" alt="楽市楽座主催" width="78" height="14"></strong>
         <?php endif;?>
-        <a href="/detail/<?php echo e($fleamarket['fleamarket_id']);?>">
+        <a href="/detail/<?php echo e($fleamarket_id);?>">
           <?php echo e(date('Y年n月j日', strtotime($fleamarket['event_date'])));?>(<?php echo $week_list[date('w', strtotime($fleamarket['event_date']))];?>)&nbsp;
           <?php echo e($fleamarket['name']);?>
         </a>
@@ -234,9 +234,13 @@ googletag.enableServices();
         </ul>
         <ul class="rightbutton">
           <?php
-            if ($user && $user->hasEntry($fleamarket['fleamarket_id'])):
+            if ($user && $user->hasEntry($fleamarket_id)):
           ?>
           <li class="button reserved">出店予約中</li>
+          <?php
+            elseif ($user && $user->hasWaiting($fleamarket_id)):
+          ?>
+          <li class="button reserved">キャンセル待ち中</li>
           <?php
             elseif ($is_official
                 && $fleamarket['event_status'] == \Model_Fleamarket::EVENT_STATUS_RESERVATION_RECEIPT
@@ -250,7 +254,7 @@ googletag.enableServices();
           <?php
             endif;
           ?>
-          <li class="button addMylist"><a id="fleamarket_id_<?php echo $fleamarket['fleamarket_id']; ?>" href="#">マイリストに追加</a></li>
+          <li class="button addMylist"><a id="fleamarket_id_<?php echo $fleamarket_id; ?>" href="#">マイリストに追加</a></li>
         </ul>
       </div>
     </div>
@@ -371,11 +375,12 @@ googletag.enableServices();
 <!-- /searchSelecter -->
 <!-- ad -->
 <div class="ad">
-<!-- (楽市楽座)検索結果_フッターバナー_728x90 -->
-<div id="div-gpt-ad-1397113960029-0" class="ad"　style="width: 728px; height: 90px;">
-<script type="text/javascript">
-googletag.cmd.push(function() { googletag.display("div-gpt-ad-1397113960029-0"); });
-</script>
+  <!-- (楽市楽座)検索結果_フッターバナー_728x90 -->
+  <div id="div-gpt-ad-1397113960029-0" class="ad" style="width: auto; height: 90px;">
+  <script type="text/javascript">
+  googletag.cmd.push(function() { googletag.display("div-gpt-ad-1397113960029-0"); });
+  </script>
+  </div>
 </div>
 <!-- /ad -->
 <!-- pagination -->

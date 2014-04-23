@@ -124,15 +124,19 @@ Map.prototype = {
             endif;
         ?></p>
         <ul class="mylist">
-          <li class="button addMylist"><a href="#" id="fleamarket_id_<?php echo $fleamarket['fleamarket_id'];?>"><i></i>マイリストに追加</a></li>
+          <li class="button addMylist"><a href="#" id="fleamarket_id_<?php echo $fleamarket_id;?>"><i></i>マイリストに追加</a></li>
           <li class="button gotoMylist"><a href="/mypage/list?type=mylist"><i></i>マイリストを見る</a></li>
         </ul>
       </div>
       <ul class="rightbutton">
         <?php
-            if ($user && $user->hasEntry($fleamarket['fleamarket_id'])):
+            if ($user && $user->hasEntry($fleamarket_id)):
         ?>
         <li class="button reserved">出店予約中</li>
+        <?php
+            elseif ($user && $user->hasWaiting($fleamarket_id)):
+        ?>
+        <li class="button reserved">キャンセル待ち中</li>
         <?php
             elseif ($is_official
                 && $fleamarket['event_status'] == \Model_Fleamarket::EVENT_STATUS_RESERVATION_RECEIPT
@@ -318,14 +322,18 @@ Map.prototype = {
 ?>
       </dl>
       <ul class="mylist <?php if (! $is_official):?>noneReservation<?php endif;?>">
-        <li class="button addMylist"><a href="#" id="fleamarket_id_<?php echo $fleamarket['fleamarket_id'];?>"><i></i>マイリストに追加</a></li>
+        <li class="button addMylist"><a href="#" id="fleamarket_id_<?php echo $fleamarket_id;?>"><i></i>マイリストに追加</a></li>
         <li class="button gotoMylist"><a href="/mypage/list?type=mylist"><i></i>マイリストを見る</a></li>
       </ul>
       <ul class="rightbutton">
         <?php
-            if ($user && $user->hasEntry($fleamarket['fleamarket_id'])):
+            if ($user && $user->hasEntry($fleamarket_id)):
         ?>
         <li class="button reserved">出店予約中</li>
+        <?php
+            elseif ($user && $user->hasWaiting($fleamarket_id)):
+        ?>
+        <li class="button reserved">キャンセル待ち中</li>
         <?php
             elseif ($is_official
                 && $fleamarket['event_status'] == \Model_Fleamarket::EVENT_STATUS_RESERVATION_RECEIPT
@@ -346,7 +354,7 @@ Map.prototype = {
 <!-- /table -->
 <script type="text/javascript">
 $(function() {
-  $(".addMylist a").click(function(evt) {
+  $(".addMylist a").click(function(evt){
       evt.preventDefault();
       var id = $(this).attr('id');
       id = id.match(/^fleamarket_id_(\d+)/)[1];
@@ -357,15 +365,25 @@ $(function() {
           data: {fleamarket_id: id}
       }).done(function(json, textStatus, jqXHR) {
           if(json == 'nologin' || json == 'nodata'){
-              alert(json);
+              $('#dialog_need_login').dialog();
           }else if(json){
-              alert('登録しました');
+              $('#dialog_success').dialog();
           }else{
-              alert('失敗しました');
+              $('#dialog_fail').dialog();
           }
       }).fail(function(jqXHR, textStatus, errorThrown) {
-          alert('失敗しました');
+          $('#dialog_fail').dialog();
       });
   });
 });
 </script>
+
+<div id="dialog_success" style="display: none;">
+マイリストに登録しました
+</div>
+<div id="dialog_fail" style="display: none;">
+マイリストに登録できませんでした
+</div>
+<div id="dialog_need_login" style="display: none;">
+マイリストに登録するためにはログインが必要です
+</div>

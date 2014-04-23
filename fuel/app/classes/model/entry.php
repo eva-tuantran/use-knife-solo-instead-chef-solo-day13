@@ -372,6 +372,95 @@ QUERY;
     }
 
     /**
+     * 特定のユーザのエントリーしたフリマ情報を取得します。
+     *
+     * @param mixed $user_id
+     * @access public
+     * @return void
+     * @author kobayashi
+     */
+    public static function getUserWaitingEntries($user_id, $page = 0, $row_count = 0)
+    {
+        $placeholders = array(
+            'user_id'         => $user_id,
+            'about_access_id' => \Model_Fleamarket_About::ACCESS,
+            'register_status' => \Model_Fleamarket::REGISTER_TYPE_ADMIN,
+            'display_flag'    => \Model_Fleamarket::DISPLAY_FLAG_ON,
+            'entry_status'    => \Model_Entry::ENTRY_STATUS_WAITING,
+        );
+
+        $limit = '';
+        if (is_numeric($page) && is_numeric($row_count)) {
+            $offset = ($page - 1) * $row_count;
+            $limit = $offset . ', ' . $row_count;
+        }
+
+        $query = <<<QUERY
+SELECT
+    f.fleamarket_id,
+    f.name,
+    f.promoter_name,
+    e.fleamarket_entry_style_id,
+    f.event_date,
+    f.event_time_start,
+    f.event_time_end,
+    f.event_status,
+    f.description,
+    f.reservation_start,
+    f.reservation_end,
+    f.reservation_tel,
+    f.reservation_email,
+    f.website,
+    f.shop_fee_flag,
+    f.car_shop_flag,
+    f.pro_shop_flag,
+    f.charge_parking_flag,
+    f.free_parking_flag,
+    f.rainy_location_flag,
+    f.register_type,
+    l.name AS location_name,
+    l.zip AS zip,
+    l.prefecture_id AS prefecture_id,
+    l.address AS address,
+    l.googlemap_address AS googlemap_address,
+    fa.description AS about_access,
+    fi.file_name
+FROM
+    entries AS e
+LEFT JOIN
+    fleamarkets AS f ON
+    e.fleamarket_id = f.fleamarket_id
+LEFT JOIN
+    locations AS l ON f.location_id = l.location_id
+LEFT JOIN
+    fleamarket_abouts AS fa ON f.fleamarket_id = fa.fleamarket_id
+    AND fa.about_id = :about_access_id
+LEFT JOIN
+    fleamarket_images AS fi ON
+    e.fleamarket_id = fi.fleamarket_id AND priority = 1
+WHERE
+    e.user_id = :user_id AND
+    e.entry_status = :entry_status AND
+    f.display_flag = :display_flag AND
+    f.event_date >= NOW() AND
+    e.deleted_at IS NULL
+ORDER BY
+    f.register_type = :register_status,
+    f.event_date DESC,
+    f.event_time_start
+LIMIT
+    {$limit}
+QUERY;
+
+        $res = \DB::query($query)->parameters($placeholders)->execute();
+        if (! empty($res)) {
+            return $res->as_array();
+        }
+
+        return array();
+    }
+
+    /**
      * 特定のユーザの現在エントリー中のフリマ情報を取得します。
      *
      * @param mixed $user_id
@@ -520,6 +609,41 @@ LEFT JOIN
 WHERE
     e.user_id = :user_id AND
     f.event_date > NOW() AND
+    e.entry_status = :entry_status AND
+    e.deleted_at IS NULL
+QUERY;
+
+        $reserved_entry_count = \DB::query($query)->parameters($placeholders)->execute()->get('count');
+
+        return $reserved_entry_count;
+    }
+
+    /**
+     * 特定のユーザのキャンセル待ちのフリマの個数を取得します
+     *
+     * @param mixed $user_id
+     * @access public
+     * @return void
+     * @author shimma
+     */
+    public static function getUserWaitingEntryCount($user_id)
+    {
+        $placeholders = array(
+            'user_id'      => $user_id,
+            'entry_status' => self::ENTRY_STATUS_WAITING,
+        );
+
+        $query = <<<QUERY
+SELECT
+    COUNT(*) as count
+FROM
+    entries AS e
+LEFT JOIN
+    fleamarkets AS f ON
+    e.fleamarket_id = f.fleamarket_id
+WHERE
+    e.user_id = :user_id AND
+    f.event_date >= NOW() AND
     e.entry_status = :entry_status AND
     e.deleted_at IS NULL
 QUERY;

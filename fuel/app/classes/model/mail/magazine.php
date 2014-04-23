@@ -12,7 +12,7 @@ class Model_Mail_Magazine extends Model_Base
     /**
      * メールマガジン関連ファイルディレクトリ
      */
-    const ROOT_DIR = '/var/www/html/public/files/mailmagazine/';
+    const ROOT_DIR = '/deploy/rakuichi-rakuza/fuel/app/logs/';
     /**
      * メールマガジンタイプ 1全員,2:希望者全員,3:出店予約者
      */
@@ -67,7 +67,7 @@ class Model_Mail_Magazine extends Model_Base
         'body' => array(
             'label' => '本文',
             'validation' => array(
-                'required', 'max_length' => array(250),
+                'required', 'max_length' => array(60000),
             ),
         ),
         'additional_serialize_data' => array(

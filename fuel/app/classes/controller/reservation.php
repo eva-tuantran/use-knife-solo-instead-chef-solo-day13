@@ -47,7 +47,7 @@ class Controller_Reservation extends Controller_Base_Template
         $view = View::forge('reservation/index');
         $view->set('fieldset', $this->fieldset, false);
         $view->set('fleamarket', $this->fleamarket, false);
-        $view->set('is_duplicate', $this->isDuplicate(), false);
+        $view->set('user', $this->login_user, false);
         $this->template->content = $view;
     }
 
@@ -64,7 +64,8 @@ class Controller_Reservation extends Controller_Base_Template
         Session::set_flash('reservation.fieldset',$this->fieldset);
 
         if (! $this->fieldset->validation()->run()
-            || $this->isDuplicate()
+            || $this->login_user->hasEntry(Input::param('fleamarket_id'))
+            || $this->login_user->hasWaiting(Input::param('fleamarket_id'))
         ) {
             return Response::redirect('reservation');
         }
@@ -150,6 +151,7 @@ class Controller_Reservation extends Controller_Base_Template
             if (! $entry) {
                 $entry = \Model_Entry::forge();
             }
+
             $entry->set($data)->save();
 
             $fleamarket->incrementReservationSerial(false);
@@ -221,7 +223,7 @@ class Controller_Reservation extends Controller_Base_Template
     {
         if ($this->request->action == 'index') {
             $fieldset = Session::get_flash('reservation.fieldset');
-            if (! $fieldset) {
+            if (! $fieldset || (! $fieldset->validation()->error())) {
                 $fieldset = $this->createFieldset();
             }
         } elseif ($this->request->action == 'confirm') {
@@ -305,33 +307,11 @@ class Controller_Reservation extends Controller_Base_Template
             $params[$column] = substr($params[$column],0,5);
         }
 
-        $this->login_user->sendmail("reservation" , $params);
-    }
-
-    /**
-     * 出店予約の重複チェック
-     *
-     * キャンセルは含まず
-     *
-     * @access private
-     * @param
-     * @return type
-     * @author kobayashi
-     * @author ida
-     */
-    private function isDuplicate()
-    {
-        $input = $this->fieldset->input();
-
-        $count = Model_Entry::query()
-            ->where(array(
-                array('user_id', '=', $this->login_user->user_id),
-                array('fleamarket_id', '=', $input['fleamarket_id']),
-                array('entry_status', '!=', \Model_Entry::ENTRY_STATUS_CANCELED),
-            ))
-            ->count();
-
-        return $count > 0;
+        if ($entry->entry_status == Model_Entry::ENTRY_STATUS_RESERVED) {
+            $this->login_user->sendmail("reservation" , $params);
+        } elseif ($entry->entry_status == Model_Entry::ENTRY_STATUS_WAITING) {
+            $this->login_user->sendmail("waiting" , $params);
+        }            
     }
 
     private function get_user_id()
