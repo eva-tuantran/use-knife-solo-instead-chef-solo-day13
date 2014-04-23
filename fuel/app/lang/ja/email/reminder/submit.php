@@ -5,8 +5,6 @@ return array(
     'from_name' => '楽市楽座 運営事務局',
     'subject'   => '【自動返信】パスワード再登録について| 楽市楽座運営事務局',
     'body'      => <<<'EOT'
-##user_name##
-
 楽市楽座運営事務局 です。
 
 
