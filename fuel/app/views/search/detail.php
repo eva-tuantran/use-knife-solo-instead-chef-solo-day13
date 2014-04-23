@@ -124,15 +124,19 @@ Map.prototype = {
             endif;
         ?></p>
         <ul class="mylist">
-          <li class="button addMylist"><a href="#" id="fleamarket_id_<?php echo $fleamarket['fleamarket_id'];?>"><i></i>マイリストに追加</a></li>
+          <li class="button addMylist"><a href="#" id="fleamarket_id_<?php echo $fleamarket_id;?>"><i></i>マイリストに追加</a></li>
           <li class="button gotoMylist"><a href="/mypage/list?type=mylist"><i></i>マイリストを見る</a></li>
         </ul>
       </div>
       <ul class="rightbutton">
         <?php
-            if ($user && $user->hasEntry($fleamarket['fleamarket_id'])):
+            if ($user && $user->hasEntry($fleamarket_id)):
         ?>
         <li class="button reserved">出店予約中</li>
+        <?php
+            elseif ($user && $user->hasWaiting($fleamarket_id)):
+        ?>
+        <li class="button reserved">キャンセル待ち中</li>
         <?php
             elseif ($is_official
                 && $fleamarket['event_status'] == \Model_Fleamarket::EVENT_STATUS_RESERVATION_RECEIPT
@@ -318,14 +322,18 @@ Map.prototype = {
 ?>
       </dl>
       <ul class="mylist <?php if (! $is_official):?>noneReservation<?php endif;?>">
-        <li class="button addMylist"><a href="#" id="fleamarket_id_<?php echo $fleamarket['fleamarket_id'];?>"><i></i>マイリストに追加</a></li>
+        <li class="button addMylist"><a href="#" id="fleamarket_id_<?php echo $fleamarket_id;?>"><i></i>マイリストに追加</a></li>
         <li class="button gotoMylist"><a href="/mypage/list?type=mylist"><i></i>マイリストを見る</a></li>
       </ul>
       <ul class="rightbutton">
         <?php
-            if ($user && $user->hasEntry($fleamarket['fleamarket_id'])):
+            if ($user && $user->hasEntry($fleamarket_id)):
         ?>
         <li class="button reserved">出店予約中</li>
+        <?php
+            elseif ($user && $user->hasWaiting($fleamarket_id)):
+        ?>
+        <li class="button reserved">キャンセル待ち中</li>
         <?php
             elseif ($is_official
                 && $fleamarket['event_status'] == \Model_Fleamarket::EVENT_STATUS_RESERVATION_RECEIPT
