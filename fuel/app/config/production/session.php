@@ -98,7 +98,8 @@ return array(
         'cookie_name'        => 'mid',                // name of the session cookie for memcached based sessions
         'servers'            => array(                    // array of servers and portnumbers that run the memcached service
             'default' => array(
-                array('host' => 'localhost', 'port' => 11211, 'weight' => 100),
+                array('host' => '192.168.4.201', 'port' => 11211, 'weight' => 100),
+                array('host' => '192.168.4.204', 'port' => 11211, 'weight' => 100),
             ),
         ),
     ),
