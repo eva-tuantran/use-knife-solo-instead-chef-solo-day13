@@ -99,7 +99,7 @@ return array(
         'servers'            => array(                    // array of servers and portnumbers that run the memcached service
             'default' => array(
                 array('host' => '192.168.33.101', 'port' => 11211, 'weight' => 100),
-                array('host' => '192.168.33.102', 'port' => 11211, 'weight' => 100),
+                array('host' => '192.168.33.101', 'port' => 11211, 'weight' => 100),
             ),
         ),
     ),
