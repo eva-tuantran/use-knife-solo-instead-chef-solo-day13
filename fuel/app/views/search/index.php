@@ -31,7 +31,7 @@ node.parentNode.insertBefore(gads, node);
 
 <script type='text/javascript'>
 googletag.cmd.push(function() {
-googletag.defineSlot('/64745063/(楽市楽座)検索結果_フッターバナー_728x90', [728, 90], 'div-gpt-ad-1397113960029-0').addService(googletag.pubads());
+googletag.defineSlot('/64745063/(楽市楽座)検索結果_フッターバナー_728x90', [auto, 90], 'div-gpt-ad-1397113960029-0').addService(googletag.pubads());
 googletag.pubads().enableSingleRequest();
 googletag.enableServices();
 });
@@ -147,13 +147,18 @@ googletag.enableServices();
                     $shop_fee_string .= $booth_fee;
                 endforeach;
             endif;
+
+            $is_entry_full = false;
+            if ($total_booth <= $fleamarket['total_reserved_booth']):
+                $is_entry_full = true;
+            endif;
 ?>
     <div class="box result <?php echo $status_class;?> <?php echo $resultPush;?> clearfix">
       <h3>
         <?php if ($is_official):?>
         <strong><img src="/assets/img/resultPush.png" alt="楽市楽座主催" width="78" height="14"></strong>
         <?php endif;?>
-        <a href="/detail/<?php echo e($fleamarket['fleamarket_id']);?>">
+        <a href="/detail/<?php echo e($fleamarket_id);?>">
           <?php echo e(date('Y年n月j日', strtotime($fleamarket['event_date'])));?>(<?php echo $week_list[date('w', strtotime($fleamarket['event_date']))];?>)&nbsp;
           <?php echo e($fleamarket['name']);?>
         </a>
@@ -230,15 +235,15 @@ googletag.enableServices();
           <li class="facility4 <?php echo $fleamarket['rainy_location_flag'] != \Model_Fleamarket::RAINY_LOCATION_FLAG_NONE ? 'on' : 'off';?>">雨天開催会場</li>
         </ul>
         <ul class="detailLink">
-          <li><a href="/detail/<?php echo e($fleamarket_id);?>">詳細情報を見る<i></i></a></li>
+          <li><a href="/detail/<?php echo $fleamarket_id;?>">詳細情報を見る<i></i></a></li>
         </ul>
         <ul class="rightbutton">
           <?php
-            if ($user && $user->hasEntry($fleamarket['fleamarket_id'])):
+            if ($user && $user->hasEntry($fleamarket_id)):
           ?>
           <li class="button reserved">出店予約中</li>
           <?php
-            elseif ($user && $user->hasWaiting($fleamarket['fleamarket_id'])):
+            elseif ($user && $user->hasWaiting($fleamarket_id)):
           ?>
           <li class="button reserved">キャンセル待ち中</li>
           <?php
@@ -246,15 +251,15 @@ googletag.enableServices();
                 && $fleamarket['event_status'] == \Model_Fleamarket::EVENT_STATUS_RESERVATION_RECEIPT
             ):
                 $reservation_button = '出店予約をする';
-                if ($fleamarket['event_reservation_status'] == \Model_Fleamarket::EVENT_RESERVATION_STATUS_FULL):
+                if ($is_entry_full):
                     $reservation_button = 'キャンセル待ちをする';
                 endif;
           ?>
-          <li class="button makeReservation"><a href="/reservation?fleamarket_id=<?php echo e($fleamarket_id);?>"><?php echo $reservation_button;?></a></li>
+          <li class="button makeReservation"><a href="/reservation?fleamarket_id=<?php echo $fleamarket_id;?>"><?php echo $reservation_button;?></a></li>
           <?php
             endif;
           ?>
-          <li class="button addMylist"><a id="fleamarket_id_<?php echo $fleamarket['fleamarket_id']; ?>" href="#">マイリストに追加</a></li>
+          <li class="button addMylist"><a id="fleamarket_id_<?php echo $fleamarket_id; ?>" href="#">マイリストに追加</a></li>
         </ul>
       </div>
     </div>
@@ -376,7 +381,7 @@ googletag.enableServices();
 <!-- ad -->
 <div class="ad">
 <!-- (楽市楽座)検索結果_フッターバナー_728x90 -->
-<div id="div-gpt-ad-1397113960029-0" class="ad"　style="width: 728px; height: 90px;">
+<div id="div-gpt-ad-1397113960029-0" class="ad" style="width: auto; height: 90px;">
 <script type="text/javascript">
 googletag.cmd.push(function() { googletag.display("div-gpt-ad-1397113960029-0"); });
 </script>
@@ -400,46 +405,54 @@ googletag.cmd.push(function() { googletag.display("div-gpt-ad-1397113960029-0");
 <script type="text/javascript">
 $(function() {
   $(".pagination li").on("click", function(evt) {
-      evt.preventDefault();
-      var href = $(this).find("a").attr("href");
-      $("#form_search").attr("action", href).submit();
+    evt.preventDefault();
+    var href = $(this).find("a").attr("href");
+    $("#form_search").attr("action", href).submit();
   });
 
   $("#do_search").on("click", function(evt) {
-      evt.preventDefault();
-      $("#form_search").submit();
+    evt.preventDefault();
+    $("#form_search").submit();
   });
 
   $(".addMylist a").click(function(evt){
-      evt.preventDefault();
-      var id = $(this).attr('id');
-      id = id.match(/^fleamarket_id_(\d+)/)[1];
-      $.ajax({
-          type: "post",
-          url: '/favorite/add',
-          dataType: "json",
-          data: {fleamarket_id: id}
-      }).done(function(json, textStatus, jqXHR) {
-          if(json == 'nologin' || json == 'nodata'){
-              $('#dialog_need_login').dialog();
-          }else if(json){
-              $('#dialog_success').dialog();
-          }else{
-              $('#dialog_fail').dialog();
+    evt.preventDefault();
+    var id = $(this).attr('id');
+    id = id.match(/^fleamarket_id_(\d+)/)[1];
+
+    $.ajax({
+      type: "post",
+      url: '/favorite/add',
+      dataType: "json",
+      data: {fleamarket_id: id}
+    }).done(function(json, textStatus, jqXHR) {
+      var message = '';
+      if (json == 'nologin' || json == 'nodata') {
+        message = 'マイリストに登録するためにはログインが必要です';
+      } else if (json) {
+        message = 'マイリストに登録しました';
+      } else {
+        message = 'マイリストに登録できませんでした';
+      }
+
+      if (message != '') {
+        $("#information-dialog #message").text(message);
+        $("#information-dialog").dialog({
+          modal: true,
+          buttons: {
+            Ok: function() {
+              $(this).dialog( "close" );
+            }
           }
-      }).fail(function(jqXHR, textStatus, errorThrown) {
-          $('#dialog_fail').dialog();
-      });
+        });
+      }
+    }).fail(function(jqXHR, textStatus, errorThrown) {
+      $('#dialog_fail').dialog();
+    });
   });
 });
 </script>
 
-<div id="dialog_success" style="display: none;">
-マイリストに登録しました
-</div>
-<div id="dialog_fail" style="display: none;">
-マイリストに登録できませんでした
-</div>
-<div id="dialog_need_login" style="display: none;">
-マイリストに登録するためにはログインが必要です
+<div id="information-dialog" style="text-align: left; padding: 20px; display: none;">
+  <p id="message"></p>
 </div>

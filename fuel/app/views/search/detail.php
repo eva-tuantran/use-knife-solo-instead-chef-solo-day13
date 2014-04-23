@@ -103,6 +103,11 @@ Map.prototype = {
             $shop_fee_string .= $booth_fee;
         endforeach;
     endif;
+
+    $is_entry_full = false;
+    if ($total_booth <= $fleamarket['total_reserved_booth']):
+        $is_entry_full = true;
+    endif;
 ?>
 <div id="contentDetail" class="row">
   <!-- title -->
@@ -134,11 +139,15 @@ Map.prototype = {
         ?>
         <li class="button reserved">出店予約中</li>
         <?php
+            elseif ($user && $user->hasWaiting($fleamarket_id)):
+        ?>
+        <li class="button reserved">キャンセル待ち中</li>
+        <?php
             elseif ($is_official
                 && $fleamarket['event_status'] == \Model_Fleamarket::EVENT_STATUS_RESERVATION_RECEIPT
             ):
                 $reservation_button = '出店予約をする';
-                if ($fleamarket['event_reservation_status'] == \Model_Fleamarket::EVENT_RESERVATION_STATUS_FULL):
+                if ($is_entry_full):
                     $reservation_button = 'キャンセル待ちをする';
                 endif;
         ?>
@@ -327,11 +336,15 @@ Map.prototype = {
         ?>
         <li class="button reserved">出店予約中</li>
         <?php
+            elseif ($user && $user->hasWaiting($fleamarket_id)):
+        ?>
+        <li class="button reserved">キャンセル待ち中</li>
+        <?php
             elseif ($is_official
                 && $fleamarket['event_status'] == \Model_Fleamarket::EVENT_STATUS_RESERVATION_RECEIPT
             ):
                 $reservation_button = '出店予約をする';
-                if ($fleamarket['event_reservation_status'] == \Model_Fleamarket::EVENT_RESERVATION_STATUS_FULL):
+                if ($is_entry_full):
                     $reservation_button = 'キャンセル待ちをする';
                 endif;
         ?>
