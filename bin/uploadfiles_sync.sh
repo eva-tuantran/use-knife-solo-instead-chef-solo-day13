@@ -19,7 +19,7 @@ main() {
         set -x
         for sync_path in ${sync_paths[@]}
         do
-            rsync -avn $fetch_host:$sync_path/* $sync_path
+            rsync -av $fetch_host:$sync_path/* $sync_path
         done
         set +x
 
