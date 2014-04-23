@@ -41,6 +41,16 @@ ErrorDocument 503 /maintenance.html
 	RewriteCond %{QUERY_STRING} s=0t4zq
 	RewriteRule /calender/kaijoichiran/kaijou.html /detail/9? [R,L]
 
+    #★出店無料★PX牛久店-牛久
+	RewriteCond %{QUERY_STRING} c=S5Kk0
+	RewriteCond %{QUERY_STRING} s=xEfJh 
+	RewriteRule /calender/kaijoichiran/kaijou.html /detail/ [R,L]
+
+    #★出店無料★PXつくば桜店-つくば
+	RewriteCond %{QUERY_STRING} c=rf12j
+	RewriteCond %{QUERY_STRING} s=2P0dx 
+	RewriteRule /calender/kaijoichiran/kaijou.html /detail/ [R,L]
+
 	#★無料フリマ★PSブランド伊勢崎店-伊勢崎市
 	RewriteCond %{QUERY_STRING} c=CvGns
 	RewriteCond %{QUERY_STRING} s=l2g1o
