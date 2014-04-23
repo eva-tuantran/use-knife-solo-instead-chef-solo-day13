@@ -56,20 +56,19 @@ class Controller_Mypage extends Controller_Base_Template
         Asset::js('jquery-ui.min.js', array(), 'add_js');
         Asset::js('jquery.carouFredSel.js', array(), 'add_js');
 
-        $fleamarkets_all['entry']        = $this->login_user->getEntries(1, 3);
-        $fleamarkets_all['waiting']        = $this->login_user->getWaitingEntries(1, 3);
+        $fleamarkets_all['reserved']     = $this->login_user->getReservedEntries(1, 3);
+        $fleamarkets_all['waiting']      = $this->login_user->getWaitingEntries(1, 3);
         $fleamarkets_all['mylist']       = $this->login_user->getFavorites(1, 3);
         $fleamarkets_all['myfleamarket'] = $this->login_user->getMyFleamarkets(1, 3);
-//        $fleamarkets_all['reserved']     = $this->login_user->getReservedEntries(1, 3);
-
 
         $fleamarkets_view = array();
         foreach ($fleamarkets_all as $type => $fleamarkets) {
             foreach ($fleamarkets as $fleamarket) {
                 $fleamarkets_view[$type][] = ViewModel::forge('component/fleamarket')
-                ->set('fleamarket', $fleamarket)
-                ->set('type', $type)
-                ->set('no_box', true);
+                    ->set('type', $type)
+                    ->set('fleamarket', $fleamarket)
+                    ->set('user', $this->login_user)
+                    ->set('no_box', true);
             }
         };
 
@@ -102,17 +101,9 @@ class Controller_Mypage extends Controller_Base_Template
         $page = Input::get($pagination_param, 1);
         $type = Input::get('type');
         switch ($type) {
-            case 'mylist':
-                $fleamarkets = $this->login_user->getFavorites($page, $item_per_page);
-                $count       = $this->login_user->getFavoriteCount();
-                break;
-            case 'entry':
-                $fleamarkets = $this->login_user->getEntries($page, $item_per_page);
-                $count       = $this->login_user->getEntryCount();
-                break;
-            case 'myfleamarket':
-                $fleamarkets = $this->login_user->getMyFleamarkets($page, $item_per_page);
-                $count       = $this->login_user->getMyFleamarketCount();
+            case 'finished':
+                $fleamarkets = $this->login_user->getFinishedEntries($page, $item_per_page);
+                $count       = $this->login_user->getFinishedEntryCount();
                 break;
             case 'reserved':
                 $fleamarkets = $this->login_user->getReservedEntries($page, $item_per_page);
@@ -122,6 +113,14 @@ class Controller_Mypage extends Controller_Base_Template
                 $fleamarkets = $this->login_user->getWaitingEntries($page, $item_per_page);
                 $count       = $this->login_user->getWaitingEntryCount();
                 break;
+            case 'mylist':
+                $fleamarkets = $this->login_user->getFavorites($page, $item_per_page);
+                $count       = $this->login_user->getFavoriteCount();
+                break;
+            case 'myfleamarket':
+                $fleamarkets = $this->login_user->getMyFleamarkets($page, $item_per_page);
+                $count       = $this->login_user->getMyFleamarketCount();
+                break;
             default:
                 return \Response::redirect('/mypage');
         }
@@ -129,22 +128,24 @@ class Controller_Mypage extends Controller_Base_Template
         $num_links = 5;
         $pagination = Pagination::forge('mypage/list',
             array(
-                'uri_segment'    => $pagination_param,
-                'num_links'      => $num_links,
-                'per_page'       => $item_per_page,
-                'total_items'    => $count,
+                'uri_segment' => $pagination_param,
+                'num_links'   => $num_links,
+                'per_page'    => $item_per_page,
+                'total_items' => $count,
             ));
 
         $fleamarkets_view = array();
         foreach ($fleamarkets as $fleamarket) {
             $fleamarkets_view[] = ViewModel::forge('component/fleamarket')
-            ->set('fleamarket', $fleamarket)
-            ->set('type', $type);
+                ->set('type', $type)
+                ->set('fleamarket', $fleamarket)
+                ->set('user', $this->login_user);
         };
 
         $view_model = View::forge('mypage/list');
         $view_model->set('type', $type, false);
         $view_model->set('pagination', $pagination, false);
+        $view_model->set('user', $this->login_user, false);
         $view_model->set('fleamarkets_view', $fleamarkets_view, false);
         $view_model->set('calendar', ViewModel::forge('component/calendar'), false);
         $view_model->set('prefectures', Config::get('master.prefectures'), false);

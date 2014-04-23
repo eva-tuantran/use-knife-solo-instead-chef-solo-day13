@@ -7,6 +7,8 @@
  */
 class Model_Error extends \Model
 {
+    const ER00000 = 'ER00000';
+    const ER00001 = 'ER00001';
 
     const ER00101 = 'ER00101';
 
