@@ -37,6 +37,7 @@ case node[:platform]
   end
 else
 end
+
 log "deploy httpd.conf"
 cookbook_file "/etc/httpd/conf.d/www.rakuichi-rakuza.jp.conf" do
  source "www.rakuichi-rakuza.jp.conf-production"
