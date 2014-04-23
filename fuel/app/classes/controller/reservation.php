@@ -114,7 +114,6 @@ class Controller_Reservation extends Controller_Base_Template
         try {
             $entry = $this->registerEntry();
         } catch (Exception $e) {
-            throw $e;
             throw new SystemException(\Model_Error::ER00603);
         }
         if ($entry && ! Session::get('admin.user.nomail')){
