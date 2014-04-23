@@ -1137,7 +1137,7 @@ QUERY;
     {
         $is_full = true;
         foreach ($this->fleamarket_entry_styles as $fleamarket_entry_style) {
-            if (! $fleamarket_entry_style->isNeedWaiting()) {
+            if (! $fleamarket_entry_style->isFullBooth()){
                 $is_full = false;
                 break;
             }
@@ -1166,5 +1166,12 @@ QUERY;
             }
         }
         return null;
+    }
+
+    public function canReserve()
+    {
+        return
+            $this->event_status             == Model_Fleamarket::EVENT_STATUS_RESERVATION_RECEIPT &&
+            $this->event_reservation_status != Model_Fleamarket::EVENT_RESERVATION_STATUS_FULL;
     }
 }

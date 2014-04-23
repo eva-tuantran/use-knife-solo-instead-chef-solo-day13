@@ -50,12 +50,7 @@
 	</div>
         <div id="submitButton" class="form-group">
 	  <?php echo \Form::csrf(); ?>
-	  <?php if ($fleamarket_entry_style->isNeedWaiting()) { ?>
-	  すでに予約数が限度に達しています。キャンセル待ちをしますか？<br />
-	  <button type="submit" name="cancel" value="キャンセル待ちをする" class="btn btn-default">キャンセル待ちをする
-	  <?php } else { ?>
 	  <button type="submit" value="登録" class="btn btn-default">登録</button>
-	  <?php } ?>
         </div>
       </form>
     </div>
