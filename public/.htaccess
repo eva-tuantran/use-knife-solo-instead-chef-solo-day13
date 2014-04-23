@@ -1,35 +1,44 @@
 # Multiple Environment config, set this to development, staging or production
 # SetEnv FUEL_ENV production
 
+ErrorDocument 503 /maintenance.html
+
+
 <IfModule mod_rewrite.c>
 
     # Make sure directory listing is disabled
 	Options +FollowSymLinks -Indexes
 	RewriteEngine on
 
+    ## 外部向け一時メンテナンス用画面(社内からのみアクセス可能) 本番リリース時には外すこと
+    RewriteCond %{REMOTE_ADDR} !^192.168.
+    RewriteCond %{REMOTE_ADDR} !^125.100.
+    RewriteCond %{REQUEST_URI} !=/maintenance.html
+    RewriteRule ^.*$ - [R=503,L]
+
 	# ★無料フリマ★夢屋 加古川店-加古川市
 	RewriteCond %{QUERY_STRING} c=VuLsN
-	RewriteCond %{QUERY_STRING} s=KzXAZ 
+	RewriteCond %{QUERY_STRING} s=KzXAZ
 	RewriteRule /calender/kaijoichiran/kaijou.html /detail/5? [R,L]
 
 	#★無料フリマ★PSブランド佐野店-佐野市
 	RewriteCond %{QUERY_STRING} c=Voppy
-	RewriteCond %{QUERY_STRING} s=iSPPS 
+	RewriteCond %{QUERY_STRING} s=iSPPS
 	RewriteRule /calender/kaijoichiran/kaijou.html /detail/ [R,L]
 
 	#地域最大級!【アリオ鷲宮 presents 第3回 イーグルマーケット】
 	RewriteCond %{QUERY_STRING} c=8RURO
-	RewriteCond %{QUERY_STRING} s=a81z6 
+	RewriteCond %{QUERY_STRING} s=a81z6
 	RewriteRule /calender/kaijoichiran/kaijou.html /detail/7? [R,L]
 
 	#あづま総合運動公園-福島市
 	RewriteCond %{QUERY_STRING} c=nK6D6
-	RewriteCond %{QUERY_STRING} s=DysNF 
+	RewriteCond %{QUERY_STRING} s=DysNF
 	RewriteRule /calender/kaijoichiran/kaijou.html /detail/8? [R,L]
 
 	#★無料フリマ★スーパーライブガーデン小山喜沢店
 	RewriteCond %{QUERY_STRING} c=xP8rR
-	RewriteCond %{QUERY_STRING} s=0t4zq 
+	RewriteCond %{QUERY_STRING} s=0t4zq
 	RewriteRule /calender/kaijoichiran/kaijou.html /detail/9? [R,L]
 
     #★出店無料★PX牛久店-牛久
@@ -44,24 +53,24 @@
 
 	#★無料フリマ★PSブランド伊勢崎店-伊勢崎市
 	RewriteCond %{QUERY_STRING} c=CvGns
-	RewriteCond %{QUERY_STRING} s=l2g1o 
+	RewriteCond %{QUERY_STRING} s=l2g1o
 	RewriteRule /calender/kaijoichiran/kaijou.html /detail/ [R,L]
 
 	#★無料フリマ★虹のある街 北本店
 	RewriteCond %{QUERY_STRING} c=nipi0
-	RewriteCond %{QUERY_STRING} s=UHuZy 
+	RewriteCond %{QUERY_STRING} s=UHuZy
 	RewriteRule /calender/kaijoichiran/kaijou.html /detail/ [R,L]
-	
+
 	#★無料フリマ★玉越本店−名古屋市
 	RewriteCond %{QUERY_STRING} c=PKSci
-	RewriteCond %{QUERY_STRING} s=wDmOn 
+	RewriteCond %{QUERY_STRING} s=wDmOn
 	RewriteRule /calender/kaijoichiran/kaijou.html /detail/ [R,L]
 
 	#★無料フリマ★ライブガーデン鹿沼グランドシティ-鹿沼市
 	RewriteCond %{QUERY_STRING} c=Y1e0C
 	RewriteCond %{QUERY_STRING} s=WdD5v
 	RewriteRule /calender/kaijoichiran/kaijou.html /detail/ [R,L]
-	
+
 	#★出店無料★フリーマーケットinキコーナ川西多田院店
 	RewriteCond %{QUERY_STRING} c=8WUqV
 	RewriteCond %{QUERY_STRING} s=UPXMm
