@@ -9,6 +9,7 @@
            $input_genres[$item_genre] = 1;
        }
    }
+
 ?>
 
 <div id="contentForm" class="row">
@@ -66,19 +67,10 @@
     <div class="form-group">
       <label class="col-sm-2 control-label">ブース数</label>
       <div class="col-sm-10">
-          <?php foreach ($fleamarket->fleamarket_entry_styles as $fleamarket_entry_style){ ?>
-          <div class="reserved_booth_div" id="reserved_booth_<?php echo $fleamarket_entry_style->fleamarket_entry_style_id; ?>" style="display: none;">
-          <select name="reserved_booth">
-            <?php foreach (range(1,$fleamarket_entry_style->reservation_booth_limit) as $n) { ?>
-          <option value="<?php echo $n; ?>"
-              <?php if ($input['reserved_booth'] == $n) { echo ' selected=selected'; } ?>>
-        <?php echo $n; ?>
-              </option>
-          <?php } ?>
+          <select name="reserved_booth" id="reserved_booth">
+          <option value="1">1</option>
           </select>
-          </div>
-          <?php } ?>
-        <?php if (isset($errors['reserved_booth'])) { ?>
+              <?php if (isset($errors['reserved_booth'])) { ?>
         <?php echo $errors['reserved_booth']; ?>
         <?php } ?>
       </div>
@@ -118,13 +110,24 @@
 </div>
 
 <script type="text/javascript">
+  var reservation_booth_limit = <?php
+   $reservation_booth_limit = array();
+   foreach ($fleamarket->fleamarket_entry_styles as $fleamarket_entry_style){
+     $reservation_booth_limit[$fleamarket_entry_style->fleamarket_entry_style_id] = $fleamarket_entry_style->reservation_booth_limit;
+   }
+   echo json_encode($reservation_booth_limit);
+?>;
+
   $('input[name="fleamarket_entry_style_id"]').change(function(){
-    $('.reserved_booth_div').hide();
     var id = $('input[name="fleamarket_entry_style_id"]:checked').val();
-    if(id){
-      $('#reserved_booth_' + id).show();
+
+    $('#reserved_booth > option').remove();
+ 
+    for(var i = 1; i<= reservation_booth_limit[id] ; i++){
+      $('#reserved_booth').append($('<option>').html(i).val(i));
     }
   });
 
   $('input[name="fleamarket_entry_style_id"]').trigger('change');
+  $('#reserved_booth').val(<?php echo e($input['reserved_booth']); ?>);
 </script>
