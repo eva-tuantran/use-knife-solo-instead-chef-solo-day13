@@ -147,11 +147,6 @@ googletag.enableServices();
                     $shop_fee_string .= $booth_fee;
                 endforeach;
             endif;
-
-            $is_entry_full = false;
-            if ($total_booth <= $fleamarket['total_reserved_booth']):
-                $is_entry_full = true;
-            endif;
 ?>
     <div class="box result <?php echo $status_class;?> <?php echo $resultPush;?> clearfix">
       <h3>
@@ -238,27 +233,19 @@ googletag.enableServices();
           <li><a href="/detail/<?php echo $fleamarket_id;?>">詳細情報を見る<i></i></a></li>
         </ul>
         <ul class="rightbutton">
-          <?php
-            if ($user && $user->hasEntry($fleamarket_id)):
-          ?>
+    <?php if ($user && $user->hasEntry($fleamarket_id)):?>
           <li class="button reserved">出店予約中</li>
-          <?php
-            elseif ($user && $user->hasWaiting($fleamarket_id)):
-          ?>
+    <?php elseif ($user && $user->hasWaiting($fleamarket_id)):?>
           <li class="button reserved">キャンセル待ち中</li>
-          <?php
-            elseif ($is_official
-                && $fleamarket['event_status'] == \Model_Fleamarket::EVENT_STATUS_RESERVATION_RECEIPT
-            ):
-                $reservation_button = '出店予約をする';
-                if ($is_entry_full):
-                    $reservation_button = 'キャンセル待ちをする';
-                endif;
-          ?>
-          <li class="button makeReservation"><a href="/reservation?fleamarket_id=<?php echo $fleamarket_id;?>"><?php echo $reservation_button;?></a></li>
-          <?php
-            endif;
-          ?>
+    <?php elseif ($is_official):?>
+        <?php if ($fleamarket['event_status'] == \Model_Fleamarket::EVENT_STATUS_RESERVATION_RECEIPT):?>
+            <?php if ($fleamarket['event_reservation_status'] == \Model_Fleamarket::EVENT_RESERVATION_STATUS_FULL):?>
+          <li class="button makeReservation"><a href="/reservation?fleamarket_id=<?php echo $fleamarket_id;?>">キャンセル待ちをする</a></li>
+            <?php else:?>
+          <li class="button makeReservation"><a href="/reservation?fleamarket_id=<?php echo $fleamarket_id;?>">出店予約をする</a></li>
+            <?php endif;?>
+        <?php endif;?>
+    <?php endif;?>
           <li class="button addMylist"><a id="fleamarket_id_<?php echo $fleamarket_id; ?>" href="#">マイリストに追加</a></li>
         </ul>
       </div>
@@ -435,22 +422,23 @@ $(function() {
       } else {
         message = 'マイリストに登録できませんでした';
       }
-
-      if (message != '') {
-        $("#information-dialog #message").text(message);
-        $("#information-dialog").dialog({
-          modal: true,
-          buttons: {
-            Ok: function() {
-              $(this).dialog( "close" );
-            }
-          }
-        });
-      }
+      openDialog(message);
     }).fail(function(jqXHR, textStatus, errorThrown) {
-      $('#dialog_fail').dialog();
+      openDialog('マイリストに登録できませんでした');
     });
   });
+
+  var openDialog = function(message) {
+    $("#information-dialog #message").text(message);
+    $("#information-dialog").dialog({
+      modal: true,
+      buttons: {
+        Ok: function() {
+          $(this).dialog( "close" );
+        }
+      }
+    });
+  };
 });
 </script>
 

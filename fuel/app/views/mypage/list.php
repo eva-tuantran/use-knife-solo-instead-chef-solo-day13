@@ -19,7 +19,7 @@
   <div id="searchResult" class="col-sm-9">
     <!-- pills -->
     <ul class="nav nav-pills">
-      <li><a href="/mypage/list?type=entry">これまで参加したフリマ <span class="badge"><?php echo e(Auth::getFinishedEntryCount()); ?>件</span></a></li>
+      <li><a href="/mypage/list?type=finished">これまで参加したフリマ <span class="badge"><?php echo e(Auth::getFinishedEntryCount()); ?>件</span></a></li>
       <li><a href="/mypage/list?type=reserved">出店予約中のフリマ <span class="badge"><?php echo e(Auth::getReservedEntryCount()); ?>件</span></a></li>
       <li><a href="/mypage/list?type=waiting">キャンセル待ちのフリマ <span class="badge"><?php echo e(Auth::getWaitingEntryCount()); ?>件</span></a></li>
       <li><a href="/mypage/list?type=mylist">マイリスト <span class="badge"><?php echo e(Auth::getFavoriteCount()); ?>件</span></a></li>
@@ -95,17 +95,20 @@
     <div id="resultTitle">
     <?php
         switch (Input::get('type')) {
+            case 'finished':
+                echo "これまで参加したフリマ一覧";
+                break;
+            case 'reserved':
+                echo "出店予約中のフリマ一覧";
+                break;
+            case 'waiting';
+                echo "キャンセル待ちのフリマ一覧";
+                break;
             case 'mylist':
                 echo "マイリスト";
                 break;
-            case 'entry':
-                echo "出店予約したフリマ一覧";
-                break;
             case 'myfleamarket':
                 echo "開催投稿したフリマ一覧";
-                break;
-            case 'reserved';
-                echo "出店予約フリマ一覧";
                 break;
             default:
                 echo "フリマ一覧";
