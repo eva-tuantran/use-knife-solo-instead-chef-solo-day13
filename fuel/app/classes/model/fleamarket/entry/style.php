@@ -82,7 +82,7 @@ class Model_Fleamarket_Entry_Style extends Model_Base
         $placeholders = array('flearmarket_id' => $fleamarket_id);
         $table_name = self::$_table_name;
         $query = <<<"QUERY"
-SELECT {$fielsds} FROM {$table_name} WHERE fleamarket_id = :flearmarket_id AND deleted_at = NULL
+SELECT {$fielsds} FROM {$table_name} WHERE fleamarket_id = :flearmarket_id AND deleted_at IS NULL
 QUERY;
 
         $statement = \DB::query($query)->parameters($placeholders);
