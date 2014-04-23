@@ -1,14 +1,10 @@
 execute "import rakuichi-rakuza database" do
-  command "mysql -uroot </deploy/rakuichi-rakuza/db/rakuichi-rakuza.sql"
+  command "mysql -uroot </deploy/rakuichi-rakuza/db/rakuichi_rakuza.sql"
 end
 
 execute "seed rakuichi-rakuza database" do
   command "cd /deploy/rakuichi-rakuza; php composer.phar update; php oil refine seed;"
 end
-
-#execute "grant readonly user" do
-#  command "echo 'grant select on *.* to readonly@localhost;' | mysql -uroot"
-#end
 
 log "deploy httpd.conf"
 cookbook_file "/etc/httpd/conf.d/www.rakuichi-rakuza.jp.conf" do
@@ -16,7 +12,6 @@ cookbook_file "/etc/httpd/conf.d/www.rakuichi-rakuza.jp.conf" do
   owner "root"
   group "root"
 end
-
 
 directory "/etc/httpd/ssl" do
   mode "0755"

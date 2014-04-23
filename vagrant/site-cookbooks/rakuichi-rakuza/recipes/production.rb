@@ -71,15 +71,7 @@ service "httpd" do
   action [:restart]
 end
 
-# todo: db系は本番で上書きしないようにするなど、要設定
+# todo: db系は本番で上書きしないようにするなど、要設定。今のところ手動でDB入れる。
 # execute "import rakuichi-rakuza database" do
   # command "mysql -uroot </deploy/rakuichi-rakuza/db/rakuichi-rakuza.sql"
-# end
-
-# execute "seed rakuichi-rakuza database" do
-  # command "cd /deploy/rakuichi-rakuza; php composer.phar update; php oil refine seed;"
-# end
-
-# execute "grant readonly user" do
-  # command "echo 'grant select on *.* to readonly@localhost;' | mysql -uroot"
 # end

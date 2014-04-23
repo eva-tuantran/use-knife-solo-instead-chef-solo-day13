@@ -23,6 +23,7 @@ mysql_database_user "rr_readonly" do
   database_name "rakuichi_rakuza"
   host       "localhost"
   privileges [:select]
+  action [:create, :grant]
 end
 
 mysql_database_user "rr_readonly" do
@@ -31,6 +32,7 @@ mysql_database_user "rr_readonly" do
   database_name "rakuichi_rakuza"
   host       "192.168.%"
   privileges [:select]
+  action [:create, :grant]
 end
 
 mysql_database_user "rr_admin" do
