@@ -28,6 +28,10 @@ service "network" do
   action [:restart]
 end
 
+service "keepalived" do
+  action [:restart]
+end
+
 ## iptabes を offにします
 execute "Flush all iptables rules" do
   command "/sbin/iptables -F"

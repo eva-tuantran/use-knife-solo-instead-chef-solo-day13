@@ -37,6 +37,9 @@ Vagrant.configure("2") do |config|
       chef.json = {
         :composer => {
           :install_path => "/usr/local/bin"
+        },
+        :mysqld => {
+          :server_id => '1023'
         }
       }
     end
@@ -60,6 +63,9 @@ Vagrant.configure("2") do |config|
       chef.json = {
         :composer => {
           :install_path => "/usr/local/bin"
+        },
+        :mysqld => {
+          :server_id => '1024'
         }
       }
     end
