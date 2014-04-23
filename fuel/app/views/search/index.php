@@ -147,6 +147,11 @@ googletag.enableServices();
                     $shop_fee_string .= $booth_fee;
                 endforeach;
             endif;
+
+            $is_entry_full = false;
+            if ($total_booth <= $fleamarket['total_reserved_booth']):
+                $is_entry_full = true;
+            endif;
 ?>
     <div class="box result <?php echo $status_class;?> <?php echo $resultPush;?> clearfix">
       <h3>
@@ -230,7 +235,7 @@ googletag.enableServices();
           <li class="facility4 <?php echo $fleamarket['rainy_location_flag'] != \Model_Fleamarket::RAINY_LOCATION_FLAG_NONE ? 'on' : 'off';?>">雨天開催会場</li>
         </ul>
         <ul class="detailLink">
-          <li><a href="/detail/<?php echo e($fleamarket_id);?>">詳細情報を見る<i></i></a></li>
+          <li><a href="/detail/<?php echo $fleamarket_id;?>">詳細情報を見る<i></i></a></li>
         </ul>
         <ul class="rightbutton">
           <?php
@@ -246,11 +251,11 @@ googletag.enableServices();
                 && $fleamarket['event_status'] == \Model_Fleamarket::EVENT_STATUS_RESERVATION_RECEIPT
             ):
                 $reservation_button = '出店予約をする';
-                if ($fleamarket['event_reservation_status'] == \Model_Fleamarket::EVENT_RESERVATION_STATUS_FULL):
+                if ($is_entry_full):
                     $reservation_button = 'キャンセル待ちをする';
                 endif;
           ?>
-          <li class="button makeReservation"><a href="/reservation?fleamarket_id=<?php echo e($fleamarket_id);?>"><?php echo $reservation_button;?></a></li>
+          <li class="button makeReservation"><a href="/reservation?fleamarket_id=<?php echo $fleamarket_id;?>"><?php echo $reservation_button;?></a></li>
           <?php
             endif;
           ?>
@@ -401,46 +406,54 @@ googletag.enableServices();
 <script type="text/javascript">
 $(function() {
   $(".pagination li").on("click", function(evt) {
-      evt.preventDefault();
-      var href = $(this).find("a").attr("href");
-      $("#form_search").attr("action", href).submit();
+    evt.preventDefault();
+    var href = $(this).find("a").attr("href");
+    $("#form_search").attr("action", href).submit();
   });
 
   $("#do_search").on("click", function(evt) {
-      evt.preventDefault();
-      $("#form_search").submit();
+    evt.preventDefault();
+    $("#form_search").submit();
   });
 
   $(".addMylist a").click(function(evt){
-      evt.preventDefault();
-      var id = $(this).attr('id');
-      id = id.match(/^fleamarket_id_(\d+)/)[1];
-      $.ajax({
-          type: "post",
-          url: '/favorite/add',
-          dataType: "json",
-          data: {fleamarket_id: id}
-      }).done(function(json, textStatus, jqXHR) {
-          if(json == 'nologin' || json == 'nodata'){
-              $('#dialog_need_login').dialog();
-          }else if(json){
-              $('#dialog_success').dialog();
-          }else{
-              $('#dialog_fail').dialog();
+    evt.preventDefault();
+    var id = $(this).attr('id');
+    id = id.match(/^fleamarket_id_(\d+)/)[1];
+
+    $.ajax({
+      type: "post",
+      url: '/favorite/add',
+      dataType: "json",
+      data: {fleamarket_id: id}
+    }).done(function(json, textStatus, jqXHR) {
+      var message = '';
+      if (json == 'nologin' || json == 'nodata') {
+        message = 'マイリストに登録するためにはログインが必要です';
+      } else if (json) {
+        message = 'マイリストに登録しました';
+      } else {
+        message = 'マイリストに登録できませんでした';
+      }
+
+      if (message != '') {
+        $("#information-dialog #message").text(message);
+        $("#information-dialog").dialog({
+          modal: true,
+          buttons: {
+            Ok: function() {
+              $(this).dialog( "close" );
+            }
           }
-      }).fail(function(jqXHR, textStatus, errorThrown) {
-          $('#dialog_fail').dialog();
-      });
+        });
+      }
+    }).fail(function(jqXHR, textStatus, errorThrown) {
+      $('#dialog_fail').dialog();
+    });
   });
 });
 </script>
 
-<div id="dialog_success" style="display: none;">
-マイリストに登録しました
-</div>
-<div id="dialog_fail" style="display: none;">
-マイリストに登録できませんでした
-</div>
-<div id="dialog_need_login" style="display: none;">
-マイリストに登録するためにはログインが必要です
+<div id="information-dialog" style="text-align: left; padding: 20px; display: none;">
+  <p id="message"></p>
 </div>
