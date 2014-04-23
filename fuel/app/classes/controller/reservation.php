@@ -171,7 +171,7 @@ class Controller_Reservation extends Controller_Base_Template
             $fleamarket->updateEventReservationStatus(false);
             $fleamarket->save();
 
-            if ($entry->fleamarket_entry_style->isOverReservationLimit()) {
+            if ($entry->fleamarket_entry_style->isOverReservationLimit('master')) {
                 $db->rollback_transaction();
                 return false;
             } else {
