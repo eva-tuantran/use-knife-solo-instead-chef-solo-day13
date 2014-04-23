@@ -30,7 +30,7 @@ end
 case node[:platform]
   when "centos"
     template "/root/.ssh/config" do
-    source "ssh/config.erb"
+    source "production/ssh/config.erb"
     owner "root"
     group "root"
     mode "0644"
