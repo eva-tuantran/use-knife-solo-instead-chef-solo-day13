@@ -151,7 +151,7 @@ QUERY;
      * @return bool
      * @author kobayasi
      */
-    public function sumReservedBooth()
+    public function sumReservedBooth($db = 'slave')
     {
         $query = DB::select(DB::expr('SUM(reserved_booth) as sum_result'));
         $query->from(\Model_Entry::table());
@@ -162,7 +162,7 @@ QUERY;
             'entry_status'              => \Model_Entry::ENTRY_STATUS_RESERVED,
         ));
 
-        return $query->execute()->get('sum_result');
+        return $query->execute($db)->get('sum_result');
     }
 
     /**
@@ -172,9 +172,9 @@ QUERY;
      * @return int
      * @author kobayasi
      */
-    public function remainBooth()
+    public function remainBooth($db = 'slave')
     {
-        return $this->max_booth - $this->sumReservedBooth();
+        return $this->max_booth - $this->sumReservedBooth($db);
     }
 
     /**
@@ -185,9 +185,9 @@ QUERY;
      * @return bool
      * @author kobayasi
      */
-    public function isOverReservationLimit()
+    public function isOverReservationLimit($db = 'slave')
     {
-        return $this->remainBooth() < 0;
+        return $this->remainBooth($db) < 0;
     }
 
     /**
@@ -198,9 +198,9 @@ QUERY;
      * @return bool
      * @author kobayasi
      */
-    public function isFullBooth()
+    public function isFullBooth($db = 'slave')
     {
-        return $this->remainBooth() <= 0;
+        return $this->remainBooth($db) <= 0;
     }
 
     /**
