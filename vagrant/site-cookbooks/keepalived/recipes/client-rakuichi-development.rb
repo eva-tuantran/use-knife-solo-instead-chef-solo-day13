@@ -13,6 +13,6 @@ execute "Flush all iptables rules & assign prerouting vip in thit server" do
 end
 
 service "iptables" do
-  action [:restart, :enable]
+  action [:start, :enable]
 end
 
