@@ -151,6 +151,7 @@ class Controller_Reservation extends Controller_Base_Template
             if (! $entry) {
                 $entry = \Model_Entry::forge();
             }
+
             $entry->set($data)->save();
 
             $fleamarket->incrementReservationSerial(false);
@@ -306,7 +307,11 @@ class Controller_Reservation extends Controller_Base_Template
             $params[$column] = substr($params[$column],0,5);
         }
 
-        $this->login_user->sendmail("reservation" , $params);
+        if ($entry->entry_status == Model_Entry::ENTRY_STATUS_RESERVED) {
+            $this->login_user->sendmail("reservation" , $params);
+        } elseif ($entry->entry_status == Model_Entry::ENTRY_STATUS_WAITING) {
+            $this->login_user->sendmail("waiting" , $params);
+        }            
     }
 
     private function get_user_id()
