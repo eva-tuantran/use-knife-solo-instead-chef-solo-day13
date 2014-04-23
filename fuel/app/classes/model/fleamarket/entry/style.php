@@ -151,7 +151,7 @@ QUERY;
      * @return bool
      * @author kobayasi
      */
-    public function sumReservedBooth()
+    public function sumReservedBooth($db = 'slave')
     {
         $query = DB::select(DB::expr('SUM(reserved_booth) as sum_result'));
         $query->from(\Model_Entry::table());
@@ -162,7 +162,19 @@ QUERY;
             'entry_status'              => \Model_Entry::ENTRY_STATUS_RESERVED,
         ));
 
-        return $query->execute()->get('sum_result');
+        return $query->execute($db)->get('sum_result');
+    }
+
+    /**
+     * 予約ブース数の残数を取得
+     *
+     * @access public
+     * @return int
+     * @author kobayasi
+     */
+    public function remainBooth($db = 'slave')
+    {
+        return $this->max_booth - $this->sumReservedBooth($db);
     }
 
     /**
@@ -173,22 +185,22 @@ QUERY;
      * @return bool
      * @author kobayasi
      */
-    public function isOverReservationLimit()
+    public function isOverReservationLimit($db = 'slave')
     {
-        return $this->max_booth < $this->sumReservedBooth();
+        return $this->remainBooth($db) < 0;
     }
 
     /**
-     * キャンセル待ちが必要かどうか
+     * キャンセル待ちかどうか
      *
      * @access public
      * @param  int
      * @return bool
      * @author kobayasi
      */
-    public function isNeedWaiting()
+    public function isFullBooth($db = 'slave')
     {
-        return $this->max_booth <= $this->sumReservedBooth();
+        return $this->remainBooth($db) <= 0;
     }
 
     /**

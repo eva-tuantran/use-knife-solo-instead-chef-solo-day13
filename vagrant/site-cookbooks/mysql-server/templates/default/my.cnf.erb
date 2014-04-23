@@ -26,13 +26,13 @@ query_prealloc_size=100M
 key_buffer_size=500M
 sort_buffer_size=100M
 #max_connections = 500
-log-slow-queries=/var/log/mysql/slow.log
+log-slow-queries=/var/log/mysqlslow.log
 long_query_time=3
 slow_query_log=1
 
-# for master/slave [chef可]
-#log-bin
-#server-id=30001
+# for master/slave
+log-bin=mysql-bin
+server-id=<%= @server_id %>
 
 [mysqld_safe]
 log-error=/var/log/mysqld.log

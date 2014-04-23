@@ -71,6 +71,14 @@ mysql_database_user "rrwp_admin" do
   action [:create, :grant]
 end
 
+mysql_database_user "repl" do
+  connection mysql_connection_info
+  password "ea9d51c2d383902c3c549f196686a3c14dc76a08"
+  host       "192.168.%"
+  privileges [:all]
+  action [:create, :grant]
+end
+
 # Query a database
 mysql_database 'flush the privileges' do
   connection mysql_connection_info

@@ -33,9 +33,13 @@ Vagrant.configure("2") do |config|
       chef.add_recipe "mysql-server"
       chef.add_recipe "rakuichi-rakuza::database"
       chef.add_recipe "rakuichi-rakuza::development"
+      chef.add_recipe "keepalived::client-rakuichi-development"
       chef.json = {
         :composer => {
           :install_path => "/usr/local/bin"
+        },
+        :mysqld => {
+          :server_id => '1023'
         }
       }
     end
@@ -53,10 +57,15 @@ Vagrant.configure("2") do |config|
       chef.add_recipe "memcached"
       chef.add_recipe "composer"
       chef.add_recipe "mysql-server"
+      chef.add_recipe "rakuichi-rakuza::database"
       chef.add_recipe "rakuichi-rakuza::development"
+      chef.add_recipe "keepalived::client-rakuichi-development"
       chef.json = {
         :composer => {
           :install_path => "/usr/local/bin"
+        },
+        :mysqld => {
+          :server_id => '1024'
         }
       }
     end
@@ -71,6 +80,7 @@ Vagrant.configure("2") do |config|
       chef.add_recipe "base"
       chef.add_recipe "selinux::disabled"
       chef.add_recipe "keepalived"
+      chef.add_recipe "keepalived::rakuichi-development"
     end
   end
 
@@ -83,6 +93,7 @@ Vagrant.configure("2") do |config|
       chef.add_recipe "base"
       chef.add_recipe "selinux::disabled"
       chef.add_recipe "keepalived"
+      chef.add_recipe "keepalived::rakuichi-development"
     end
   end
 

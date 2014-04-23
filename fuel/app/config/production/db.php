@@ -10,7 +10,7 @@ return array(
     'default' => array(
         'type' => 'mysqli',
         'connection'  => array(
-            'hostname' => 'localhost',
+            'hostname' => '192.168.4.201',
             'database' => 'rakuichi_rakuza',
             'username' => 'rr_readonly',
             'password' => '6bd369abc23fc87abf191566348a69798d85092e',
@@ -34,7 +34,7 @@ return array(
     'slave' => array(
         'type' => 'mysqli',
         'connection'  => array(
-            'hostname' => 'localhost',
+            'hostname' => '192.168.4.201',
             'database' => 'rakuichi_rakuza',
             'username' => 'rr_readonly',
             'password' => '6bd369abc23fc87abf191566348a69798d85092e',
