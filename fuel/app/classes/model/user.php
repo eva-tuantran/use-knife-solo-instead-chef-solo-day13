@@ -824,7 +824,7 @@ QUERY;
             }
             $this->has_entry = $has_entry;
         }
-
+        
         return in_array($fleamarket_id, $this->has_entry);
     }
 
@@ -841,5 +841,12 @@ QUERY;
         }
 
         return in_array($fleamarket_id, $this->has_waiting);
+    }
+
+    public function canReserve($fleamarket)
+    {
+        return 
+            (! $this->hasEntry($fleamarket->fleamarket_id)) &&
+            (! $this->hasWaiting($fleamarket->fleamarket_id));
     }
 }

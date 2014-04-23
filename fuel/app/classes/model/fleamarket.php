@@ -131,11 +131,11 @@ class Model_Fleamarket extends Model_Base
         ),
         'event_time_start' => array(
             'label' => '開始時間',
-            'validation' => array('valid_time')
+//            'validation' => array('valid_time')
         ),
         'event_time_end' => array(
             'label' => '終了時間',
-            'validation' => array('valid_time')
+//            'validation' => array('valid_time')
         ),
         'event_status' => array(
             'label' => '開催状況',
@@ -177,7 +177,7 @@ class Model_Fleamarket extends Model_Base
         ),
         'reservation_tel' => array(
             'label' => '予約受付電話番号',
-            'validation' => array('valid_tel')
+//            'validation' => array('valid_tel')
         ),
         'reservation_email' => array(
             'label' => '予約受付E-mailアドレス',
@@ -393,8 +393,6 @@ QUERY;
             $where .= implode(' AND ', $conditions);
         }
 
-//        list($where, $placeholders) = self::buildSearchWhere($condition_list);
-
         $limit = '';
         if (is_numeric($page) && is_numeric($row_count)) {
             $offset = ($page - 1) * $row_count;
@@ -531,28 +529,7 @@ ENTRY_STYLE_QUERY;
     {$where}
 WHERE_QUERY;
 
-
-/*
-        $query = <<<"QUERY"
-SELECT
-    COUNT(DISTINCT f.fleamarket_id) AS cnt
-FROM
-    fleamarkets AS f
-LEFT JOIN
-    locations AS l ON f.location_id = l.location_id
-LEFT JOIN
-    fleamarket_abouts AS fa ON f.fleamarket_id = fa.fleamarket_id
-    AND fa.about_id = :about_access_id
-LEFT JOIN
-    fleamarket_entry_styles AS fes ON f.fleamarket_id = fes.fleamarket_id
-WHERE
-    f.display_flag = :display_flag
-    AND f.deleted_at IS NULL
-    {$where}
-QUERY;
-*/
-
-        $statement = \DB::query($query)->parameters($placeholders);
+      $statement = \DB::query($query)->parameters($placeholders);
         $result = $statement->execute();
 
         $rows = null;
@@ -959,10 +936,7 @@ QUERY;
     {
         $conditions = array();
 
-        if (! $condition_list) {
-            return $conditions;
-        }
-
+        $is_event_date = false;
         foreach ($condition_list as $field => $condition) {
             if ($condition == '') {
                 continue;
@@ -974,9 +948,6 @@ QUERY;
             }
 
             switch ($field) {
-                case 'event_date':
-                    $conditions['event_date'] = array($operator, $condition);
-                    break;
                 case 'keyword':
                     $conditions['f.name'] = array(
                         ' like ', '%' . $condition . '%'
@@ -1026,9 +997,11 @@ QUERY;
                     );
                     break;
                 case 'calendar':
+                    $is_event_date = true;
                     $conditions['event_date'] = array($operator, $condition);
                     break;
                 case 'upcomming':
+                    $is_event_date = true;
                     $conditions['event_date'] = array('>= CURDATE()');
                     $conditions['event_status'] = array(
                         '<=',
@@ -1036,6 +1009,7 @@ QUERY;
                     );
                     break;
                 case 'reservation':
+                    $is_event_date = true;
                     $conditions['event_date'] = array('>= CURDATE()');
                     $conditions['event_status'] = array(
                         $operator,
@@ -1049,6 +1023,10 @@ QUERY;
                 default:
                     break;
             }
+        }
+
+        if (! $is_event_date) {
+            $conditions['event_date'] = array('>= CURDATE()');
         }
 
         return $conditions;
@@ -1104,11 +1082,11 @@ QUERY;
         return array($conditions, $placeholders);
     }
 
-    /*
+    /**
      * Fieldsetオブジェクトの生成
      *
      * @access public
-     * @param is_admin: 管理画面かどうか
+     * @param bool $is_admin 管理画面かどうか
      * @return array
      * @author ida
      * @author kobayasi
@@ -1125,19 +1103,19 @@ QUERY;
         return $fieldset;
     }
 
-    /*
+    /**
      * event_reservation_status の更新
      *
      * @access public
-     * @param
-     * @return
+     * @param bool $save
+     * @return void
      * @author kobayasi
      */
     public function updateEventReservationStatus($save = true)
     {
         $is_full = true;
         foreach ($this->fleamarket_entry_styles as $fleamarket_entry_style) {
-            if (! $fleamarket_entry_style->isNeedWaiting()) {
+            if (! $fleamarket_entry_style->isFullBooth()){
                 $is_full = false;
                 break;
             }
@@ -1166,5 +1144,12 @@ QUERY;
             }
         }
         return null;
+    }
+
+    public function canReserve()
+    {
+        return
+            $this->event_status             == Model_Fleamarket::EVENT_STATUS_RESERVATION_RECEIPT &&
+            $this->event_reservation_status != Model_Fleamarket::EVENT_RESERVATION_STATUS_FULL;
     }
 }

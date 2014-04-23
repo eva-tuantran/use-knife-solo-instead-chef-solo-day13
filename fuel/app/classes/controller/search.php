@@ -50,7 +50,7 @@ class Controller_Search extends Controller_Base_Template
         );
 
         // ページネーション設定
-        $pagination = Pagination::forge(
+        $pagination = \Pagination::forge(
             'fleamarket_pagination',
             $this->getPaginationConfig($total_count)
         );
@@ -62,7 +62,6 @@ class Controller_Search extends Controller_Base_Template
         $view_model->set('pagination', $pagination, false);
         $view_model->set('user', $this->login_user, false);
 
-        $this->setMetaTag('search/index');
         $this->template->content = $view_model;
     }
 
@@ -118,7 +117,6 @@ class Controller_Search extends Controller_Base_Template
         );
         $view_model->set('user', $this->login_user, false);
 
-        $this->setMetaTag('search/detail');
         $this->template->content = $view_model;
     }
 
@@ -191,9 +189,9 @@ class Controller_Search extends Controller_Base_Template
             $conditions = array('prefecture' => $prefecture_id);
         }
 
-        $date = Input::get('calendar');
-        if ($date) {
-            $conditions = array('calendar' => $date);
+        $calendar = Input::get('calendar');
+        if ($calendar) {
+            $conditions = array('calendar' => $calendar);
         }
 
         $upcomming = Input::get('upcomming');
@@ -211,6 +209,7 @@ class Controller_Search extends Controller_Base_Template
             && $conditions['shop_fee'] == \Model_Fleamarket::SHOP_FEE_FLAG_FREE
         ) {
             $add_conditions['shop_fee'][] = \Model_Fleamarket::SHOP_FEE_FLAG_FREE;
+            unset($conditions['shop_fee']);
         }
 
         return array($conditions, $add_conditions);

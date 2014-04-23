@@ -1,0 +1,11 @@
+ForwardAgent yes
+PubkeyAuthentication yes
+ServerAliveInterval 30
+ServerAliveCountMax 100
+
+Host gitlab.aucfan.com
+    HostName gitlab.aucfan.com
+    IdentityFile ~/.ssh/id_rsa_gitlab
+
+Host 192.168.*
+    IdentityFile ~/.ssh/id_rsa_rakuichi
