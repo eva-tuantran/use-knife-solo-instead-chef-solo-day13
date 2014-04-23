@@ -35,4 +35,5 @@ class Model_Error extends \Model
     const ER00701 = 'ER00701';
     const ER00702 = 'ER00702';
 
+    const ER00905 = 'ER00905';
 }

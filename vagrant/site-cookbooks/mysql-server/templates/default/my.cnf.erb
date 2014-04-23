@@ -1,0 +1,42 @@
+[mysqld]
+;--------------------
+; General Settings
+;--------------------
+datadir=/var/lib/mysql
+socket=/var/lib/mysql/mysql.sock
+user=mysql
+symbolic-links=0
+skip-name-resolve
+
+;--------------------
+; Character Set Settings
+;--------------------
+character-set-server = utf8
+default-character-set=utf8
+collation-server = utf8_general_ci
+skip-character-set-client-handshake
+init-connect = SET NAMES utf8
+
+;--------------------
+; Query Cache
+;--------------------
+query_cache_type=1
+query_cache_size=500M
+query_prealloc_size=100M
+key_buffer_size=500M
+sort_buffer_size=100M
+#max_connections = 500
+log-slow-queries=/var/log/mysqlslow.log
+long_query_time=3
+slow_query_log=1
+
+# for master/slave
+log-bin=mysql-bin
+server-id=<%= @server_id %>
+
+[mysqld_safe]
+log-error=/var/log/mysqld.log
+pid-file=/var/run/mysqld/mysqld.pid
+
+[mysqld]
+open_files_limit=10240

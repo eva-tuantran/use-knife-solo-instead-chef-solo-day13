@@ -131,21 +131,26 @@ class Model_Fleamarket extends Model_Base
         ),
         'event_time_start' => array(
             'label' => '開始時間',
-            'validation' => array('valid_time')
+//            'validation' => array('valid_time')
         ),
         'event_time_end' => array(
             'label' => '終了時間',
-            'validation' => array('valid_time')
+//            'validation' => array('valid_time')
         ),
         'event_status' => array(
             'label' => '開催状況',
             'form'  => array('type' => false),
             'validation' => array('required'),
         ),
-        'event_reservation_status',
+        'event_reservation_status' => array(
+            'label' => '予約状況',
+            'validation' => array(
+                'required',
+            )
+        ),
         'headline' => array(
             'validation' => array(
-                'max_length' => array(100)
+                'max_length' => array(100),
             )
         ),
         'information' => array(
@@ -172,7 +177,7 @@ class Model_Fleamarket extends Model_Base
         ),
         'reservation_tel' => array(
             'label' => '予約受付電話番号',
-            'validation' => array('valid_tel')
+//            'validation' => array('valid_tel')
         ),
         'reservation_email' => array(
             'label' => '予約受付E-mailアドレス',
@@ -241,9 +246,6 @@ class Model_Fleamarket extends Model_Base
             'form'  => array('type' => false)
         ),
         'display_flag' => array(
-            'form'  => array('type' => false)
-        ),
-        'event_reservation_status' => array(
             'form'  => array('type' => false)
         ),
         'created_user' => array(
@@ -376,7 +378,20 @@ QUERY;
     public static function findBySearch(
         $condition_list, $page = 0, $row_count = 0
     ) {
-        list($where, $placeholders) = self::buildSearchWhere($condition_list);
+        $search_where = self::buildSearchWhere($condition_list);
+        list($conditions, $placeholders) = $search_where;
+
+        $entry_style_where = '';
+        if (isset($conditions['fes.entry_style_id'])) {
+            $entry_style_where = 'AND ' . $conditions['fes.entry_style_id'];
+            unset($conditions['fes.entry_style_id']);
+        }
+
+        $where = '';
+        if ($conditions) {
+            $where = ' AND ';
+            $where .= implode(' AND ', $conditions);
+        }
 
         $limit = '';
         if (is_numeric($page) && is_numeric($row_count)) {
@@ -412,7 +427,8 @@ SELECT
     l.prefecture_id AS prefecture_id,
     l.address AS address,
     l.googlemap_address AS googlemap_address,
-    fa.description AS about_access
+    fa.description AS about_access,
+    fi.file_name
 FROM
     fleamarkets AS f
 LEFT JOIN
@@ -421,43 +437,31 @@ LEFT JOIN
     fleamarket_abouts AS fa ON f.fleamarket_id = fa.fleamarket_id
     AND fa.about_id = :about_access_id
 LEFT JOIN
-    fleamarket_entry_styles AS fes ON f.fleamarket_id = fes.fleamarket_id
+    fleamarket_images AS fi ON
+    f.fleamarket_id = fi.fleamarket_id AND priority = 1
 WHERE
+QUERY;
+
+        if ($entry_style_where != '') {
+            $entry_style_query = <<<"ENTRY_STYLE_QUERY"
+    EXISTS (
+        SELECT * FROM fleamarket_entry_styles AS fes
+        WHERE f.fleamarket_id = fes.fleamarket_id
+          {$entry_style_where}
+    ) AND
+ENTRY_STYLE_QUERY;
+            $query .= $entry_style_query;
+        }
+
+        $query .= <<<"WHERE_QUERY"
     f.display_flag = :display_flag
     AND f.deleted_at IS NULL
     {$where}
-GROUP BY
-	f.fleamarket_id,
-	f.name,
-	f.promoter_name,
-	event_date,
-	event_time_start,
-	event_time_end,
-	f.event_status,
-	f.description,
-	f.reservation_start,
-	f.reservation_end,
-	f.reservation_tel,
-	f.reservation_email,
-	f.website,
-	f.shop_fee_flag,
-	f.car_shop_flag,
-	f.pro_shop_flag,
-	f.charge_parking_flag,
-	f.free_parking_flag,
-	f.rainy_location_flag,
-	f.register_type,
-	location_name,
-	zip,
-	prefecture_id,
-	address,
-	googlemap_address,
-	about_access
-ORDER BY
-    f.register_type,
-    f.event_date
-{$limit}
-QUERY;
+    ORDER BY
+        f.register_type,
+        f.event_date
+    {$limit}
+WHERE_QUERY;
 
         $statement = \DB::query($query)->parameters($placeholders);
         $result = $statement->execute();
@@ -480,11 +484,24 @@ QUERY;
      */
     public static function getCountBySearch($condition_list)
     {
-        list($where, $placeholders) = self::buildSearchWhere($condition_list);
+        $search_where = self::buildSearchWhere($condition_list);
+        list($conditions, $placeholders) = $search_where;
+
+        $entry_style_where = '';
+        if (isset($conditions['fes.entry_style_id'])) {
+            $entry_style_where = 'AND ' . $conditions['fes.entry_style_id'];
+            unset($conditions['fes.entry_style_id']);
+        }
+
+        $where = '';
+        if ($conditions) {
+            $where = ' AND ';
+            $where .= implode(' AND ', $conditions);
+        }
 
         $query = <<<"QUERY"
 SELECT
-    COUNT(DISTINCT f.fleamarket_id) AS cnt
+    COUNT(f.fleamarket_id) AS cnt
 FROM
     fleamarkets AS f
 LEFT JOIN
@@ -492,15 +509,27 @@ LEFT JOIN
 LEFT JOIN
     fleamarket_abouts AS fa ON f.fleamarket_id = fa.fleamarket_id
     AND fa.about_id = :about_access_id
-LEFT JOIN
-    fleamarket_entry_styles AS fes ON f.fleamarket_id = fes.fleamarket_id
 WHERE
+QUERY;
+
+        if ($entry_style_where != '') {
+            $entry_style_query = <<<"ENTRY_STYLE_QUERY"
+    EXISTS (
+        SELECT * FROM fleamarket_entry_styles AS fes
+        WHERE f.fleamarket_id = fes.fleamarket_id
+          {$entry_style_where}
+    ) AND
+ENTRY_STYLE_QUERY;
+            $query .= $entry_style_query;
+        }
+
+        $query .= <<<"WHERE_QUERY"
     f.display_flag = :display_flag
     AND f.deleted_at IS NULL
     {$where}
-QUERY;
+WHERE_QUERY;
 
-        $statement = \DB::query($query)->parameters($placeholders);
+      $statement = \DB::query($query)->parameters($placeholders);
         $result = $statement->execute();
 
         $rows = null;
@@ -608,13 +637,14 @@ SELECT
     f.event_date,
     l.name AS location_name,
     l.prefecture_id,
-    SUM(fes.max_booth) AS max_booth
+    fi.file_name
 FROM
     fleamarkets AS f
 LEFT JOIN
     locations AS l ON f.location_id = l.location_id
 LEFT JOIN
-    fleamarket_entry_styles AS fes ON f.fleamarket_id = fes.fleamarket_id
+    fleamarket_images AS fi ON
+    f.fleamarket_id = fi.fleamarket_id AND priority = 1
 WHERE
     f.display_flag = :display_flag
     AND f.register_type = :register_status
@@ -740,7 +770,8 @@ SELECT
     f.event_date,
     l.name AS location_name,
     l.prefecture_id AS prefecture_id,
-    fa.description AS about_access
+    fa.description AS about_access,
+    fi.file_name
 FROM
     fleamarkets AS f
 LEFT JOIN
@@ -748,6 +779,9 @@ LEFT JOIN
 LEFT JOIN
     fleamarket_abouts AS fa ON f.fleamarket_id = fa.fleamarket_id
     AND fa.about_id = :about_access_id
+LEFT JOIN
+    fleamarket_images AS fi ON
+    f.fleamarket_id = fi.fleamarket_id AND priority = 1
 WHERE
     f.display_flag = :display_flag
     AND f.register_type = :register_status
@@ -823,7 +857,8 @@ SELECT
     l.prefecture_id AS prefecture_id,
     l.address AS address,
     l.googlemap_address AS googlemap_address,
-    fa.description AS about_access
+    fa.description AS about_access,
+    fi.file_name
 FROM
     fleamarkets AS f
 LEFT JOIN
@@ -831,6 +866,9 @@ LEFT JOIN
 LEFT JOIN
     fleamarket_abouts AS fa ON f.fleamarket_id = fa.fleamarket_id
     AND fa.about_id = :about_access_id
+LEFT JOIN
+    fleamarket_images AS fi ON
+    f.fleamarket_id = fi.fleamarket_id AND priority = 1
 WHERE
     f.created_user = :user_id AND
     f.display_flag = :display_flag AND
@@ -890,114 +928,105 @@ QUERY;
      * 検索条件を取得する
      *
      * @access private
-     * @param array $data 選択された検索条件
+     * @param array $condition_list 検索条件
      * @return array 検索条件
      * @author void
      */
-    public static function createSearchCondition($data)
+    public static function createSearchCondition($condition_list = array())
     {
         $conditions = array();
 
-        if (isset($data['event_date']) && $data['event_date'] !== '') {
-            $conditions[] = array(
-                'DATE_FORMAT(event_date, \'%Y/%m/%d\')',
-                '=',
-                $data['event_date']
-            );
-        }
+        $is_event_date = false;
+        foreach ($condition_list as $field => $condition) {
+            if ($condition == '') {
+                continue;
+            }
 
-        if (isset($data['keyword']) && $data['keyword'] !== '') {
-            $conditions[] = array(
-                'f.name', 'like', '%' . $data['keyword'] . '%'
-            );
-        }
-
-        if (isset($data['prefecture']) && $data['prefecture'] !== '') {
-            $conditions[] = array('prefecture_id', '=', $data['prefecture']);
-        } else if (isset($data['region']) && $data['region'] !== '') {
-            $region_prefectures = \Config::get('master.region_prefectures');
-            $prefecture = $region_prefectures[$data['region']];
-            $conditions[] = array('prefecture_id', 'IN', $prefecture);
-        }
-
-        if (isset($data['shop_fee']) && $data['shop_fee'] !== '') {
             $operator = '=';
-            if (is_array($data['shop_fee'])) {
+            if (is_array($condition)) {
                 $operator = 'IN';
             }
-            $conditions[] = array(
-                'shop_fee_flag', $operator, $data['shop_fee']
-            );
-        }
 
-        if (isset($data['car_shop']) && $data['car_shop'] !== '') {
-            $conditions[] = array('car_shop_flag', '=', $data['car_shop']);
-        }
-
-        if (isset($data['pro_shop']) && $data['pro_shop'] !== '') {
-            $conditions[] = array('pro_shop_flag', '=', $data['pro_shop']);
-        }
-
-        if (isset($data['rainy_location']) && $data['rainy_location'] !== '') {
-            $conditions[] = array(
-                'rainy_location_flag', '=', $data['rainy_location']
-            );
-        }
-
-        if (isset($data['charge_parking']) && $data['charge_parking'] !== '') {
-            $conditions[] = array(
-                'charge_parking_flag', '=', $data['charge_parking']
-            );
-        }
-
-        if (isset($data['free_parking']) && $data['free_parking'] !== '') {
-            $conditions[] = array(
-                'free_parking_flag', '=', $data['free_parking']
-            );
-        }
-
-        if (isset($data['event_status']) && is_array($data['event_status'])) {
-            $operator = '=';
-            if (is_array($data['event_status'])) {
-                $operator = 'IN';
+            switch ($field) {
+                case 'keyword':
+                    $conditions['f.name'] = array(
+                        ' like ', '%' . $condition . '%'
+                    );
+                    break;
+                case 'prefecture':
+                    $conditions['prefecture_id'] = array($operator, $condition);
+                    break;
+                case 'region':
+                    if (! isset($condition_list['prefecture'])) {
+                        $region_prefectures =
+                            \Config::get('master.region_prefectures');
+                        $prefecture = $region_prefectures[$condition];
+                        $conditions['prefecture_id'] = array('IN', $prefecture);
+                    }
+                    break;
+                case 'shop_fee':
+                    $conditions['shop_fee_flag'] = array($operator, $condition);
+                    break;
+                case 'car_shop':
+                    $conditions['car_shop_flag'] = array($operator, $condition);
+                    break;
+                case 'pro_shop':
+                    $conditions['pro_shop_flag'] = array($operator, $condition);
+                    break;
+                case 'rainy_location':
+                    $conditions['rainy_location_flag'] = array(
+                        $operator, $condition
+                    );
+                    break;
+                case 'charge_parking':
+                    $conditions['charge_parking_flag'] = array(
+                        $operator, $condition
+                    );
+                    break;
+                case 'free_parking':
+                    $conditions['free_parking_flag'] = array(
+                        $operator, $condition
+                    );
+                    break;
+                case 'event_status':
+                    $conditions['event_status'] = array($operator, $condition);
+                    break;
+                case 'entry_style':
+                    $conditions['fes.entry_style_id'] = array(
+                        $operator, $condition
+                    );
+                    break;
+                case 'calendar':
+                    $is_event_date = true;
+                    $conditions['event_date'] = array($operator, $condition);
+                    break;
+                case 'upcomming':
+                    $is_event_date = true;
+                    $conditions['event_date'] = array('>= CURDATE()');
+                    $conditions['event_status'] = array(
+                        '<=',
+                        self::EVENT_STATUS_RECEIPT_END
+                    );
+                    break;
+                case 'reservation':
+                    $is_event_date = true;
+                    $conditions['event_date'] = array('>= CURDATE()');
+                    $conditions['event_status'] = array(
+                        $operator,
+                        self::EVENT_STATUS_RESERVATION_RECEIPT,
+                    );
+                    $conditions['f.register_type'] = array(
+                        $operator,
+                        self::REGISTER_TYPE_ADMIN,
+                    );
+                    break;
+                default:
+                    break;
             }
-            $conditions[] = array(
-                'f.event_status', $operator, $data['event_status']
-            );
         }
 
-        if (isset($data['entry_style']) && is_array($data['entry_style'])) {
-            $operator = '=';
-            if (is_array($data['entry_style'])) {
-                $operator = 'IN';
-            }
-            $conditions[] = array(
-                'fes.entry_style_id', $operator, $data['entry_style']
-            );
-        }
-
-        if (isset($data['calendar']) && $data['calendar']) {
-            $conditions[] = array(
-                'f.event_date', '=', $data['calendar']
-            );
-        }
-
-        if (isset($data['upcomming']) && $data['upcomming']) {
-            $conditions[] = array(
-                'f.event_date >= CURDATE()'
-            );
-        }
-
-        if (isset($data['reservation']) && $data['reservation']) {
-            $conditions[] = array(
-                'f.event_date >= CURDATE()'
-            );
-            $conditions[] = array(
-                'f.event_status', '=', \Model_Fleamarket::EVENT_STATUS_RESERVATION_RECEIPT,
-            );
-            $conditions[] = array(
-                'f.register_type', '=', \Model_Fleamarket::REGISTER_TYPE_ADMIN,
-            );
+        if (! $is_event_date) {
+            $conditions['event_date'] = array('>= CURDATE()');
         }
 
         return $conditions;
@@ -1013,58 +1042,51 @@ QUERY;
      */
     private static function buildSearchWhere($condition_list)
     {
-        $where = '';
+        $conditions = array();
         $placeholders = array(
             ':display_flag' => self::DISPLAY_FLAG_ON,
             ':about_access_id' => \Model_Fleamarket_About::ACCESS,
-            ':register_status' => self::REGISTER_TYPE_ADMIN,
         );
 
         if (empty($condition_list)) {
-            return array($where, $placeholders);
+            return array($conditions, $placeholders);
         }
 
         $conditions = array();
-        foreach ($condition_list as $condition) {
+        foreach ($condition_list as $field => $condition) {
+            $operator = $condition[0];
             if (count($condition) == 1) {
-                $conditions[] = $condition[0];
-            } else {
-                $field = $condition[0];
-                $operator = $condition[1];
-                if ($operator === 'IN') {
-                    $placeholder = ':' . $field;
-                    $values = $condition[2];
-                    $placeholder_strings = array();
-                    foreach ($values as $key => $value) {
-                        $placeholder_in = $placeholder . $key;
-                        $placeholder_strings[] = $placeholder_in;
-                        $placeholders[$placeholder_in] = $value;
-                    }
-                    $value = implode(',', $values);
-                    $placeholder_string = implode(',', $placeholder_strings);
-                    $conditions[] = $field . ' '
-                                  . $operator . ' '
-                                  . '(' . $placeholder_string . ')';
-                } else {
-                    $placeholder = ':' . $field;
-                    $value = trim($condition[2]);
-                    $conditions[] = $field . ' ' . $operator . ' ' . $placeholder;
-                    $placeholders[$placeholder] = $value;
+                $conditions[$field] = $field . $condition[0];
+            } elseif ($operator === 'IN') {
+                $placeholder = ':' . $field;
+                $values = $condition[1];
+                $placeholder_list = array();
+                foreach ($values as $key => $value) {
+                    $placeholder_in = $placeholder . $key;
+                    $placeholder_list[] = $placeholder_in;
+                    $placeholders[$placeholder_in] = $value;
                 }
+                $value = implode(',', $values);
+                $placeholder_string = implode(',', $placeholder_list);
+                $conditions[$field] = $field . ' '
+                              . $operator . ' '
+                              . '(' . $placeholder_string . ')';
+            } else {
+                $placeholder = ':' . $field;
+                $value = $condition[1];
+                $conditions[$field] = $field . $operator . $placeholder;
+                $placeholders[$placeholder] = $value;
             }
         }
 
-        $where = ' AND ';
-        $where .= implode(' AND ', $conditions);
-
-        return array($where, $placeholders);
+        return array($conditions, $placeholders);
     }
 
-    /*
+    /**
      * Fieldsetオブジェクトの生成
      *
      * @access public
-     * @param is_admin: 管理画面かどうか
+     * @param bool $is_admin 管理画面かどうか
      * @return array
      * @author ida
      * @author kobayasi
@@ -1081,19 +1103,19 @@ QUERY;
         return $fieldset;
     }
 
-    /*
+    /**
      * event_reservation_status の更新
      *
      * @access public
-     * @param
-     * @return
+     * @param bool $save
+     * @return void
      * @author kobayasi
      */
     public function updateEventReservationStatus($save = true)
     {
         $is_full = true;
         foreach ($this->fleamarket_entry_styles as $fleamarket_entry_style) {
-            if (! $fleamarket_entry_style->isNeedWaiting()) {
+            if (! $fleamarket_entry_style->isFullBooth()){
                 $is_full = false;
                 break;
             }
@@ -1112,5 +1134,22 @@ QUERY;
         if ($save) {
             $this->save();
         }
+    }
+
+    public function fleamarket_image($n)
+    {
+        foreach ($this->fleamarket_images as $fleamarket_image) {
+            if ($fleamarket_image->priority == $n) {
+                return $fleamarket_image;
+            }
+        }
+        return null;
+    }
+
+    public function canReserve()
+    {
+        return
+            $this->event_status             == Model_Fleamarket::EVENT_STATUS_RESERVATION_RECEIPT &&
+            $this->event_reservation_status != Model_Fleamarket::EVENT_RESERVATION_STATUS_FULL;
     }
 }

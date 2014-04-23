@@ -57,8 +57,7 @@
           <li class="market"><a href="/search/1"><i></i>フリマ会場一覧</a></li>
           <li class="reservation"><a href="/search?reservation=1"><i></i>出店予約</a></li>
           <li class="post"><a href="/fleamarket"><i></i>フリマ投稿</a></li>
-          <!-- <li class="news"><a href="/news"><i></i>新着情報</a></li> -->
-          <li class="blog"><a href="http://aucfan.com/article/" target="_blank"><i></i>新着ブログ(仮)</a></li>
+          <li class="blog"><a href="/blog"><i></i>新着ブログ</a></li>
           <li class="mypage"><a href="/mypage"><i></i>マイページ</a></li>
           <li class="guide visible-xs"><a href="/guide">初めての方へ</a></li>
           <li class="inquiry visible-xs"><a href="/inquiry">お問い合せ</a></li>
@@ -72,8 +71,8 @@
             <li><a href="/">ホーム</a></li>
             <li class="active"><?php echo $title; ?></li>
           </ul>
-          <form>
-            <input type="text" class="form-control hidden-xs" id="keywordInput">
+          <form id="form_search_calendar" action="/search/1" method="get">
+            <input type="text" class="form-control" id="keywordInput" placeholder="キーワードを入力" name="c[keyword]">
           </form>
         </div>
         <!-- /globalNavBottom -->
@@ -174,7 +173,7 @@
       <li><a href="/info/question">よくある質問</a></li>
       <li><a href="/inquiry">お問い合わせ</a></li>
       <li><a href="/info/manager">運営会社</a></li>
-      <li><a href="http://aucfan.com/article/">ブログ</a></li>
+      <li><a href="/blog">ブログ</a></li>
       <li><a href="/info/policy">プライバシーポリシー</a></li>
     </ul>
     <div class="copyright pull-right">

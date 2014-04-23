@@ -65,6 +65,15 @@ class View_Search_Detail extends ViewModel
         );
         $fleamarket['entry_styles'] = $entry_styles;
 
+        $total_reserved_booth = 0;
+        $entry = \Model_Entry::getTotalEntryByFleamarketId(
+            $fleamarket['fleamarket_id'], false
+        );
+        if ($entry) {
+            $total_reserved_booth = $entry[0]['reserved_booth'];
+        }
+        $fleamarket['total_reserved_booth'] = $total_reserved_booth;
+
         return $fleamarket;
     }
 

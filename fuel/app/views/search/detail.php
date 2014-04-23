@@ -1,3 +1,18 @@
+<style type="text/css">
+.reserved {
+  padding: 1em 0;
+  width: 200px;
+  font-size: 116%;
+  background-color: #f59000;
+  color: #fff;
+  border: none;
+  border-radius: 3px;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  text-align: center;
+  cursor: default;
+}
+</style>
 <script type='text/javascript' src='http://maps.google.com/maps/api/js?sensor=false'></script>
 <script type="text/javascript">
 $(function() {
@@ -61,15 +76,9 @@ Map.prototype = {
 </script>
 <?php
     $fleamarket_id = $fleamarket['fleamarket_id'];
-    $is_admin_fleamarket = false;
+    $is_official = false;
     if ($fleamarket['register_type'] == \Model_Fleamarket::REGISTER_TYPE_ADMIN):
-        $is_admin_fleamarket = true;
-    endif;
-    if ($is_admin_fleamarket):
-        $reservation_button = '出店予約をする';
-        if ($fleamarket['event_reservation_status'] == \Model_Fleamarket::EVENT_RESERVATION_STATUS_FULL):
-            $reservation_button = 'キャンセル待ちをする';
-        endif;
+        $is_official = true;
     endif;
 
     $total_booth = 0;
@@ -94,6 +103,11 @@ Map.prototype = {
             $shop_fee_string .= $booth_fee;
         endforeach;
     endif;
+
+    $is_entry_full = false;
+    if ($total_booth <= $fleamarket['total_reserved_booth']):
+        $is_entry_full = true;
+    endif;
 ?>
 <div id="contentDetail" class="row">
   <!-- title -->
@@ -101,7 +115,7 @@ Map.prototype = {
     <div class="box clearfix">
       <div class="titleLeft">
         <h2>
-          <?php if ($is_admin_fleamarket):?>
+          <?php if ($is_official):?>
           <strong><img src="/assets/img/resultPush.png" alt="楽市楽座主催" width="78" height="14"></strong>
           <?php endif;?><?php echo e($fleamarket['name']);?>
         </h2>
@@ -115,15 +129,25 @@ Map.prototype = {
             endif;
         ?></p>
         <ul class="mylist">
-          <li class="button addMylist"><a href="#" id="fleamarket_id_<?php echo $fleamarket['fleamarket_id'];?>"><i></i>マイリストに追加</a></li>
+          <li class="button addMylist"><a href="#" id="fleamarket_id_<?php echo $fleamarket_id;?>"><i></i>マイリストに追加</a></li>
           <li class="button gotoMylist"><a href="/mypage/list?type=mylist"><i></i>マイリストを見る</a></li>
         </ul>
       </div>
       <ul class="rightbutton">
         <?php
-            if ($is_admin_fleamarket && $fleamarket['event_status'] == \Model_Fleamarket::EVENT_STATUS_RESERVATION_RECEIPT):
+            if ($user && $user->hasEntry($fleamarket_id)):
+        ?>
+        <li class="button reserved">出店予約中</li>
+        <?php
+            elseif ($user && $user->hasWaiting($fleamarket_id)):
+        ?>
+        <li class="button reserved">キャンセル待ち中</li>
+        <?php
+            elseif ($is_official
+                && $fleamarket['event_status'] == \Model_Fleamarket::EVENT_STATUS_RESERVATION_RECEIPT
+            ):
                 $reservation_button = '出店予約をする';
-                if ($fleamarket['event_reservation_status'] == \Model_Fleamarket::EVENT_RESERVATION_STATUS_FULL):
+                if ($is_entry_full):
                     $reservation_button = 'キャンセル待ちをする';
                 endif;
         ?>
@@ -142,13 +166,25 @@ Map.prototype = {
     <?php
         if (count($image_files) > 0):
             $first_image_name = $image_files[0];
+            $first_image = '/files/fleamarket/img/l_' . $first_image_name;
+
+            if (! file_exists('.' . $first_image)):
+                $first_image ='/assets/img/noimage.jpg';
+            endif;
     ?>
-    <div class="mainPhoto"><img src="/files/fleamarket/img/<?php echo e($first_image_name);?>" alt="" width="460px" height="300px" class="img-responsive"></div>
+    <div class="mainPhoto">
+      <img src="<?php echo $first_image;?>" style="width: 460px; height: 300px;" class="img-responsive">
+    </div>
     <ul class="thumbnailPhoto">
     <?php
             foreach ($image_files as $image_file_name):
+                $image_file = '/files/fleamarket/img/ss_' . $image_file_name;
+
+                if (! file_exists('.' . $image_file)):
+                    $image_file ='/assets/img/noimage_s.jpg';
+                endif;
     ?>
-      <li><img src="/files/fleamarket/img/<?php echo e($image_file_name);?>" alt="" width="100"></li>
+      <li><img src="<?php echo $image_file;?>" style="width: 100px; height: 65px;"></li>
     <?php
             endforeach;
     ?>
@@ -156,7 +192,9 @@ Map.prototype = {
     <?php
         else:
     ?>
-    <div class="mainPhoto"><img src="/assets/img/noimage.jpg" alt="" width="460px" height="300px" class="img-responsive"></div>
+    <div class="mainPhoto">
+      <img src="/assets/img/noimage.jpg" alt="" width="460px" height="300px" class="img-responsive">
+    </div>
     <?php
         endif;
     ?>
@@ -189,7 +227,7 @@ Map.prototype = {
             endif;
         ?></dd>
 <?php
-    if (! $is_admin_fleamarket):
+    if (! $is_official):
 ?>
         <dt>主催者ホームページ</dt>
         <dd><a href="<?php echo e($fleamarket['website']);?>" target="_blank"><?php echo e($fleamarket['website']);?></a></dd>
@@ -229,9 +267,9 @@ Map.prototype = {
             if ($fleamarket['zip']):
                 echo '〒' . e($fleamarket['zip']);
             endif;
-            if ($fleamarket['address']):
-                echo '&nbsp;' . e($fleamarket['address']);
-            endif;
+
+            echo '&nbsp;' . $prefectures[$fleamarket['prefecture_id']];
+            echo e($fleamarket['address']);
         ?></dd>
         <dt>交通・アクセス</dt>
         <dd><?php
@@ -243,7 +281,7 @@ Map.prototype = {
             endif;
         ?></dd>
 <?php
-    if ($is_admin_fleamarket):
+    if ($is_official):
 ?>
         <dt>出店形態</dt>
         <dd><?php
@@ -288,15 +326,25 @@ Map.prototype = {
     endif;
 ?>
       </dl>
-      <ul class="mylist <?php if (! $is_admin_fleamarket):?>noneReservation<?php endif;?>">
-        <li class="button addMylist"><a href="#" id="fleamarket_id_<?php echo $fleamarket['fleamarket_id'];?>"><i></i>マイリストに追加</a></li>
+      <ul class="mylist <?php if (! $is_official):?>noneReservation<?php endif;?>">
+        <li class="button addMylist"><a href="#" id="fleamarket_id_<?php echo $fleamarket_id;?>"><i></i>マイリストに追加</a></li>
         <li class="button gotoMylist"><a href="/mypage/list?type=mylist"><i></i>マイリストを見る</a></li>
       </ul>
       <ul class="rightbutton">
         <?php
-            if ($is_admin_fleamarket && $fleamarket['event_status'] == \Model_Fleamarket::EVENT_STATUS_RESERVATION_RECEIPT):
+            if ($user && $user->hasEntry($fleamarket_id)):
+        ?>
+        <li class="button reserved">出店予約中</li>
+        <?php
+            elseif ($user && $user->hasWaiting($fleamarket_id)):
+        ?>
+        <li class="button reserved">キャンセル待ち中</li>
+        <?php
+            elseif ($is_official
+                && $fleamarket['event_status'] == \Model_Fleamarket::EVENT_STATUS_RESERVATION_RECEIPT
+            ):
                 $reservation_button = '出店予約をする';
-                if ($fleamarket['event_reservation_status'] == \Model_Fleamarket::EVENT_RESERVATION_STATUS_FULL):
+                if ($is_entry_full):
                     $reservation_button = 'キャンセル待ちをする';
                 endif;
         ?>
@@ -311,7 +359,7 @@ Map.prototype = {
 <!-- /table -->
 <script type="text/javascript">
 $(function() {
-  $(".addMylist a").click(function(evt) {
+  $(".addMylist a").click(function(evt){
       evt.preventDefault();
       var id = $(this).attr('id');
       id = id.match(/^fleamarket_id_(\d+)/)[1];
@@ -322,15 +370,25 @@ $(function() {
           data: {fleamarket_id: id}
       }).done(function(json, textStatus, jqXHR) {
           if(json == 'nologin' || json == 'nodata'){
-              alert(json);
+              $('#dialog_need_login').dialog();
           }else if(json){
-              alert('登録しました');
+              $('#dialog_success').dialog();
           }else{
-              alert('失敗しました');
+              $('#dialog_fail').dialog();
           }
       }).fail(function(jqXHR, textStatus, errorThrown) {
-          alert('失敗しました');
+          $('#dialog_fail').dialog();
       });
   });
 });
 </script>
+
+<div id="dialog_success" style="display: none;">
+マイリストに登録しました
+</div>
+<div id="dialog_fail" style="display: none;">
+マイリストに登録できませんでした
+</div>
+<div id="dialog_need_login" style="display: none;">
+マイリストに登録するためにはログインが必要です
+</div>

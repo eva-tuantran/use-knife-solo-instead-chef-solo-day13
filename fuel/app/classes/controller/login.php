@@ -21,12 +21,18 @@ class Controller_Login extends Controller_Base_Template
     /**
      * 初期画面
      *
+     * ログイン画像を切り替える場合
+     * 「会員登録はこちら」のimgのidを書きかえる
+     *
      * @access public
      * @return void
      * @author shimma
+     * @author ida
      */
     public function action_index()
     {
+        Asset::css('login.css', array(), 'add_css');
+
         $return_url = Input::get('rurl');
 
         $data = array(

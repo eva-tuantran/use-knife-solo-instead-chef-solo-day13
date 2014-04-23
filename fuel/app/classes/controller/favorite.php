@@ -11,6 +11,8 @@ class Controller_Favorite  extends Controller_Base_Template
     protected $fleamarket = null;
     protected $input = array();
 
+    protected $_secure_actions = array('delete');
+
     public function before()
     {
         parent::before();

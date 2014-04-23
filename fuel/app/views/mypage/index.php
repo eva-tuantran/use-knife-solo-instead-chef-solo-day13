@@ -26,6 +26,7 @@
     <ul class="nav nav-pills">
       <li><a href="/mypage/list?type=entry">これまで参加したフリマ <span class="badge"><?php echo e(Auth::getFinishedEntryCount()); ?>件</span></a></li>
       <li><a href="/mypage/list?type=reserved">出店予約中のフリマ <span class="badge"><?php echo e(Auth::getReservedEntryCount()); ?>件</span></a></li>
+      <li><a href="/mypage/list?type=reserved">キャンセル待ちのフリマ <span class="badge"><?php echo e(Auth::getWaitingEntryCount()); ?>件</span></a></li>
       <li><a href="/mypage/list?type=mylist">マイリスト <span class="badge"><?php echo e(Auth::getFavoriteCount()); ?>件</span></a></li>
     </ul>
     <!-- /pills -->
@@ -146,6 +147,7 @@
     <!-- nav-tabs -->
     <ul class="nav nav-tabs">
       <li class="active"><a href="#reservation" data-toggle="tab">出店予約したフリマ</a></li>
+      <li><a href="#waiting" data-toggle="tab">キャンセル待ち中のフリマ</a></li>
       <li><a href="#mylist" data-toggle="tab">マイリスト</a></li>
     </ul>
     <!-- /nav-tabs -->
@@ -164,6 +166,18 @@
             <?php endif; ?>
             <ul class="more">
               <li><a href="/mypage/list?type=entry">続きを見る</a></li>
+            </ul>
+          </div>
+
+          <!-- waiting -->
+          <div class="tab-pane" id="waiting">
+            <?php if (empty($fleamarkets_view['waiting'])): ?>
+                <p>キャンセル待ち中のフリマはありません</p>
+            <?php else: ?>
+                <?php foreach ($fleamarkets_view['waiting'] as $fleamarket_view) { echo $fleamarket_view; }; ?>
+            <?php endif; ?>
+            <ul class="more">
+              <li><a href="/mypage/list?type=waiting">続きを見る</a></li>
             </ul>
           </div>
 
@@ -206,9 +220,18 @@
 <script>
 
 $('.fleamarket_cancel').click(function() {
-  if (!confirm('フリーマーケットをキャンセルします\nよろしいですか？')) {
-    return false;
-  }
+  var href = $(this).attr('href');
+  $('#dialog_confirm').dialog({
+    buttons: {
+      "はい": function(event){
+         location.href = href;
+       },
+      "いいえ": function(event){
+        $(this).dialog("close");
+       }
+    }
+  });
+  return false;
 });
 
 
@@ -330,4 +353,8 @@ $(function () {
 </div>
 <div id="dialog_need_login" style="display: none;">
 マイリストを解除するためにはログインが必要です
+</div>
+
+<div id="dialog_confirm" style="display: none;">
+フリーマーケットをキャンセルします。よろしいですか？
 </div>

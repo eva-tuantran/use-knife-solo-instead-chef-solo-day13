@@ -37,60 +37,31 @@ class Controller_Search extends Controller_Base_Template
             $page = 1;
         }
 
-        $base_conditions = Input::get('conditions', array());
-
-        $prefecure = Input::get('prefecture');
-        if (null != $prefecure) {
-            $alphabet_prefectures = \Config::get('master.alphabet_prefectures');
-            $prefecture_id = array_search($prefecure, $alphabet_prefectures);
-            $base_conditions = array('prefecture' => $prefecture_id);
-        }
-
-        $date = Input::get('calendar');
-        if ($date) {
-            $base_conditions = array('calendar' => $date);
-        }
-
-        $upcomming = Input::get('upcomming');
-        if ($upcomming) {
-            $base_conditions = array('upcomming' => $upcomming);
-        }
-
-        $reservation = Input::get('reservation');
-        if ($reservation) {
-            $base_conditions = array('reservation' => $reservation);
-        }
-
-        $add_conditions = Input::get('add_conditions', array());
-        if (isset($base_conditions['shop_fee'])
-            && $base_conditions['shop_fee'] == \Model_Fleamarket::SHOP_FEE_FLAG_FREE
-        ) {
-            $add_conditions['shop_fee'][] = \Model_Fleamarket::SHOP_FEE_FLAG_FREE;
-            unset($base_conditions['shop_fee']);
-        }
-
-        $conditions = array_merge($base_conditions, $add_conditions);
+        list($conditions, $add_conditions) = $this->getCondition();
 
         // 検索条件から表示するフリーマーケット情報の取得
-        $condition_list = \Model_Fleamarket::createSearchCondition($conditions);
+        $condition_list = \Model_Fleamarket::createSearchCondition(
+            array_merge($conditions, $add_conditions)
+        );
+
         $total_count = \Model_Fleamarket::getCountBySearch($condition_list);
         $fleamarket_list = \Model_Fleamarket::findBySearch(
             $condition_list, $page, $this->search_result_per_page
         );
 
         // ページネーション設定
-        $pagination = Pagination::forge(
+        $pagination = \Pagination::forge(
             'fleamarket_pagination',
             $this->getPaginationConfig($total_count)
         );
 
         $view_model = ViewModel::forge('search/index');
-        $view_model->set('base_conditions', $base_conditions, false);
+        $view_model->set('conditions', $conditions, false);
         $view_model->set('add_conditions', $add_conditions, false);
-        $view_model->set('pagination', $pagination, false);
         $view_model->set('fleamarket_list', $fleamarket_list, false);
+        $view_model->set('pagination', $pagination, false);
+        $view_model->set('user', $this->login_user, false);
 
-        $this->setMetaTag('search/index');
         $this->template->content = $view_model;
     }
 
@@ -104,6 +75,9 @@ class Controller_Search extends Controller_Base_Template
      */
     public function get_detail($fleamarket_id)
     {
+        Asset::css('jquery-ui.min.css', array(), 'add_css');
+        Asset::js('jquery-ui.min.js', array(), 'add_js');
+
         if (! $fleamarket_id) {
             Response::redirect('errors/notfound');
         }
@@ -138,8 +112,11 @@ class Controller_Search extends Controller_Base_Template
             'fleamarket_entry_styles', $entry_styles, false
         );
         $view_model->set('entries', $entries, false);
+        $view_model->set(
+            'prefectures', \Config::get('master.prefectures'), false
+        );
+        $view_model->set('user', $this->login_user, false);
 
-        $this->setMetaTag('search/detail');
         $this->template->content = $view_model;
     }
 
@@ -173,6 +150,69 @@ class Controller_Search extends Controller_Base_Template
         }
 
         $this->response_json($result, true);
+    }
+
+    /**
+     * 検索条件を取得する
+     *
+     * @access private
+     * @param
+     * @return array
+     * @author ida
+     */
+    private function getCondition()
+    {
+        $conditions = Input::get('c', array());
+
+        if (isset($conditions['keyword'])
+            && $conditions['keyword'] == ''
+        ) {
+            unset($conditions['keyword']);
+        }
+
+        if (isset($conditions['prefecture'])
+            && $conditions['prefecture'] == ''
+        ) {
+            unset($conditions['prefecture']);
+        }
+
+        if (isset($conditions['region'])
+            && $conditions['region'] == ''
+        ) {
+            unset($conditions['region']);
+        }
+
+        $prefecure = Input::get('prefecture');
+        if ($prefecure != '') {
+            $alphabet_prefectures = \Config::get('master.alphabet_prefectures');
+            $prefecture_id = array_search($prefecure, $alphabet_prefectures);
+            $conditions = array('prefecture' => $prefecture_id);
+        }
+
+        $calendar = Input::get('calendar');
+        if ($calendar) {
+            $conditions = array('calendar' => $calendar);
+        }
+
+        $upcomming = Input::get('upcomming');
+        if ($upcomming) {
+            $conditions = array('upcomming' => $upcomming);
+        }
+
+        $reservation = Input::get('reservation');
+        if ($reservation) {
+            $conditions = array('reservation' => $reservation);
+        }
+
+        $add_conditions = Input::get('ac', array());
+        if (isset($conditions['shop_fee'])
+            && $conditions['shop_fee'] == \Model_Fleamarket::SHOP_FEE_FLAG_FREE
+        ) {
+            $add_conditions['shop_fee'][] = \Model_Fleamarket::SHOP_FEE_FLAG_FREE;
+            unset($conditions['shop_fee']);
+        }
+
+        return array($conditions, $add_conditions);
     }
 
     /**

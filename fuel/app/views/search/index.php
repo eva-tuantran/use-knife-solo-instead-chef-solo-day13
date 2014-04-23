@@ -1,3 +1,19 @@
+<style type="text/css">
+.reserved {
+  margin: 0 5px 0 5px;
+  padding: 10px 0;
+  width: 130px;
+  font-size: 100%;
+  background-color: #f59000;
+  color: #fff;
+  border: none;
+  border-radius: 3px;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  text-align: center;
+  cursor: default;
+}
+</style>
 <script type='text/javascript'>
 var googletag = googletag || {};
 googletag.cmd = googletag.cmd || [];
@@ -15,7 +31,7 @@ node.parentNode.insertBefore(gads, node);
 
 <script type='text/javascript'>
 googletag.cmd.push(function() {
-googletag.defineSlot('/64745063/(楽市楽座)検索結果_フッターバナー_728x90', [728, 90], 'div-gpt-ad-1397113960029-0').addService(googletag.pubads());
+googletag.defineSlot('/64745063/(楽市楽座)検索結果_フッターバナー_728x90', [auto, 90], 'div-gpt-ad-1397113960029-0').addService(googletag.pubads());
 googletag.pubads().enableSingleRequest();
 googletag.enableServices();
 });
@@ -26,59 +42,62 @@ googletag.enableServices();
     <?php
         $title = '';
         $titles = array();
-        if ($base_conditions):
-            if (isset($base_conditions['prefecture']) && ! empty($base_conditions['prefecture'])):
-                $titles[] = $prefectures[$base_conditions['prefecture']];
-            elseif (isset($base_conditions['region']) && ! empty($base_conditions['region'])):
-                $titles[] = $regions[$base_conditions['region']];
-            endif;
-            if (isset($base_conditions['calendar']) && ! empty($base_conditions['calendar'])):
-                $titles[] = date('Y年m月d日', strtotime($base_conditions['calendar']));
-            endif;
-            if (isset($base_conditions['upcomming']) && ! empty($base_conditions['upcomming'])):
-                $titles[] = '近日開催';
-            endif;
-            if (isset($base_conditions['reservation']) && ! empty($base_conditions['reservation'])):
-                $titles[] = '出店予約可能';
-            endif;
-            if (isset($base_conditions['keyword']) && ! empty($base_conditions['keyword'])):
-                $titles[] = e($base_conditions['keyword']);
-            endif;
-            if (isset($base_conditions['shop_fee'])
-                && $base_conditions['shop_fee'] == \Model_Fleamarket::SHOP_FEE_FLAG_FREE
-            ):
-                $titles[] = '出店無料';
-            endif;
-            if (isset($base_conditions['car_shop'])
-                && $base_conditions['car_shop'] == \Model_Fleamarket::CAR_SHOP_FLAG_OK
-            ):
-                $titles[] = '車出店可';
-            endif;
-            if (isset($base_conditions['rainy_location'])
-                && $base_conditions['rainy_location'] == \Model_Fleamarket::RAINY_LOCATION_FLAG_EXIST
-            ):
-                $titles[] = '雨天開催会場';
-            endif;
-            if (isset($base_conditions['pro_shop'])
-                && $base_conditions['pro_shop'] == \Model_Fleamarket::PRO_SHOP_FLAG_OK
-            ):
-                $titles[] = 'プロ出店可';
-            endif;
-            if (isset($base_conditions['charge_parking'])
-                && $base_conditions['charge_parking'] == \Model_Fleamarket::CHARGE_PARKING_FLAG_EXIST
-            ):
-                $titles[] = '有料駐車場あり';
-            endif;
-            if (isset($base_conditions['free_parking'])
-                && $base_conditions['free_parking'] == \Model_Fleamarket::FREE_PARKING_FLAG_EXIST
-            ):
-                $titles[] = '無料駐車場あり';
-            endif;
 
-            if (! empty($titles)):
-                $title = implode('/', $titles);
-                $title .= 'の';
-            endif;
+        if ($conditions):
+            foreach ($conditions as $field => $condition):
+                if ($condition == '') {
+                    continue;
+                }
+
+                switch ($field):
+                    case 'prefecture':
+                        $titles[0] = $prefectures[$condition];
+                        break;
+                    case 'region':
+                        if (! isset($conditions['prefecture'])):
+                            $titles[1] = $regions[$condition];
+                        endif;
+                        break;
+                    case 'calendar':
+                        $titles[2] = date('Y年m月d日', strtotime($condition));
+                        break;
+                    case 'upcomming':
+                        $titles[3] = '近日開催';
+                        break;
+                    case 'reservation':
+                        $titles[4] = '出店予約可能';
+                        break;
+                    case 'keyword':
+                        $titles[5] = e($condition);
+                        break;
+                    case 'shop_fee':
+                        $titles[6] = '出店無料';
+                        break;
+                    case 'car_shop':
+                        $titles[7] = '車出店可';
+                        break;
+                    case 'rainy_location':
+                        $titles[8] = '雨天開催会場';
+                        break;
+                    case 'pro_shop':
+                        $titles[9] = 'プロ出店可';
+                        break;
+                    case 'charge_parking':
+                        $titles[10] = '有料駐車場あり';
+                        break;
+                    case 'free_parking':
+                        $titles[11] = '無料駐車場あり';
+                        break;
+                    default:
+                        break;
+                endswitch;
+            endforeach;
+        endif;
+
+        if ($titles):
+            ksort($titles);
+            $title = implode('/', $titles);
+            $title .= 'の';
         endif;
     ?>
     <div id="resultTitle"><?php echo $title;?>フリマ会場一覧</div>
@@ -128,18 +147,37 @@ googletag.enableServices();
                     $shop_fee_string .= $booth_fee;
                 endforeach;
             endif;
+
+            $is_entry_full = false;
+            if ($total_booth <= $fleamarket['total_reserved_booth']):
+                $is_entry_full = true;
+            endif;
 ?>
     <div class="box result <?php echo $status_class;?> <?php echo $resultPush;?> clearfix">
       <h3>
         <?php if ($is_official):?>
         <strong><img src="/assets/img/resultPush.png" alt="楽市楽座主催" width="78" height="14"></strong>
         <?php endif;?>
-        <a href="/detail/<?php echo e($fleamarket['fleamarket_id']);?>">
+        <a href="/detail/<?php echo e($fleamarket_id);?>">
           <?php echo e(date('Y年n月j日', strtotime($fleamarket['event_date'])));?>(<?php echo $week_list[date('w', strtotime($fleamarket['event_date']))];?>)&nbsp;
           <?php echo e($fleamarket['name']);?>
         </a>
       </h3>
-      <div class="resultPhoto"><a href="/detail/<?php echo e($fleamarket_id);?>"><img src="/assets/img/noimage.jpg" class="img-rounded"></a></div>
+      <div class="resultPhoto">
+        <?php
+            $image_path = '/assets/img/noimage.jpg';
+            if (isset($fleamarket['file_name']) && $fleamarket['file_name'] != ''):
+                $image_path = '/files/fleamarket/img/m_' . $fleamarket['file_name'];
+
+                if (! file_exists('.' . $image_path)):
+                    $image_path ='/assets/img/noimage.jpg';
+                endif;
+            endif;
+        ?>
+        <a href="/detail/<?php echo e($fleamarket_id);?>">
+          <img src="<?php echo $image_path;?>" class="img-rounded" style="width: 200px; height: 150px;">
+        </a>
+      </div>
       <div class="resultDetail">
         <dl class="col-md-6">
           <dt>出店ブース数</dt>
@@ -191,27 +229,37 @@ googletag.enableServices();
           ?></dd>
         </dl>
         <ul class="facilitys">
-          <li class="facility1 <?php echo $fleamarket['car_shop_flag'] != \Model_Fleamarket::CAR_SHOP_FLAG_NG ?: 'off';?>">車出店可能</li>
-          <li class="facility2 <?php echo $fleamarket['charge_parking_flag'] != \Model_Fleamarket::CHARGE_PARKING_FLAG_NONE ?: 'off';?>">有料駐車場</li>
-          <li class="facility3 <?php echo $fleamarket['free_parking_flag'] != \Model_Fleamarket::FREE_PARKING_FLAG_NONE ?: 'off';?>">無料駐車場</li>
-          <li class="facility4 <?php echo $fleamarket['rainy_location_flag'] != \Model_Fleamarket::RAINY_LOCATION_FLAG_NONE ?: 'off';?>">雨天開催会場</li>
+          <li class="facility1 <?php echo $fleamarket['car_shop_flag'] != \Model_Fleamarket::CAR_SHOP_FLAG_NG ? 'on' : 'off';?>">車出店可能</li>
+          <li class="facility2 <?php echo $fleamarket['charge_parking_flag'] != \Model_Fleamarket::CHARGE_PARKING_FLAG_NONE ? 'on' : 'off';?>">有料駐車場</li>
+          <li class="facility3 <?php echo $fleamarket['free_parking_flag'] != \Model_Fleamarket::FREE_PARKING_FLAG_NONE ? 'on' : 'off';?>">無料駐車場</li>
+          <li class="facility4 <?php echo $fleamarket['rainy_location_flag'] != \Model_Fleamarket::RAINY_LOCATION_FLAG_NONE ? 'on' : 'off';?>">雨天開催会場</li>
         </ul>
         <ul class="detailLink">
-          <li><a href="/detail/<?php echo e($fleamarket_id);?>">詳細情報を見る<i></i></a></li>
+          <li><a href="/detail/<?php echo $fleamarket_id;?>">詳細情報を見る<i></i></a></li>
         </ul>
         <ul class="rightbutton">
           <?php
-            if ($is_official && $fleamarket['event_status'] == \Model_Fleamarket::EVENT_STATUS_RESERVATION_RECEIPT):
+            if ($user && $user->hasEntry($fleamarket_id)):
+          ?>
+          <li class="button reserved">出店予約中</li>
+          <?php
+            elseif ($user && $user->hasWaiting($fleamarket_id)):
+          ?>
+          <li class="button reserved">キャンセル待ち中</li>
+          <?php
+            elseif ($is_official
+                && $fleamarket['event_status'] == \Model_Fleamarket::EVENT_STATUS_RESERVATION_RECEIPT
+            ):
                 $reservation_button = '出店予約をする';
-                if ($fleamarket['event_reservation_status'] == \Model_Fleamarket::EVENT_RESERVATION_STATUS_FULL):
+                if ($is_entry_full):
                     $reservation_button = 'キャンセル待ちをする';
                 endif;
           ?>
-          <li class="button makeReservation"><a href="/reservation?fleamarket_id=<?php echo e($fleamarket_id);?>"><?php echo $reservation_button;?></a></li>
+          <li class="button makeReservation"><a href="/reservation?fleamarket_id=<?php echo $fleamarket_id;?>"><?php echo $reservation_button;?></a></li>
           <?php
             endif;
           ?>
-          <li class="button addMylist"><a id="fleamarket_id_<?php echo $fleamarket['fleamarket_id']; ?>" href="#">マイリストに追加</a></li>
+          <li class="button addMylist"><a id="fleamarket_id_<?php echo $fleamarket_id; ?>" href="#">マイリストに追加</a></li>
         </ul>
       </div>
     </div>
@@ -223,13 +271,13 @@ googletag.enableServices();
   </div>
   <!-- /searchResult -->
   <!-- searchSelecter -->
-  <form id="form_search" action="/search/1/" method="get">
+  <form id="form_search" action="/search/1" method="get">
     <div id="searchSelecter" class="col-sm-3 col-sm-pull-9">
       <div class="box clearfix">
       <?php
-          if (is_array($base_conditions) && count($base_conditions) > 0):
-              foreach ($base_conditions as $field => $value):
-                  echo Form::hidden('conditions[' . $field . ']', $value);
+          if ($conditions):
+              foreach ($conditions as $field => $value):
+                  echo '<input type="hidden" name="c[' . $field . ']" value="' . $value . '">';
               endforeach;
           endif;
       ?>
@@ -239,25 +287,25 @@ googletag.enableServices();
               $is_checked = isset($add_conditions['event_status']) && in_array(\Model_Fleamarket::EVENT_STATUS_SCHEDULE, $add_conditions['event_status']);
           ?>
           <label>
-            <input type="checkbox" name="add_conditions[event_status][]" value="<?php echo \Model_Fleamarket::EVENT_STATUS_SCHEDULE;?>" <?php echo $is_checked ? 'checked': '';?>>開催予定
+            <input type="checkbox" name="ac[event_status][]" value="<?php echo \Model_Fleamarket::EVENT_STATUS_SCHEDULE;?>" <?php echo $is_checked ? 'checked': '';?>>開催予定
           </label>
           <?php
               $is_checked = isset($add_conditions['event_status']) && in_array(\Model_Fleamarket::EVENT_STATUS_RESERVATION_RECEIPT, $add_conditions['event_status']);
           ?>
           <label>
-            <input type="checkbox" name="add_conditions[event_status][]" value="<?php echo \Model_Fleamarket::EVENT_STATUS_RESERVATION_RECEIPT;?>" <?php echo $is_checked ? 'checked': '';?>>予約受付中
+            <input type="checkbox" name="ac[event_status][]" value="<?php echo \Model_Fleamarket::EVENT_STATUS_RESERVATION_RECEIPT;?>" <?php echo $is_checked ? 'checked': '';?>>予約受付中
           </label>
           <?php
               $is_checked = isset($add_conditions['event_status']) && in_array(\Model_Fleamarket::EVENT_STATUS_RECEIPT_END, $add_conditions['event_status']);
           ?>
           <label>
-            <input type="checkbox" name="add_conditions[event_status][]" value="<?php echo \Model_Fleamarket::EVENT_STATUS_RECEIPT_END;?>" <?php echo $is_checked ? 'checked': '';?>>受付終了
+            <input type="checkbox" name="ac[event_status][]" value="<?php echo \Model_Fleamarket::EVENT_STATUS_RECEIPT_END;?>" <?php echo $is_checked ? 'checked': '';?>>受付終了
           </label>
           <?php
               $is_checked = isset($add_conditions['event_status']) && in_array(\Model_Fleamarket::EVENT_STATUS_CLOSE, $add_conditions['event_status']);
           ?>
           <label>
-            <input type="checkbox" name="add_conditions[event_status][]" value="<?php echo \Model_Fleamarket::EVENT_STATUS_CLOSE;?>" <?php echo $is_checked ? 'checked': '';?>>開催終了
+            <input type="checkbox" name="ac[event_status][]" value="<?php echo \Model_Fleamarket::EVENT_STATUS_CLOSE;?>" <?php echo $is_checked ? 'checked': '';?>>開催終了
           </label>
           <h3>出店形態</h3>
           <?php
@@ -265,7 +313,7 @@ googletag.enableServices();
                   $is_checked = isset($add_conditions['entry_style']) && in_array($entry_style_id, $add_conditions['entry_style']);
           ?>
           <label>
-            <input type="checkbox" name="add_conditions[entry_style][]" value="<?php echo $entry_style_id;?>" <?php echo $is_checked ? 'checked': '';?>><?php echo e($entry_style_name);?>
+            <input type="checkbox" name="ac[entry_style][]" value="<?php echo $entry_style_id;?>" <?php echo $is_checked ? 'checked': '';?>><?php echo e($entry_style_name);?>
           </label>
           <?php
               endforeach;
@@ -275,13 +323,13 @@ googletag.enableServices();
               $is_checked = isset($add_conditions['shop_fee']) && in_array(\Model_Fleamarket::SHOP_FEE_FLAG_FREE, $add_conditions['shop_fee']);
           ?>
           <label>
-            <input type="checkbox" name="add_conditions[shop_fee][]" value="<?php echo \Model_Fleamarket::SHOP_FEE_FLAG_FREE;?>" <?php echo $is_checked ? 'checked': '';?>>無料出店
+            <input type="checkbox" name="ac[shop_fee][]" value="<?php echo \Model_Fleamarket::SHOP_FEE_FLAG_FREE;?>" <?php echo $is_checked ? 'checked': '';?>>出店無料
           </label>
           <?php
               $is_checked = isset($add_conditions['shop_fee']) && in_array(\Model_Fleamarket::SHOP_FEE_FLAG_CHARGE, $add_conditions['shop_fee']);
           ?>
           <label>
-            <input type="checkbox" name="add_conditions[shop_fee][]" value="<?php echo \Model_Fleamarket::SHOP_FEE_FLAG_CHARGE;?>" <?php echo $is_checked ? 'checked': '';?>>有料出店
+            <input type="checkbox" name="ac[shop_fee][]" value="<?php echo \Model_Fleamarket::SHOP_FEE_FLAG_CHARGE;?>" <?php echo $is_checked ? 'checked': '';?>>出店有料
           </label>
           <div id="searchButton">
             <button id="do_search" type="button" class="btn btn-default">検索</button>
@@ -332,11 +380,12 @@ googletag.enableServices();
 <!-- /searchSelecter -->
 <!-- ad -->
 <div class="ad">
-<!-- (楽市楽座)検索結果_フッターバナー_728x90 -->
-<div id="div-gpt-ad-1397113960029-0" class="ad"　style="width: 728px; height: 90px;">
-<script type="text/javascript">
-googletag.cmd.push(function() { googletag.display("div-gpt-ad-1397113960029-0"); });
-</script>
+  <!-- (楽市楽座)検索結果_フッターバナー_728x90 -->
+  <div id="div-gpt-ad-1397113960029-0" class="ad" style="width: auto; height: 90px;">
+  <script type="text/javascript">
+  googletag.cmd.push(function() { googletag.display("div-gpt-ad-1397113960029-0"); });
+  </script>
+  </div>
 </div>
 <!-- /ad -->
 <!-- pagination -->
@@ -357,46 +406,54 @@ googletag.cmd.push(function() { googletag.display("div-gpt-ad-1397113960029-0");
 <script type="text/javascript">
 $(function() {
   $(".pagination li").on("click", function(evt) {
-      evt.preventDefault();
-      var href = $(this).find("a").attr("href");
-      $("#form_search").attr("action", href).submit();
+    evt.preventDefault();
+    var href = $(this).find("a").attr("href");
+    $("#form_search").attr("action", href).submit();
   });
 
   $("#do_search").on("click", function(evt) {
-      evt.preventDefault();
-      $("#form_search").submit();
+    evt.preventDefault();
+    $("#form_search").submit();
   });
 
   $(".addMylist a").click(function(evt){
-      evt.preventDefault();
-      var id = $(this).attr('id');
-      id = id.match(/^fleamarket_id_(\d+)/)[1];
-      $.ajax({
-          type: "post",
-          url: '/favorite/add',
-          dataType: "json",
-          data: {fleamarket_id: id}
-      }).done(function(json, textStatus, jqXHR) {
-          if(json == 'nologin' || json == 'nodata'){
-              $('#dialog_need_login').dialog();
-          }else if(json){
-              $('#dialog_success').dialog();
-          }else{
-              $('#dialog_fail').dialog();
+    evt.preventDefault();
+    var id = $(this).attr('id');
+    id = id.match(/^fleamarket_id_(\d+)/)[1];
+
+    $.ajax({
+      type: "post",
+      url: '/favorite/add',
+      dataType: "json",
+      data: {fleamarket_id: id}
+    }).done(function(json, textStatus, jqXHR) {
+      var message = '';
+      if (json == 'nologin' || json == 'nodata') {
+        message = 'マイリストに登録するためにはログインが必要です';
+      } else if (json) {
+        message = 'マイリストに登録しました';
+      } else {
+        message = 'マイリストに登録できませんでした';
+      }
+
+      if (message != '') {
+        $("#information-dialog #message").text(message);
+        $("#information-dialog").dialog({
+          modal: true,
+          buttons: {
+            Ok: function() {
+              $(this).dialog( "close" );
+            }
           }
-      }).fail(function(jqXHR, textStatus, errorThrown) {
-          $('#dialog_fail').dialog();
-      });
+        });
+      }
+    }).fail(function(jqXHR, textStatus, errorThrown) {
+      $('#dialog_fail').dialog();
+    });
   });
 });
 </script>
 
-<div id="dialog_success" style="display: none;">
-マイリストに登録しました
-</div>
-<div id="dialog_fail" style="display: none;">
-マイリストに登録できませんでした
-</div>
-<div id="dialog_need_login" style="display: none;">
-マイリストに登録するためにはログインが必要です
+<div id="information-dialog" style="text-align: left; padding: 20px; display: none;">
+  <p id="message"></p>
 </div>
