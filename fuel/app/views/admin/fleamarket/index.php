@@ -1,5 +1,3 @@
-<?php
-?>
 <script type="text/javascript">
 $(function() {
   $("#inputEventDate").datepicker({
@@ -118,9 +116,7 @@ $(function() {
       <td>内容</td>
       <td>
 	
-	<textarea name="description" cols=50 rows=10>
-	  <?php echo e($fields['description']->value); ?>
-	</textarea>
+	<textarea name="description" cols=50 rows=10><?php echo e($fields['description']->value); ?></textarea>
 	<?php
 	   if (isset($errors['description'])) {
    	       echo $errors['description'];
@@ -364,9 +360,7 @@ $(function() {
 	<?php echo e($title); ?>
       </td>
       <td>
-	<textarea name="fleamarket_about_<?php echo $id; ?>_description" cols=50 rows=10>
-	  <?php echo e($fieldsets['fleamarket_abouts'][$id]->field('description')->value); ?>
-	</textarea>
+	<textarea name="fleamarket_about_<?php echo $id; ?>_description" cols=50 rows=10><?php echo e($fieldsets['fleamarket_abouts'][$id]->field('description')->value); ?></textarea>
 	<?php $errors = $fieldsets['fleamarket_abouts'][$id]->validation()->error_message(); ?>
 	<?php 
 	   if (isset($errors['description'])) {
