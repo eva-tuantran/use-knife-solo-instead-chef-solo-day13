@@ -6,19 +6,18 @@ Vagrant.configure("2") do |config|
   # config.vm.box_url = "http://developer.nrel.gov/downloads/vagrant-boxes/CentOS-6.4-x86_64-v20130731.box"
   config.vm.box_url = "http://192.168.101.62:8888/vagrant/CentOS-6.4-x86_64-v20130731.box"
 
-
-  config.vm.define :web0 do |web|
-    web.vm.network :private_network, ip: "192.168.33.98"
-    web.vm.hostname = 'dbtest'
-    web.vm.provision :chef_solo do |chef|
-      chef.cookbooks_path = ["./site-cookbooks", "./cookbooks"]
-      chef.add_recipe "base"
-      chef.add_recipe "mysql"
-      chef.add_recipe "rakuichidb::database"
-    end
-  end
-
-
+#
+#  config.vm.define :web0 do |web|
+#    web.vm.network :private_network, ip: "192.168.33.98"
+#    web.vm.hostname = 'dbtest'
+#    web.vm.provision :chef_solo do |chef|
+#      chef.cookbooks_path = ["./site-cookbooks", "./cookbooks"]
+#      chef.add_recipe "base"
+#      chef.add_recipe "mysql-server"
+#      chef.add_recipe "rakuichi::database"
+#    end
+#  end
+#
 
   config.vm.define :web1 do |web|
     web.vm.network :private_network, ip: "192.168.33.101"
@@ -31,8 +30,8 @@ Vagrant.configure("2") do |config|
       chef.add_recipe "selinux::disabled"
       chef.add_recipe "memcached"
       chef.add_recipe "composer"
-      chef.add_recipe "mysql"
-      chef.add_recipe "rakuichi-rakuza-stg"
+      chef.add_recipe "mysql-server"
+      chef.add_recipe "rakuichi-rakuza::development"
       chef.json = {
         :composer => {
           :install_path => "/usr/local/bin"
@@ -52,8 +51,8 @@ Vagrant.configure("2") do |config|
       chef.add_recipe "selinux::disabled"
       chef.add_recipe "memcached"
       chef.add_recipe "composer"
-      chef.add_recipe "mysql"
-      chef.add_recipe "rakuichi-rakuza-stg"
+      chef.add_recipe "mysql-server"
+      chef.add_recipe "rakuichi-rakuza::development"
       chef.json = {
         :composer => {
           :install_path => "/usr/local/bin"
