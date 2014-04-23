@@ -1,7 +1,4 @@
 #
-# Cookbook Name:: rakuichi-httpd
-# Recipe:: default
-#
 # 楽市楽座のWebサーバの基本的な設定をコピーします
 # - DB等はまだ作成されておりません
 # - 基本的には冪等性を担保しているはずなので、何回実行しても大丈夫です。
@@ -53,7 +50,7 @@ directory "/etc/httpd/ssl" do
 end
 
 log "ssl crtificate file copy"
-%w{20240414.self-signed-certificate.crt 20240414.self-signed-certificate.key}.each do |name|
+%w{20240414.self-signed-certificate.crt 20240414.self-signed-certificate.key 20141104.wildcard.rakuichi-rakuza.jp.chain.crt 20141104.wildcard.rakuichi-rakuza.jp.crt 20141104.wildcard.rakuichi-rakuza.jp.key.nopass}.each do |name|
   cookbook_file "/etc/httpd/ssl/#{name}" do
     source "#{name}"
     owner "root"

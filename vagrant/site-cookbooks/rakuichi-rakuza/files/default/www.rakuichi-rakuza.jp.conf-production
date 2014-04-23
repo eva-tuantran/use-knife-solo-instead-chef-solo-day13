@@ -46,7 +46,7 @@
     SSLCipherSuite          ALL:!ADH:!EXPORT:!SSLv2:RC4+RSA:+HIGH:+MEDIUM:+LOW
     SSLCertificateChainFile /etc/httpd/ssl/20141104.wildcard.rakuichi-rakuza.jp.chain.crt
     SSLCertificateFile      /etc/httpd/ssl/20141104.wildcard.rakuichi-rakuza.jp.crt
-    SSLCertificateKeyFile   /etc/httpd/ssl/20141104.wildcard.rakuichi-rakuza.jp.key
+    SSLCertificateKeyFile   /etc/httpd/ssl/20141104.wildcard.rakuichi-rakuza.jp.key.nopass
 
     SetEnv FUEL_ENV production
 
