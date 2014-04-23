@@ -93,12 +93,8 @@ SELECT
     f.event_time_start,
     f.event_time_end,
     f.event_status,
+    f.event_reservation_status,
     f.description,
-    f.reservation_start,
-    f.reservation_end,
-    f.reservation_tel,
-    f.reservation_email,
-    f.website,
     f.shop_fee_flag,
     f.car_shop_flag,
     f.pro_shop_flag,
@@ -129,7 +125,6 @@ LEFT JOIN
 WHERE
     fav.user_id = :user_id AND
     f.display_flag = :display_flag AND
-    fa.about_id = :about_access_id AND
     fav.deleted_at IS NULL
 ORDER BY
     f.event_date DESC,

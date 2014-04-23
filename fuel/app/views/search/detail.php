@@ -103,11 +103,6 @@ Map.prototype = {
             $shop_fee_string .= $booth_fee;
         endforeach;
     endif;
-
-    $is_entry_full = false;
-    if ($total_booth <= $fleamarket['total_reserved_booth']):
-        $is_entry_full = true;
-    endif;
 ?>
 <div id="contentDetail" class="row">
   <!-- title -->
@@ -134,27 +129,17 @@ Map.prototype = {
         </ul>
       </div>
       <ul class="rightbutton">
-        <?php
-            if ($user && $user->hasEntry($fleamarket_id)):
-        ?>
+    <?php if ($user && $user->hasEntry($fleamarket_id)):?>
         <li class="button reserved">出店予約中</li>
-        <?php
-            elseif ($user && $user->hasWaiting($fleamarket_id)):
-        ?>
+    <?php elseif ($user && $user->hasWaiting($fleamarket_id)):?>
         <li class="button reserved">キャンセル待ち中</li>
-        <?php
-            elseif ($is_official
-                && $fleamarket['event_status'] == \Model_Fleamarket::EVENT_STATUS_RESERVATION_RECEIPT
-            ):
-                $reservation_button = '出店予約をする';
-                if ($is_entry_full):
-                    $reservation_button = 'キャンセル待ちをする';
-                endif;
-        ?>
-        <li class="button makeReservation"><a href="/reservation/?fleamarket_id=<?php echo e($fleamarket_id);?>"><i></i><?php echo $reservation_button;?></a></li>
-        <?php
-            endif;
-        ?>
+    <?php elseif ($is_official):?>
+        <?php if($fleamarket['event_status'] == \Model_Fleamarket::EVENT_STATUS_RESERVATION_RECEIPT):?>
+        <li class="button makeReservation"><a href="/reservation?fleamarket_id=<?php echo $fleamarket_id;?>">出店予約をする</a></li>
+        <?php elseif ($fleamarket['event_reservation_status'] == \Model_Fleamarket::EVENT_RESERVATION_STATUS_FULL):?>
+        <li class="button makeReservation"><a href="/reservation?fleamarket_id=<?php echo $fleamarket_id;?>">キャンセル待ちをする</a></li>
+        <?php endif;?>
+    <?php endif;?>
         <li id="do_print" class="button print hidden-xs"><a href="#"><i></i>ページの印刷をする</a></li>
       </ul>
     </div>
@@ -178,10 +163,10 @@ Map.prototype = {
     <ul class="thumbnailPhoto">
     <?php
             foreach ($image_files as $image_file_name):
-                $image_file = '/files/fleamarket/img/ss_' . $image_file_name;
+                $image_file = '/files/fleamarket/img/l_' . $image_file_name;
 
                 if (! file_exists('.' . $image_file)):
-                    $image_file ='/assets/img/noimage_s.jpg';
+                    $image_file ='/assets/img/noimage.jpg';
                 endif;
     ?>
       <li><img src="<?php echo $image_file;?>" style="width: 100px; height: 65px;"></li>
@@ -331,27 +316,19 @@ Map.prototype = {
         <li class="button gotoMylist"><a href="/mypage/list?type=mylist"><i></i>マイリストを見る</a></li>
       </ul>
       <ul class="rightbutton">
-        <?php
-            if ($user && $user->hasEntry($fleamarket_id)):
-        ?>
+    <?php if ($user && $user->hasEntry($fleamarket_id)):?>
         <li class="button reserved">出店予約中</li>
-        <?php
-            elseif ($user && $user->hasWaiting($fleamarket_id)):
-        ?>
+    <?php elseif ($user && $user->hasWaiting($fleamarket_id)):?>
         <li class="button reserved">キャンセル待ち中</li>
-        <?php
-            elseif ($is_official
-                && $fleamarket['event_status'] == \Model_Fleamarket::EVENT_STATUS_RESERVATION_RECEIPT
-            ):
-                $reservation_button = '出店予約をする';
-                if ($is_entry_full):
-                    $reservation_button = 'キャンセル待ちをする';
-                endif;
-        ?>
-        <li class="button makeReservation"><a id="do_reservation" href="/reservation/?fleamarket_id=<?php echo e($fleamarket_id);?>"><i></i><?php echo $reservation_button;?></a></li>
-        <?php
-            endif;
-        ?>
+    <?php elseif ($is_official):?>
+        <?php if ($fleamarket['event_status'] == \Model_Fleamarket::EVENT_STATUS_RESERVATION_RECEIPT):?>
+            <?php if ($fleamarket['event_reservation_status'] == \Model_Fleamarket::EVENT_RESERVATION_STATUS_FULL):?>
+        <li class="button makeReservation"><a href="/reservation?fleamarket_id=<?php echo $fleamarket_id;?>">出店予約をする</a></li>
+            <?php else:?>
+        <li class="button makeReservation"><a href="/reservation?fleamarket_id=<?php echo $fleamarket_id;?>">キャンセル待ちをする</a></li>
+            <?php endif;?>
+        <?php endif;?>
+    <?php endif;?>
       </ul>
     </div>
   </div>
@@ -360,35 +337,43 @@ Map.prototype = {
 <script type="text/javascript">
 $(function() {
   $(".addMylist a").click(function(evt){
-      evt.preventDefault();
-      var id = $(this).attr('id');
-      id = id.match(/^fleamarket_id_(\d+)/)[1];
-      $.ajax({
-          type: "post",
-          url: '/favorite/add',
-          dataType: "json",
-          data: {fleamarket_id: id}
-      }).done(function(json, textStatus, jqXHR) {
-          if(json == 'nologin' || json == 'nodata'){
-              $('#dialog_need_login').dialog();
-          }else if(json){
-              $('#dialog_success').dialog();
-          }else{
-              $('#dialog_fail').dialog();
-          }
-      }).fail(function(jqXHR, textStatus, errorThrown) {
-          $('#dialog_fail').dialog();
-      });
+    evt.preventDefault();
+    var id = $(this).attr('id');
+    id = id.match(/^fleamarket_id_(\d+)/)[1];
+
+    $.ajax({
+      type: "post",
+      url: '/favorite/add',
+      dataType: "json",
+      data: {fleamarket_id: id}
+    }).done(function(json, textStatus, jqXHR) {
+      var message = '';
+      if (json == 'nologin' || json == 'nodata') {
+        message = 'マイリストに登録するためにはログインが必要です';
+      } else if (json) {
+        message = 'マイリストに登録しました';
+      } else {
+        message = 'マイリストに登録できませんでした';
+      }
+      openDialog(message);
+    }).fail(function(jqXHR, textStatus, errorThrown) {
+      openDialog('マイリストに登録できませんでした');
+    });
   });
+
+  var openDialog = function(message) {
+    $("#information-dialog #message").text(message);
+    $("#information-dialog").dialog({
+      modal: true,
+      buttons: {
+        Ok: function() {
+          $(this).dialog( "close" );
+        }
+      }
+    });
+  };
 });
 </script>
-
-<div id="dialog_success" style="display: none;">
-マイリストに登録しました
-</div>
-<div id="dialog_fail" style="display: none;">
-マイリストに登録できませんでした
-</div>
-<div id="dialog_need_login" style="display: none;">
-マイリストに登録するためにはログインが必要です
+<div id="information-dialog" style="text-align: left; padding: 20px; display: none;">
+  <p id="message"></p>
 </div>

@@ -586,16 +586,30 @@ QUERY;
     }
 
     /**
-     * これまで参加したフリマの数を取得します
+     * エントリーした全てのフリーマーケットの情報を取得します
+     *
+     * @access public
+     * @param int $page ページ
+     * @param int $row_count 1ページの件数
+     * @return mixed
+     * @author shimma
+     */
+    public function getEntries($page = 1, $row_count = 30)
+    {
+        return \Model_Entry::getUserEntries($this->user_id, $page, $row_count);
+    }
+
+    /**
+     * フリマ参加総数を取得します
      *
      * @access public
      * @param
      * @return int
      * @author shimma
      */
-    public function getFinishedEntryCount()
+    public function getEntryCount()
     {
-        return \Model_Entry::getUserFinishedEntryCount($this->user_id);
+        return \Model_Entry::getUserEntryCount($this->user_id);
     }
 
     /**
@@ -622,6 +636,46 @@ QUERY;
     public function getReservedEntryCount()
     {
         return \Model_Entry::getUserReservedEntryCount($this->user_id);
+    }
+
+    /**
+     * これまで参加したフリマの数を取得します
+     *
+     * @access public
+     * @param
+     * @return int
+     * @author ida
+     */
+    public function getFinishedEntries($page = 1, $row_count = 30)
+    {
+        return \Model_Entry::getUserFinishedEntries($this->user_id, $page, $row_count);
+    }
+
+    /**
+     * これまで参加したフリマの数を取得します
+     *
+     * @access public
+     * @param
+     * @return int
+     * @author shimma
+     */
+    public function getFinishedEntryCount()
+    {
+        return \Model_Entry::getUserFinishedEntryCount($this->user_id);
+    }
+
+    /**
+     * キャンセル待ちした全てのフリーマーケットの情報を取得します
+     *
+     * @access public
+     * @param int $page ページ
+     * @param int $row_count 1ページの件数
+     * @return mixed
+     * @author kobayasi
+     */
+    public function getWaitingEntries($page = 1, $row_count = 30)
+    {
+        return \Model_Entry::getUserWaitingEntries($this->user_id, $page, $row_count);
     }
 
     /**
@@ -661,47 +715,6 @@ QUERY;
     public function getFavoriteCount()
     {
         return \Model_Favorite::getUserFavoriteCount($this->user_id);
-    }
-
-    /**
-     * エントリーした全てのフリーマーケットの情報を取得します
-     *
-     * @access public
-     * @param int $page ページ
-     * @param int $row_count 1ページの件数
-     * @return mixed
-     * @author shimma
-     */
-    public function getEntries($page = 1, $row_count = 30)
-    {
-        return \Model_Entry::getUserEntries($this->user_id, $page, $row_count);
-    }
-
-    /**
-     * キャンセル待ちした全てのフリーマーケットの情報を取得します
-     *
-     * @access public
-     * @param int $page ページ
-     * @param int $row_count 1ページの件数
-     * @return mixed
-     * @author kobayasi
-     */
-    public function getWaitingEntries($page = 1, $row_count = 30)
-    {
-        return \Model_Entry::getUserWaitingEntries($this->user_id, $page, $row_count);
-    }
-
-    /**
-     * フリマ参加総数を取得します
-     *
-     * @access public
-     * @param
-     * @return int
-     * @author shimma
-     */
-    public function getEntryCount()
-    {
-        return \Model_Entry::getUserEntryCount($this->user_id);
     }
 
     /**
@@ -824,10 +837,18 @@ QUERY;
             }
             $this->has_entry = $has_entry;
         }
-        
+
         return in_array($fleamarket_id, $this->has_entry);
     }
 
+    /**
+     * キャンセル待ちか
+     *
+     * @access public
+     * @param mixed $fleamarket_id
+     * @return bool
+     * @author kobayasi
+     */
     public function hasWaiting($fleamarket_id)
     {
         if (! $this->has_waiting) {
@@ -845,7 +866,7 @@ QUERY;
 
     public function canReserve($fleamarket)
     {
-        return 
+        return
             (! $this->hasEntry($fleamarket->fleamarket_id)) &&
             (! $this->hasWaiting($fleamarket->fleamarket_id));
     }
