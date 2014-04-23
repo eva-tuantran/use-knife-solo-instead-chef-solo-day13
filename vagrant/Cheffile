@@ -4,6 +4,8 @@
 site 'http://community.opscode.com/api/v1'
 
 cookbook 'selinux'
+cookbook 'mysql'
+cookbook 'database'
 
 # cookbook 'apache2', '>= 1.0.0'
 

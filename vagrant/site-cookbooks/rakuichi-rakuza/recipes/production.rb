@@ -1,7 +1,4 @@
 #
-# Cookbook Name:: rakuichi-httpd
-# Recipe:: default
-#
 # 楽市楽座のWebサーバの基本的な設定をコピーします
 # - DB等はまだ作成されておりません
 # - 基本的には冪等性を担保しているはずなので、何回実行しても大丈夫です。
@@ -42,7 +39,7 @@ else
 end
 log "deploy httpd.conf"
 cookbook_file "/etc/httpd/conf.d/www.rakuichi-rakuza.jp.conf" do
- source "www.rakuichi-rakuza.jp.conf"
+ source "www.rakuichi-rakuza.jp.conf-production"
  owner "root"
  group "root"
 end
@@ -53,7 +50,7 @@ directory "/etc/httpd/ssl" do
 end
 
 log "ssl crtificate file copy"
-%w{20240414.self-signed-certificate.crt 20240414.self-signed-certificate.key}.each do |name|
+%w{20240414.self-signed-certificate.crt 20240414.self-signed-certificate.key 20141104.wildcard.rakuichi-rakuza.jp.chain.crt 20141104.wildcard.rakuichi-rakuza.jp.crt 20141104.wildcard.rakuichi-rakuza.jp.key.nopass}.each do |name|
   cookbook_file "/etc/httpd/ssl/#{name}" do
     source "#{name}"
     owner "root"
@@ -71,15 +68,7 @@ service "httpd" do
   action [:restart]
 end
 
-# todo: db系は本番で上書きしないようにするなど、要設定
+# todo: db系は本番で上書きしないようにするなど、要設定。今のところ手動でDB入れる。
 # execute "import rakuichi-rakuza database" do
   # command "mysql -uroot </deploy/rakuichi-rakuza/db/rakuichi-rakuza.sql"
-# end
-
-# execute "seed rakuichi-rakuza database" do
-  # command "cd /deploy/rakuichi-rakuza; php composer.phar update; php oil refine seed;"
-# end
-
-# execute "grant readonly user" do
-  # command "echo 'grant select on *.* to readonly@localhost;' | mysql -uroot"
 # end

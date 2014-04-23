@@ -2,16 +2,16 @@ SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES';
 
-DROP SCHEMA IF EXISTS `rakuichi-rakuza` ;
-CREATE SCHEMA IF NOT EXISTS `rakuichi-rakuza` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci ;
-USE `rakuichi-rakuza` ;
+DROP SCHEMA IF EXISTS `rakuichi_rakuza` ;
+CREATE SCHEMA IF NOT EXISTS `rakuichi_rakuza` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci ;
+USE `rakuichi_rakuza` ;
 
 -- -----------------------------------------------------
--- Table `rakuichi-rakuza`.`users`
+-- Table `rakuichi_rakuza`.`users`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `rakuichi-rakuza`.`users` ;
+DROP TABLE IF EXISTS `rakuichi_rakuza`.`users` ;
 
-CREATE TABLE IF NOT EXISTS `rakuichi-rakuza`.`users` (
+CREATE TABLE IF NOT EXISTS `rakuichi_rakuza`.`users` (
   `user_id` INT NOT NULL AUTO_INCREMENT COMMENT '10000000から採番',
   `user_old_id` INT NULL COMMENT '旧楽市楽座のユーザID',
   `nick_name` VARCHAR(50) NOT NULL,
@@ -52,11 +52,11 @@ AUTO_INCREMENT = 10000000;
 
 
 -- -----------------------------------------------------
--- Table `rakuichi-rakuza`.`user_services`
+-- Table `rakuichi_rakuza`.`user_services`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `rakuichi-rakuza`.`user_services` ;
+DROP TABLE IF EXISTS `rakuichi_rakuza`.`user_services` ;
 
-CREATE TABLE IF NOT EXISTS `rakuichi-rakuza`.`user_services` (
+CREATE TABLE IF NOT EXISTS `rakuichi_rakuza`.`user_services` (
   `user_service_id` INT NOT NULL AUTO_INCREMENT,
   `user_id` INT NOT NULL,
   `shop_genre` TINYINT NOT NULL COMMENT '1:アロマ,2:アンケート調査,3:お笑い,4:カフェ,5:ダンス,6:フリーマーケットの冠協賛,7:フリーマーケットへのチラシ,8:記載,9:マッサージ.10:似顔絵,11:加工食品販売,12:占い,13:大道芸,14:契約推進,15:実演販売,16:屋台,17:歌・バンド・演奏,18:移動販売車,19:農産物販売,99:その他',
@@ -72,11 +72,11 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `rakuichi-rakuza`.`user_service_prefectures`
+-- Table `rakuichi_rakuza`.`user_service_prefectures`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `rakuichi-rakuza`.`user_service_prefectures` ;
+DROP TABLE IF EXISTS `rakuichi_rakuza`.`user_service_prefectures` ;
 
-CREATE TABLE IF NOT EXISTS `rakuichi-rakuza`.`user_service_prefectures` (
+CREATE TABLE IF NOT EXISTS `rakuichi_rakuza`.`user_service_prefectures` (
   `user_service_prefecture_id` INT NOT NULL AUTO_INCREMENT,
   `user_service_id` INT NOT NULL,
   `prefecture_id` TINYINT NOT NULL COMMENT '都道府県',
@@ -91,11 +91,11 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `rakuichi-rakuza`.`locations`
+-- Table `rakuichi_rakuza`.`locations`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `rakuichi-rakuza`.`locations` ;
+DROP TABLE IF EXISTS `rakuichi_rakuza`.`locations` ;
 
-CREATE TABLE IF NOT EXISTS `rakuichi-rakuza`.`locations` (
+CREATE TABLE IF NOT EXISTS `rakuichi_rakuza`.`locations` (
   `location_id` INT NOT NULL AUTO_INCREMENT,
   `branch_id` INT NULL COMMENT 'register_typeが運営者の時セット',
   `name` VARCHAR(50) NOT NULL COMMENT '開催地名',
@@ -115,11 +115,11 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `rakuichi-rakuza`.`fleamarkets`
+-- Table `rakuichi_rakuza`.`fleamarkets`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `rakuichi-rakuza`.`fleamarkets` ;
+DROP TABLE IF EXISTS `rakuichi_rakuza`.`fleamarkets` ;
 
-CREATE TABLE IF NOT EXISTS `rakuichi-rakuza`.`fleamarkets` (
+CREATE TABLE IF NOT EXISTS `rakuichi_rakuza`.`fleamarkets` (
   `fleamarket_id` INT NOT NULL AUTO_INCREMENT,
   `location_id` INT NOT NULL,
   `group_code` CHAR(6) NOT NULL COMMENT '同開催を一意にするコード',
@@ -166,11 +166,11 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `rakuichi-rakuza`.`entries`
+-- Table `rakuichi_rakuza`.`entries`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `rakuichi-rakuza`.`entries` ;
+DROP TABLE IF EXISTS `rakuichi_rakuza`.`entries` ;
 
-CREATE TABLE IF NOT EXISTS `rakuichi-rakuza`.`entries` (
+CREATE TABLE IF NOT EXISTS `rakuichi_rakuza`.`entries` (
   `entry_id` INT NOT NULL AUTO_INCREMENT,
   `user_id` INT NOT NULL,
   `fleamarket_id` INT NOT NULL,
@@ -193,11 +193,11 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `rakuichi-rakuza`.`companies`
+-- Table `rakuichi_rakuza`.`companies`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `rakuichi-rakuza`.`companies` ;
+DROP TABLE IF EXISTS `rakuichi_rakuza`.`companies` ;
 
-CREATE TABLE IF NOT EXISTS `rakuichi-rakuza`.`companies` (
+CREATE TABLE IF NOT EXISTS `rakuichi_rakuza`.`companies` (
   `company_id` INT NOT NULL AUTO_INCREMENT,
   `parent_id` INT NOT NULL DEFAULT 0 COMMENT '0:本社,0以外:店舗',
   `name` VARCHAR(50) NULL COMMENT '企業名,店舗名',
@@ -227,11 +227,11 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `rakuichi-rakuza`.`branches`
+-- Table `rakuichi_rakuza`.`branches`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `rakuichi-rakuza`.`branches` ;
+DROP TABLE IF EXISTS `rakuichi_rakuza`.`branches` ;
 
-CREATE TABLE IF NOT EXISTS `rakuichi-rakuza`.`branches` (
+CREATE TABLE IF NOT EXISTS `rakuichi_rakuza`.`branches` (
   `branch_id` INT NOT NULL AUTO_INCREMENT,
   `company_id` INT NOT NULL,
   `name` VARCHAR(50) NOT NULL COMMENT '開催地名',
@@ -253,11 +253,11 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `rakuichi-rakuza`.`administrators`
+-- Table `rakuichi_rakuza`.`administrators`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `rakuichi-rakuza`.`administrators` ;
+DROP TABLE IF EXISTS `rakuichi_rakuza`.`administrators` ;
 
-CREATE TABLE IF NOT EXISTS `rakuichi-rakuza`.`administrators` (
+CREATE TABLE IF NOT EXISTS `rakuichi_rakuza`.`administrators` (
   `administrator_id` INT NOT NULL AUTO_INCREMENT,
   `last_name` VARCHAR(50) NOT NULL COMMENT '姓',
   `first_name` VARCHAR(50) NOT NULL COMMENT '名',
@@ -278,11 +278,11 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `rakuichi-rakuza`.`administrator_permissions`
+-- Table `rakuichi_rakuza`.`administrator_permissions`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `rakuichi-rakuza`.`administrator_permissions` ;
+DROP TABLE IF EXISTS `rakuichi_rakuza`.`administrator_permissions` ;
 
-CREATE TABLE IF NOT EXISTS `rakuichi-rakuza`.`administrator_permissions` (
+CREATE TABLE IF NOT EXISTS `rakuichi_rakuza`.`administrator_permissions` (
   `administrator_permission_id` INT NOT NULL AUTO_INCREMENT,
   `administrator_id` INT NOT NULL,
   `permission` VARCHAR(50) NOT NULL COMMENT 'contoroller.actionの形式',
@@ -296,11 +296,11 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `rakuichi-rakuza`.`contacts`
+-- Table `rakuichi_rakuza`.`contacts`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `rakuichi-rakuza`.`contacts` ;
+DROP TABLE IF EXISTS `rakuichi_rakuza`.`contacts` ;
 
-CREATE TABLE IF NOT EXISTS `rakuichi-rakuza`.`contacts` (
+CREATE TABLE IF NOT EXISTS `rakuichi_rakuza`.`contacts` (
   `contact_id` INT NOT NULL AUTO_INCREMENT,
   `user_id` INT NULL,
   `inquiry_type` TINYINT NOT NULL COMMENT 'お問合せ区分 1:ホームページについて,2:フリーマーケットについて,3:楽市楽座について,4:開催可否の診断希望,5:その他お問合せ\n',
@@ -319,11 +319,11 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `rakuichi-rakuza`.`fleamarket_entry_styles`
+-- Table `rakuichi_rakuza`.`fleamarket_entry_styles`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `rakuichi-rakuza`.`fleamarket_entry_styles` ;
+DROP TABLE IF EXISTS `rakuichi_rakuza`.`fleamarket_entry_styles` ;
 
-CREATE TABLE IF NOT EXISTS `rakuichi-rakuza`.`fleamarket_entry_styles` (
+CREATE TABLE IF NOT EXISTS `rakuichi_rakuza`.`fleamarket_entry_styles` (
   `fleamarket_entry_style_id` INT NOT NULL AUTO_INCREMENT,
   `fleamarket_id` INT NOT NULL,
   `entry_style_id` TINYINT NOT NULL COMMENT '1:\'手持ち出店,2:手持ち出店(プロ),3:手持ち出店(手作り品),4:車出店,5:車出店(プロ),6:車出店(手作り品),7:企業手持ち出店,8:企業車出店,9:飲食店',
@@ -341,11 +341,11 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `rakuichi-rakuza`.`branch_abouts`
+-- Table `rakuichi_rakuza`.`branch_abouts`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `rakuichi-rakuza`.`branch_abouts` ;
+DROP TABLE IF EXISTS `rakuichi_rakuza`.`branch_abouts` ;
 
-CREATE TABLE IF NOT EXISTS `rakuichi-rakuza`.`branch_abouts` (
+CREATE TABLE IF NOT EXISTS `rakuichi_rakuza`.`branch_abouts` (
   `branch_about_id` INT NOT NULL AUTO_INCREMENT,
   `branch_id` INT NOT NULL,
   `title` VARCHAR(50) NOT NULL,
@@ -360,11 +360,11 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `rakuichi-rakuza`.`fleamarket_abouts`
+-- Table `rakuichi_rakuza`.`fleamarket_abouts`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `rakuichi-rakuza`.`fleamarket_abouts` ;
+DROP TABLE IF EXISTS `rakuichi_rakuza`.`fleamarket_abouts` ;
 
-CREATE TABLE IF NOT EXISTS `rakuichi-rakuza`.`fleamarket_abouts` (
+CREATE TABLE IF NOT EXISTS `rakuichi_rakuza`.`fleamarket_abouts` (
   `fleamarket_about_id` INT NOT NULL AUTO_INCREMENT,
   `fleamarket_id` INT NOT NULL,
   `about_id` INT NOT NULL,
@@ -381,11 +381,11 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `rakuichi-rakuza`.`user_tokens`
+-- Table `rakuichi_rakuza`.`user_tokens`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `rakuichi-rakuza`.`user_tokens` ;
+DROP TABLE IF EXISTS `rakuichi_rakuza`.`user_tokens` ;
 
-CREATE TABLE IF NOT EXISTS `rakuichi-rakuza`.`user_tokens` (
+CREATE TABLE IF NOT EXISTS `rakuichi_rakuza`.`user_tokens` (
   `user_token_id` INT NOT NULL AUTO_INCREMENT,
   `user_id` INT NOT NULL COMMENT '会員ID',
   `hash` VARCHAR(40) NOT NULL COMMENT 'activateに利用するhash文字列。ランダムのmd5を想定。',
@@ -400,11 +400,11 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `rakuichi-rakuza`.`fleamarket_images`
+-- Table `rakuichi_rakuza`.`fleamarket_images`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `rakuichi-rakuza`.`fleamarket_images` ;
+DROP TABLE IF EXISTS `rakuichi_rakuza`.`fleamarket_images` ;
 
-CREATE TABLE IF NOT EXISTS `rakuichi-rakuza`.`fleamarket_images` (
+CREATE TABLE IF NOT EXISTS `rakuichi_rakuza`.`fleamarket_images` (
   `fleamarket_image_id` INT NOT NULL AUTO_INCREMENT,
   `fleamarket_id` INT NOT NULL,
   `priority` TINYINT NOT NULL,
@@ -420,11 +420,11 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `rakuichi-rakuza`.`favorites`
+-- Table `rakuichi_rakuza`.`favorites`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `rakuichi-rakuza`.`favorites` ;
+DROP TABLE IF EXISTS `rakuichi_rakuza`.`favorites` ;
 
-CREATE TABLE IF NOT EXISTS `rakuichi-rakuza`.`favorites` (
+CREATE TABLE IF NOT EXISTS `rakuichi_rakuza`.`favorites` (
   `favorite_id` INT NOT NULL AUTO_INCREMENT,
   `user_id` INT NOT NULL,
   `fleamarket_id` INT NOT NULL,
@@ -437,11 +437,11 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `rakuichi-rakuza`.`mail_magazines`
+-- Table `rakuichi_rakuza`.`mail_magazines`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `rakuichi-rakuza`.`mail_magazines` ;
+DROP TABLE IF EXISTS `rakuichi_rakuza`.`mail_magazines` ;
 
-CREATE TABLE IF NOT EXISTS `rakuichi-rakuza`.`mail_magazines` (
+CREATE TABLE IF NOT EXISTS `rakuichi_rakuza`.`mail_magazines` (
   `mail_magazine_id` INT NOT NULL AUTO_INCREMENT,
   `send_datetime` DATETIME NULL,
   `mail_magazine_type` TINYINT NOT NULL DEFAULT 0 COMMENT 'メールマガジンタイプ 1全員,2:希望者全員,3:出店予約者',
