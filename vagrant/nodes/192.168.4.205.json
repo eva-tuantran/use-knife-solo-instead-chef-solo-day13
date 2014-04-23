@@ -1,1 +1,1 @@
-{  "host_name" : "ceb02",  "run_list":[    "recipe[base]",    "recipe[nameserver]",    "recipe[selinux::disabled]",    "recipe[keepalived]"  ]}
+{  "host_name" : "ceb02",  "run_list":[    "recipe[base]",    "recipe[nameserver]",    "recipe[selinux::disabled]",    "recipe[keepalived::rakuichi-production]"  ]}

@@ -1,0 +1,66 @@
+#============================================================
+#rakuichi-rakuza development
+#============================================================
+
+vrrp_instance VI_1 {
+  state BACKUP
+  interface eth0
+  virtual_router_id 60
+  priority 100
+  nopreempt
+  advert_int 1
+  authentication {
+    auth_type PASS
+    auth_pass 1112
+  }
+  virtual_ipaddress {
+    192.168.33.5
+  }
+}
+
+virtual_server_group aucfan_web_servers {
+  192.168.33.5 80
+  192.168.33.5 443
+}
+
+virtual_server group aucfan_web_servers {
+  delay_loop   5
+  lvs_sched    wlc
+  lvs_method   DR
+  protocol     TCP
+  #virtualhost  www.rakuichi-rakuza.jp
+  #sorry_server 192.168.31.102 80
+
+  ## nrt01 - rakuichi 001
+  real_server  192.168.33.101 {
+    weight 100
+    inhibit_on_failure
+    HTTP_GET {
+      url {
+        path /
+        status_code 200
+      }
+      connect_port 80
+      connect_timeout 3
+      retry 5
+      delay_before_retry 3
+    }
+  }
+
+  ## ceb01 - rakuichi 002
+  real_server  192.168.33.102 {
+    weight 100
+    inhibit_on_failure
+    HTTP_GET {
+      url {
+        path /
+        status_code 200
+      }
+      connect_port 80
+      connect_timeout 3
+      retry 5
+      delay_before_retry 3
+    }
+  }
+
+}
