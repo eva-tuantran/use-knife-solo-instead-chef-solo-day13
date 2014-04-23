@@ -42,3 +42,16 @@ master へのトランザクションをはるときなどは、
 ```
 
 のように明示的に指定してください。
+
+
+
+
+# やり残した点 (2014/4/23)
+
+## Lsyncd未実装
+
+lsyncdが出来なかったため、下記のcrontabを設定して稼働させている。(Webサーバ)
+
+```
+* * * * * /deploy/rakuichi-rakuza/bin/uploadfiles_sync.sh 192.168.4.204 >>/var/log/sync.$(date "+\%Y\%m\%d") 2>&1
+```
