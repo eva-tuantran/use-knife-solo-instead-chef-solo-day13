@@ -141,12 +141,16 @@
 <script type="text/javascript">
   var reservation_booth_limit = <?php echo json_encode($reservation_booth_limit); ?>;
   var remain_booth = <?php echo json_encode($remain_booth); ?>;
+  var can_reserve = <?php echo json_encode($fleamarket->canReserve()); ?>;
 
   $('input[name="fleamarket_entry_style_id"]').change(function(){
 
     var id = $('input[name="fleamarket_entry_style_id"]:checked').val();
 
-    if(remain_booth[id] <= 0){
+    if(!id){
+        $('#form-waiting').hide();
+        $('#form-no-waiting').hide();
+    }else if(!can_reserve || remain_booth[id] <= 0){
         $('#form-waiting').show();
         $('#form-no-waiting').hide();
         $('#waiting_fleamarket_entry_style_id').val(id);
