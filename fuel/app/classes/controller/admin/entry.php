@@ -53,17 +53,31 @@ class Controller_Admin_Entry extends Controller_Admin_Base_Template
     public function action_csv()
     {
         $fleamarket = Model_Fleamarket::find(Input::param('fleamarket_id'));
+        $csv = Lang::load('admin/csv');
 
-        $data = array();
+        $data = array($csv['header']);
+
+        $prefectures = Config::get('master.prefectures');
+        $entry_styles = Config::get('master.entry_styles');
+
         foreach ($fleamarket->entries as $entry) {
-            $array = $entry->to_array();
 
-            if ($entry->user) {
-                foreach (array('nick_name','last_name','first_name','email') as $column) {
-                    $array[$column] = $entry->user->get($column);
-                }
+            if ($entry->user && $entry->fleamarket_entry_style) {
+                $data[] = array(
+                    $fleamarket->created_at,
+                    $fleamarket->event_date,
+                    $fleamarket->location->name,
+                    $entry->user->user_id,
+                    $entry->reservation_number,
+                    $entry_styles[$entry->fleamarket_entry_style->entry_style_id],
+                    $entry->user->last_name . $entry->user->first_name,
+                    $entry->user->zip,
+                    $prefectures[$entry->user->prefecture_id],
+                    $entry->user->address,
+                    $entry->user->email,
+                    $entry->user->mobile_email
+                );
             }
-            $data[] = $array;
         }
         return $this->response_csv($data);
     }
