@@ -76,11 +76,19 @@ class Controller_Reservation extends Controller_Base_Template
     {
         Session::set_flash('reservation.fieldset',$this->fieldset);
 
+/*
+        //var_dump($this->fleamarket->event_status             == Model_Fleamarket::EVENT_STATUS_RESERVATION_RECEIPT);exit;
+        var_dump($this->fleamarket->event_reservation_status != Model_Fleamarket::EVENT_RESERVATION_STATUS_FULL);exit;
+
+        var_dump($this->fleamarket->canReserve());exit;
+        var_dump($this->canReserve());exit;
+*/
         if (! $this->fieldset->validation()->run() ||
             ! $this->canReserve()){
+            Session::set_flash('reservation.error', true);
             return Response::redirect('reservation');
         }
-
+        
         if (! $this->fleamarket_entry_style) {
             throw new SystemException(\Model_Error::ER00601);
         }
@@ -232,7 +240,7 @@ class Controller_Reservation extends Controller_Base_Template
     {
         if ($this->request->action == 'index') {
             $fieldset = Session::get_flash('reservation.fieldset');
-            if (! $fieldset || (! $fieldset->validation()->error())) {
+            if (! $fieldset || (! Session::get_flash('reservation.error'))) {
                 $fieldset = $this->createFieldset();
             }
         } elseif ($this->request->action == 'confirm') {
