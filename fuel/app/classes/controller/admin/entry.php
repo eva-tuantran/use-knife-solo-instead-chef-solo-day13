@@ -62,7 +62,7 @@ class Controller_Admin_Entry extends Controller_Admin_Base_Template
                 $data[] = array(
                     $fleamarket->created_at,
                     $fleamarket->event_date,
-                    $fleamarket->location->name,
+                    $fleamarket->name,
                     $entry->user->user_id,
                     $entry->reservation_number,
                     $entry_styles[$entry->fleamarket_entry_style->entry_style_id],
@@ -75,10 +75,10 @@ class Controller_Admin_Entry extends Controller_Admin_Base_Template
                 );
             }
         }
-        return $this->response_csv($data);
+        return $this->response_csv($data, $fleamarket->name);
     }
 
-    protected function response_csv($data)
+    protected function response_csv($data, $fleamarket_name)
     {
         $csv = mb_convert_encoding(
             Format::forge($data)->to_csv(),
@@ -86,9 +86,10 @@ class Controller_Admin_Entry extends Controller_Admin_Base_Template
             'UTF-8'
         );
 
+        $file_name = $fleamarket_name . '_エントリ一覧';
         $response = new Response($csv, 200, array(
             'Content-Type'        => 'application/csv',
-            'Content-Disposition' => 'attachment; filename="hoge.csv"',
+            'Content-Disposition' => 'attachment; filename="' . $file_name . '"',
         ));
 
         return $response;
