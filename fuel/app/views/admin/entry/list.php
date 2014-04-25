@@ -1,36 +1,44 @@
+<div style="margin-bottom: 50px; width: 700px">
 <form action="/admin/entry/list" method="GET">
-  <table>
+  <table class="table">
     <tr>
-      <td>予約番号</td>
-      <td><input type="text" name="reservation_number" value="<?php echo e(Input::param('reservation_number')); ?>">
+      <td style="width: 180px">予約番号</td>
+      <td><input type="text" name="reservation_number" value="<?php echo e(Input::param('reservation_number')); ?>"></td>
+      <td>
+        <input type="hidden" name="fleamarket_id" value="<?php echo e(Input::param('fleamarket_id','')); ?>">
+        <input type="hidden" name="user_id" value="<?php echo e(Input::param('user_id','')); ?>">
+        <input type="submit" value="search">
+      </td>
     </tr>
     <?php if(isset($user)) { ?>
     <tr>
-      <td>ユーザー</td>
-      <td>
-	<a href="/admin/user/?user_id=<?php echo $user->user_id; ?>">
-	  <?php echo e($user->last_name); ?> <?php echo e($user->first_name); ?>
-	</a>
+      <td style="width: 180px">ユーザー</td>
+      <td colspan="2">
+        <a href="/admin/user/?user_id=<?php echo $user->user_id; ?>">
+          <?php echo e($user->last_name); ?> <?php echo e($user->first_name); ?>
+        </a>
       </td>
     </tr>
     <?php } ?>
-    <?php if(isset($fleamarket)) { ?>
+    <?php if (isset($fleamarket)) { ?>
     <tr>
-      <td>開催</td>
-      <td>
-	<a href="/admin/fleamarket/?fleamarket_id=<?php echo $fleamarket->fleamarket_id; ?>">
-	  <?php echo e($fleamarket->name); ?>
-	</a>
+      <td style="width: 180px">開催</td>
+      <td colspan="2">
+        <a href="/admin/fleamarket/?fleamarket_id=<?php echo $fleamarket->fleamarket_id; ?>">
+        <?php echo e($fleamarket->name); ?>
+    	</a>
       </td>
     </tr>
     <?php } ?>
+    <tr>
+      <td style="width: 180px">総件数<br>（キャンセル、キャンセル待ち含む）</td>
+      <td colspan="2">
+        <?php echo isset($total) ? $total : 0;?>件
+      </td>
+    </tr>
   </table>
-
-  <input type="hidden" name="fleamarket_id" value="<?php echo e(Input::param('fleamarket_id','')); ?>">
-  <input type="hidden" name="user_id" value="<?php echo e(Input::param('user_id','')); ?>">
-  <input type="submit" value="search">
 </form>
-
+</div>
 <table class="table table-hover table-condensed">
   <tr>
     <th>ユーザー</th>
@@ -43,7 +51,7 @@
   </tr>
   <?php
     foreach ($entries as $entry):
-?>
+  ?>
   <tr>
     <td>
       <a href="/admin/user/?user_id=<?php echo $entry->user_id; ?>">

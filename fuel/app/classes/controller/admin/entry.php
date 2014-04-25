@@ -43,6 +43,7 @@ class Controller_Admin_Entry extends Controller_Admin_Base_Template
         }
         $view->set('item_categories', \Model_Entry::getItemCategoryDefine());
         $view->set('entry_statuses', \Model_Entry::getEntryStatuses());
+        $view->set('total', $total);
         $this->template->content = $view;
     }
 
