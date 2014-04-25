@@ -26,7 +26,7 @@
   <input type="submit" value="search">
 </form>
 
-<table>
+<table class="table table-hover table-condensed" style="width: 1000px">
   <tr>
     <th>氏名</th>
     <th>メールアドレス</th>

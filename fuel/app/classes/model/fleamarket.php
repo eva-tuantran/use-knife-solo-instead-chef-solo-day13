@@ -447,6 +447,7 @@ QUERY;
     EXISTS (
         SELECT * FROM fleamarket_entry_styles AS fes
         WHERE f.fleamarket_id = fes.fleamarket_id
+          AND fes.deleted_at IS NULL
           {$entry_style_where}
     ) AND
 ENTRY_STYLE_QUERY;
@@ -517,6 +518,7 @@ QUERY;
     EXISTS (
         SELECT * FROM fleamarket_entry_styles AS fes
         WHERE f.fleamarket_id = fes.fleamarket_id
+          AND fes.deleted_at IS NULL
           {$entry_style_where}
     ) AND
 ENTRY_STYLE_QUERY;

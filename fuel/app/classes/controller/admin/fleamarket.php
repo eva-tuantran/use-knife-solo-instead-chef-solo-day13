@@ -290,8 +290,10 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
         } else {
             if (Input::param('fleamarket_id')) {
                 $fleamarket = Model_Fleamarket::find(Input::param('fleamarket_id'));
+                unset($data['reservation_serial']);
             } else {
                 $fleamarket = Model_Fleamarket::forge();
+                $data['reservation_serial'] = 1;
             }
             if ($fleamarket) {
                 $fleamarket->set($data);

@@ -12,15 +12,7 @@
     # ガラケーは専用サイトのある旧楽市楽座へ飛ばす
     #----------------------------------------
     RewriteEngine on
-    # DoComo
-    RewriteCond %{HTTP_USER_AGENT} DoCoMo [NC]
-    # SoftBank
-    RewriteCond %{HTTP_USER_AGENT} J-PHONE [NC,OR]
-    RewriteCond %{HTTP_USER_AGENT} Vodafone [NC,OR]
-    RewriteCond %{HTTP_USER_AGENT} SoftBank [NC,OR]
-    # au
-    RewriteCond %{HTTP_USER_AGENT} KDDI- [NC,OR]
-    RewriteCond %{HTTP_USER_AGENT} UP.Browser [NC,OR]
+    RewriteCond %{HTTP_USER_AGENT} ^(DoCoMo|J-PHONE|KDDI|DDIPOKET|UP\.Browser|J-PHONE|Vodafone|SoftBank).*$ [NC]
     RewriteRule ^(.*)$ http://www2.rakuichi-rakuza.jp/$1 [P,L,QSA]
     ProxyPassReverse / http://www2.rakuichi-rakuza.jp/
     #----------------------------------------

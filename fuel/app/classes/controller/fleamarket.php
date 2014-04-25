@@ -92,7 +92,12 @@ class Controller_Fleamarket extends Controller_Base_Template
 
         $fleamarket_validation = $fleamarket_fieldset->validation();
         $fleamarket_validation->add_callable('Custom_Validation');
+
+        // 出店予約のバリデーション整合性のためセット
         $fleamarket['event_status'] = \Model_Fleamarket::EVENT_STATUS_SCHEDULE;
+        $fleamarket['event_reservation_status'] =
+            \Model_Fleamarket::EVENT_RESERVATION_STATUS_ENOUGH;
+
         $fleamarket_result = $fleamarket_validation->run($fleamarket);
 
         $fleamarket_about_validation = $fleamarket_about_fieldset->validation();
@@ -308,7 +313,7 @@ class Controller_Fleamarket extends Controller_Base_Template
             'event_time_start'  => $data['event_time_start'],
             'event_time_end'    => $data['event_time_end'],
             'event_status'      => $data['event_status'],
-            'event_reservation_status' => \Model_Fleamarket::EVENT_RESERVATION_STATUS_ENOUGH,
+            'event_reservation_status' => $data['event_reservation_status'],
             'headline'          => '',
             'information'       => '',
             'description'       => $data['description'],

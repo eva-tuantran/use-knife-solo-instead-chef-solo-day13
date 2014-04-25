@@ -18,12 +18,13 @@ class SystemException extends \FuelException
         $error_list = Lang::load('error/user', $error_code);
 
         if (! isset($error_list[$error_code])) {
-            $error_code = 0;
+            $error_code = \Model_Error::ER00001;
         }
+        $error_message = $error_list[$error_code];
 
         $params = array(
             'error_code' => $error_code,
-            'error_message' => $error_list[$error_code],
+            'error_message' => $error_message,
         );
         $response = \Request::forge('errors/index', false)
             ->execute($params)->response();
