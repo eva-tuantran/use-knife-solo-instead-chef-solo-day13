@@ -162,6 +162,28 @@ class Model_Entry extends Model_Base
     );
 
     /**
+     * 開催状況リスト
+     */
+    protected static $entry_statuses = array(
+        self::ENTRY_STATUS_RESERVED => '出店予約',
+        self::ENTRY_STATUS_WAITING  => 'キャンセル待ち',
+        self::ENTRY_STATUS_CANCELED => 'キャンセル',
+    );
+
+    /**
+     * 出店予約状況リストを取得する
+     *
+     * @access public
+     * @param
+     * @return array
+     * @author ida
+     */
+    public static function getEntryStatuses()
+    {
+        return self::$entry_statuses;
+    }
+
+    /**
      * カテゴリの番号と名前の連想配列を返す
      *
      * @access public
