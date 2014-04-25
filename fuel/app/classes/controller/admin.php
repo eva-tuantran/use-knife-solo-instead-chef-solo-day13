@@ -18,10 +18,10 @@ class Controller_Admin extends Controller_Admin_Base_Template
             ->where('email', Input::param('email'))
             ->where('password', \Auth::hash_password(Input::param('password')))
             ->get_one();
-        
+
         if ($administrator) {
             Session::set('admin.administrator',$administrator);
-            return Response::redirect('/admin');
+            return Response::redirect('/admin/fleamarket/list');
         } else {
             $view = View::forge('admin/login');
             $view->set('failed',true ,false);

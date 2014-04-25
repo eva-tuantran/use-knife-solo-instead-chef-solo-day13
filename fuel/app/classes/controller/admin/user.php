@@ -176,7 +176,7 @@ class Controller_Admin_User extends Controller_Admin_Base_Template
         $total = Model_User::findByKeywordCount(
             Input::all()
         );
-        
+
         Pagination::set_config(array(
             'uri_segment'    => 4,
             'num_links'      => 10,
@@ -190,7 +190,7 @@ class Controller_Admin_User extends Controller_Admin_Base_Template
             Pagination::get('per_page'),
             Pagination::get('offset')
         );
-        
+
         $view->set('users', $users, false);
     }
 

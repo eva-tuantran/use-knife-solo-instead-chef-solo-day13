@@ -1,6 +1,6 @@
 <?php
 /**
- * 
+ *
  *
  * @extends  Controller_Base_Template
  * @author Hiroyuki Kobayashi
@@ -11,7 +11,6 @@ class Controller_Admin_Entry extends Controller_Admin_Base_Template
     public function action_list()
     {
         $view = View::forge('admin/entry/list');
-        $this->template->content = $view;
 
         $total = Model_Entry::findByKeywordCount(
             Input::all()
@@ -30,7 +29,7 @@ class Controller_Admin_Entry extends Controller_Admin_Base_Template
             Pagination::get('per_page'),
             Pagination::get('offset')
         );
-        
+
         $view->set('entries', $entries, false);
 
         if (Input::param('fleamarket_id')) {
@@ -42,6 +41,9 @@ class Controller_Admin_Entry extends Controller_Admin_Base_Template
             $user = Model_User::find(Input::param('user_id'));
             $view->set('user', $user, false);
         }
+        $view->set('item_categories', \Model_Entry::getItemCategoryDefine());
+        $view->set('entry_statuses', \Model_Entry::getEntryStatuses());
+        $this->template->content = $view;
     }
 
     public function action_csv()
