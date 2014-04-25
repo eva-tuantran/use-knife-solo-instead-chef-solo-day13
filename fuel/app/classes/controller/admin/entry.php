@@ -1,6 +1,6 @@
 <?php
 /**
- * 
+ *
  *
  * @extends  Controller_Base_Template
  * @author Hiroyuki Kobayashi
@@ -11,19 +11,12 @@ class Controller_Admin_Entry extends Controller_Admin_Base_Template
     public function action_list()
     {
         $view = View::forge('admin/entry/list');
-        $this->template->content = $view;
 
         $total = Model_Entry::findByKeywordCount(
             Input::all()
         );
 
-        $query_string = '';
-        foreach (array('reservation_number','fleamarket_id', 'user_id') as $field) {
-            $query_string = $query_string . "&${field}=" . urlencode(Input::param($field));
-        }
-        
         Pagination::set_config(array(
-            'pagination_url' => "admin/entry/list?$query_string",
             'uri_segment'    => 4,
             'num_links'      => 10,
             'per_page'       => 50,
@@ -36,7 +29,7 @@ class Controller_Admin_Entry extends Controller_Admin_Base_Template
             Pagination::get('per_page'),
             Pagination::get('offset')
         );
-        
+
         $view->set('entries', $entries, false);
 
         if (Input::param('fleamarket_id')) {
@@ -48,22 +41,39 @@ class Controller_Admin_Entry extends Controller_Admin_Base_Template
             $user = Model_User::find(Input::param('user_id'));
             $view->set('user', $user, false);
         }
+        $view->set('item_categories', \Model_Entry::getItemCategoryDefine());
+        $view->set('entry_statuses', \Model_Entry::getEntryStatuses());
+        $this->template->content = $view;
     }
 
     public function action_csv()
     {
         $fleamarket = Model_Fleamarket::find(Input::param('fleamarket_id'));
+        $csv = Lang::load('admin/csv');
 
-        $data = array();
+        $data = array($csv['header']);
+
+        $prefectures = Config::get('master.prefectures');
+        $entry_styles = Config::get('master.entry_styles');
+
         foreach ($fleamarket->entries as $entry) {
-            $array = $entry->to_array();
 
-            if ($entry->user) {
-                foreach (array('nick_name','last_name','first_name','email') as $column) {
-                    $array[$column] = $entry->user->get($column);
-                }
+            if ($entry->user && $entry->fleamarket_entry_style) {
+                $data[] = array(
+                    $fleamarket->created_at,
+                    $fleamarket->event_date,
+                    $fleamarket->location->name,
+                    $entry->user->user_id,
+                    $entry->reservation_number,
+                    $entry_styles[$entry->fleamarket_entry_style->entry_style_id],
+                    $entry->user->last_name . $entry->user->first_name,
+                    $entry->user->zip,
+                    $prefectures[$entry->user->prefecture_id],
+                    $entry->user->address,
+                    $entry->user->email,
+                    $entry->user->mobile_email
+                );
             }
-            $data[] = $array;
         }
         return $this->response_csv($data);
     }

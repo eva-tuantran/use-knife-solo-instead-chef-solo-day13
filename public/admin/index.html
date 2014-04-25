@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ja">
   <head>
@@ -6,9 +7,7 @@
     <script src="/assets/js/bootstrap.min.js"></script>
     <link href="/assets/css/bootstrap.min.css" rel="stylesheet">
     <link href="/assets/css/admin.css" rel="stylesheet">
-    <?php echo Asset::render('add_css');?>
-    <?php echo Asset::render('add_js');?>
-  </head>
+          </head>
   <body>
 <nav role="navigation" class="navbar navbar-default navbar-fixed-top">
       <!-- We use the fluid option here to avoid overriding the fixed width of a normal container within the narrow content columns. -->
@@ -53,7 +52,20 @@
 -->
     <div id="wrap">
       <div class="container-fluid">
-        <?php echo $content; ?>
+        
+<form action="/admin/login" method="POST">
+  <table>
+    <tr>
+      <td>email</td>
+      <td><input type="text" name="email" size="40"></td>
+    </tr>
+    <tr>
+      <td>password</td>
+      <td><input type="password" name="password" size="40"></td>
+    </tr>
+  </table>
+  <input type="submit" value="login">
+</form>
       </div>
     </div>
   </body>
