@@ -546,7 +546,6 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
         $total = Model_Fleamarket::query()->count();
 
         Pagination::set_config(array(
-            'pagination_url' => 'admin/fleamarket/list',
             'uri_segment'    => 4,
             'num_links'      => 10,
             'per_page'       => 50,
