@@ -11,7 +11,7 @@ class Controller_Admin_Base_Template extends Controller_Template
         if ($this->request->action != 'login') {
             $this->administrator = Session::get('admin.administrator');
             if (! $this->administrator) {
-                return Response::redirect('admin/login');
+                return Response::redirect('admin/index');
             }
         }
 
