@@ -56,8 +56,6 @@ class View_Admin_Fleamarket_List extends ViewModel
                 ),
                 'order_by' => array('entry_style_id'),
             ));
-//$db = \Database_Connection::instance('slave');
-//var_dump($db->last_query);
             $results = $this->createReservation(
                 $fleamarket_entry_styles
             );
@@ -76,7 +74,7 @@ class View_Admin_Fleamarket_List extends ViewModel
      * フリーマーケット出店形態情報を取得する
      *
      * @access private
-     * @param array $entry_styles フリーマーケット出店形態情報
+     * @param array $fleamarket_entry_styles フリーマーケット出店形態情報
      * @return array
      * @author ida
      */
@@ -91,9 +89,9 @@ class View_Admin_Fleamarket_List extends ViewModel
                 $reseved_booth = 0;
                 foreach ($fleamarket_entry_styles as $entry_style) {
                     if ($entry_style_id == $entry_style['entry_style_id']) {
-                        if (null != $entry_style->sumReservedBooth()) {
-                            $reseved_booth = $entry_style->sumReservedBooth();
-                            $total_reseved_booth += $reseved_booth;
+                        if (0 < ($sum_reserved_booth = $entry_style->sumReservedBooth())) {
+                            $reseved_booth = $sum_reserved_booth;
+                            $total_reseved_booth += $sum_reserved_booth;
                         }
                         $entry_style['reseved_booth'] = (int) $reseved_booth;
                         $total_booth += (int) $entry_style['max_booth'];
