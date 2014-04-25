@@ -55,10 +55,16 @@ class Controller_Admin_Entry extends Controller_Admin_Base_Template
 
         $prefectures = Config::get('master.prefectures');
         $entry_styles = Config::get('master.entry_styles');
+        $entry_statuses = \Model_Entry::getEntryStatuses();
 
         foreach ($fleamarket->entries as $entry) {
-
             if ($entry->user && $entry->fleamarket_entry_style) {
+                $prefecture_id = $entry->user->prefecture_id;
+                if (! isset($prefectures[$prefecture_id])) {
+                    $prefecture_name = '-';
+                } else {
+                    $prefecture_name = $prefectures[$prefecture_id];
+                }
                 $data[] = array(
                     $fleamarket->created_at,
                     $fleamarket->event_date,
@@ -68,13 +74,15 @@ class Controller_Admin_Entry extends Controller_Admin_Base_Template
                     $entry_styles[$entry->fleamarket_entry_style->entry_style_id],
                     $entry->user->last_name . $entry->user->first_name,
                     $entry->user->zip,
-                    $prefectures[$entry->user->prefecture_id],
+                    $prefecture_name,
                     $entry->user->address,
                     $entry->user->email,
-                    $entry->user->mobile_email
+                    $entry->user->mobile_email,
+                    $entry_statuses[$entry->entry_status]
                 );
             }
         }
+
         return $this->response_csv($data, $fleamarket->name);
     }
 
@@ -86,7 +94,7 @@ class Controller_Admin_Entry extends Controller_Admin_Base_Template
             'UTF-8'
         );
 
-        $file_name = $fleamarket_name . '_エントリ一覧';
+        $file_name = $fleamarket_name . '_エントリ一覧.csv';
         $response = new Response($csv, 200, array(
             'Content-Type'        => 'application/csv',
             'Content-Disposition' => 'attachment; filename="' . $file_name . '"',
