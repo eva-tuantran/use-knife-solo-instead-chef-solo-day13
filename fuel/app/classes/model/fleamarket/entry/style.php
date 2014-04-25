@@ -153,7 +153,7 @@ QUERY;
      */
     public function sumReservedBooth($db = 'slave')
     {
-        $query = DB::select(DB::expr('SUM(reserved_booth) as sum_result'));
+        $query = \DB::select(DB::expr('SUM(reserved_booth) as sum_result'));
         $query->from(\Model_Entry::table());
 
         $query->where(array(
@@ -161,8 +161,9 @@ QUERY;
             'fleamarket_entry_style_id' => $this->fleamarket_entry_style_id,
             'entry_status'              => \Model_Entry::ENTRY_STATUS_RESERVED,
         ));
+        $result = $query->execute($db)->get('sum_result');
 
-        return $query->execute($db)->get('sum_result');
+        return $result;
     }
 
     /**
