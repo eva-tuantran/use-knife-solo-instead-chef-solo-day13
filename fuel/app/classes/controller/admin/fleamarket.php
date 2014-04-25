@@ -8,10 +8,17 @@
 
 class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
 {
-    protected $fleamarket              = null;
-    protected $fleamarket_abouts       = array();
-    protected $fleamarket_entry_styles = array();
-    protected $fieldsets               = null;
+    /**
+     * 検索結果1ページあたりの行数
+     *
+     * @var int
+     */
+    private $result_per_page = 50;
+
+    private $fleamarket              = null;
+    private $fleamarket_abouts       = array();
+    private $fleamarket_entry_styles = array();
+    private $fieldsets               = null;
 
     public function before()
     {
@@ -34,7 +41,46 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
     }
 
     /**
-     * 初期画面
+     * 一覧表示
+     *
+     * @access public
+     * @param
+     * @return void
+     * @author kobayashi
+     * @author ida
+     */
+    public function action_list()
+    {
+        $view_model = \ViewModel::forge('admin/fleamarket/list');
+
+        $conditions = $this->getCondition();
+
+        // 検索条件取得
+        $condition_list = \Model_Fleamarket::createAdminSearchCondition($conditions);
+
+        // 件数取得
+        $total_count = \Model_Fleamarket::getCountByAdminSearch($condition_list);
+
+        // ページネーション設定
+        $pagination = \Pagination::forge(
+            'fleamarket_pagination',
+            $this->getPaginationConfig($total_count)
+        );
+
+        $fleamarkets = \Model_Fleamarket::findAdminBySearch(
+            $condition_list,
+            $pagination->current_page,
+            $this->result_per_page,
+            array('order_by' => array('event_date' => 'ASC', 'event_status' => 'ASC'))
+        );
+
+        $view_model->set('fleamarkets', $fleamarkets, false);
+        $view_model->set('pagination', $pagination, false);
+        $this->template->content = $view_model;
+   }
+
+    /**
+     * 入力画面
      *
      * @access public
      * @return void
@@ -400,7 +446,7 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
                     ->where('fleamarket_id', $fleamarket->fleamarket_id)
                     ->where('priority', $priority)
                     ->get_one();
-                
+
                 if ($fleamarket_image) {
                     $fleamarket_image->set($data);
                     $fleamarket_image->updated_user = $this->administrator->administrator_id;
@@ -538,28 +584,42 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
         }
     }
 
-    public function action_list()
+    /**
+     * 検索条件を取得する
+     *
+     * @access private
+     * @param
+     * @return array
+     * @author ida
+     */
+    private function getCondition()
     {
-        $view = View::forge('admin/fleamarket/list');
-        $this->template->content = $view;
+        $conditions = Input::get('c', array());
 
-        $total = Model_Fleamarket::query()->count();
+        return $conditions;
+    }
 
-        Pagination::set_config(array(
+    /**
+     * ページネーション設定を取得する
+     *
+     * @access private
+     * @param int $count 総行数
+     * @return array
+     * @author ida
+     */
+    private function getPaginationConfig($count)
+    {
+        $search_result_per_page = Input::post('search_result_per_page');
+        if ($search_result_per_page) {
+            $this->result_per_page = $search_result_per_page;
+        }
+
+        return array(
             'pagination_url' => 'admin/fleamarket/list',
             'uri_segment'    => 4,
             'num_links'      => 10,
-            'per_page'       => 50,
-            'total_items'    => $total,
-            'name'           => 'pagenation',
-        ));
-
-        $fleamarkets = Model_Fleamarket::query()
-            ->order_by('fleamarket_id')
-            ->limit(Pagination::get('per_page'))
-            ->offset(Pagination::get('offset'))
-            ->get();
-
-        $view->set('fleamarkets', $fleamarkets);
-   }
+            'per_page'       => $this->result_per_page,
+            'total_items'    => $count,
+        );
+    }
 }

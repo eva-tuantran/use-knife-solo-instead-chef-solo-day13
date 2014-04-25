@@ -1,6 +1,6 @@
 <?php
 /**
- * 
+ *
  *
  * @extends  Controller_Base_Template
  * @author Hiroyuki Kobayashi
@@ -11,7 +11,6 @@ class Controller_Admin_Entry extends Controller_Admin_Base_Template
     public function action_list()
     {
         $view = View::forge('admin/entry/list');
-        $this->template->content = $view;
 
         $total = Model_Entry::findByKeywordCount(
             Input::all()
@@ -21,7 +20,7 @@ class Controller_Admin_Entry extends Controller_Admin_Base_Template
         foreach (array('reservation_number','fleamarket_id', 'user_id') as $field) {
             $query_string = $query_string . "&${field}=" . urlencode(Input::param($field));
         }
-        
+
         Pagination::set_config(array(
             'pagination_url' => "admin/entry/list?$query_string",
             'uri_segment'    => 4,
@@ -36,7 +35,7 @@ class Controller_Admin_Entry extends Controller_Admin_Base_Template
             Pagination::get('per_page'),
             Pagination::get('offset')
         );
-        
+
         $view->set('entries', $entries, false);
 
         if (Input::param('fleamarket_id')) {
@@ -48,6 +47,9 @@ class Controller_Admin_Entry extends Controller_Admin_Base_Template
             $user = Model_User::find(Input::param('user_id'));
             $view->set('user', $user, false);
         }
+        $view->set('item_categories', \Model_Entry::getItemCategoryDefine());
+        $view->set('entry_statuses', \Model_Entry::getEntryStatuses());
+        $this->template->content = $view;
     }
 
     public function action_csv()

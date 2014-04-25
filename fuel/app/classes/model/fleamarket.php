@@ -927,6 +927,166 @@ QUERY;
     }
 
     /**
+     * 指定された条件でフリーマーケット情報リストを取得する
+     *
+     * @access public
+     * @param array $condition_list 検索条件
+     * @param mixed $page ページ
+     * @param mixed $row_count ページあたりの行数
+     * @return array フリーマーケット情報
+     * @author ida
+     */
+    public static function findAdminBySearch(
+        $condition_list, $page = 0, $row_count = 0
+    ) {
+        $search_where = self::buildSearchWhere($condition_list);
+        list($conditions, $placeholders) = $search_where;
+
+        $where = '';
+        if ($conditions) {
+            $where = ' WHERE ';
+            $where .= implode(' AND ', $conditions);
+        }
+
+        $limit = '';
+        if (is_numeric($page) && is_numeric($row_count)) {
+            $offset = ($page - 1) * $row_count;
+            $limit = ' LIMIT ' . $offset . ', ' . $row_count;
+        }
+
+        $query = <<<"QUERY"
+SELECT
+    f.fleamarket_id,
+    f.name,
+    f.promoter_name,
+    f.event_date,
+    f.event_time_start,
+    f.event_time_end,
+    f.event_status,
+    f.description,
+    f.reservation_start,
+    f.reservation_end,
+    f.reservation_tel,
+    f.reservation_email,
+    f.event_reservation_status,
+    f.display_flag,
+    f.deleted_at,
+    f.register_type,
+    l.name AS location_name,
+    l.zip AS zip,
+    l.prefecture_id AS prefecture_id,
+    l.address AS address
+FROM
+    fleamarkets AS f
+LEFT JOIN
+    locations AS l ON f.location_id = l.location_id
+{$where}
+ORDER BY
+    f.event_date DESC,
+    f.event_status ASC,
+    f.register_type
+{$limit}
+QUERY;
+
+        $statement = \DB::query($query)->parameters($placeholders);
+        $result = $statement->execute();
+
+        $rows = null;
+        if (! empty($result)) {
+            $rows = $result->as_array();
+        }
+
+        return $rows;
+    }
+
+    /**
+     * 指定された条件でフリーマーケット情報の件数を取得する
+     *
+     * @access public
+     * @param array $condition_list 検索条件
+     * @return array フリーマーケット情報
+     * @author ida
+     */
+    public static function getCountByAdminSearch($condition_list)
+    {
+        $search_where = self::buildSearchWhere($condition_list);
+        list($conditions, $placeholders) = $search_where;
+
+        $where = '';
+        if ($conditions) {
+            $where = ' WHERE ';
+            $where .= implode(' AND ', $conditions);
+        }
+
+        $query = <<<"QUERY"
+SELECT
+    COUNT(f.fleamarket_id) AS cnt
+FROM
+    fleamarkets AS f
+LEFT JOIN
+    locations AS l ON f.location_id = l.location_id
+{$where}
+QUERY;
+
+        $statement = \DB::query($query)->parameters($placeholders);
+        $result = $statement->execute();
+
+        $rows = null;
+        if (! empty($result)) {
+            $rows = $result->as_array();
+        }
+
+        return $rows[0]['cnt'];
+    }
+
+    /**
+     * 検索条件を取得する
+     *
+     * @access private
+     * @param array $condition_list 検索条件
+     * @return array 検索条件
+     * @author void
+     */
+    public static function createAdminSearchCondition($condition_list = array())
+    {
+        $conditions = array();
+
+        $is_event_date = false;
+        foreach ($condition_list as $field => $condition) {
+            if ($condition == '') {
+                continue;
+            }
+
+            $operator = '=';
+            if (is_array($condition)) {
+                $operator = 'IN';
+            }
+
+            switch ($field) {
+                case 'keyword':
+                    $conditions['f.name'] = array(
+                        ' like ', '%' . $condition . '%'
+                    );
+                    break;
+                case 'prefecture':
+                    $conditions['prefecture_id'] = array($operator, $condition);
+                    break;
+                case 'event_status':
+                    $conditions['event_status'] = array($operator, $condition);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        if (! $is_event_date) {
+            $conditions['event_date'] = array('>= CURDATE()');
+        }
+
+        return $conditions;
+    }
+
+    /**
      * 検索条件を取得する
      *
      * @access private

@@ -176,12 +176,12 @@ class Controller_Admin_User extends Controller_Admin_Base_Template
         $total = Model_User::findByKeywordCount(
             Input::all()
         );
-        
+
         $query_string = '';
         foreach (array('name', 'address','email','tel','user_old_id') as $field) {
             $query_string = $query_string . "&${field}=" . urlencode(Input::param($field));
         }
-        
+
         Pagination::set_config(array(
             'pagination_url' => "admin/user/list?$query_string",
             'uri_segment'    => 4,
@@ -196,7 +196,7 @@ class Controller_Admin_User extends Controller_Admin_Base_Template
             Pagination::get('per_page'),
             Pagination::get('offset')
         );
-        
+
         $view->set('users', $users, false);
     }
 
