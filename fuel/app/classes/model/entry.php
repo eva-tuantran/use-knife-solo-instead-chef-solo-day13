@@ -901,23 +901,32 @@ QUERY;
 
     public static function findByKeyword($input, $limit, $offset)
     {
-        $fleamarket_id = $input['fleamarket_id'];
-        unset($input['fleamarket_id']);
-
         $query = static::getFindByKeywordQuery($input)
-            ->where('fleamarket_id', $fleamarket_id)
             ->limit($limit)
             ->offset($offset);
+
+        if (isset($input['fleamarket_id'])) {
+            $fleamarket_id = $input['fleamarket_id'];
+            $query->where('fleamarket_id', $fleamarket_id);
+            unset($input['fleamarket_id']);
+        }
 
         return $query->get();
     }
 
     public static function findByKeywordCount($input)
     {
-        $fleamarket_id = $input['fleamarket_id'];
-        unset($input['fleamarket_id']);
-        $query = static::getFindByKeywordQuery($input)
-            ->where('fleamarket_id', $fleamarket_id);
+        if (isset($input['fleamarket_id'])) {
+            $fleamarket_id = $input['fleamarket_id'];
+            unset($input['fleamarket_id']);
+        }
+
+        $query = static::getFindByKeywordQuery($input);
+        if (isset($input['fleamarket_id'])) {
+            $fleamarket_id = $input['fleamarket_id'];
+            $query->where('fleamarket_id', $fleamarket_id);
+            unset($input['fleamarket_id']);
+        }
 
         return $query->count();
     }
