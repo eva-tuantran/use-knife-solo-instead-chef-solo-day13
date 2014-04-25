@@ -17,13 +17,7 @@ class Controller_Admin_Entry extends Controller_Admin_Base_Template
             Input::all()
         );
 
-        $query_string = '';
-        foreach (array('reservation_number','fleamarket_id', 'user_id') as $field) {
-            $query_string = $query_string . "&${field}=" . urlencode(Input::param($field));
-        }
-        
         Pagination::set_config(array(
-            'pagination_url' => "admin/entry/list?$query_string",
             'uri_segment'    => 4,
             'num_links'      => 10,
             'per_page'       => 50,
