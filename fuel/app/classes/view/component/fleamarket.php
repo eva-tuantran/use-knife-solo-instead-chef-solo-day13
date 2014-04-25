@@ -1,11 +1,13 @@
 <?php
 
 /**
- * Base
+ * View_Component_Fleamarket ViewModel
  *
  * @author shimma
+ * @author ida
+ *
  */
-class View_Component_Fleamarket extends ViewModel
+class View_Component_Fleamarket extends \ViewModel
 {
     public function view()
     {
@@ -19,7 +21,7 @@ class View_Component_Fleamarket extends ViewModel
         $this->render_status = $render_status;
 
         $is_official = false;
-        if (! empty($this->fleamarket['register_type']) ) {
+        if (! empty($this->fleamarket['register_type'])) {
             if ($this->fleamarket['register_type'] == \Model_Fleamarket::REGISTER_TYPE_ADMIN) {
                 $is_official = true;
             }

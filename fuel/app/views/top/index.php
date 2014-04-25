@@ -242,7 +242,7 @@
   <!-- blog -->
   <div id="blog" class="container">
     <div class="box">
-      <h2><a href="#" target="_blank"><i></i>楽市楽座ブログ</a></h2>
+      <h2><a href="/blog" target="_blank"><i></i>楽市楽座ブログ</a></h2>
       <dl class="dl-horizontal">
       <?php foreach ($news_headlines as $headline): ?>
           <dt><?php echo $headline['date'] ?></dt>

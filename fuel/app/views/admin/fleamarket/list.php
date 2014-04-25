@@ -3,7 +3,7 @@
 <a href="/admin/fleamarket/">新規登録</a>
 <br><br>
 
-<table>
+<table class="table table-hover table-condensed" style="width: 700px">
   <?php foreach ($fleamarkets as $fleamarket) { ?>
   <tr>
     <td>

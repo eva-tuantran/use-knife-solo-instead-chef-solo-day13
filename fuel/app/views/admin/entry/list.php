@@ -31,7 +31,7 @@
   <input type="submit" value="search">
 </form>
 
-<table>
+<table class="table table-hover table-condensed">
 <tr>
   <th>ユーザー</th>
   <th>予約番号</th>

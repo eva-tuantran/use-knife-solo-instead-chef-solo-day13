@@ -28,6 +28,29 @@ class Controller_Errors extends Controller_Template
     }
 
     /**
+     * 拾いきれてないエラー
+     *
+     * @access public
+     * @return void
+     * @author ida
+     */
+    public function action_error()
+    {
+        $error_code = \Model_Error::ER00000;
+        $error_list = Lang::load('error/user', $error_code);
+        $error_message = $error_list[$error_code];
+
+        $this->template->title = $error_code;
+        $this->template->content = View::forge(
+            'errors/index',
+            array(
+                'error_code' => $error_code,
+                'error_message' => $error_message
+            )
+        );
+    }
+
+    /**
      * アクセス禁止
      *
      * @access public
@@ -39,7 +62,10 @@ class Controller_Errors extends Controller_Template
         $this->template->title = 'アクセスが許可されておりません';
         $this->template->content = View::forge(
             'errors/content',
-            array('error_code' => '', 'message' => 'アクセスが許可されておりません')
+            array(
+                'error_code' => '',
+                'error_message' => 'アクセスが許可されておりません'
+            )
         );
     }
 
@@ -55,7 +81,10 @@ class Controller_Errors extends Controller_Template
         $this->template->title = '該当ページが見つかりませんでした';
         $this->template->content = View::forge(
             'errors/content',
-            array('error_code' => '', 'error_message' => '該当ページが見つかりませんでした')
+            array(
+                'error_code' => '',
+                'error_message' => '該当ページが見つかりませんでした'
+            )
         );
     }
 
@@ -71,7 +100,10 @@ class Controller_Errors extends Controller_Template
         $this->template->title = '不正なアクセスです';
         $this->template->content = View::forge(
             'errors/content',
-            array('error_code' => '', 'error_message' => '不正なアクセスです')
+            array(
+                'error_code' => '',
+                'error_message' => '不正なアクセスです'
+            )
         );
     }
 
@@ -87,7 +119,10 @@ class Controller_Errors extends Controller_Template
         $this->template->title = '2重投稿です';
         $this->template->content = View::forge(
             'errors/content',
-            array('error_code' => '', 'error_message' => '2重投稿です')
+            array(
+                'error_code' => '',
+                'error_message' => '2重投稿です'
+            )
         );
     }
 }
