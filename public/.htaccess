@@ -10,11 +10,11 @@ ErrorDocument 503 /maintenance.html
 	Options +FollowSymLinks -Indexes
 	RewriteEngine on
 
-    ## 外部向け一時メンテナンス用画面(社内からのみアクセス可能) 本番リリース時には外すこと
-    RewriteCond %{REMOTE_ADDR} !^192.168.
-    RewriteCond %{REMOTE_ADDR} !^125.100.
-    RewriteCond %{REQUEST_URI} !=/maintenance.html
-    RewriteRule ^.*$ - [R=503,L]
+  ## 外部向け一時メンテナンス用画面(社内からのみアクセス可能) 本番リリース時には外すこと
+#  RewriteCond %{REMOTE_ADDR} !^192.168.
+#    RewriteCond %{REMOTE_ADDR} !^125.100.
+#    RewriteCond %{REQUEST_URI} !=/maintenance.html
+#    RewriteRule ^.*$ - [R=503,L]
 
 	# ★無料フリマ★夢屋 加古川店-加古川市
 	RewriteCond %{QUERY_STRING} c=VuLsN
