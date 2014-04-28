@@ -23,19 +23,22 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
     public function before()
     {
         parent::before();
-        if (Input::param('fleamarket_id')) {
+        if (Input::get('fleamarket_id')) {
             $this->fleamarket =
-                Model_Fleamarket::find(Input::param('fleamarket_id'));
+                \Model_Fleamarket::find(Input::param('fleamarket_id'));
+        }
 
-            if ($this->fleamarket) {
-                foreach ($this->fleamarket->fleamarket_abouts as $fleamarket_about){
-                    $this->fleamarket_abouts[$fleamarket_about->about_id]
-                        = $fleamarket_about;
-                }
-                foreach ($this->fleamarket->fleamarket_entry_styles as $fleamarket_entry_style){
-                    $this->fleamarket_entry_styles[$fleamarket_entry_style->entry_style_id]
-                        = $fleamarket_entry_style;
-                }
+        if ($this->fleamarket) {
+            $fleamarket_abouts = $this->fleamarket->fleamarket_abouts;
+            foreach ($fleamarket_abouts as $fleamarket_about) {
+                $this->fleamarket_abouts[$fleamarket_about->about_id]
+                    = $fleamarket_about;
+            }
+
+            $fleamarket_entry_styles = $this->fleamarket->fleamarket_entry_styles;
+            foreach ($fleamarket_entry_styles as $fleamarket_entry_style) {
+                $this->fleamarket_entry_styles[$fleamarket_entry_style->entry_style_id]
+                    = $fleamarket_entry_style;
             }
         }
     }
@@ -54,7 +57,6 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
         $view_model = \ViewModel::forge('admin/fleamarket/list');
 
         $conditions = $this->getCondition();
-
         // 検索条件取得
         $condition_list = \Model_Fleamarket::createAdminSearchCondition($conditions);
 
@@ -71,11 +73,14 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
             $condition_list,
             $pagination->current_page,
             $this->result_per_page,
-            array('order_by' => array('event_date' => 'ASC', 'event_status' => 'ASC'))
+            array('order_by' => array(
+                'event_date' => 'ASC', 'event_status' => 'ASC'
+            ))
         );
 
         $view_model->set('fleamarkets', $fleamarkets, false);
         $view_model->set('pagination', $pagination, false);
+        $view_model->set('conditions', $conditions, false);
         $this->template->content = $view_model;
    }
 
@@ -83,48 +88,56 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
      * 入力画面
      *
      * @access public
+     * @param
      * @return void
+     * @author kobayashi
+     * @author ida
      */
     public function action_index()
     {
         $this->setAssets();
-        $view = View::forge('admin/fleamarket/index');
+        $view_model = \View::forge('admin/fleamarket/index');
         $fieldsets = $this->getFieldsets();
-        $view->set('locations',Model_Location::find('all'));
-        $view->set('fieldsets', $fieldsets, false);
-        $view->set('fleamarket', $this->fleamarket, false);
-        $this->template->content = $view;
+        $view_model->set('locations', \Model_Location::find('all'));
+        $view_model->set('fieldsets', $fieldsets, false);
+        $view_model->set('fleamarket', $this->fleamarket, false);
+        $this->template->content = $view_model;
 
     }
+
     /**
      * 確認画面
      *
      * @access public
+     * @param
      * @return void
+     * @author kobayashi
+     * @author ida
      */
     public function post_confirm()
     {
         $fieldsets = $this->getFieldsets();
-        Session::set_flash('admin.fleamarket.fieldsets', $fieldsets);
+        \Session::set_flash('admin.fleamarket.fieldsets', $fieldsets);
 
-        if ((! $this->validate_fleamarket($fieldsets)) ||
-            (! $this->validate_fleamarket_about($fieldsets)) ||
-            (! $this->validate_fleamarket_entry_style($fieldsets)) ){
-            return Response::redirect(
-                'admin/fleamarket/?fleamarket_id=' . Input::param('fleamarket_id','')
+        if ((! $this->validate_fleamarket($fieldsets))
+            || (! $this->validate_fleamarket_about($fieldsets))
+            || (! $this->validate_fleamarket_entry_style($fieldsets))
+        ) {
+            \Response::redirect(
+                'admin/fleamarket/?fleamarket_id=' . Input::post('fleamarket_id','')
             );
         }
 
         $files = $this->saveUploadedImages();
 
-        if(! is_array($files)){
-            return Response::redirect(
-                'admin/fleamarket/?fleamarket_id=' . Input::param('fleamarket_id','')
+        if (! is_array($files)) {
+            \Response::redirect(
+                'admin/fleamarket/?fleamarket_id=' . Input::post('fleamarket_id','')
             );
         }
 
-        $view = View::forge('admin/fleamarket/confirm');
-        $view->set('locations',Model_Location::find('all'));
+        $view = \View::forge('admin/fleamarket/confirm');
+        $view->set('locations', \Model_Location::find('all'));
         $view->set('fieldsets', $fieldsets, false);
         $view->set('fleamarket', $this->fleamarket, false);
         $view->set('files', $files, false);
@@ -132,252 +145,143 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
         $this->template->content = $view;
     }
 
+    /**
+     * フリマ情報のバリデーション
+     *
+     * @access public
+     * @param object $fieldsets フィールドセットオブジェクト
+     * @return void
+     * @author kobayashi
+     */
     public function validate_fleamarket($fieldsets)
     {
         return $fieldsets['fleamarket']->validation()->run();
     }
 
+    /**
+     * フリマ説明情報のバリデーション
+     *
+     * @access public
+     * @param object $fieldsets フィールドセットオブジェクト
+     * @return void
+     * @author kobayashi
+     * @author ida
+     */
     public function validate_fleamarket_about($fieldsets)
     {
-        $is_valid = true;
+        $is_valid = false;
         foreach ($fieldsets['fleamarket_abouts'] as $id => $fieldset) {
             $input = array(
-                'description' => Input::param("fleamarket_about_${id}_description"),
+                'description' => Input::post("fleamarket_about_${id}_description"),
             );
 
-            if (! $fieldset->validation()->run($input)) {
-                $is_valid = false;
+            if ($fieldset->validation()->run($input)) {
+                $is_valid = true;
             }
         }
+
         return $is_valid;
     }
 
+    /**
+     * フリマ出店形態情報のバリデーション
+     *
+     * @access public
+     * @param object $fieldsets フィールドセットオブジェクト
+     * @return void
+     * @author kobayashi
+     * @author ida
+     */
     public function validate_fleamarket_entry_style($fieldsets)
     {
-        $is_valid = true;
-        $entry_styles = Config::get('master.entry_styles');
+        $is_valid = false;
+        $entry_styles = \Config::get('master.entry_styles');
         foreach ($entry_styles as $id => $entry_style) {
             $input = array();
-            foreach (array('booth_fee', 'max_booth', 'reservation_booth_limit') as $column) {
-                $input[$column] = Input::param("fleamarket_entry_style_${id}_${column}");
+            $fields = array(
+                'booth_fee', 'max_booth', 'reservation_booth_limit'
+            );
+            foreach ($fields as $field) {
+                $field_name = "fleamarket_entry_style_{$id}_{$field}";
+                $input[$field] = \Input::post($field_name);
             }
 
             $fieldset = $fieldsets['fleamarket_entry_styles'][$id];
 
-            if (! $fieldset->validation()->run($input)) {
-                $is_valid = false;
+            if ($fieldset->validation()->run($input)) {
+                $is_valid = true;
             }
         }
+
         return $is_valid;
     }
+
     /**
      * 完了画面
      *
      * @access public
+     * @param
      * @return void
+     * @author kobayashi
      */
     public function post_thanks()
     {
         if (! Security::check_token()) {
-            return Response::redirect('errors/doubletransmission');
+            \Response::redirect('errors/doubletransmission');
         }
 
         $view = View::forge('admin/fleamarket/thanks');
-        $this->template->content = $view;
 
         $this->removeFleamarketImages();
         $files = $this->moveUploadedImages();
 
-        $db = Database_Connection::instance('master');
-        $db->start_transaction();
-
         try {
+            $db = \Database_Connection::instance('master');
+            $db->start_transaction();
+
             $fleamarket = $this->registerFleamarket();
             if ($files) {
                 $this->registerFleamarketImage($fleamarket, $files);
             }
             $this->registerFleamarketAbout($fleamarket);
             $this->registerFleamarketEntryStyle($fleamarket);
-        } catch ( Exception $e ) {
+
+            $db->commit_transaction();
+        } catch (Exception $e) {
             $db->rollback_transaction();
             throw $e;
         }
-        $db->commit_transaction();
-     }
 
-    private function getFieldsets()
-    {
-        if (! $this->fieldsets) {
-            if ($this->request->action == 'index') {
-                $fieldsets = Session::get_flash('admin.fleamarket.fieldsets');
-                if (! $fieldsets) {
-                    $fieldsets = $this->createFieldsets();
-                }
-            } elseif ($this->request->action == 'confirm') {
-                $fieldsets = $this->createFieldsets();
-            } elseif ($this->request->action == 'thanks') {
-                $fieldsets = Session::get_flash('admin.fleamarket.fieldsets');
-            }
-            $this->fieldsets = $fieldsets;
-        }
-        return $this->fieldsets;
-    }
-
-    private function createFieldsets()
-    {
-        return array(
-            'fleamarket'              => $this->createFieldsetFleamarket(),
-            'fleamarket_abouts'       => $this->createFieldsetFleamarketAbouts(),
-            'fleamarket_entry_styles' => $this->createFieldsetFleamarketEntryStyles()
-        );
-    }
-
-    private function createFieldsetFleamarket()
-    {
-        $fieldset = Fieldset::forge('fleamarket');
-
-        if ($this->fleamarket) {
-            $fieldset->add_model($this->fleamarket)->populate($this->fleamarket,false);
-
-            foreach (array('event_time_start','event_time_end') as $column) {
-                $value = $fieldset->field($column)->value;
-                $matches = array();
-                if (preg_match('/(^\d{2}:\d{2})/',$value,$matches)) {
-                    $value = $matches[1];
-                }
-                $fieldset->field($column)->set_value($value);
-            }
-            foreach (array('reservation_start','reservation_end') as $column) {
-                $value = $fieldset->field($column)->value;
-                $matches = array();
-                if (preg_match('/(^\d{4}-\d{2}-\d{2})/',$value,$matches)) {
-                    $value = $matches[1];
-                }
-                $fieldset->field($column)->set_value($value);
-            }
-        } else {
-            $fieldset->add_model('Model_Fleamarket');
-        }
-
-        $fieldset->validation()->add_callable('Custom_Validation');
-        $fieldset->add('delete_priorities');
-        $fieldset->repopulate();
-
-        return $fieldset;
-    }
-
-    private function createFieldsetFleamarketAbouts()
-    {
-        $fieldsets = array();
-        foreach (Model_Fleamarket_About::getAboutTitles() as $id => $about) {
-            $fieldset = Fieldset::forge("fleamarket_about_${id}");
-
-            if (isset($this->fleamarket_abouts[$id])) {
-                $fieldset
-                    ->add_model($this->fleamarket_abouts[$id])
-                    ->populate($this->fleamarket_abouts[$id],false);
-            }else{
-                $fieldset->add_model('Model_Fleamarket_About');
-            }
-
-            if (Input::method() == 'POST') {
-                $fieldset
-                    ->field('description')
-                    ->set_value(Input::param("fleamarket_about_${id}_description"));
-            }
-
-            $fieldsets[$id] = $fieldset;
-        }
-
-        return $fieldsets;
-    }
-
-    private function createFieldsetFleamarketEntryStyles()
-    {
-        $entry_styles = Config::get('master.entry_styles');
-        $fieldsets = array();
-
-        foreach ($entry_styles as $id => $entry_stype) {
-            $fieldset = Fieldset::forge("fleamarket_entry_style_${id}");
-
-            if (isset($this->fleamarket_entry_styles[$id])) {
-                $fieldset
-                    ->add_model($this->fleamarket_entry_styles[$id])
-                    ->populate($this->fleamarket_entry_styles[$id],false);
-            }else{
-                $fieldset->add_model('Model_Fleamarket_Entry_Style');
-            }
-
-            if (Input::method() == 'POST') {
-                foreach (array('booth_fee','max_booth','reservation_booth_limit') as $column) {
-                    $fieldset
-                        ->field($column)
-                        ->set_value(Input::param("fleamarket_entry_style_${id}_${column}"));
-                }
-            }
-
-            $fieldsets[$id] = $fieldset;
-        }
-
-        return $fieldsets;
+        $this->template->content = $view;
     }
 
     /**
-     * fleamarkets テーブルへの登録
+     * js、cssを追加する
      *
      * @access private
-     * @return Model_Fleamarketオブジェクト
+     * @param
+     * @return void
+     * @author kobayashi
      */
-    private function registerFleamarket()
+    private function setAssets()
     {
-        $data = $this->getFleamarketData();
-        if (! $data) {
-            throw new Exception(\Model_Error::ER00502);
-        } else {
-            if (Input::param('fleamarket_id')) {
-                $fleamarket = Model_Fleamarket::find(Input::param('fleamarket_id'));
-                unset($data['reservation_serial']);
-            } else {
-                $fleamarket = Model_Fleamarket::forge();
-                $data['reservation_serial'] = 1;
-            }
-            if ($fleamarket) {
-                $fleamarket->set($data);
-                $fleamarket->save();
-            }
-            return $fleamarket;
-        }
+        \Asset::css('jquery-ui.min.css', array(), 'add_css');
+        \Asset::css('jquery-ui-timepicker.css', array(), 'add_css');
+        \Asset::js('jquery-ui.min.js', array(), 'add_js');
+        \Asset::js('jquery.ui.datepicker-ja.js', array(), 'add_js');
+        \Asset::js('jquery-ui-timepicker.js', array(), 'add_js');
+        \Asset::js('jquery-ui-timepicker-ja.js', array(), 'add_js');
     }
 
     /**
-     * セッションからfleamarketのデータを取得、整形
+     * アップロードファイルを指定のフォルダに移動する
      *
      * @access private
-     * @return array fleamarketのデータ
+     * @param
+     * @return void
+     * @author kobayashi
      */
-    private function getFleamarketData()
-    {
-        $fieldsets = $this->getFieldsets();
-
-        if (! $fieldsets) {
-            return false;
-        }
-
-        $fieldset = $fieldsets['fleamarket'];
-
-        $input = $fieldset->validation()->validated();
-
-        if (isset($input['fleamarket_id'])) {
-            $input['updated_user'] = $this->administrator->administrator_id;
-        }else{
-            $input['created_user'] = $this->administrator->administrator_id;
-        }
-        $input['group_code'] = '';
-
-        return $input;
-    }
-
-    public function saveUploadedImages()
+    private function saveUploadedImages()
     {
         Upload::process(array(
             'path' => DOCROOT . 'files/admin/fleamarket/img/',
@@ -385,81 +289,68 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
             'randomize'      => true,
         ));
 
-        if (Upload::is_valid()) {
-            Upload::save();
-            $files = Upload::get_files();
-            $files_array = array();
+        $result = array();
+        if (\Upload::is_valid()) {
+            \Upload::save();
+            $files = \Upload::get_files();
 
             foreach ($files as $file) {
-                $files_array[$file['field']] = $file;
+                $result[$file['field']] = $file;
             }
 
-            Session::set_flash('admin.fleamarket.files', $files_array);
-
-            return $files_array;
+            \Session::set_flash('admin.fleamarket.files', $result);
         } else {
-            foreach (Upload::get_errors() as $file) {
-                foreach ($file['errors'] as $error){
-                    if( $error['error'] != Upload::UPLOAD_ERR_NO_FILE) {
+            foreach (\Upload::get_errors() as $file) {
+                foreach ($file['errors'] as $error) {
+                    if ($error['error'] != \Upload::UPLOAD_ERR_NO_FILE) {
                         return false;
                     }
                 }
             }
-            return array();
         }
+
+        return $result;
     }
 
-    public function moveUploadedImages()
+    /**
+     * アップロードファイルを指定のフォルダに移動する
+     *
+     * @access private
+     * @param
+     * @return void
+     * @author kobayashi
+     */
+    private function moveUploadedImages()
     {
-        $files = Session::get_flash('admin.fleamarket.files');
+        $files = \Session::get_flash('admin.fleamarket.files');
         if (! $files) {
             return false;
         }
 
-        if(! file_exists(DOCROOT . 'files/fleamarket/img/') ){
+        if (! file_exists(DOCROOT . 'files/fleamarket/img/')) {
             mkdir(DOCROOT . 'files/fleamarket/img/', 0777, true);
         }
 
         foreach ($files as $file) {
-            File::rename(
+            \File::rename(
                 DOCROOT . 'files/admin/fleamarket/img/' . $file['saved_as'],
                 DOCROOT . 'files/fleamarket/img/'       . $file['saved_as']
             );
             $this->makeThumbnail($file['saved_as']);
         }
+
         return $files;
     }
 
-    public function registerFleamarketImage($fleamarket, $files)
-    {
-        foreach ($files as $file) {
-            $matches = array();
-            if (preg_match('/^upload(\d+)$/',$file['field'], $matches)) {
-                $priority = $matches[1];
-                $data = array(
-                    'fleamarket_id' => $fleamarket->fleamarket_id,
-                    'file_name' => $file['saved_as'],
-                    'priority' => $priority
-                );
-
-                $fleamarket_image = Model_Fleamarket_Image::query()
-                    ->where('fleamarket_id', $fleamarket->fleamarket_id)
-                    ->where('priority', $priority)
-                    ->get_one();
-
-                if ($fleamarket_image) {
-                    $fleamarket_image->set($data);
-                    $fleamarket_image->updated_user = $this->administrator->administrator_id;
-                }else{
-                    $fleamarket_image = Model_Fleamarket_Image::forge($data);
-                    $fleamarket_image->created_user = $this->administrator->administrator_id;
-                }
-                $fleamarket_image->save();
-            }
-        }
-    }
-
-    public function makeThumbnail($image_filename)
+    /**
+     * アップロードされた画像のサムネイルを生成する
+     *
+     * @access private
+     * @param string $image_filename 画像ファイル名
+     * @return void
+     * @author kobayashi
+     */
+    private function makeThumbnail($image_filename)
     {
         $sizes = array(
             array('width' => 100, 'height' =>  65, 'prefix' => 'ss_'),
@@ -486,6 +377,52 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
         }
     }
 
+    /**
+     * ファイル名をフリマ画像情報に登録する
+     *
+     * @access private
+     * @param object $fleamarket フリマ情報
+     * @param array $files フリマ画像情報
+     * @return void
+     * @author kobayashi
+     */
+    private function registerFleamarketImage($fleamarket, $files)
+    {
+        foreach ($files as $file) {
+            $matches = array();
+            if (preg_match('/^upload(\d+)$/', $file['field'], $matches)) {
+                $priority = $matches[1];
+                $data = array(
+                    'fleamarket_id' => $fleamarket->fleamarket_id,
+                    'file_name' => $file['saved_as'],
+                    'priority' => $priority
+                );
+
+                $fleamarket_image = \Model_Fleamarket_Image::query()
+                    ->where('fleamarket_id', $fleamarket->fleamarket_id)
+                    ->where('priority', $priority)
+                    ->get_one();
+
+                if ($fleamarket_image) {
+                    $fleamarket_image->set($data);
+                    $fleamarket_image->updated_user = $this->administrator->administrator_id;
+                }else{
+                    $fleamarket_image = \Model_Fleamarket_Image::forge($data);
+                    $fleamarket_image->created_user = $this->administrator->administrator_id;
+                }
+                $fleamarket_image->save();
+            }
+        }
+    }
+
+    /**
+     * 画像を削除する
+     *
+     * @access private
+     * @param
+     * @return void
+     * @author kobayashi
+     */
     public function removeFleamarketImages()
     {
         $fieldsets = $this->getFieldsets();
@@ -494,94 +431,326 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
 
         if ($input['delete_priorities']) {
             foreach ($input['delete_priorities'] as $priority) {
-                $query = Model_Fleamarket_Image::query()
-                    ->where('fleamarket_id', Input::param('fleamarket_id'))
+                $query = \Model_Fleamarket_Image::query()
+                    ->where('fleamarket_id', Input::post('fleamarket_id'))
                     ->where('priority', $priority)
                     ->delete();
             }
         }
     }
 
-    public function setAssets()
-    {
-        Asset::css('jquery-ui.min.css', array(), 'add_css');
-        Asset::css('jquery-ui-timepicker.css', array(), 'add_css');
-        Asset::js('jquery-ui.min.js', array(), 'add_js');
-        Asset::js('jquery.ui.datepicker-ja.js', array(), 'add_js');
-        Asset::js('jquery-ui-timepicker.js', array(), 'add_js');
-        Asset::js('jquery-ui-timepicker-ja.js', array(), 'add_js');
-    }
-
-    public function registerFleamarketAbout($fleamarket)
+    /**
+     * フリマ説明情報を登録する
+     *
+     * @access private
+     * @param object フリマ情報
+     * @return void
+     * @author kobayashi
+     * @author ida
+     */
+    private function registerFleamarketAbout($fleamarket)
     {
         $fieldsets = $this->getFieldsets();
 
-        foreach (Model_Fleamarket_About::getAboutTitles() as $id => $title) {
+        foreach (\Model_Fleamarket_About::getAboutTitles() as $id => $title) {
             $fieldset = $fieldsets['fleamarket_abouts'][$id];
             $input = $fieldset->input();
 
-            $fleamarket_about = Model_Fleamarket_About::find('first',array(
+            $data = array(
+                'title'        => $title,
+                'description'  => $input['description'],
+                'created_user' => 1,
+                'updated_user' => 1
+            );
+
+            $fleamarket_about = \Model_Fleamarket_About::find('first',array(
                 'where' => array(
                     'fleamarket_id' => $fleamarket->fleamarket_id,
                     'about_id' => $id
                 )
             ));
 
-            if (! $fleamarket_about) {
-                $fleamarket_about = Model_Fleamarket_About::forge(array(
+            if ($fleamarket_about) {
+                $data['updated_user'] = $this->administrator->administrator_id;
+            } else {
+                $fleamarket_about = \Model_Fleamarket_About::forge(array(
                     'fleamarket_id' => $fleamarket->fleamarket_id,
                     'about_id' => $id
                 ));
+                $data['created_user'] = $this->administrator->administrator_id;
             }
 
-            $fleamarket_about->set(array(
-                'title'        => $title,
-                'description'  => $input['description'],
-                'created_user' => 1,
-                'updated_user' => 1
-            ));
-
-            $fleamarket_about->save();
+            $fleamarket_about->set($data)->save();
         }
     }
 
-    public function registerFleamarketEntryStyle($fleamarket)
+    /**
+     * フリマ出店形態情報を登録する
+     *
+     * @access private
+     * @param object フリマ情報
+     * @return void
+     * @author kobayashi
+     * @author ida
+     */
+    private function registerFleamarketEntryStyle($fleamarket)
     {
+        $entry_styles = \Config::get('master.entry_styles');
         $fieldsets = $this->getFieldsets();
-        $entry_styles = Config::get('master.entry_styles');
 
         foreach ($entry_styles as $id => $entry_style) {
             $fieldset = $fieldsets['fleamarket_entry_styles'][$id];
             $input = $fieldset->input();
 
-            $fleamarket_entry_style = Model_Fleamarket_Entry_Style::find('first',array(
+            $fleamarket_entry_style = \Model_Fleamarket_Entry_Style::find('first',array(
                 'where' => array(
                     'fleamarket_id'  => $fleamarket->fleamarket_id,
                     'entry_style_id' => $id
                 )
             ));
 
+            $data = array(
+                'booth_fee'     => $input['booth_fee'],
+                'max_booth'     => $input['max_booth'],
+                'reservation_booth_limit' => $input['reservation_booth_limit'],
+            );
+
             if (strlen($input['booth_fee'])) {
-                if (! $fleamarket_entry_style) {
-                    $fleamarket_entry_style = Model_Fleamarket_Entry_Style::forge(array(
+                if ($fleamarket_entry_style) {
+                    $data['updated_user'] = $this->administrator->administrator_id;
+                } else {
+                    $fleamarket_entry_style = \Model_Fleamarket_Entry_Style::forge(array(
                         'fleamarket_id' => $fleamarket->fleamarket_id,
                         'entry_style_id'      => $id
                     ));
+                    $data['created_user'] = $this->administrator->administrator_id;
                 }
-                $fleamarket_entry_style->set(array(
-                    'booth_fee'               => $input['booth_fee'],
-                    'max_booth'               => $input['max_booth'],
-                    'reservation_booth_limit' => $input['reservation_booth_limit'],
-                    'created_user'            => 1,
-                    'updated_user'            => 1
-                ));
-                $fleamarket_entry_style->save();
-            }else{
+                $fleamarket_entry_style->set()->save($data);
+            } else {
                 if ($fleamarket_entry_style) {
                     $fleamarket_entry_style->delete();
                 }
             }
         }
+    }
+
+    /**
+     * フィールドセットを取得する
+     *
+     * @access private
+     * @param
+     * @return void
+     * @author kobayashi
+     */
+    private function getFieldsets()
+    {
+        if (! $this->fieldsets) {
+            if ($this->request->action == 'index') {
+                $fieldsets = Session::get_flash('admin.fleamarket.fieldsets');
+                if (! $fieldsets) {
+                    $fieldsets = $this->createFieldsets();
+                }
+            } elseif ($this->request->action == 'confirm') {
+                $fieldsets = $this->createFieldsets();
+            } elseif ($this->request->action == 'thanks') {
+                $fieldsets = Session::get_flash('admin.fleamarket.fieldsets');
+            }
+            $this->fieldsets = $fieldsets;
+        }
+
+        return $this->fieldsets;
+    }
+
+    /**
+     * フィールドセットを生成する
+     *
+     * @access private
+     * @param
+     * @return void
+     * @author kobayashi
+     */
+    private function createFieldsets()
+    {
+        return array(
+            'fleamarket'              => $this->createFieldsetFleamarket(),
+            'fleamarket_abouts'       => $this->createFieldsetFleamarketAbouts(),
+            'fleamarket_entry_styles' => $this->createFieldsetFleamarketEntryStyles()
+        );
+    }
+
+    /**
+     * フリマ情報のフィールドセットを生成する
+     *
+     * @access private
+     * @param
+     * @return void
+     * @author kobayashi
+     */
+    private function createFieldsetFleamarket()
+    {
+        $fieldset = \Fieldset::forge('fleamarket');
+
+        if ($this->fleamarket) {
+            $fieldset->add_model($this->fleamarket)->populate($this->fleamarket, false);
+
+            foreach (array('event_time_start','event_time_end') as $field) {
+                $value = $fieldset->field($field)->value;
+                $matches = array();
+                if (preg_match('/(^\d{2}:\d{2})/', $value, $matches)) {
+                    $value = $matches[1];
+                }
+                $fieldset->field($field)->set_value($value);
+            }
+
+            foreach (array('reservation_start','reservation_end') as $field) {
+                $value = $fieldset->field($field)->value;
+                $matches = array();
+                if (preg_match('/(^\d{4}-\d{2}-\d{2})/', $value, $matches)) {
+                    $value = $matches[1];
+                }
+                $fieldset->field($field)->set_value($value);
+            }
+        } else {
+            $fieldset->add_model('Model_Fleamarket');
+        }
+
+        $fieldset->validation()->add_callable('Custom_Validation');
+        $fieldset->add('delete_priorities');
+        $fieldset->repopulate();
+
+        return $fieldset;
+    }
+
+    /**
+     * フリマ説明情報のフィールドセットを生成する
+     *
+     * @access private
+     * @param
+     * @return void
+     * @author kobayashi
+     */
+    private function createFieldsetFleamarketAbouts()
+    {
+        $fieldsets = array();
+        foreach (\Model_Fleamarket_About::getAboutTitles() as $id => $title) {
+            $fieldset = Fieldset::forge("fleamarket_about_{$id}");
+
+            if (isset($this->fleamarket_abouts[$id])) {
+                $fieldset->add_model($this->fleamarket_abouts[$id])
+                    ->populate($this->fleamarket_abouts[$id],false);
+            } else {
+                $fieldset->add_model('Model_Fleamarket_About');
+            }
+
+            if (\Input::method() == 'POST') {
+                $fieldset->field('description')
+                    ->set_value(\Input::post("fleamarket_about_{$id}_description"));
+            }
+
+            $fieldsets[$id] = $fieldset;
+        }
+
+        return $fieldsets;
+    }
+
+    /**
+     * フリマ出店形態情報のフィールドセットを生成する
+     *
+     * @access private
+     * @param
+     * @return void
+     * @author kobayashi
+     */
+    private function createFieldsetFleamarketEntryStyles()
+    {
+        $entry_styles = \Config::get('master.entry_styles');
+        $fieldsets = array();
+
+        foreach ($entry_styles as $id => $entry_stype) {
+            $fieldset = \Fieldset::forge("fleamarket_entry_style_${id}");
+
+            if (isset($this->fleamarket_entry_styles[$id])) {
+                $fieldset->add_model($this->fleamarket_entry_styles[$id])
+                    ->populate($this->fleamarket_entry_styles[$id],false);
+            }else{
+                $fieldset->add_model('Model_Fleamarket_Entry_Style');
+            }
+
+            if (Input::method() == 'POST') {
+                $fields = array(
+                    'booth_fee','max_booth','reservation_booth_limit'
+                );
+                foreach ($fields as $field) {
+                    $fieldset->field($field)
+                        ->set_value(Input::post("fleamarket_entry_style_{$id}_{$field}"));
+                }
+            }
+
+            $fieldsets[$id] = $fieldset;
+        }
+
+        return $fieldsets;
+    }
+
+    /**
+     * fleamarkets テーブルへの登録
+     *
+     * @access private
+     * @param
+     * @return Model_Fleamarketオブジェクト
+     * @author kobayashi
+     */
+    private function registerFleamarket()
+    {
+        $data = $this->getFleamarketData();
+        if (! $data) {
+            throw new Exception(\Model_Error::ER00502);
+        } else {
+            if (Input::post('fleamarket_id')) {
+                $fleamarket = \Model_Fleamarket::find(
+                    \Input::post('fleamarket_id')
+                );
+                unset($data['reservation_serial']);
+            } else {
+                $fleamarket = \Model_Fleamarket::forge();
+                $data['reservation_serial'] = 1;
+            }
+            if ($fleamarket) {
+                $fleamarket->set($data)->save();
+            }
+
+            return $fleamarket;
+        }
+    }
+
+    /**
+     * セッションからフリマ情報のデータを取得、整形
+     *
+     * @access private
+     * @param
+     * @return array fleamarketのデータ
+     * @author kobayashi
+     */
+    private function getFleamarketData()
+    {
+        $fieldsets = $this->getFieldsets();
+
+        if (! $fieldsets) {
+            return false;
+        }
+
+        $fieldset = $fieldsets['fleamarket'];
+
+        $input = $fieldset->validation()->validated();
+
+        if (isset($input['fleamarket_id'])) {
+            $input['updated_user'] = $this->administrator->administrator_id;
+        }else{
+            $input['created_user'] = $this->administrator->administrator_id;
+        }
+        $input['group_code'] = '';
+
+        return $input;
     }
 
     /**
@@ -594,9 +763,16 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
      */
     private function getCondition()
     {
-        $conditions = Input::get('c', array());
+        $conditions = Input::post('c', array());
 
-        return $conditions;
+        $result = array();
+        foreach ($conditions as $field => $value) {
+            if ($value !== '') {
+                $result[$field] = $value;
+            }
+        }
+
+        return $result;
     }
 
     /**
