@@ -19,10 +19,11 @@ class View_Admin_Fleamarket_List extends ViewModel
         $this->week_list = \Config::get('master.week');
         $this->entry_styles = \Config::get('master.entry_styles');
         $this->prefectures = \Config::get('master.prefectures');
+        $this->event_statuses = \Model_Fleamarket::getEventStatuses();
+        $this->register_types = \Model_Fleamarket::getRegisterTypes();
         $this->fleamarket_list = $this->getFleamarketEntryStyle(
             $this->fleamarkets
         );
-        $this->event_statuses = \Model_Fleamarket::getEventStatuses();
     }
 
     /**

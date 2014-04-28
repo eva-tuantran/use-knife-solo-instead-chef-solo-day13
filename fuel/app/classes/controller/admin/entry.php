@@ -12,7 +12,7 @@ class Controller_Admin_Entry extends Controller_Admin_Base_Template
     {
         $view = View::forge('admin/entry/list');
 
-        $total = Model_Entry::findByKeywordCount(
+        $total = \Model_Entry::findByKeywordCount(
             Input::all()
         );
 
@@ -24,7 +24,7 @@ class Controller_Admin_Entry extends Controller_Admin_Base_Template
             'name'           => 'pagenation',
         ));
 
-        $entries = Model_Entry::findByKeyword(
+        $entries = \Model_Entry::findByKeyword(
             Input::all(),
             Pagination::get('per_page'),
             Pagination::get('offset')

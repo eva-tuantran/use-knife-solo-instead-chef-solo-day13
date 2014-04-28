@@ -1,20 +1,102 @@
 <div class="panel panel-default">
   <!-- Default panel contents -->
   <div class="panel-heading">
-    <h2 class="panel-title">開催一覧</h2>
-    <a class="btn btn-primary dropdown-toggle" href="/admin/fleamarket/">新規登録</a>
+      <h2 class="panel-title">フリマ一覧</h2>
   </div>
   <div class="panel-body">
+    <div class="row">
+      <div class="col-md-10">
+        <form class="form-horizontal" id="" action="/admin/fleamarket/list" method="post" role="form">
+          <div class="form-group">
+            <label for="register_type" class="col-md-1 control-label">種類</label>
+            <div class="col-md-2">
+              <select class="form-control" id="register_type" name="c[register_type]">
+                <option value=""></option>
+              <?php
+                  foreach ($register_types as $register_type_id => $register_type_name):
+                      $selected = '';
+                      if (isset($conditions['register_type'])
+                          && $register_type_id == $conditions['register_type']
+                      ):
+                          $selected = 'selected';
+                      endif;
+              ?>
+                <option value="<?php echo $register_type_id;?>" <?php echo $selected;?>><?php echo $register_type_name;?></option>
+              <?php
+                  endforeach;
+              ?>
+              </select>
+            </div>
+            <label for="event_status" class="col-md-1 control-label">開催状況</label>
+            <div class="col-md-2">
+              <select class="form-control" id="event_status" name="c[event_status]">
+                <option value=""></option>
+              <?php
+                  foreach ($event_statuses as $event_statuse_id => $event_statuse_name):
+                      $selected = '';
+                      if (isset($conditions['event_status'])
+                          && $event_statuse_id == $conditions['event_status']
+                      ):
+                          $selected = 'selected';
+                      endif;
+              ?>
+                <option value="<?php echo $event_statuse_id;?>" <?php echo $selected;?>><?php echo $event_statuse_name;?></option>
+              <?php
+                  endforeach;
+              ?>
+              </select>
+            </div>
+            <label for="prefecture" class="col-md-1 control-label">都道府県</label>
+            <div class="col-md-2">
+              <select class="form-control" id="prefecture" name="c[prefecture]">
+                <option value=""></option>
+              <?php
+                  foreach ($prefectures as $prefecture_id => $prefecture_name):
+                      $selected = '';
+                      if (isset($conditions['prefecture'])
+                          && $prefecture_id == $conditions['prefecture']
+                      ):
+                          $selected = 'selected';
+                      endif;
+              ?>
+                <option value="<?php echo $prefecture_id;?>" <?php echo $selected;?>><?php echo $prefecture_name;?></option>
+              <?php
+                  endforeach;
+              ?>
+              </select>
+            </div>
+            <button type="submit" class="btn btn-default" <?php echo $selected;?>><span class="glyphicon glyphicon-search"></span> 検 索</button>
+          </div>
+          <div class="form-group">
+            <label for="keyword" class="col-md-1 control-label">キーワード</label>
+            <div class="col-md-4">
+              <?php
+                  $keyword = '';
+                  if (isset($conditions['keyword'])
+                      && '' !== $conditions['keyword']
+                  ):
+                      $keyword = $conditions['keyword'];
+                  endif;
+              ?>
+              <input type="text" class="form-control" id="keyword" placeholder="フリマ名、開催地" name="c[keyword]" value="<?php echo e($keyword);?>">
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
     <table class="table table-hover table-condensed" style="">
       <thead>
         <tr>
           <th rowspan="2">フリマID</th>
           <th rowspan="2">開催日</th>
           <th rowspan="2">場所</th>
+          <th rowspan="2">&nbsp;</th>
           <th rowspan="2">名前</th>
           <th colspan="<?php echo count($entry_styles) + 1;?>">予約</th>
-          <th rowspan="2">状態</th>
-          <th rowspan="2">&nbsp;</th>
+          <th rowspan="2">開催状況</th>
+          <th rowspan="2">
+            <a class="btn btn-primary dropdown-toggle" href="/admin/fleamarket/">新規登録</a>
+          </th>
         </tr>
         <tr>
         <?php
@@ -29,14 +111,32 @@
       </thead>
       <tbody>
       <?php
-          foreach ($fleamarket_list as $fleamarket):
-              $fleamarket_id = $fleamarket['fleamarket_id'];
+          if (! $fleamarket_list):
+      ?>
+        <tr>
+          <td colspan="12">検索条件に該当するフリマ情報はありません</td>
+        </tr>
+      <?php
+          else:
+              foreach ($fleamarket_list as $fleamarket):
+                  $fleamarket_id = $fleamarket['fleamarket_id'];
       ?>
         <tr>
           <td><a class="" href="/admin/fleamarket/?fleamarket_id=<?php echo $fleamarket_id;?>"><?php echo e($fleamarket_id);?></a></td>
           <td><?php echo e(date('Y年m月d日', strtotime($fleamarket['event_date'])));?></td>
           <td><?php echo e(@$prefectures[$fleamarket['prefecture_id']]);?></td>
-          <td><?php echo e($fleamarket['name']);?></td>
+          <td>
+            <?php
+                if ( $fleamarket['register_type'] == \Model_Fleamarket::REGISTER_TYPE_ADMIN):
+            ?>
+              <span class="label label-success">楽</span>
+            <?php
+                endif;
+            ?>
+          </td>
+          <td>
+            <?php echo e($fleamarket['name']);?>
+          </td>
           <?php
               foreach ($entry_styles as $entry_style_id => $entry_style_name):
           ?>
@@ -66,7 +166,10 @@
             <a class="btn btn-default dropdown-toggle" href="/admin/entry/csv?fleamarket_id=<?php echo e($fleamarket_id);?>">CSV</a>
           </td>
         </tr>
-      <?php endforeach?>
+      <?php
+              endforeach;
+          endif;
+      ?>
       </tbody>
     </table>
   </div>

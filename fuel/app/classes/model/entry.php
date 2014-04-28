@@ -916,18 +916,18 @@ QUERY;
 
     public static function findByKeywordCount($input)
     {
+        $fleamarket_id = null;
         if (isset($input['fleamarket_id'])) {
             $fleamarket_id = $input['fleamarket_id'];
             unset($input['fleamarket_id']);
         }
 
         $query = static::getFindByKeywordQuery($input);
-        if (isset($input['fleamarket_id'])) {
-            $fleamarket_id = $input['fleamarket_id'];
+        if (isset($fleamarket_id)) {
             $query->where('fleamarket_id', $fleamarket_id);
-            unset($input['fleamarket_id']);
         }
+        $count = $query->count();
 
-        return $query->count();
+        return $count;
     }
 }
