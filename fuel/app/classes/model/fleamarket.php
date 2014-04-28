@@ -19,7 +19,7 @@ class Model_Fleamarket extends Model_Base
     const EVENT_STATUS_CANCEL = 5;
 
     /**
-     * 出店料 0:有料,1:無料
+     * 出店料 0:無料,1:有料
      */
     const SHOP_FEE_FLAG_FREE = 0;
     const SHOP_FEE_FLAG_CHARGE = 1;
@@ -131,11 +131,11 @@ class Model_Fleamarket extends Model_Base
         ),
         'event_time_start' => array(
             'label' => '開始時間',
-//            'validation' => array('valid_time')
+            'validation' => array('valid_time')
         ),
         'event_time_end' => array(
             'label' => '終了時間',
-//            'validation' => array('valid_time')
+            'validation' => array('valid_time')
         ),
         'event_status' => array(
             'label' => '開催状況',
@@ -196,40 +196,47 @@ class Model_Fleamarket extends Model_Base
             'form'  => array('type' => false)
         ),
         'link_from_list' => array(
-            'label' => '出品物の種類',
+            'label' => '反響項目リスト',
             'form'  => array('type' => false)
         ),
         'pickup_flag' => array(
+            'label' => 'ピックアップ',
             'validation' => array(
                 'numeric_between' => array(0, 1)
             )
         ),
         'shop_fee_flag' => array(
+            'label' => '出店料',
             'validation' => array(
                 'numeric_between' => array(0, 1)
             )
         ),
         'car_shop_flag' => array(
+            'label' => '車出店',
             'validation' => array(
                 'numeric_between' => array(0, 1)
             )
         ),
         'pro_shop_flag' => array(
+            'label' => 'プロ出店',
             'validation' => array(
                 'numeric_between' => array(0, 1)
             )
         ),
         'rainy_location_flag' => array(
+            'label' => '雨天開催会場',
             'validation' => array(
                 'numeric_between' => array(0, 1)
             )
         ),
         'charge_parking_flag' => array(
+            'label' => '有料駐車場',
             'validation' => array(
                 'numeric_between' => array(0, 1)
             )
         ),
         'free_parking_flag' => array(
+            'label' => '無料駐車場',
             'validation' => array(
                 'numeric_between' => array(0, 1)
             )
@@ -243,9 +250,11 @@ class Model_Fleamarket extends Model_Base
             'form'  => array('type' => false)
         ),
         'register_type' => array(
+            'label' => '登録タイプ',
             'form'  => array('type' => false)
         ),
         'display_flag' => array(
+            'label' => '表示',
             'form'  => array('type' => false)
         ),
         'created_user' => array(
@@ -279,14 +288,22 @@ class Model_Fleamarket extends Model_Base
     );
 
     /**
-     * 開催状況リスト
+     * 開催状況一覧
      */
-    protected static $event_statuses = array(
+    private static $event_statuses = array(
         self::EVENT_STATUS_SCHEDULE    => '開催予定',
         self::EVENT_STATUS_RESERVATION_RECEIPT => '予約受付中',
         self::EVENT_STATUS_RECEIPT_END => '受付終了',
         self::EVENT_STATUS_CLOSE       => '開催終了',
         self::EVENT_STATUS_CANCEL      => '開催中止',
+    );
+
+    /**
+     * 登録タイプ一覧
+     */
+    private static $register_types = array(
+        self::REGISTER_TYPE_ADMIN => '運営事務局',
+        self::REGISTER_TYPE_USER => 'ユーザ投稿',
     );
 
     /**
@@ -300,6 +317,19 @@ class Model_Fleamarket extends Model_Base
     public static function getEventStatuses()
     {
         return self::$event_statuses;
+    }
+
+    /**
+     * 登録タイプリストを取得する
+     *
+     * @access public
+     * @param
+     * @return array
+     * @author ida
+     */
+    public static function getRegisterTypes()
+    {
+        return self::$register_types;
     }
 
     /**
@@ -1047,11 +1077,11 @@ QUERY;
      * @return array 検索条件
      * @author void
      */
-    public static function createAdminSearchCondition($condition_list = array())
-    {
+    public static function createAdminSearchCondition(
+        $condition_list = array()
+    ) {
         $conditions = array();
 
-        $is_event_date = false;
         foreach ($condition_list as $field => $condition) {
             if ($condition == '') {
                 continue;
@@ -1063,24 +1093,23 @@ QUERY;
             }
 
             switch ($field) {
+                case 'register_type':
+                    $conditions['f.register_type'] = array($operator, $condition);
+                    break;
+                case 'event_status':
+                    $conditions['f.event_status'] = array($operator, $condition);
+                    break;
+                case 'prefecture':
+                    $conditions['l.prefecture_id'] = array($operator, $condition);
+                    break;
                 case 'keyword':
                     $conditions['f.name'] = array(
                         ' like ', '%' . $condition . '%'
                     );
                     break;
-                case 'prefecture':
-                    $conditions['prefecture_id'] = array($operator, $condition);
-                    break;
-                case 'event_status':
-                    $conditions['event_status'] = array($operator, $condition);
-                    break;
                 default:
                     break;
             }
-        }
-
-        if (! $is_event_date) {
-            $conditions['event_date'] = array('>= CURDATE()');
         }
 
         return $conditions;

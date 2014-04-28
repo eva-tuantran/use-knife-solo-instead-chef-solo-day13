@@ -783,12 +783,18 @@ QUERY;
 
         if(! empty($input['name'])){
             $query->and_where_open();
-            $query->where('first_name', 'LIKE', static::makeLikeValue($input['name']));
-            $query->or_where('last_name', 'LIKE', static::makeLikeValue($input['name']));
+            $query->where(\DB::expr("CONCAT(last_name,first_name)"), 'LIKE', str_replace(' ','', static::makeLikeValue($input['name'])));
             $query->and_where_close();
         }
 
-        foreach (array('address', 'email', 'tel', 'user_old_id') as $field) {
+        if(! empty($input['tel'])){
+            $query->and_where_open();
+            $query->where   (\DB::expr("REPLACE(tel,'-','')"), '=', str_replace('-','',$input['tel']));
+            $query->or_where(\DB::expr("REPLACE(tel,'-','')"), 'LIKE', '%'.str_replace('-','',$input['tel']).'%');
+            $query->and_where_close();
+        }
+
+        foreach (array('address', 'email', 'user_old_id') as $field) {
             if(! empty($input[$field])){
                 $query->where($field, 'LIKE', static::makeLikeValue($input[$field]));
             }

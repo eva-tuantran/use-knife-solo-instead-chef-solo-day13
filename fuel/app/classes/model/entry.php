@@ -885,7 +885,10 @@ QUERY;
         $fields = array('reservation_number','user_id');
         foreach ($fields as $field) {
             if (! empty($input[$field])) {
+                $query->where_open();
                 $query->where($field, 'LIKE', static::makeLikeValue($input[$field]));
+                $query->or_where($field, '=', $input[$field]);
+                $query->where_close();
             }
         }
 
@@ -901,33 +904,38 @@ QUERY;
 
     public static function findByKeyword($input, $limit, $offset)
     {
+
+        $fleamarket_id = null;
+        if (isset($input['fleamarket_id']) && $input['fleamarket_id'] != '') {
+            $fleamarket_id = $input['fleamarket_id'];
+            unset($input['fleamarket_id']);
+        }
+
         $query = static::getFindByKeywordQuery($input)
             ->limit($limit)
             ->offset($offset);
-
-        if (isset($input['fleamarket_id'])) {
-            $fleamarket_id = $input['fleamarket_id'];
+        if ($fleamarket_id) {
             $query->where('fleamarket_id', $fleamarket_id);
-            unset($input['fleamarket_id']);
         }
+        $result = $query->get();
 
         return $query->get();
     }
 
     public static function findByKeywordCount($input)
     {
-        if (isset($input['fleamarket_id'])) {
+        $fleamarket_id = null;
+        if (isset($input['fleamarket_id']) && $input['fleamarket_id'] != '') {
             $fleamarket_id = $input['fleamarket_id'];
             unset($input['fleamarket_id']);
         }
 
         $query = static::getFindByKeywordQuery($input);
-        if (isset($input['fleamarket_id'])) {
-            $fleamarket_id = $input['fleamarket_id'];
+        if ($fleamarket_id) {
             $query->where('fleamarket_id', $fleamarket_id);
-            unset($input['fleamarket_id']);
         }
+        $count = $query->count();
 
-        return $query->count();
+        return $count;
     }
 }
