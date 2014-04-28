@@ -22,7 +22,7 @@
     <?php } ?>
     <?php if (isset($fleamarket)) { ?>
     <tr>
-      <td style="width: 180px">開催</td>
+      <td style="width: 180px">フリマ</td>
       <td colspan="2">
         <a href="/admin/fleamarket/?fleamarket_id=<?php echo $fleamarket->fleamarket_id; ?>">
         <?php echo e($fleamarket->name); ?>
@@ -46,7 +46,7 @@
     <th>カテゴリ</th>
     <th>ジャンル</th>
     <th>予約ブース数</th>
-    <th>知った媒体</th>
+    <th>反響</th>
     <th>状態</th>
   </tr>
   <?php
