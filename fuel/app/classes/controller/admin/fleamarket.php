@@ -95,6 +95,7 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
         $view_model = \ViewModel::forge('admin/fleamarket/index');
         $view_model->set('fieldsets', $this->getFieldsets(), false);
         $view_model->set('fleamarket', $this->fleamarket, false);
+        $view_model->set('location_id', \Input::get('location_id'), false);
         $this->template->content = $view_model;
     }
 
@@ -573,7 +574,7 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
     {
         if (! $this->fieldsets) {
             if ($this->request->action == 'index') {
-                $fieldsets = Session::get_flash('admin.fleamarket.fieldsets');
+                $fieldsets = \Session::get_flash('admin.fleamarket.fieldsets');
                 if (! $fieldsets) {
                     $fieldsets = $this->createFieldsets();
                 }
