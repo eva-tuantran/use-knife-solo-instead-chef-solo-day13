@@ -23,7 +23,7 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
     public function before()
     {
         parent::before();
-        if (Input::get('fleamarket_id')) {
+        if (Input::param('fleamarket_id')) {
             $this->fleamarket =
                 \Model_Fleamarket::find(Input::param('fleamarket_id'));
         }
@@ -54,13 +54,8 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
      */
     public function action_list()
     {
-        $view_model = \ViewModel::forge('admin/fleamarket/list');
-
         $conditions = $this->getCondition();
-        // 検索条件取得
         $condition_list = \Model_Fleamarket::createAdminSearchCondition($conditions);
-
-        // 件数取得
         $total_count = \Model_Fleamarket::getCountByAdminSearch($condition_list);
 
         // ページネーション設定
@@ -78,6 +73,7 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
             ))
         );
 
+        $view_model = \ViewModel::forge('admin/fleamarket/list');
         $view_model->set('fleamarkets', $fleamarkets, false);
         $view_model->set('pagination', $pagination, false);
         $view_model->set('conditions', $conditions, false);
@@ -96,13 +92,10 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
     public function action_index()
     {
         $this->setAssets();
-        $view_model = \View::forge('admin/fleamarket/index');
-        $fieldsets = $this->getFieldsets();
-        $view_model->set('locations', \Model_Location::find('all'));
-        $view_model->set('fieldsets', $fieldsets, false);
+        $view_model = \ViewModel::forge('admin/fleamarket/index');
+        $view_model->set('fieldsets', $this->getFieldsets(), false);
         $view_model->set('fleamarket', $this->fleamarket, false);
         $this->template->content = $view_model;
-
     }
 
     /**
@@ -119,9 +112,9 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
         $fieldsets = $this->getFieldsets();
         \Session::set_flash('admin.fleamarket.fieldsets', $fieldsets);
 
-        if ((! $this->validate_fleamarket($fieldsets))
-            || (! $this->validate_fleamarket_about($fieldsets))
-            || (! $this->validate_fleamarket_entry_style($fieldsets))
+        if ((! $this->validateFleamarket($fieldsets))
+            || (! $this->validateFleamarketAbout($fieldsets))
+            || (! $this->validateFleamarketEntryStyle($fieldsets))
         ) {
             \Response::redirect(
                 'admin/fleamarket/?fleamarket_id=' . Input::post('fleamarket_id','')
@@ -136,84 +129,11 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
             );
         }
 
-        $view = \View::forge('admin/fleamarket/confirm');
-        $view->set('locations', \Model_Location::find('all'));
-        $view->set('fieldsets', $fieldsets, false);
-        $view->set('fleamarket', $this->fleamarket, false);
-        $view->set('files', $files, false);
-
-        $this->template->content = $view;
-    }
-
-    /**
-     * フリマ情報のバリデーション
-     *
-     * @access public
-     * @param object $fieldsets フィールドセットオブジェクト
-     * @return void
-     * @author kobayashi
-     */
-    public function validate_fleamarket($fieldsets)
-    {
-        return $fieldsets['fleamarket']->validation()->run();
-    }
-
-    /**
-     * フリマ説明情報のバリデーション
-     *
-     * @access public
-     * @param object $fieldsets フィールドセットオブジェクト
-     * @return void
-     * @author kobayashi
-     * @author ida
-     */
-    public function validate_fleamarket_about($fieldsets)
-    {
-        $is_valid = false;
-        foreach ($fieldsets['fleamarket_abouts'] as $id => $fieldset) {
-            $input = array(
-                'description' => Input::post("fleamarket_about_${id}_description"),
-            );
-
-            if ($fieldset->validation()->run($input)) {
-                $is_valid = true;
-            }
-        }
-
-        return $is_valid;
-    }
-
-    /**
-     * フリマ出店形態情報のバリデーション
-     *
-     * @access public
-     * @param object $fieldsets フィールドセットオブジェクト
-     * @return void
-     * @author kobayashi
-     * @author ida
-     */
-    public function validate_fleamarket_entry_style($fieldsets)
-    {
-        $is_valid = false;
-        $entry_styles = \Config::get('master.entry_styles');
-        foreach ($entry_styles as $id => $entry_style) {
-            $input = array();
-            $fields = array(
-                'booth_fee', 'max_booth', 'reservation_booth_limit'
-            );
-            foreach ($fields as $field) {
-                $field_name = "fleamarket_entry_style_{$id}_{$field}";
-                $input[$field] = \Input::post($field_name);
-            }
-
-            $fieldset = $fieldsets['fleamarket_entry_styles'][$id];
-
-            if ($fieldset->validation()->run($input)) {
-                $is_valid = true;
-            }
-        }
-
-        return $is_valid;
+        $view_model = \ViewModel::forge('admin/fleamarket/confirm');
+        $view_model->set('fieldsets', $fieldsets, false);
+        $view_model->set('fleamarket', $this->fleamarket, false);
+        $view_model->set('files', $files, false);
+        $this->template->content = $view_model;
     }
 
     /**
@@ -404,13 +324,11 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
                     ->get_one();
 
                 if ($fleamarket_image) {
-                    $fleamarket_image->set($data);
                     $fleamarket_image->updated_user = $this->administrator->administrator_id;
                 }else{
-                    $fleamarket_image = \Model_Fleamarket_Image::forge($data);
                     $fleamarket_image->created_user = $this->administrator->administrator_id;
                 }
-                $fleamarket_image->save();
+                $fleamarket_image->set($data)->save();
             }
         }
     }
@@ -525,13 +443,84 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
                     ));
                     $data['created_user'] = $this->administrator->administrator_id;
                 }
-                $fleamarket_entry_style->set()->save($data);
+                $fleamarket_entry_style->set($data)->save();
             } else {
                 if ($fleamarket_entry_style) {
                     $fleamarket_entry_style->delete();
                 }
             }
         }
+    }
+
+    /**
+     * フリマ情報のバリデーション
+     *
+     * @access public
+     * @param object $fieldsets フィールドセットオブジェクト
+     * @return void
+     * @author kobayashi
+     */
+    public function validateFleamarket($fieldsets)
+    {
+        return $fieldsets['fleamarket']->validation()->run();
+    }
+
+    /**
+     * フリマ説明情報のバリデーション
+     *
+     * @access public
+     * @param object $fieldsets フィールドセットオブジェクト
+     * @return void
+     * @author kobayashi
+     * @author ida
+     */
+    public function validateFleamarketAbout($fieldsets)
+    {
+        $is_valid = false;
+        foreach ($fieldsets['fleamarket_abouts'] as $id => $fieldset) {
+            $input = array(
+                'description' => Input::post("fleamarket_about_${id}_description"),
+            );
+
+            if ($fieldset->validation()->run($input)) {
+                $is_valid = true;
+            }
+        }
+
+        return $is_valid;
+    }
+
+    /**
+     * フリマ出店形態情報のバリデーション
+     *
+     * @access public
+     * @param object $fieldsets フィールドセットオブジェクト
+     * @return void
+     * @author kobayashi
+     * @author ida
+     */
+    public function validateFleamarketEntryStyle($fieldsets)
+    {
+        $is_valid = false;
+        $entry_styles = \Config::get('master.entry_styles');
+        foreach ($entry_styles as $id => $entry_style) {
+            $input = array();
+            $fields = array(
+                'booth_fee', 'max_booth', 'reservation_booth_limit'
+            );
+            foreach ($fields as $field) {
+                $field_name = "fleamarket_entry_style_{$id}_{$field}";
+                $input[$field] = \Input::post($field_name);
+            }
+
+            $fieldset = $fieldsets['fleamarket_entry_styles'][$id];
+
+            if ($fieldset->validation()->run($input)) {
+                $is_valid = true;
+            }
+        }
+
+        return $is_valid;
     }
 
     /**
@@ -593,7 +582,7 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
         if ($this->fleamarket) {
             $fieldset->add_model($this->fleamarket)->populate($this->fleamarket, false);
 
-            foreach (array('event_time_start','event_time_end') as $field) {
+            foreach (array('event_time_start', 'event_time_end') as $field) {
                 $value = $fieldset->field($field)->value;
                 $matches = array();
                 if (preg_match('/(^\d{2}:\d{2})/', $value, $matches)) {
