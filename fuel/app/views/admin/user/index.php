@@ -20,7 +20,7 @@
       </td>
     </tr>
     <tr>
-      <td>氏名</td>
+      <td>氏名(姓/名)</td>
       <td>
 	<input type="text" name="last_name" value="<?php echo e($fields['last_name']->value); ?>">
 	<input type="text" name="first_name" value="<?php echo e($fields['first_name']->value); ?>">
@@ -35,7 +35,7 @@
       </td>
     </tr>
     <tr>
-      <td>氏名（かな）</td>
+      <td>シメイ（セイ/メイ）</td>
       <td>
 	<input type="text" name="last_name_kana" value="<?php echo e($fields['last_name_kana']->value); ?>">
 	<input type="text" name="first_name_kana" value="<?php echo e($fields['first_name_kana']->value); ?>">
@@ -150,7 +150,7 @@
       </td>
     </tr>
     <tr>
-      <td>デバイス</td>
+      <td>携帯端末</td>
       <td>
 	<input type="text" name="device" value="<?php echo e($fields['device']->value); ?>">
 	<?php
@@ -161,9 +161,10 @@
       </td>
     </tr>
     <tr>
-      <td>mm_flag</td>
+      <td>メールマガジン購読</td>
       <td>
-	<input type="text" name="mm_flag" value="<?php echo e($fields['mm_flag']->value); ?>">
+    <input type="radio" name="mm_flag" value="1" <?php echo $fields['mm_flag']->value ? 'checked' : ''; ?>>購読する
+    <input type="radio" name="mm_flag" value="0" <?php echo $fields['mm_flag']->value ? '' : 'checked'; ?>>購読しない
 	<?php
 	   if (isset($errors['mm_flag'])) {
 	       echo $errors['mm_flag'];
@@ -172,7 +173,7 @@
       </td>
     </tr>
     <tr>
-      <td>mm_device</td>
+      <td>メルマガ受信端末</td>
       <td>
 	<input type="text" name="mm_device" value="<?php echo e($fields['mm_device']->value); ?>">
 	<?php
@@ -183,15 +184,8 @@
       </td>
     </tr>
     <tr>
-      <td>mm_error_flag</td>
-      <td>
-	<input type="text" name="mm_error_flag" value="<?php echo e($fields['mm_error_flag']->value); ?>">
-	<?php
-	   if (isset($errors['mm_error_flag'])) {
-	       echo $errors['mm_error_flag'];
-    	   }
-	?>
-      </td>
+      <td>メルマガエラーフラグ</td>
+      <td><?php echo e($fields['mm_error_flag']->value); ?></td>
     </tr>
     <tr>
       <td>mobile_carrier</td>
@@ -216,18 +210,11 @@
       </td>
     </tr>
     <tr>
-      <td>password</td>
-      <td>
-	<input type="text" name="password" value="<?php echo e($fields['password']->value); ?>">
-	<?php
-	   if (isset($errors['password'])) {
-	       echo $errors['password'];
-    	   }
-	?>
-      </td>
+      <td>パスワード(暗号化済)</td>
+      <td><?php echo e($fields['password']->value); ?></td>
     </tr>
     <tr>
-      <td>admin_memo</td>
+      <td>管理者メモ</td>
       <td>
 	<input type="text" name="admin_memo" value="<?php echo e($fields['admin_memo']->value); ?>">
 	<?php
@@ -238,7 +225,7 @@
       </td>
     </tr>
     <tr>
-      <td>organization_flag</td>
+      <td>organization_flag(未使用)</td>
       <td>
 	<input type="text" name="organization_flag" value="<?php echo e($fields['organization_flag']->value); ?>">
 	<?php
@@ -249,7 +236,7 @@
       </td>
     </tr>
     <tr>
-      <td>register_status</td>
+      <td>会員ステータス</td>
       <td>
 	<input type="text" name="register_status" value="<?php echo e($fields['register_status']->value); ?>">
 	<?php
@@ -260,14 +247,8 @@
       </td>
     </tr>
     <tr>
-      <td>last_login</td>
-      <td>
-	<input type="text" name="last_login" value="<?php echo e($fields['last_login']->value); ?>">
-	<?php
-	   if (isset($errors['last_login'])) {
-	       echo $errors['last_login'];
-    	   }
-	?>
+      <td>最終ログイン時刻</td>
+      <td> <?php echo e($fields['last_login']->value); ?>
       </td>
     </tr>
   </table>
