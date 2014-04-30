@@ -122,7 +122,7 @@
                   $fleamarket_id = $fleamarket['fleamarket_id'];
       ?>
         <tr>
-          <td><a class="" href="/admin/fleamarket/?fleamarket_id=<?php echo $fleamarket_id;?>"><?php echo e($fleamarket_id);?></a></td>
+          <td><a href="/admin/fleamarket/?fleamarket_id=<?php echo $fleamarket_id;?>"><?php echo e($fleamarket_id);?></a></td>
           <td><?php echo e(date('Y年m月d日', strtotime($fleamarket['event_date'])));?></td>
           <td><?php echo e(@$prefectures[$fleamarket['prefecture_id']]);?></td>
           <td>
@@ -134,9 +134,7 @@
                 endif;
             ?>
           </td>
-          <td>
-            <?php echo e($fleamarket['name']);?>
-          </td>
+          <td><a href="/admin/fleamarket/?fleamarket_id=<?php echo $fleamarket_id;?>"><?php echo e($fleamarket['name']);?></a></td>
           <?php
               foreach ($entry_styles as $entry_style_id => $entry_style_name):
           ?>
