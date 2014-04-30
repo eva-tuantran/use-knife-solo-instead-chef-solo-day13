@@ -95,6 +95,7 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
         $view_model = \ViewModel::forge('admin/fleamarket/index');
         $view_model->set('fieldsets', $this->getFieldsets(), false);
         $view_model->set('fleamarket', $this->fleamarket, false);
+        $view_model->set('location_id', \Input::get('location_id'), false);
         $this->template->content = $view_model;
     }
 
@@ -298,6 +299,63 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
     }
 
     /**
+     * 画像を削除する
+     *
+     * @access private
+     * @param
+     * @return void
+     * @author kobayashi
+     */
+    public function removeFleamarketImages()
+    {
+        $fieldsets = $this->getFieldsets();
+        $fieldset  = $fieldsets['fleamarket'];
+        $input = $fieldset->input();
+
+        if ($input['delete_priorities']) {
+            foreach ($input['delete_priorities'] as $priority) {
+                $query = \Model_Fleamarket_Image::query()
+                    ->where('fleamarket_id', Input::post('fleamarket_id'))
+                    ->where('priority', $priority)
+                    ->delete();
+            }
+        }
+    }
+
+    /**
+     * fleamarkets テーブルへの登録
+     *
+     * @access private
+     * @param
+     * @return Model_Fleamarketオブジェクト
+     * @author kobayashi
+     */
+    private function registerFleamarket()
+    {
+        $data = $this->getFleamarketData();
+        if (! $data) {
+            throw new \Exception(\Model_Error::ER00502);
+        }
+
+        $fleamarket = \Model_Fleamarket::find(
+            \Input::post('fleamarket_id')
+        );
+
+        $administrator_id = $this->administrator->administrator_id;
+        if ($fleamarket) {
+            $data['updated_user'] = $administrator_id;
+            unset($data['reservation_serial']);
+        }else{
+            $fleamarket = \Model_Fleamarket::forge();
+            $data['reservation_serial'] = 1;
+            $data['created_user'] = $administrator_id;
+        }
+        $fleamarket->set($data)->save();
+
+        return $fleamarket;
+    }
+
+    /**
      * ファイル名をフリマ画像情報に登録する
      *
      * @access private
@@ -323,36 +381,17 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
                     ->where('priority', $priority)
                     ->get_one();
 
+                $administrator_id = $this->administrator->administrator_id;
                 if ($fleamarket_image) {
-                    $fleamarket_image->updated_user = $this->administrator->administrator_id;
+                    $data['updated_user'] = $administrator_id;
                 }else{
-                    $fleamarket_image->created_user = $this->administrator->administrator_id;
+                    $fleamarket_image = \Model_Fleamarket_Image::forge(array(
+                        'fleamarket_id' => $fleamarket->fleamarket_id,
+                        'priority' => $priority
+                    ));
+                    $data['created_user'] = $administrator_id;
                 }
                 $fleamarket_image->set($data)->save();
-            }
-        }
-    }
-
-    /**
-     * 画像を削除する
-     *
-     * @access private
-     * @param
-     * @return void
-     * @author kobayashi
-     */
-    public function removeFleamarketImages()
-    {
-        $fieldsets = $this->getFieldsets();
-        $fieldset  = $fieldsets['fleamarket'];
-        $input = $fieldset->input();
-
-        if ($input['delete_priorities']) {
-            foreach ($input['delete_priorities'] as $priority) {
-                $query = \Model_Fleamarket_Image::query()
-                    ->where('fleamarket_id', Input::post('fleamarket_id'))
-                    ->where('priority', $priority)
-                    ->delete();
             }
         }
     }
@@ -377,25 +416,24 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
             $data = array(
                 'title'        => $title,
                 'description'  => $input['description'],
-                'created_user' => 1,
-                'updated_user' => 1
             );
 
             $fleamarket_about = \Model_Fleamarket_About::find('first',array(
                 'where' => array(
                     'fleamarket_id' => $fleamarket->fleamarket_id,
-                    'about_id' => $id
+                    'about_id'      => $id
                 )
             ));
 
+            $administrator_id = $this->administrator->administrator_id;
             if ($fleamarket_about) {
-                $data['updated_user'] = $this->administrator->administrator_id;
+                $data['updated_user'] = $administrator_id;
             } else {
                 $fleamarket_about = \Model_Fleamarket_About::forge(array(
                     'fleamarket_id' => $fleamarket->fleamarket_id,
                     'about_id' => $id
                 ));
-                $data['created_user'] = $this->administrator->administrator_id;
+                $data['created_user'] = $administrator_id;
             }
 
             $fleamarket_about->set($data)->save();
@@ -434,14 +472,15 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
             );
 
             if (strlen($input['booth_fee'])) {
+                $administrator_id = $this->administrator->administrator_id;
                 if ($fleamarket_entry_style) {
-                    $data['updated_user'] = $this->administrator->administrator_id;
+                    $data['updated_user'] = $administrator_id;
                 } else {
                     $fleamarket_entry_style = \Model_Fleamarket_Entry_Style::forge(array(
-                        'fleamarket_id' => $fleamarket->fleamarket_id,
-                        'entry_style_id'      => $id
+                        'fleamarket_id'     => $fleamarket->fleamarket_id,
+                        'entry_style_id'    => $id
                     ));
-                    $data['created_user'] = $this->administrator->administrator_id;
+                    $data['created_user'] = $administrator_id;
                 }
                 $fleamarket_entry_style->set($data)->save();
             } else {
@@ -535,7 +574,7 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
     {
         if (! $this->fieldsets) {
             if ($this->request->action == 'index') {
-                $fieldsets = Session::get_flash('admin.fleamarket.fieldsets');
+                $fieldsets = \Session::get_flash('admin.fleamarket.fieldsets');
                 if (! $fieldsets) {
                     $fieldsets = $this->createFieldsets();
                 }
@@ -682,37 +721,6 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
     }
 
     /**
-     * fleamarkets テーブルへの登録
-     *
-     * @access private
-     * @param
-     * @return Model_Fleamarketオブジェクト
-     * @author kobayashi
-     */
-    private function registerFleamarket()
-    {
-        $data = $this->getFleamarketData();
-        if (! $data) {
-            throw new Exception(\Model_Error::ER00502);
-        } else {
-            if (Input::post('fleamarket_id')) {
-                $fleamarket = \Model_Fleamarket::find(
-                    \Input::post('fleamarket_id')
-                );
-                unset($data['reservation_serial']);
-            } else {
-                $fleamarket = \Model_Fleamarket::forge();
-                $data['reservation_serial'] = 1;
-            }
-            if ($fleamarket) {
-                $fleamarket->set($data)->save();
-            }
-
-            return $fleamarket;
-        }
-    }
-
-    /**
      * セッションからフリマ情報のデータを取得、整形
      *
      * @access private
@@ -729,14 +737,7 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
         }
 
         $fieldset = $fieldsets['fleamarket'];
-
         $input = $fieldset->validation()->validated();
-
-        if (isset($input['fleamarket_id'])) {
-            $input['updated_user'] = $this->administrator->administrator_id;
-        }else{
-            $input['created_user'] = $this->administrator->administrator_id;
-        }
         $input['group_code'] = '';
 
         return $input;

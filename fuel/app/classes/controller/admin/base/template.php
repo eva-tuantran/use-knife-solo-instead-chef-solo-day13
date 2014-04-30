@@ -9,9 +9,9 @@ class Controller_Admin_Base_Template extends Controller_Template
         $this->template = 'admin/template';
 
         if ($this->request->action != 'login') {
-            $this->administrator = Session::get('admin.administrator');
+            $this->administrator = \Session::get('admin.administrator');
             if (! $this->administrator) {
-                return Response::redirect('admin/index');
+                \Response::redirect('admin/login');
             }
         }
 
@@ -28,7 +28,7 @@ class Controller_Admin_Base_Template extends Controller_Template
      */
     protected function response_json($data = false, $send = false)
     {
-        $response = new Response(json_encode($data), 200);
+        $response = new \Response(json_encode($data), 200);
         $response->set_header('Content-Type', 'application/json');
         if ($send) {
             $response->send(true);

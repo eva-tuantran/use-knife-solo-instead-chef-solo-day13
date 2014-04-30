@@ -35,22 +35,25 @@ $(function() {
 <div class="panel panel-default">
   <!-- Default panel contents -->
   <div class="panel-heading">
-    <h2 class="panel-title">フリマ登録</h2>
+    <h2 class="panel-title">フリマ情報の入力</h2>
   </div>
   <div class="panel-body">
     <form action="/admin/fleamarket/confirm" method="post" class="form-horizontal" enctype="multipart/form-data">
       <input type="hidden" name="fleamarket_id" value="<?php echo e(\Input::param('fleamarket_id'));?>">
       <div class="row">
         <div class="col-md-6">
-          <table class="table">
+          <table class="fleamarket-table table">
             <tr>
               <th>開催地</th>
               <td>
                 <select name="location_id">
                 <?php
+                    if (empty($location_id) && $fields['location_id']->value != ''):
+                        $location_id = $fields['location_id']->value;
+                    endif;
                     foreach ($locations as $location):
                         $selected = '';
-                        if (isset($fields['location_id']->value) && $location->location_id == $fields['location_id']->value):
+                        if ($location_id == $location->location_id):
                             $selected = 'selected';
                         endif;
                 ?>
@@ -134,7 +137,7 @@ $(function() {
             <tr>
               <th>内容</th>
               <td>
-                <textarea name="description" cols="60" rows="8"><?php echo e($fields['description']->value);?></textarea>
+                <textarea name="description" cols="55" rows="8"><?php echo e($fields['description']->value);?></textarea>
                 <?php
                     if (isset($errors['description'])):
                        echo '<div class="error-message">' . $errors['description'] . '</div>';
@@ -346,13 +349,13 @@ $(function() {
           <div id="accordion">
             <h3>画像イメージ</h3>
             <div>
-              <table class="table">
+              <table class="fleamarket-table table">
                 <?php foreach (range(1, 4) as $priority):?>
                 <tr>
                   <th>ファイル<?php echo $priority;?></th>
                   <td>
                     <?php if ($fleamarket && $fleamarket->fleamarket_image($priority)):?>
-                    <img src="<?php echo $fleamarket->fleamarket_image($priority)->Url();?>">
+                    <img src="<?php echo $fleamarket->fleamarket_image($priority)->Url();?>" class="img-responsive">
                     <input type="checkbox" name="delete_priorities[]" value="<?php echo $priority;?>">削除する
                     <?php endif;?>
                     <input type="file" name="upload<?php echo $priority;?>">
@@ -363,12 +366,12 @@ $(function() {
             </div>
             <h3>説明</h3>
             <div>
-              <table class="table">
+              <table class="fleamarket-table table">
                 <?php foreach (\Model_Fleamarket_About::getAboutTitles() as $id => $title):?>
                 <tr>
                   <th><?php echo e($title);?></th>
                   <td>
-                    <textarea name="fleamarket_about_<?php echo $id; ?>_description" cols="60" rows="8"><?php echo e($fieldsets['fleamarket_abouts'][$id]->field('description')->value);?></textarea>
+                    <textarea name="fleamarket_about_<?php echo $id; ?>_description" cols="55" rows="8"><?php echo e($fieldsets['fleamarket_abouts'][$id]->field('description')->value);?></textarea>
                     <?php $errors = $fieldsets['fleamarket_abouts'][$id]->validation()->error_message();?>
                     <?php
                         if (isset($errors['description'])):
@@ -382,7 +385,7 @@ $(function() {
             </div>
             <h3><a class="anchor" href="#entry_style_section">出店形態</a></h3>
             <div id="entry_style_section">
-              <table class="table">
+              <table class="fleamarket-table table">
                 <?php foreach ($entry_styles as $id => $entry_style):?>
                 <tr>
                   <th><?php echo e($entry_style);?></th>

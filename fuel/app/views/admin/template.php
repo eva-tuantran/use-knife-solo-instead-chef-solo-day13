@@ -10,7 +10,7 @@
     <?php echo Asset::render('add_js');?>
   </head>
   <body>
-<nav role="navigation" class="navbar navbar-default navbar-fixed-top">
+    <nav role="navigation" class="navbar navbar-default navbar-fixed-top">
       <!-- We use the fluid option here to avoid overriding the fixed width of a normal container within the narrow content columns. -->
       <div class="container-fluid">
         <div class="navbar-header">
@@ -22,7 +22,6 @@
           </button>
           <a href="#" class="navbar-brand">楽市楽座</a>
         </div>
-
         <div id="bs-example-navbar-collapse-6" class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
             <li><a href="/admin/user/list">ユーザー</a></li>
@@ -35,23 +34,7 @@
         </div><!-- /.navbar-collapse -->
       </div>
     </nav>
-<!--
-    <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
-      <div class="container-fluid">
-        <ul class="nav nav-pills" style="float: left;">
-          <li><a href="/admin/user/list">ユーザー</a></li>
-          <li class="nav-divider"></li>
-          <li><a href="/admin/fleamarket/list">開催</a></li>
-          <li><a href="/admin/location/list">開催地</a></li>
-          <li><a href="/admin/entry/list">予約</a></li>
-        </ul>
-        <div style="float: right;">
-          <button type="button" class="btn btn-default navbar-btn"><a href="/admin/logout">ログアウト</a></button>
-        </div>
-      </div>
-    </nav>
--->
-    <div id="wrap">
+    <div id="container-wrap">
       <div class="container-fluid">
         <?php echo $content; ?>
       </div>
