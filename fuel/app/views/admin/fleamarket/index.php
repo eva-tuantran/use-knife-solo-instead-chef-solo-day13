@@ -48,9 +48,12 @@ $(function() {
               <td>
                 <select name="location_id">
                 <?php
+                    if (empty($location_id) && $fields['location_id']->value != ''):
+                        $location_id = $fields['location_id']->value;
+                    endif;
                     foreach ($locations as $location):
                         $selected = '';
-                        if (isset($fields['location_id']->value) && $location->location_id == $fields['location_id']->value):
+                        if ($location_id == $location->location_id):
                             $selected = 'selected';
                         endif;
                 ?>
