@@ -1,5 +1,14 @@
-#wrap {
-  padding-top: 70px;
+#container-wrap {
+  margin-top: 70px;
+}
+
+.fleamarket-table th {
+  width: 33.33333333%;
+}
+
+.fleamarket-table td {
+  width: 66.66666667%;
+  word-break: break-all;
 }
 
 .error-message {
