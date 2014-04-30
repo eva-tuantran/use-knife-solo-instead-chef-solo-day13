@@ -29,10 +29,12 @@ class SystemException extends \FuelException
         $params = array(
             'error_code'    => $error_code,
             'error_message' => $error_message,
-            'line'          => __LINE__,
-            'file'          => __FILE__,
+            'line'          => $this->getLine(),
+            'file'          => $this->getFile(),
             'url'           => Uri::main(),
             'input'         => print_r(Input::all(), true),
+            'real_ip'       => Input::real_ip(),
+            'user_agent'    => Input::user_agent(),
             'user_id'       => Auth::get_user_id(),
             'occurred_at'   => date('Y/m/d H:i:s'),
         );

@@ -12,7 +12,7 @@ return array(
 ##error_message## (##error_code##)
 
 ファイル名:
-##file## (line: ##line##)
+##file## :##line##
 
 URL:
 ##url##
@@ -22,6 +22,12 @@ INPUT:
 
 日時:
 ##occurred_at##
+
+IPアドレス:
+##real_ip##
+
+User Agent:
+##user_agent##
 
 ユーザID:
 ##user_id##
