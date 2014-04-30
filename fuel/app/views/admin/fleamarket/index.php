@@ -20,22 +20,25 @@ $(function() {
     showButtonPanel: true,
     stepMinute: 5
   });
+
+  $("#accordion").accordion({
+      heightStyle: "content",
+      activate: function(event, ui) {}
+  });
 });
 </script>
-
-<?php $entry_styles = Config::get('master.entry_styles');?>
-
-<?php $input  = $fieldsets['fleamarket']->input();?>
-<?php $errors = $fieldsets['fleamarket']->validation()->error_message();?>
-<?php $fields = $fieldsets['fleamarket']->field();?>
-
+<?php
+    $input  = $fieldsets['fleamarket']->input();
+    $fields = $fieldsets['fleamarket']->field();
+    $errors = $fieldsets['fleamarket']->validation()->error_message();
+?>
 <div class="panel panel-default">
   <!-- Default panel contents -->
   <div class="panel-heading">
     <h2 class="panel-title">フリマ登録</h2>
   </div>
   <div class="panel-body">
-    <form action="/admin/fleamarket/confirm" method="POST" class="form-horizontal" enctype="multipart/form-data">
+    <form action="/admin/fleamarket/confirm" method="post" class="form-horizontal" enctype="multipart/form-data">
       <input type="hidden" name="fleamarket_id" value="<?php echo e(\Input::param('fleamarket_id'));?>">
       <div class="row">
         <div class="col-md-6">
@@ -44,9 +47,17 @@ $(function() {
               <th>開催地</th>
               <td>
                 <select name="location_id">
-                <?php foreach ($locations as $location):?>
-                <option value="<?php echo $location->location_id;?>" <?php echo ($location->location_id == $fields['location_id']->value) ? 'selected' : '';?>><?php echo e($location->name);?></option>
-                <?php endforeach;?>
+                <?php
+                    foreach ($locations as $location):
+                        $selected = '';
+                        if (isset($fields['location_id']->value) && $location->location_id == $fields['location_id']->value):
+                            $selected = 'selected';
+                        endif;
+                ?>
+                <option value="<?php echo $location->location_id;?>" <?php echo $selected;?>><?php echo e($location->name);?></option>
+                <?php
+                    endforeach;
+                ?>
                 </select>
               </td>
             </tr>
@@ -56,7 +67,7 @@ $(function() {
                 <input type="text" name="name" value="<?php echo e($fields['name']->value);?>">
                 <?php
                     if (isset($errors['name'])):
-                       echo $errors['name'];
+                       echo '<div class="error-message">' . $errors['name'] . '</div>';
                     endif;
                 ?>
               </td>
@@ -67,7 +78,7 @@ $(function() {
                 <input type="text" name="promoter_name" value="<?php echo e($fields['promoter_name']->value);?>">
                 <?php
                     if (isset($errors['promoter_name'])):
-                       echo $errors['promoter_name'];
+                       echo '<div class="error-message">' . $errors['promoter_name'] . '</div>';
                     endif;
                 ?>
               </td>
@@ -78,7 +89,7 @@ $(function() {
                 <input type="text" name="event_date" value="<?php echo e($fields['event_date']->value);?>" id="inputEventDate">
                 <?php
                     if (isset($errors['event_date'])):
-                       echo $errors['event_date'];
+                       echo '<div class="error-message">' . $errors['event_date'] . '</div>';
                     endif;
                 ?>
               </td>
@@ -89,7 +100,7 @@ $(function() {
                 <input type="text" name="event_time_start" value="<?php echo e($fields['event_time_start']->value);?>" id="inputEventTimeStart">
                 <?php
                     if (isset($errors['event_time_start'])):
-                       echo $errors['event_time_start'];
+                       echo '<div class="error-message">' . $errors['event_time_start'] . '</div>';
                     endif;
                 ?>
               </td>
@@ -100,7 +111,7 @@ $(function() {
                 <input type="text" name="event_time_end" value="<?php echo e($fields['event_time_end']->value);?>" id="inputEventTimeEnd">
                 <?php
                     if (isset($errors['event_time_end'])):
-                       echo $errors['event_time_end'];
+                       echo '<div class="error-message">' . $errors['event_time_end'] . '</div>';
                     endif;
                 ?>
               </td>
@@ -115,7 +126,7 @@ $(function() {
                 <input type="radio" name="event_status" value="<?php echo \Model_Fleamarket::EVENT_STATUS_CANCEL;?>" <?php if ($fields['event_status']->value == \Model_Fleamarket::EVENT_STATUS_CANCEL) { echo 'checked'; } ?>>中止
                 <?php
                     if (isset($errors['event_status'])):
-                       echo $errors['event_status'];
+                       echo '<div class="error-message">' . $errors['event_status'] . '</div>';
                     endif;
                 ?>
               </td>
@@ -126,7 +137,7 @@ $(function() {
                 <textarea name="description" cols="60" rows="8"><?php echo e($fields['description']->value);?></textarea>
                 <?php
                     if (isset($errors['description'])):
-                       echo $errors['description'];
+                       echo '<div class="error-message">' . $errors['description'] . '</div>';
                     endif;
                 ?>
               </td>
@@ -137,7 +148,7 @@ $(function() {
                 <input type="text" name="reservation_start" value="<?php echo e($fields['reservation_start']->value);?>" id="inputReservationStart">
                 <?php
                     if (isset($errors['reservation_start'])):
-                       echo $errors['reservation_start'];
+                       echo '<div class="error-message">' . $errors['reservation_start'] . '</div>';
                     endif;
                 ?>
               </td>
@@ -148,7 +159,7 @@ $(function() {
                 <input type="text" name="reservation_end" value="<?php echo e($fields['reservation_end']->value);?>" id="inputReservationEnd">
                 <?php
                     if (isset($errors['reservation_end'])):
-                       echo $errors['reservation_end'];
+                       echo '<div class="error-message">' . $errors['reservation_end'] . '</div>';
                     endif;
                 ?>
               </td>
@@ -159,7 +170,7 @@ $(function() {
                 <input type="text" name="reservation_tel" value="<?php echo e($fields['reservation_tel']->value);?>">
                 <?php
                     if (isset($errors['reservation_tel'])):
-                       echo $errors['reservation_tel'];
+                       echo '<div class="error-message">' . $errors['reservation_tel'] . '</div>';
                     endif;
                 ?>
               </td>
@@ -170,7 +181,7 @@ $(function() {
                 <input type="text" name="reservation_email" value="<?php echo e($fields['reservation_email']->value);?>">
                 <?php
                     if (isset($errors['reservation_email'])):
-                       echo $errors['reservation_email'];
+                       echo '<div class="error-message">' . $errors['reservation_email'] . '</div>';
                     endif;
                 ?>
               </td>
@@ -181,7 +192,7 @@ $(function() {
                 <input type="text" name="website" value="<?php echo e($fields['website']->value);?>">
                 <?php
                     if (isset($errors['website'])):
-                       echo $errors['website'];
+                       echo '<div class="error-message">' . $errors['website'] . '</div>';
                     endif;
                 ?>
               </td>
@@ -192,7 +203,7 @@ $(function() {
                 <input type="text" name="item_categories" value="<?php echo e($fields['item_categories']->value);?>">
                 <?php
                     if (isset($errors['item_categories'])):
-                       echo $errors['item_categories'];
+                       echo '<div class="error-message">' . $errors['item_categories'] . '</div>';
                     endif;
                 ?>
               </td>
@@ -203,7 +214,7 @@ $(function() {
                 <input type="text" name="link_from_list" value="<?php echo e($fields['link_from_list']->value);?>">
                 <?php
                     if (isset($errors['link_from_list'])):
-                       echo $errors['link_from_list'];
+                       echo '<div class="error-message">' . $errors['link_from_list'] . '</div>';
                     endif;
                 ?>
               </td>
@@ -215,7 +226,7 @@ $(function() {
                 <input type="radio" name="pickup_flag" value="<?php echo \Model_Fleamarket::PICKUP_FLAG_OFF?>" <?php if ($fields['pickup_flag']->value == \Model_Fleamarket::PICKUP_FLAG_OFF) { echo 'checked'; }?>>対象外
                 <?php
                     if (isset($errors['pickup_flag'])):
-                       echo $errors['pickup_flag'];
+                       echo '<div class="error-message">' . $errors['pickup_flag'] . '</div>';
                     endif;
                 ?>
               </td>
@@ -227,7 +238,7 @@ $(function() {
                 <input type="radio" name="shop_fee_flag" value="<?php echo \Model_Fleamarket::SHOP_FEE_FLAG_CHARGE;?>" <?php if ($fields['shop_fee_flag']->value == \Model_Fleamarket::SHOP_FEE_FLAG_CHARGE) { echo 'checked'; }?>>有料
                 <?php
                     if (isset($errors['shop_fee_flag'])):
-                       echo $errors['shop_fee_flag'];
+                       echo '<div class="error-message">' . $errors['shop_fee_flag'] . '</div>';
                     endif;
                 ?>
               </td>
@@ -239,7 +250,7 @@ $(function() {
                 <input type="radio" name="car_shop_flag" value="<?php echo \Model_Fleamarket::CAR_SHOP_FLAG_NG;?>" <?php if ($fields['car_shop_flag']->value == \Model_Fleamarket::CAR_SHOP_FLAG_NG) { echo 'checked'; }?>>NG
                 <?php
                     if (isset($errors['car_shop_flag'])):
-                       echo $errors['car_shop_flag'];
+                       echo '<div class="error-message">' . $errors['car_shop_flag'] . '</div>';
                     endif;
                 ?>
               </td>
@@ -251,19 +262,7 @@ $(function() {
                 <input type="radio" name="pro_shop_flag" value="<?php echo \Model_Fleamarket::PRO_SHOP_FLAG_NG;?>" <?php if ($fields['pro_shop_flag']->value == \Model_Fleamarket::PRO_SHOP_FLAG_NG) { echo 'checked'; }?>>NG
                 <?php
                     if (isset($errors['pro_shop_flag'])):
-                       echo $errors['pro_shop_flag'];
-                    endif;
-                ?>
-              </td>
-            </tr>
-            <tr>
-              <th>雨天開催会場</th>
-              <td>
-                <input type="radio" name="rainy_location_flag" value="<?php echo \Model_Fleamarket::RAINY_LOCATION_FLAG_EXIST;?> "<?php if ($fields['rainy_location_flag']->value == \Model_Fleamarket::RAINY_LOCATION_FLAG_EXIST) { echo 'checked'; } ?>>OK
-                <input type="radio" name="rainy_location_flag" value="<?php echo \Model_Fleamarket::RAINY_LOCATION_FLAG_NONE;?>" <?php if ($fields['rainy_location_flag']->value == \Model_Fleamarket::RAINY_LOCATION_FLAG_NONE) { echo 'checked'; } ?>>NG
-                <?php
-                    if (isset($errors['rainy_location_flag'])):
-                       echo $errors['rainy_location_flag'];
+                       echo '<div class="error-message">' . $errors['pro_shop_flag'] . '</div>';
                     endif;
                 ?>
               </td>
@@ -275,7 +274,7 @@ $(function() {
                 <input type="radio" name="charge_parking_flag" value="<?php echo \Model_Fleamarket::CHARGE_PARKING_FLAG_NONE;?>" <?php if ($fields['charge_parking_flag']->value == \Model_Fleamarket::CHARGE_PARKING_FLAG_NONE) { echo 'checked'; } ?>>なし
                 <?php
                     if (isset($errors['charge_parking_flag'])):
-                       echo $errors['charge_parking_flag'];
+                       echo '<div class="error-message">' . $errors['charge_parking_flag'] . '</div>';
                     endif;
                 ?>
               </td>
@@ -287,19 +286,19 @@ $(function() {
                 <input type="radio" name="free_parking_flag" value="<?php echo \Model_Fleamarket::FREE_PARKING_FLAG_NONE;?>" <?php if ($fields['free_parking_flag']->value == \Model_Fleamarket::FREE_PARKING_FLAG_NONE) { echo 'checked'; } ?>>なし
                 <?php
                     if (isset($errors['free_parking_flag'])):
-                       echo $errors['free_parking_flag'];
+                       echo '<div class="error-message">' . $errors['free_parking_flag'] . '</div>';
                     endif;
                 ?>
               </td>
             </tr>
             <tr>
-              <th>登録タイプ</th>
+              <th>雨天開催会場</th>
               <td>
-                <input type="radio" name="register_type" value="<?php echo \Model_Fleamarket::REGISTER_TYPE_ADMIN;?>" <?php if ($fields['register_type']->value == \Model_Fleamarket::REGISTER_TYPE_ADMIN) { echo 'checked'; } ?>>運営者
-                <input type="radio" name="register_type" value="<?php echo \Model_Fleamarket::REGISTER_TYPE_USER;?>" <?php if ($fields['register_type']->value == \Model_Fleamarket::REGISTER_TYPE_USER) { echo 'checked'; } ?>>ユーザー投稿
+                <input type="radio" name="rainy_location_flag" value="<?php echo \Model_Fleamarket::RAINY_LOCATION_FLAG_EXIST;?> "<?php if ($fields['rainy_location_flag']->value == \Model_Fleamarket::RAINY_LOCATION_FLAG_EXIST) { echo 'checked'; } ?>>対象
+                <input type="radio" name="rainy_location_flag" value="<?php echo \Model_Fleamarket::RAINY_LOCATION_FLAG_NONE;?>" <?php if ($fields['rainy_location_flag']->value == \Model_Fleamarket::RAINY_LOCATION_FLAG_NONE) { echo 'checked'; } ?>>対象外
                 <?php
-                    if (isset($errors['register_type'])):
-                       echo $errors['register_type'];
+                    if (isset($errors['rainy_location_flag'])):
+                       echo '<div class="error-message">' . $errors['rainy_location_flag'] . '</div>';
                     endif;
                 ?>
               </td>
@@ -311,7 +310,7 @@ $(function() {
                 <input type="radio" name="display_flag" value="<?php echo \Model_Fleamarket::DISPLAY_FLAG_OFF;?>" <?php if ($fields['display_flag']->value == \Model_Fleamarket::DISPLAY_FLAG_OFF) { echo 'checked'; } ?>>非表示
                 <?php
                     if (isset($errors['display_flag'])):
-                       echo $errors['display_flag'];
+                       echo '<div class="error-message">' . $errors['display_flag'] . '</div>';
                     endif;
                 ?>
               </td>
@@ -324,86 +323,115 @@ $(function() {
                 <input type="radio" name="event_reservation_status" value="<?php echo \Model_Fleamarket::EVENT_RESERVATION_STATUS_FULL;?>" <?php if ($fields['event_reservation_status']->value == \Model_Fleamarket::EVENT_RESERVATION_STATUS_FULL) { echo 'checked'; } ?>>満員
                 <?php
                     if (isset($errors['event_reservation_status'])):
-                       echo $errors['event_reservation_status'];
+                        echo '<div class="error-message">' . $errors['event_reservation_status'] . '</div>';
                     endif;
                 ?>
               </td>
             </tr>
-            <?php foreach (range(1, 4) as $priority):?>
             <tr>
-              <th>ファイル<?php echo $priority;?></th>
+              <th>登録タイプ</th>
               <td>
-                <?php if ($fleamarket && $fleamarket->fleamarket_image($priority)):?>
-                <img src="<?php echo $fleamarket->fleamarket_image($priority)->Url();?>">
-                <input type="checkbox" name="delete_priorities[]" value="<?php echo $priority;?>">削除する
-                <?php endif;?>
-                <input type="file" name="upload<?php echo $priority;?>">
-              </td>
-            </tr>
-            <?php endforeach;?>
-          </table>
-          </div>
-          <div class="col-md-6">
-          <table class="table">
-            <?php foreach (\Model_Fleamarket_About::getAboutTitles() as $id => $title):?>
-            <tr>
-              <th><?php echo e($title);?></th>
-              <td>
-                <textarea name="fleamarket_about_<?php echo $id; ?>_description" cols="60" rows="8"><?php echo e($fieldsets['fleamarket_abouts'][$id]->field('description')->value);?></textarea>
-                <?php $errors = $fieldsets['fleamarket_abouts'][$id]->validation()->error_message();?>
+                <input type="radio" name="register_type" value="<?php echo \Model_Fleamarket::REGISTER_TYPE_ADMIN;?>" <?php if ($fields['register_type']->value == \Model_Fleamarket::REGISTER_TYPE_ADMIN) { echo 'checked'; } ?>>運営事務局
+                <input type="radio" name="register_type" value="<?php echo \Model_Fleamarket::REGISTER_TYPE_USER;?>" <?php if ($fields['register_type']->value == \Model_Fleamarket::REGISTER_TYPE_USER) { echo 'checked'; } ?>>ユーザー投稿
                 <?php
-                    if (isset($errors['description'])):
-                        echo $errors['description'];
+                    if (isset($errors['register_type'])):
+                       echo '<div class="error-message">' . $errors['register_type'] . '</div>';
                     endif;
                 ?>
               </td>
             </tr>
-            <?php endforeach;?>
-            <?php foreach ($entry_styles as $id => $entry_style):?>
-            <tr>
-              <th><?php echo e($entry_style);?></th>
-              <td>
-                <?php $errors = $fieldsets['fleamarket_entry_styles'][$id]->validation()->error_message();?>
-                <table>
-                  <tr>
-                    <th>出店料</th>
-                    <td>
-                      <input type="text" name="fleamarket_entry_style_<?php echo $id;?>_booth_fee" value="<?php echo e($fieldsets['fleamarket_entry_styles'][$id]->field('booth_fee')->value);?>">
-                      <?php
-                          if (isset($errors['booth_fee'])):
-                              echo $errors['booth_fee'];
-                          endif;
-                       ?>
-                    </td>
-                  </tr>
-                  <tr>
-                    <th>最大出店ブース数</th>
-                    <td>
-                      <input type="text" name="fleamarket_entry_style_<?php echo $id;?>_max_booth" value="<?php echo e($fieldsets['fleamarket_entry_styles'][$id]->field('max_booth')->value);?>">
-                      <?php
-                          if (isset($errors['max_booth'])):
-                              echo $errors['max_booth'];
-                          endif;
-                      ?>
-                    </td>
-                  </tr>
-                  <tr>
-                    <th>予約可能出店ブース上限</th>
-                    <td>
-                      <input type="text" name="fleamarket_entry_style_<?php echo $id;?>_reservation_booth_limit" value="<?php echo e($fieldsets['fleamarket_entry_styles'][$id]->field('reservation_booth_limit')->value);?>">
-                      <?php
-                          if (isset($errors['reservation_booth_limit'])):
-                              echo $errors['reservation_booth_limit'];
-                          endif;
-                      ?>
-                    </td>
-                  </tr>
-                </table>
-              </td>
-            </tr>
-            <?php endforeach;?>
           </table>
-          <input type="submit" value="内容を確認する">
+        </div>
+        <div class="col-md-6">
+          <div id="accordion">
+            <h3>画像イメージ</h3>
+            <div>
+              <table class="table">
+                <?php foreach (range(1, 4) as $priority):?>
+                <tr>
+                  <th>ファイル<?php echo $priority;?></th>
+                  <td>
+                    <?php if ($fleamarket && $fleamarket->fleamarket_image($priority)):?>
+                    <img src="<?php echo $fleamarket->fleamarket_image($priority)->Url();?>">
+                    <input type="checkbox" name="delete_priorities[]" value="<?php echo $priority;?>">削除する
+                    <?php endif;?>
+                    <input type="file" name="upload<?php echo $priority;?>">
+                  </td>
+                </tr>
+                <?php endforeach;?>
+              </table>
+            </div>
+            <h3>説明</h3>
+            <div>
+              <table class="table">
+                <?php foreach (\Model_Fleamarket_About::getAboutTitles() as $id => $title):?>
+                <tr>
+                  <th><?php echo e($title);?></th>
+                  <td>
+                    <textarea name="fleamarket_about_<?php echo $id; ?>_description" cols="60" rows="8"><?php echo e($fieldsets['fleamarket_abouts'][$id]->field('description')->value);?></textarea>
+                    <?php $errors = $fieldsets['fleamarket_abouts'][$id]->validation()->error_message();?>
+                    <?php
+                        if (isset($errors['description'])):
+                            echo '<div class="error-message">' . $errors['description'] . '</div>';
+                        endif;
+                    ?>
+                  </td>
+                </tr>
+                <?php endforeach;?>
+              </table>
+            </div>
+            <h3><a class="anchor" href="#entry_style_section">出店形態</a></h3>
+            <div id="entry_style_section">
+              <table class="table">
+                <?php foreach ($entry_styles as $id => $entry_style):?>
+                <tr>
+                  <th><?php echo e($entry_style);?></th>
+                  <td>
+                    <?php $errors = $fieldsets['fleamarket_entry_styles'][$id]->validation()->error_message();?>
+                    <table>
+                      <tr>
+                        <th>出店料</th>
+                        <td>
+                          <input type="text" name="fleamarket_entry_style_<?php echo $id;?>_booth_fee" value="<?php echo e($fieldsets['fleamarket_entry_styles'][$id]->field('booth_fee')->value);?>">
+                          <?php
+                              if (isset($errors['booth_fee'])):
+                                  echo '<div class="error-message">' . $errors['booth_fee'] . '</div>';
+                              endif;
+                           ?>
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>最大出店ブース数</th>
+                        <td>
+                          <input type="text" name="fleamarket_entry_style_<?php echo $id;?>_max_booth" value="<?php echo e($fieldsets['fleamarket_entry_styles'][$id]->field('max_booth')->value);?>">
+                          <?php
+                              if (isset($errors['max_booth'])):
+                                  echo '<div class="error-message">' . $errors['max_booth'] . '</div>';
+                              endif;
+                          ?>
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>予約可能出店ブース上限</th>
+                        <td>
+                          <input type="text" name="fleamarket_entry_style_<?php echo $id;?>_reservation_booth_limit" value="<?php echo e($fieldsets['fleamarket_entry_styles'][$id]->field('reservation_booth_limit')->value);?>">
+                          <?php
+                              if (isset($errors['reservation_booth_limit'])):
+                                  echo '<div class="error-message">' . $errors['reservation_booth_limit'] . '</div>';
+                              endif;
+                          ?>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+                <?php endforeach;?>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-12 btn-group">
+          <button type="submit" class="btn btn-info">内容を確認する</button>
         </div>
       </div>
     </form>
