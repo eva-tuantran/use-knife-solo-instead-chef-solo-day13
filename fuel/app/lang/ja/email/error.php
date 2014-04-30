@@ -17,6 +17,9 @@ return array(
 URL:
 ##url##
 
+INPUT:
+##input##
+
 日時:
 ##occurred_at##
 

@@ -32,6 +32,7 @@ class SystemException extends \FuelException
             'line'          => __LINE__,
             'file'          => __FILE__,
             'url'           => Uri::main(),
+            'input'         => print_r(Input::all(), true),
             'user_id'       => Auth::get_user_id(),
             'occurred_at'   => date('Y/m/d H:i:s'),
         );
