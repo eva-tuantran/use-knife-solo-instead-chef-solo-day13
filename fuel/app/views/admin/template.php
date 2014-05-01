@@ -29,7 +29,7 @@
             <li><a href="/admin/location/list">開催地</a></li>
             <li><a href="/admin/entry/list">予約</a></li>
             <li><a href="/admin/mailmagazine">メールマガジン</a></li>
-            <li><a href="/admin/logout">ログアウト</a></li>
+            <li><a href="/admin/index/logout">ログアウト</a></li>
           </ul>
         </div><!-- /.navbar-collapse -->
       </div>
