@@ -57,7 +57,6 @@
   ```sh
   $ cd vagrant
   $ vagrant up web1
-  $
   $ vagrant ssh web1
   ```
 
@@ -151,6 +150,7 @@
 
   192.168.4.243という仮想サーバを新規で立てたとしてchef経由のインストール手順を記載します。
   前提として以下2点を準備します。
+
   - ローカル環境にknifeおよびchef-soloがインストール済み
   - 公開鍵が対象サーバ向けに設定されている
 
@@ -169,6 +169,7 @@
   ```
 
   Webサーバ設定のrun_listを他のマシンから参照してコピーします
+
   ```
   {
     "host_name" : "(自分で設定する)",
@@ -211,8 +212,8 @@
 
 ## 社内バックアップスクリプト
 
-  以下の社内サーバで朝5時に起動して動かしている。
-  内容物としてはmysqldump rakuichi_rakuza のフルデータベースDump。
+  - 以下の社内サーバで朝5時に起動して動かしている。
+  - 内容物としてはmysqldump rakuichi_rakuza のフルデータベースDump。
 
   ```
   192.168.101.251:/deploy/rakuichi-rakuza-dbbackup/backup_rakuichi_rakuza_local.sh
@@ -234,7 +235,7 @@
 
 ### スキーマの作成方法(MySQLWorkbench)
 
-  データベースのER図の完全体はmwbファイルとして保存されています。
+  - データベースのER図の完全体はmwbファイルとして保存されています。
 
   ```
   /db/rakuichi_rakuza.mwb
