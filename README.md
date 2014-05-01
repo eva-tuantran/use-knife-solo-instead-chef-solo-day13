@@ -23,7 +23,7 @@
 ## 概要図
 
 
-  ![概略図](./doc/system_overview.png)
+  ![概略図](/doc/system_overview.png)
 
   1台のApplication ServerにApache, MySQL, Memcachedが同居している。
   現状ではnrt01の一台構成でLVSを経由せず稼働している。(要冗長化)
@@ -31,7 +31,7 @@
 
 ## サーバIPアドレス構成(2014/5/1 現在)
 
-  ![IPアドレス](./doc/system_ipaddr.png)
+  ![IPアドレス](/doc/system_ipaddr.png)
 
   - サーバ自体はnrt01(web), nrt02(lvs), ceb01(web), ceb02(lvs)の4台用意されている。
   - LVSの検証が間に合わず、nrt01以外は上記の図の通りの稼働状況。
