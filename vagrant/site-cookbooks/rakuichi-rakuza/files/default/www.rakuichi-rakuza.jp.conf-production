@@ -50,7 +50,7 @@
 </VirtualHost>
 
 ## Basic認証
-<Directory /deploy/rakuichi-rakuza/public/admin>
+<Location /admin>
     Options -Indexes FollowSymLinks
     AllowOverride All
 
@@ -58,4 +58,4 @@
     AuthName      "Please Enter Your Password"
     AuthType      Basic
     Require       valid-user
-</Directory>
+</Location>
