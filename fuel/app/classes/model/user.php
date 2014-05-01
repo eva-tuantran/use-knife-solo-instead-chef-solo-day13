@@ -173,7 +173,7 @@ class Model_User extends Model_Base
             'label' => '携帯電話番号',
             'validation' => array(
                 'trim',
-                'max_length' => array(10),
+                'max_length' => array(20),
             ),
         ),
         'email' => array(
