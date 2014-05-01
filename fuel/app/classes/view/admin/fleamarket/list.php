@@ -5,7 +5,7 @@
  *
  * @author ida
  */
-class View_Admin_Fleamarket_List extends ViewModel
+class View_Admin_Fleamarket_List extends \ViewModel
 {
     /**
      * view method
