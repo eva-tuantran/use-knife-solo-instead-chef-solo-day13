@@ -1,1 +1,0 @@
-<p><a href="/auth/login">トップへ戻る</a></p>
