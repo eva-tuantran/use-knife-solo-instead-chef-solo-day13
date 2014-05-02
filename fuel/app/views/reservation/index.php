@@ -31,11 +31,11 @@
     <div class="box clearfix">
       <h3>フリマ予約情報入力欄</h3>
       <?php if (count($fleamarket->fleamarket_entry_styles) == 0){ ?>
-      現在予約することが出来ません
+      <span class="errorMessage">現在予約することが出来ません</span>
       <?php }elseif ($user->hasEntry($fleamarket->fleamarket_id)) { ?>
-      既に予約済みです。キャンセルの場合、<a href="/mypage">マイページにてキャンセル</a>を行って下さい。
+      <span class="errorMessage">既に予約済みです。キャンセルの場合、<a href="/mypage">マイページにてキャンセル</a>を行って下さい。</span>
       <?php }elseif ($user->hasWaiting($fleamarket->fleamarket_id)) { ?>
-      既にキャンセル待ち済みです。
+      <span class="errorMessage">既にキャンセル待ち済みです。</span>
       <?php }else{ ?>
       <form action="/reservation/confirm" method="POST" class="form-horizontal">
 
@@ -60,7 +60,7 @@
             <?php echo e($entry_styles[$fleamarket_entry_style->entry_style_id]); ?>
             <?php } ?>
             <?php if (isset($errors['fleamarket_entry_style_id'])) { ?>
-            <?php echo $errors['fleamarket_entry_style_id']; ?>
+            <span class="errorMessage"><?php echo $errors['fleamarket_entry_style_id']; ?></span>
             <?php } ?>
 	  </div>
 	</div>
@@ -72,7 +72,7 @@
 		<option value="1">1</option>
               </select>
               <?php if (isset($errors['reserved_booth'])) { ?>
-              <?php echo $errors['reserved_booth']; ?>
+              <span class="errorMessage"><?php echo $errors['reserved_booth']; ?></span>
               <?php } ?>
 	    </div>
 	  </div>
@@ -87,7 +87,7 @@
 		<?php } ?>
 	      </select>
 	      <?php if (isset($errors['item_category'])) { ?>
-	      <?php echo $errors['item_category']; ?>
+	      <span class="errorMessage"><?php echo $errors['item_category']; ?></span>
 	      <?php } ?>
 	      <?php foreach (Model_Entry::getItemGenresDefine() as $item_genres => $name) { ?>
 	      <label class="checkbox">
@@ -96,7 +96,7 @@
 	      </label>
 	      <?php } ?>
 	      <?php if (isset($errors['item_genres'])) { ?>
-	      <?php echo $errors['item_genres']; ?>
+	      <span class="errorMessage"><?php echo $errors['item_genres']; ?></span>
 	      <?php } ?>
 	    </div>
 	  </div>
@@ -132,9 +132,9 @@
    $remain_booth = array();
 
    foreach ($fleamarket->fleamarket_entry_styles as $fleamarket_entry_style){
-     $reservation_booth_limit[$fleamarket_entry_style->fleamarket_entry_style_id] = 
+     $reservation_booth_limit[$fleamarket_entry_style->fleamarket_entry_style_id] =
                   $fleamarket_entry_style->reservation_booth_limit;
-     $remain_booth[$fleamarket_entry_style->fleamarket_entry_style_id] = 
+     $remain_booth[$fleamarket_entry_style->fleamarket_entry_style_id] =
                   $fleamarket_entry_style->remainBooth();
    }
 ?>
@@ -164,7 +164,7 @@
       for(var i = 1; i<= max ; i++){
         $('#reserved_booth').append($('<option>').html(i).val(i));
       }
-    }  
+    }
   });
 
   $('input[name="fleamarket_entry_style_id"]').trigger('change');

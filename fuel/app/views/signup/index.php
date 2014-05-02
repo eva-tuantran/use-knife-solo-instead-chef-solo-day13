@@ -27,7 +27,7 @@
             <input type="text" class="form-control" id="inputName_last" placeholder="姓を入力" name="last_name" style="width: 10em; float: left; margin-right: 10px;" value="<?php echo $input['last_name'] ?>" required/>
             <input type="text" class="form-control" id="inputName_first" placeholder="名を入力" name="first_name" style="width: 10em;" value="<?php echo $input['first_name'] ?>" required/>
             <?php if (isset($errors['last_name']) || isset($errors['first_name'])): ?>
-                名前は必須入力です
+              <span class="errorMessage">名前は必須入力です</span>
             <?php endif; ?>
           </div>
         </div>
@@ -37,7 +37,7 @@
             <input type="text" class="form-control" id="inputPhonetic_last" placeholder="セイを入力" name="last_name_kana" style="width: 10em; float: left; margin-right: 10px;" value="<?php echo $input['last_name_kana'] ?>" required/>
             <input type="text" class="form-control" id="inputPhonetic_first" placeholder="メイを入力" name="first_name_kana" style="width: 10em;" value="<?php echo $input['first_name_kana'] ?>" required/>
             <?php if (isset($errors['last_name_kana']) || isset($errors['first_name_kana'])): ?>
-                正しいカナを入力して下さい
+              <span class="errorMessage">正しいカナを入力して下さい</span>
             <?php endif; ?>
           </div>
         </div>
@@ -69,23 +69,23 @@
               <?php endforeach; ?>
             </select>
             <input type="text" class="form-control" id="inputAddress" placeholder="住所を入力" name="address" value="<?php echo $input['address'] ?>" required/>
-            <?php if (isset($errors['zip'])) { echo $errors['zip'];  } ?>
-            <?php if (isset($errors['prefecture_id'])) { echo $errors['prefecture_id'];  } ?>
-            <?php if (isset($errors['address'])) { echo $errors['address'];  } ?>
+            <?php if (isset($errors['zip'])) { echo '<span class="errorMessage">' .$errors['zip']. '</span>'; } ?>
+            <?php if (isset($errors['prefecture_id'])) { echo '<span class="errorMessage">' .$errors['prefecture_id']. '</span>'; } ?>
+            <?php if (isset($errors['address'])) { echo '<span class="errorMessage">' .$errors['address']. '</span>'; } ?>
           </div>
         </div>
         <div class="form-group">
           <label class="col-sm-2 control-label" for="inputTel">電話番号 *</label>
           <div class="col-sm-10">
             <input type="text" class="form-control" id="inputTel" placeholder="例）03-1234-5678　半角英数字で入力してください" name="tel" value="<?php echo $input['tel'] ?>" required/>
-            <?php if (isset($errors['tel'])) { echo $errors['tel'];  } ?>
+            <?php if (isset($errors['tel'])) { echo '<span class="errorMessage">' .$errors['tel']. '</span>'; } ?>
           </div>
         </div>
         <div class="form-group">
           <label class="col-sm-2 control-label" for="inputEmail">E-mailアドレス *</label>
           <div class="col-sm-10">
             <input type="email" class="form-control" id="inputEmail" placeholder="例）your@email.com　半角英数字で入力してください" name="email" value="<?php echo $input['email'] ?>" required/>
-            <?php if (isset($errors['email'])) { echo $errors['email'];  } ?>
+            <?php if (isset($errors['email'])) { echo '<span class="errorMessage">' .$errors['email']. '</span>'; } ?>
           </div>
         </div>
         <div class="form-group">
@@ -93,14 +93,14 @@
             （確認用）</label>
             <div class="col-sm-10">
               <input type="email" class="form-control" id="inputEmail2" placeholder="確認のため、もう一度メールアドレスを入力してください" name="email2" value="<?php echo $input['email2'] ?>" required/>
-            <?php if (isset($errors['email2'])) { echo $errors['email2'];  } ?>
+              <?php if (isset($errors['email2'])) { echo '<span class="errorMessage">' .$errors['email2']. '</span>'; } ?>
             </div>
           </div>
           <div class="form-group">
             <label class="col-sm-2 control-label" for="inputPassword">パスワード *</label>
             <div class="col-sm-10">
               <input type="password" class="form-control" id="inputPassword" placeholder="半角英数字6文字以上で入力してください" name="password" value="<?php echo $input['password'] ?>"required/>
-              <?php if (isset($errors['password'])) { echo $errors['password'];  } ?>
+              <?php if (isset($errors['password'])) { echo '<span class="errorMessage">' .$errors['password']. '</span>'; } ?>
             </div>
           </div>
           <div class="form-group">
@@ -108,14 +108,14 @@
               （確認用）</label>
               <div class="col-sm-10">
                 <input type="password" class="form-control" id="inputPassword2" placeholder="確認のため、もう一度パスワードを入力してください" name="password2" value="<?php echo $input['password2'] ?>" required/>
-                <?php if (isset($errors['password2'])) { echo $errors['password2'];  } ?>
+                <?php if (isset($errors['password2'])) { echo '<span class="errorMessage">' .$errors['password2']. '</span>'; } ?>
               </div>
             </div>
             <div class="form-group">
               <label class="col-sm-2 control-label" for="inputNickname">ニックネーム *</label>
               <div class="col-sm-10">
                 <input type="text" class="form-control" id="inputNickname" placeholder="ニックネームを入力" name="nick_name" value="<?php echo $input['nick_name'] ?>" required/>
-                <?php if (isset($errors['nick_name'])) { echo $errors['nick_name'];  } ?>
+                <?php if (isset($errors['nick_name'])) { echo '<span class="errorMessage">' .$errors['nick_name']. '</span>'; } ?>
               </div>
             </div>
 
@@ -124,10 +124,9 @@
               <div id="radio" class="col-sm-10">
                 <input type="radio" name="mm_flag" id="inputMm_flag" value="1" checked />購読する
                 <input type="radio" name="mm_flag" id="inputMm_flag" value="0" />購読しない
-                <?php if (isset($errors['mm_flag'])) { echo $errors['mm_flag'];  } ?>
+                <?php if (isset($errors['mm_flag'])) { echo '<span class="errorMessage">' .$errors['mm_flag']. '</span>'; } ?>
               </div>
             </div>
-
 
             <div class="form-group">
               <label class="col-sm-2 control-label" for="terms">利用規約 *</label>
@@ -138,7 +137,7 @@
                     利用規約に同意する。 <br>
                     <a href="/info/agreement" target="_blank">規約の確認はコチラ（別ウィンドウで開きます）</a> </label>
                   </div>
-                <?php if (isset($errors['terms'])) { echo $errors['terms'];  } ?>
+                  <?php if (isset($errors['terms'])) { echo '<span class="errorMessage">' .$errors['terms']. '</span>'; } ?>
                 </div>
               </div>
               <div id="submitButton" class="form-group">
