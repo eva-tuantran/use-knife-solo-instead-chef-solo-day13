@@ -4,6 +4,7 @@ return array(
     'from'      => 'info@rakuichi-rakuza.jp',
     'from_name' => '楽市楽座 運営事務局',
     'subject'   => '【自動返信】キャンセル待ち予約完了メール',
+    'bcc'       => array('rakuichi-test@aucfan.com'),
     'body'      => <<<'EOT'
 
 

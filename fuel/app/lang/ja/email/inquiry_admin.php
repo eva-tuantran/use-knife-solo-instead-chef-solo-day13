@@ -1,11 +1,16 @@
 <?php
 
 return array(
-    'from'      => 'info@rakuichi-rakuza.jp',
+    'from'      => 'admin@rakuichi-rakuza.jp',
     'from_name' => '楽市楽座 運営事務局',
-    'email'     => array('h_kobayashi@aucfan.com'),
-    'subject'   => 'お問い合わせフォーム(admin向け)',
+    'email'     => array('info@rakuichi-rakuza.jp'),
+    'bcc'       => array('rakuichi-test@aucfan.com'),
+    'subject'   => 'お問い合わせを受け付けました。',
     'body'      => <<<'EOT'
+以下の内容でお問い合わせフォームからの送信を受け付けました。
+内容をご確認下さい。
+━━━━━━━━━━━━━━━━━━━━━━━━
+
 (admin向け)
 お問い合わせの種類 ##inquiry_type_label##
 名前 ##last_name## ##first_name##

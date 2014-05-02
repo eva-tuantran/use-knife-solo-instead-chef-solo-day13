@@ -16,7 +16,7 @@ class Model_Email extends \Model
      * @return void
      * @author kobayasi
      */
-    public function sendMailByParams($name,$params = array(), $to = null)
+    public function sendMailByParams($name, $params = array(), $to = null, $bcc = null)
     {
         Lang::load("email/{$name}");
 
@@ -30,6 +30,15 @@ class Model_Email extends \Model
         }
 
         $email->to($to);
+
+        if (! $bcc) {
+            $bcc = Lang::get('bcc');
+        }
+
+        if ($bcc) {
+            $email->bcc($bcc);
+        }
+
         $email->send();
     }
 
