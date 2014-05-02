@@ -50,10 +50,10 @@
         <div class="form-group">
           <label class="col-sm-2 control-label" for="inputBirthday">誕生日</label>
           <div class="col-sm-10">
-            <?php if(isset($input["birthday"])): ?>
-              <?php echo date('Y年n月j日', strtotime($input["birthday"])); ?>
-            <?php else: ?>
+            <?php if(!isset($input["birthday"]) || $input["birthday"] === ""): ?>
               選択なし
+            <?php elseif(isset($input["birthday"])): ?>
+              <?php echo date('Y年n月j日', strtotime($input["birthday"])); ?>
             <?php endif; ?>
           </div>
         </div>
