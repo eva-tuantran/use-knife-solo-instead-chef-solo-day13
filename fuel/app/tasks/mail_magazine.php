@@ -23,7 +23,7 @@ class Mail_Magazine
      * @return void
      * @author ida
      */
-    public function run($mail_magazine_id)
+    public function run($mail_magazine_id, $administrator_id)
     {
         \Model_Mail_Magazine::startProcess();
 
@@ -33,9 +33,8 @@ class Mail_Magazine
         $mail_magazine = \Model_Mail_Magazine::find($mail_magazine_id);
         $mail_magazine->send_status = \Model_Mail_Magazine::SEND_STATUS_PROGRESS;
         $mail_magazine->save();
-        $query = $mail_magazine['query'];
 
-        $users = \DB::query($query)->execute()->as_array();
+        $users = \Model_Mail_Magazine_User::findByMailMagazineId($mail_magazine_id);
 
         $is_stop = false;
         $total_count = 0;
@@ -43,22 +42,34 @@ class Mail_Magazine
         $error_count = 0;
 
         foreach ($users as $user) {
-            $total_count++;
             if (! \Model_Mail_Magazine::isProcess()) {
                 $is_stop = true;
-                $this->log($user['user_id'] . ": cancel.\n");
+                $this->log($user->user_id . ": cancel.\n");
                 break;
             }
 
             try {
+                usleep(200000);
                 $this->send($user, $mail_magazine);
-                $this->log($user['user_id'] . ": success\n");
+
+                $this->log($user->user_id . ": success\n");
+                $user->set(array(
+                    'send_status' => \Model_Mail_Magazine_User::SEND_STATUS_NORMAL_END,
+                    'error' => null,
+                    'updated_user' => $administrator_id,
+                ))->save();
                 $success_count++;
             } catch (\Exception $e) {
                 $message = $e->getMessage();
-                $this->log($user['user_id'] . ": error " . $message . "\n");
+                $this->log($user->user_id . ": error " . $message . "\n");
+                $user->set(array(
+                    'send_status' => \Model_Mail_Magazine_User::SEND_STATUS_ERROR_END,
+                    'error' => $message,
+                    'updated_user' => $administrator_id,
+                ))->save();
                 $error_count++;
             }
+            $total_count++;
         }
 
         $this->log('[total] ' . $total_count . ' [success] ' . $success_count . ' [fail] ' . $error_count . "\n");

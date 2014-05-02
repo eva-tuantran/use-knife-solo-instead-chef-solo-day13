@@ -100,9 +100,9 @@
         </tr>
         <tr>
         <?php
-            foreach ($entry_styles as $entry_Style_name):
+            foreach ($entry_styles as $entry_style_name):
         ?>
-          <th class="small"><?php echo $entry_Style_name;?></th>
+          <th class="small"><?php echo $entry_style_name;?></th>
         <?php
             endforeach;
         ?>
@@ -173,8 +173,16 @@
   </div>
   <div class="panel-footer">
     <?php
-        if ('' != ($numbers =  $pagination->render())):
-            echo $numbers;
+        if ('' != ($pagnation =  $pagination->render())):
+            echo $pagnation;
+        elseif ($mail_magazine_list):
+    ?>
+    <ul class="pagination">
+      <li class="disabled"><a href="javascript:void(0);" rel="prev">«</a></li>
+      <li class="active"><a href="javascript:void(0);">1<span class="sr-only"></span></a></li>
+      <li class="disabled"><a href="javascript:void(0);" rel="next">»</a></li>
+    </ul>
+    <?php
         endif;
     ?>
   </div>

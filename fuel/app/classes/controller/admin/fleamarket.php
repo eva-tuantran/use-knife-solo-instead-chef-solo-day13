@@ -67,10 +67,7 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
         $fleamarkets = \Model_Fleamarket::findAdminBySearch(
             $condition_list,
             $pagination->current_page,
-            $this->result_per_page,
-            array('order_by' => array(
-                'event_date' => 'ASC', 'event_status' => 'ASC'
-            ))
+            $this->result_per_page
         );
 
         $view_model = \ViewModel::forge('admin/fleamarket/list');
