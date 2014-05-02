@@ -1,7 +1,7 @@
 <?php $input  = $fieldset->input(); ?>
 <?php $errors = $fieldset->validation()->error_message(); ?>
 
-<div id="contentForm" class="row"> 
+<div id="contentForm" class="row">
   <!-- form -->
   <div id="form" class="container">
     <div class="box clearfix">
@@ -25,65 +25,65 @@
 	      </option>
 	    </select>
 	    <?php if (isset($errors['inquiry_type'])) { ?>
-	    <?php echo $errors['inquiry_type']; ?>
+	    <?php echo '<span class="errorMessage">' .$errors['inquiry_type']. '</span>'; ?>
 	    <?php } ?>
 	  </div>
 	</div>
 	<div class="form-group">
 	  <label class="col-sm-2 control-label">名前</label>
 	  <div class="col-sm-6">
-	    <input type="text" name="last_name" value="<?php echo e($input['last_name']); ?>" class="form-control">
-	    <input type="text" name="first_name" value="<?php echo e($input['first_name']); ?>" class="form-control">
+	    <input type="text" name="last_name" value="<?php echo e($input['last_name']); ?>" class="form-control" required>
+	    <input type="text" name="first_name" value="<?php echo e($input['first_name']); ?>" class="form-control" required>
 	    <?php if (isset($errors['last_name'])) { ?>
-	    <?php echo $errors['last_name']; ?>
+	    <?php echo '<span class="errorMessage">' .$errors['last_name']. '</span>'; ?>
 	    <?php } ?>
 	    <?php if (isset($errors['first_name'])) { ?>
-	    <?php echo $errors['first_name']; ?>
+	    <?php echo '<span class="errorMessage">' .$errors['first_name']. '</span>'; ?>
 	    <?php } ?>
 	  </div>
 	</div>
 	<div class="form-group">
 	  <label class="col-sm-2 control-label">件名</label>
 	  <div class="col-sm-6">
-	    <input type="text" name="subject" value="<?php echo e($input['subject']); ?>" class="form-control">
+	    <input type="text" name="subject" value="<?php echo e($input['subject']); ?>" class="form-control" required>
 	    <?php if (isset($errors['subject'])) { ?>
-	    <?php echo $errors['subject']; ?>
+	    <?php echo '<span class="errorMessage">' .$errors['subject']. '</span>'; ?>
 	    <?php } ?>
 	  </div>
 	</div>
 	<div class="form-group">
 	  <label class="col-sm-2 control-label">メールアドレス</label>
 	  <div class="col-sm-6">
-	    <input type="text" name="email" value="<?php echo e($input['email']); ?>" class="form-control">
+	    <input type="text" name="email" value="<?php echo e($input['email']); ?>" class="form-control" required>
 	    <?php if (isset($errors['email'])) { ?>
-	    <?php echo $errors['email']; ?>
+	    <?php echo '<span class="errorMessage">' .$errors['email']. '</span>'; ?>
 	    <?php } ?>
 	  </div>
 	</div>
 	<div class="form-group">
 	  <label class="col-sm-2 control-label">メールアドレス確認用</label>
 	  <div class="col-sm-6">
-	    <input type="text" name="email2" value="<?php echo e($input['email2']); ?>" class="form-control">
+	    <input type="text" name="email2" value="<?php echo e($input['email2']); ?>" class="form-control" required>
 	    <?php if (isset($errors['email2'])) { ?>
-	    <?php echo $errors['email2']; ?>
+	    <?php echo '<span class="errorMessage">' .$errors['email2']. '</span>'; ?>
 	    <?php } ?>
 	  </div>
 	</div>
 	<div class="form-group">
 	  <label class="col-sm-2 control-label">電話番号</label>
 	  <div class="col-sm-6">
-	    <input type="text" name="tel" value="<?php echo e($input['tel']); ?>" class="form-control">
+	    <input type="text" name="tel" value="<?php echo e($input['tel']); ?>" class="form-control" required>
 	    <?php if (isset($errors['tel'])) { ?>
-	    <?php echo $errors['tel']; ?>
+	    <?php echo '<span class="errorMessage">' .$errors['tel']. '</span>'; ?>
 	    <?php } ?>
 	  </div>
 	</div>
 	<div class="form-group">
 	  <label class="col-sm-2 control-label">内容</label>
 	  <div class="col-sm-6">
-	    <textarea name="contents" cols=80 rows=10 class="form-control"><?php echo e($input['contents']); ?></textarea>
+	    <textarea name="contents" cols=80 rows=10 class="form-control" required><?php echo e($input['contents']); ?></textarea>
 	    <?php if (isset($errors['contents'])) { ?>
-	    <?php echo $errors['contents']; ?>
+	    <?php echo '<span class="errorMessage">' .$errors['contents']. '</span>'; ?>
 	    <?php } ?>
 	  </div>
 	</div>

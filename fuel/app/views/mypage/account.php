@@ -15,14 +15,14 @@
           <div class="form-group">
             <label class="col-sm-2 control-label" for="inputName">お名前</label>
             <div class="col-sm-10">
-              <input type="text" name="last_name" class="form-control" id="inputName" value="<?php echo e($fields['last_name']->value); ?>">
-              <input type="text" name="first_name" class="form-control" id="inputName" value="<?php echo e($fields['first_name']->value); ?>">
+              <input type="text" name="last_name" class="form-control" id="inputName" value="<?php echo e($fields['last_name']->value); ?>" required>
+              <input type="text" name="first_name" class="form-control" id="inputName" value="<?php echo e($fields['first_name']->value); ?>" required>
               <?php
               if (isset($errors['last_name'])) {
-                echo $errors['last_name'];
+                echo '<span class="errorMessage">' .$errors['last_name']. '</span>';
               }
               if (isset($errors['first_name'])) {
-                echo $errors['first_name'];
+                echo '<span class="errorMessage">' .$errors['first_name']. '</span>';
               }
               ?>
 
@@ -31,14 +31,14 @@
           <div class="form-group">
             <label class="col-sm-2 control-label" for="inputPhonetic">フリガナ</label>
             <div class="col-sm-10">
-              <input type="text" class="form-control" id="inputPhonetic" name="last_name_kana" value="<?php echo e($fields['last_name_kana']->value); ?>">
-              <input type="text" class="form-control" id="inputPhonetic" name="first_name_kana" value="<?php echo e($fields['first_name_kana']->value); ?>">
+              <input type="text" class="form-control" id="inputPhonetic" name="last_name_kana" value="<?php echo e($fields['last_name_kana']->value); ?>" required>
+              <input type="text" class="form-control" id="inputPhonetic" name="first_name_kana" value="<?php echo e($fields['first_name_kana']->value); ?>" required>
               <?php
               if (isset($errors['last_name_kana'])) {
-                echo $errors['last_name_kana'];
+                echo '<span class="errorMessage">' .$errors['last_name_kana']. '</span>';
               }
               if (isset($errors['first_name_kana'])) {
-                echo $errors['first_name_kana'];
+                echo '<span class="errorMessage">' .$errors['first_name_kana']. '</span>';
               }
               ?>
             </div>
@@ -48,10 +48,10 @@
             <label class="col-sm-2 control-label" for="inputAddress">ご住所</label>
             <div class="col-sm-10">
 
-              <input type="text" class="form-control" id="inputZip" placeholder="例）123-4567" name="zip" value="<?php echo e($fields['zip']->value); ?>">
+              <input type="text" class="form-control" id="inputZip" placeholder="例）123-4567" name="zip" value="<?php echo e($fields['zip']->value); ?>" required>
               <?php
               if (isset($errors['zip'])) {
-                echo $errors['zip'];
+                echo '<span class="errorMessage">' .$errors['zip']. '</span>';
               }
               ?>
               <button type="submit" class="btn btn-default" onclick="AjaxZip3.zip2addr('zip','','prefecture_id','address'); return false;">住所を検索</button>
@@ -62,10 +62,10 @@
                 <?php } ?>
               </select>
 
-              <input type="text" name="address" class="form-control" id="inputAddress" value="<?php echo e($fields['address']->value); ?>">
+              <input type="text" name="address" class="form-control" id="inputAddress" value="<?php echo e($fields['address']->value); ?>" required>
               <?php
               if (isset($errors['address'])) {
-                echo $errors['address'];
+                echo '<span class="errorMessage">' .$errors['address']. '</span>';
               }
               ?>
             </div>
@@ -74,10 +74,10 @@
           <div class="form-group">
             <label class="col-sm-2 control-label" for="inputTel">電話番号</label>
             <div class="col-sm-10">
-              <input type="text" class="form-control" id="inputTel" name="tel" value="<?php echo e($fields['tel']->value); ?>">
+              <input type="text" class="form-control" id="inputTel" name="tel" value="<?php echo e($fields['tel']->value); ?>" required>
               <?php
               if (isset($errors['tel'])) {
-                echo $errors['tel'];
+                echo '<span class="errorMessage">' .$errors['tel']. '</span>';
               }
               ?>
             </div>
@@ -85,10 +85,10 @@
           <div class="form-group">
             <label class="col-sm-2 control-label" for="inputEmail">E-mailアドレス</label>
             <div class="col-sm-10">
-              <input type="email" class="form-control" id="inputEmail" name="email" value="<?php echo e($fields['email']->value); ?>">
+              <input type="email" class="form-control" id="inputEmail" name="email" value="<?php echo e($fields['email']->value); ?>" required>
               <?php
               if (isset($errors['email'])) {
-                echo $errors['email'];
+                echo '<span class="errorMessage">' .$errors['email']. '</span>';
               }
               ?>
             </div>
@@ -96,10 +96,10 @@
             <div class="form-group">
               <label class="col-sm-2 control-label" for="inputNickname">ニックネーム</label>
               <div class="col-sm-10">
-                <input type="text" name="nick_name" class="form-control" id="inputNickname" value="<?php echo e($fields['nick_name']->value); ?>">
+                <input type="text" name="nick_name" class="form-control" id="inputNickname" value="<?php echo e($fields['nick_name']->value); ?>" required>
                 <?php
                 if (isset($errors['nick_name'])) {
-                  echo $errors['nick_name'];
+                  echo '<span class="errorMessage">' .$errors['nick_name']. '</span>';
                 }
                 ?>
               </div>
