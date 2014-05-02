@@ -36,6 +36,28 @@
           </div>
         </div>
         <div class="form-group">
+          <label class="col-sm-2 control-label" for="inputGender">性別</label>
+          <div class="col-sm-10">
+            <?php if($input["gender"] === '1'): ?>
+              男性
+            <?php elseif($input["gender"] === '2'): ?>
+              女性
+            <?php else: ?>
+              選択なし
+            <?php endif; ?>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="col-sm-2 control-label" for="inputBirthday">誕生日</label>
+          <div class="col-sm-10">
+            <?php if(!isset($input["birthday"]) || $input["birthday"] === ""): ?>
+              選択なし
+            <?php elseif(isset($input["birthday"])): ?>
+              <?php echo date('Y年n月j日', strtotime($input["birthday"])); ?>
+            <?php endif; ?>
+          </div>
+        </div>
+        <div class="form-group">
           <label class="col-sm-2 control-label" for="inputAddress">ご住所</label>
           <div class="col-sm-10">
             <?php echo $input["zip"]; ?>
@@ -66,6 +88,17 @@
             <?php echo $input["nick_name"]; ?>
           </div>
         </div>
+        <div class="form-group">
+          <label class="col-sm-2 control-label" for="inputMm_flag">メールマガジン購読</label>
+          <div class="col-sm-10">
+            <?php if($input["mm_flag"] === '1'): ?>
+              購読する
+            <?php else: ?>
+              購読しない
+            <?php endif; ?>
+          </div>
+        </div>
+
         <div class="form-group">
           <label class="col-sm-2 control-label" for="terms">利用規約</label>
           <div class="col-sm-10">
