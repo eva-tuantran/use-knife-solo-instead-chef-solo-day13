@@ -845,7 +845,6 @@ QUERY;
      * @return bool
      * @author shimma
      * @author ida
-     * @todo: こちらの実装がお気に入りから取得になっているので修正
      */
     public static function getUserFleamarkets(
         $user_id, $page = 0, $row_count = 0
@@ -951,7 +950,8 @@ ORDER BY
     f.event_time_start
 QUERY;
 
-        $count = \DB::query($query)->parameters($placeholders)->execute()->get('my_fleamarket_count');
+        $query = \DB::query($query)->parameters($placeholders);
+        $count = $query->execute()->get('my_fleamarket_count');
 
         return $count;
     }
@@ -1075,12 +1075,16 @@ QUERY;
      * @access private
      * @param array $condition_list 検索条件
      * @return array 検索条件
-     * @author void
+     * @author ida
      */
     public static function createAdminSearchCondition(
         $condition_list = array()
     ) {
         $conditions = array();
+
+        if (! $condition_list) {
+            return $conditions;
+        }
 
         foreach ($condition_list as $field => $condition) {
             if ($condition == '') {
@@ -1126,6 +1130,10 @@ QUERY;
     public static function createSearchCondition($condition_list = array())
     {
         $conditions = array();
+
+        if (! $condition_list) {
+            return $conditions;
+        }
 
         $is_event_date = false;
         foreach ($condition_list as $field => $condition) {

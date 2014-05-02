@@ -8,15 +8,51 @@
 
 class Controller_Admin_User extends Controller_Admin_Base_Template
 {
+    protected $_secure_actions = array(
+        'list', 'index', 'confirm', 'thanks',
+    );
+
     protected $user = null;
 
     public function before()
     {
         parent::before();
+
         if (Input::param('user_id')) {
-            $this->user =
-                Model_User::find(Input::param('user_id'));
+            $this->user = \Model_User::find(Input::param('user_id'));
         }
+    }
+
+    /**
+     * 一覧画面
+     *
+     * @access public
+     * @return void
+     */
+    public function action_list()
+    {
+        $view = View::forge('admin/user/list');
+        $this->template->content = $view;
+
+        $total = Model_User::findByKeywordCount(
+            Input::all()
+        );
+
+        Pagination::set_config(array(
+            'uri_segment'    => 4,
+            'num_links'      => 10,
+            'per_page'       => 100,
+            'total_items'    => $total,
+            'name'           => 'pagenation',
+        ));
+
+        $users = Model_User::findByKeyword(
+            Input::all(),
+            Pagination::get('per_page'),
+            Pagination::get('offset')
+        );
+
+        $view->set('users', $users, false);
     }
 
     /**
@@ -166,32 +202,6 @@ class Controller_Admin_User extends Controller_Admin_Base_Template
         Asset::js('jquery.ui.datepicker-ja.js', array(), 'add_js');
         Asset::js('jquery-ui-timepicker.js', array(), 'add_js');
         Asset::js('jquery-ui-timepicker-ja.js', array(), 'add_js');
-    }
-
-    public function action_list()
-    {
-        $view = View::forge('admin/user/list');
-        $this->template->content = $view;
-
-        $total = Model_User::findByKeywordCount(
-            Input::all()
-        );
-
-        Pagination::set_config(array(
-            'uri_segment'    => 4,
-            'num_links'      => 10,
-            'per_page'       => 100,
-            'total_items'    => $total,
-            'name'           => 'pagenation',
-        ));
-
-        $users = Model_User::findByKeyword(
-            Input::all(),
-            Pagination::get('per_page'),
-            Pagination::get('offset')
-        );
-
-        $view->set('users', $users, false);
     }
 
     public function action_force_login()

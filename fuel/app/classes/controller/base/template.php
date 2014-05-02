@@ -58,7 +58,6 @@ class Controller_Base_Template extends Controller_Template
      */
     protected $meta = array();
 
-
     /**
      * ログインしているユーザインスタンスです
      *
@@ -117,14 +116,12 @@ class Controller_Base_Template extends Controller_Template
         }
     }
 
-
     public function after($response)
     {
         $this->template->meta = $this->meta;
 
         return parent::after($response);
     }
-
 
     /**
      * http/httpsの引数で現状のURIを引き継いでリダイレクトします
