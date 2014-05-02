@@ -1076,6 +1076,12 @@ li.inquiry i {
 #contentForm .form-address select {
   margin-bottom: 5px;
 }
+#mailmagazine {
+	margin-top: 10px;
+}
+#mailmagazine input{
+	margin-right: 5px;
+}
 /* --------------------contentMypage-------------------- */
 
 #contentMypage .more {

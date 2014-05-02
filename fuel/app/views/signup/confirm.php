@@ -67,6 +67,16 @@
           </div>
         </div>
         <div class="form-group">
+          <label class="col-sm-2 control-label" for="inputNickname">メールマガジン購読</label>
+          <div class="col-sm-10">
+            <?php if($input["mm_flag"] === '1'): ?>
+              購読する
+            <?php else: ?>
+              購読しない
+            <?php endif; ?>
+          </div>
+        </div>
+        <div class="form-group">
           <label class="col-sm-2 control-label" for="terms">利用規約</label>
           <div class="col-sm-10">
             <p>同意する</p>

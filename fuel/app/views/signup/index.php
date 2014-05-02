@@ -102,6 +102,17 @@
                 <?php if (isset($errors['nick_name'])) { echo $errors['nick_name'];  } ?>
               </div>
             </div>
+
+          <div class="form-group">
+              <label class="col-sm-2 control-label" for="inputNickname">メールマガジン購読  *</label>
+              <div id="mailmagazine" class="col-sm-10">
+                <input type="radio" name="mm_flag" value="1" checked>購読する
+                <input type="radio" name="mm_flag" value="0" >購読しない
+                <?php if (isset($errors['mm_flag'])) { echo $errors['mm_flag'];  } ?>
+              </div>
+            </div>
+
+
             <div class="form-group">
               <label class="col-sm-2 control-label" for="terms">利用規約 *</label>
               <div class="col-sm-10">
