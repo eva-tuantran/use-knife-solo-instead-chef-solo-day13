@@ -41,6 +41,22 @@
             <?php endif; ?>
           </div>
         </div>
+
+        <div class="form-group">
+          <label class="col-sm-2 control-label" for="inputGender">性別<br>
+         （任意）</label>
+          <div id="radio" class="col-sm-10">
+            <input type="radio" id="inputGender" name="gender" value="1" <?php if($input['gender'] === 1) echo 'checked'; ?>>男性
+            <input type="radio" id="inputGender" name="gender" value="2" <?php if($input['gender'] === 2) echo 'checked'; ?>>女性
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="col-sm-2 control-label" for="inputBirthday">誕生日<br>
+         （任意）</label>
+          <div class="col-sm-10">
+            <input type="date" class="form-control" id="inputBirthday" name="birthday" min="1900-01-01" max="<?php echo date('Y-m-d'); ?>" style="width: 12em;" value="<?php echo $input['birthday'] ?>" />
+          </div>
+        </div>
         <div class="form-group form-address">
           <label class="col-sm-2 control-label" for="inputAddress">ご住所 *</label>
           <div class="col-sm-10">
@@ -104,10 +120,10 @@
             </div>
 
           <div class="form-group">
-              <label class="col-sm-2 control-label" for="inputNickname">メールマガジン購読  *</label>
-              <div id="mailmagazine" class="col-sm-10">
-                <input type="radio" name="mm_flag" value="1" checked>購読する
-                <input type="radio" name="mm_flag" value="0" >購読しない
+              <label class="col-sm-2 control-label" for="inputMm_flag">メールマガジン購読  *</label>
+              <div id="radio" class="col-sm-10">
+                <input type="radio" name="mm_flag" id="inputMm_flag" value="1" checked>購読する
+                <input type="radio" name="mm_flag" id="inputMm_flag" value="0" >購読しない
                 <?php if (isset($errors['mm_flag'])) { echo $errors['mm_flag'];  } ?>
               </div>
             </div>

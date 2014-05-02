@@ -1044,6 +1044,9 @@ li.inquiry i {
 #contentForm .form-group {
 	padding-bottom: 15px;
 }
+#contentForm .form-group .col-sm-10 {
+	margin-top: 7px;
+}
 #contentForm #flow {
 	margin: 0;
 	padding: 0 0 20px 0;
@@ -1076,11 +1079,11 @@ li.inquiry i {
 #contentForm .form-address select {
   margin-bottom: 5px;
 }
-#mailmagazine {
+#radio {
 	margin-top: 10px;
 }
-#mailmagazine input{
-	margin-right: 5px;
+#radio input{
+	margin-right: 3px;
 }
 /* --------------------contentMypage-------------------- */
 
