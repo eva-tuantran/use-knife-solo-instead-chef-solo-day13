@@ -1,4 +1,4 @@
-%w{php php-mbstring php-pdo php-mysql php-xml php-gd}.each do |name|
+%w{php php-mbstring php-pdo php-mysql php-xml php-gd php-pecl-apc}.each do |name|
   package name do
     action :install
   end
