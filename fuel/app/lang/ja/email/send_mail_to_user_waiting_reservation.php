@@ -3,8 +3,8 @@
 return array(
     'from'      => 'info@rakuichi-rakuza.jp',
     'from_name' => '楽市楽座 運営事務局',
-    'email'     => array('h_kobayashi@aucfan.com'),
     'subject'   => 'キャンセルに伴う空枠追加のご連絡',
+    'bcc'       => array('rakuichi-test@aucfan.com'),
     'body'      => <<<'EOT'
 ##user.last_name####user.first_name## 様
 
