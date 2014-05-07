@@ -63,11 +63,11 @@ $(function() {
         <div class="form-group">
             <label class="col-sm-2 control-label" for="inputPromoterName">主催者名</label>
             <div class="col-sm-10">
-              <input id="inputPromoterName" type="text" class="form-control" name="f[promoter_name]" placeholder="主催者名を入力" value="<?php echo e($fleamarket['promoter_name']);?>">
+              <input id="inputPromoterName" type="text" class="form-control" name="f[promoter_name]" placeholder="主催者名を入力" value="<?php echo e($fleamarket['promoter_name']);?>" required>
             <?php
               if (isset($fleamarket_errors['promoter_name'])):
             ?>
-              <div><?php echo $fleamarket_errors['promoter_name'];?></div>
+          <div><?php echo '<span class="errorMessage">' .$fleamarket_errors['promoter_name']. '</span>'; ?></div>
             <?php
               endif;
             ?>
@@ -80,7 +80,7 @@ $(function() {
             <?php
               if (isset($fleamarket_errors['website'])):
             ?>
-              <div><?php echo $fleamarket_errors['website'];?></div>
+          <div><?php echo '<span class="errorMessage">' .$fleamarket_errors['website']. '</span>'; ?></div>
             <?php
               endif;
             ?>
@@ -89,11 +89,11 @@ $(function() {
         <div class="form-group">
           <label class="col-sm-2 control-label" for="inputReservationTel">予約受付電話番号</label>
           <div class="col-sm-10">
-            <input id="inputReservationTel" type="text" class="form-control" name="f[reservation_tel]" placeholder="例）03-1234-5678　半角英数字で入力してください" value="<?php echo e($fleamarket['reservation_tel']);?>">
+            <input id="inputReservationTel" type="text" class="form-control" name="f[reservation_tel]" placeholder="例）03-1234-5678　半角英数字で入力してください" value="<?php echo e($fleamarket['reservation_tel']);?>" required>
             <?php
               if (isset($fleamarket_errors['reservation_tel'])):
             ?>
-              <div><?php echo $fleamarket_errors['reservation_tel'];?></div>
+          <div><?php echo '<span class="errorMessage">' .$fleamarket_errors['reservation_tel']. '</span>'; ?></div>
             <?php
               endif;
             ?>
@@ -102,11 +102,11 @@ $(function() {
         <div class="form-group">
           <label class="col-sm-2 control-label" for="inputReservationEmail">予約受付<br>E-mailアドレス</label>
           <div class="col-sm-10">
-            <input id="inputReservationEmail" type="email" class="form-control" name="f[reservation_email]" placeholder="例）your@email.com　半角英数字で入力してください" value="<?php echo e($fleamarket['reservation_email']);?>">
+            <input id="inputReservationEmail" type="email" class="form-control" name="f[reservation_email]" placeholder="例）your@email.com　半角英数字で入力してください" value="<?php echo e($fleamarket['reservation_email']);?>" required>
             <?php
               if (isset($fleamarket_errors['reservation_email'])):
             ?>
-              <div><?php echo $fleamarket_errors['reservation_email'];?></div>
+          <div><?php echo '<span class="errorMessage">' .$fleamarket_errors['reservation_email']. '</span>'; ?></div>
             <?php
               endif;
             ?>
@@ -115,11 +115,11 @@ $(function() {
         <div class="form-group">
           <label class="col-sm-2 control-label" for="inputReservationEmail2">E-mailアドレス<br>（確認用）</label>
           <div class="col-sm-10">
-            <input id="inputReservationEmail2" type="email" class="form-control" name="f[reservation_email_confirm]" placeholder="確認のため、もう一度メールアドレスを入力してください" value="<?php echo e($fleamarket['reservation_email_confirm']);?>">
+            <input id="inputReservationEmail2" type="email" class="form-control" name="f[reservation_email_confirm]" placeholder="確認のため、もう一度メールアドレスを入力してください" value="<?php echo e($fleamarket['reservation_email_confirm']);?>" required>
             <?php
               if (isset($fleamarket_errors['reservation_email_confirm'])):
             ?>
-              <div><?php echo $fleamarket_errors['reservation_email_confirm'];?></div>
+          <div><?php echo '<span class="errorMessage">' .$fleamarket_errors['reservation_email_confirm']. '</span>'; ?></div>
             <?php
               endif;
             ?>
@@ -134,11 +134,11 @@ $(function() {
                     $event_date = date('Y/m/d', strtotime($fleamarket['event_date']));
                 endif;
             ?>
-            <input id="inputEventDate" type="text" class="form-control" name="f[event_date]" placeholder="例）2014/01/25" value="<?php echo e($event_date);?>">
+            <input id="inputEventDate" type="text" class="form-control" name="f[event_date]" placeholder="例）2014/01/25" value="<?php echo e($event_date);?>" required>
             <?php
               if (isset($fleamarket_errors['event_date'])):
             ?>
-              <div><?php echo $fleamarket_errors['event_date'];?></div>
+          <div><?php echo '<span class="errorMessage">' .$fleamarket_errors['event_date']. '</span>'; ?></div>
             <?php
               endif;
             ?>
@@ -153,11 +153,11 @@ $(function() {
                     $event_time_start = date('H:i', strtotime($fleamarket['event_time_start']));
                 endif;
             ?>
-            <input id="inputEventTimeStart" type="text" class="form-control" name="f[event_time_start]" placeholder="例）09:00" value="<?php echo e($event_time_start);?>">
+            <input id="inputEventTimeStart" type="text" class="form-control" name="f[event_time_start]" placeholder="例）09:00" value="<?php echo e($event_time_start);?>" required>
             <?php
               if (isset($fleamarket_errors['event_time_start'])):
             ?>
-              <div><?php echo $fleamarket_errors['event_time_start'];?></div>
+          <div><?php echo '<span class="errorMessage">' .$fleamarket_errors['event_time_start']. '</span>'; ?></div>
             <?php
               endif;
             ?>
@@ -172,11 +172,11 @@ $(function() {
                     $event_time_end = date('H:i', strtotime($fleamarket['event_time_end']));
                 endif;
             ?>
-            <input id="inputEventTimeEnd" type="text" class="form-control" name="f[event_time_end]" placeholder="例）16:00" value="<?php echo e($event_time_end);?>">
+            <input id="inputEventTimeEnd" type="text" class="form-control" name="f[event_time_end]" placeholder="例）16:00" value="<?php echo e($event_time_end);?>" required>
             <?php
               if (isset($fleamarket_errors['event_time_end'])):
             ?>
-              <div><?php echo $fleamarket_errors['event_time_end'];?></div>
+          <div><?php echo '<span class="errorMessage">' .$fleamarket_errors['event_time_end']. '</span>'; ?></div>
             <?php
               endif;
             ?>
@@ -185,11 +185,11 @@ $(function() {
         <div class="form-group">
           <label class="col-sm-2 control-label" for="inputName">フリマ名</label>
           <div class="col-sm-10">
-            <input id="inputName" type="text" class="form-control" name="f[name]" placeholder="例）◯◯フリーマーケット" value="<?php echo e($fleamarket['name']);?>">
+            <input id="inputName" type="text" class="form-control" name="f[name]" placeholder="例）◯◯フリーマーケット" value="<?php echo e($fleamarket['name']);?>" required>
             <?php
               if (isset($fleamarket_errors['name'])):
             ?>
-              <div><?php echo $fleamarket_errors['name'];?></div>
+          <div><?php echo '<span class="errorMessage">' .$fleamarket_errors['name']. '</span>'; ?></div>
             <?php
               endif;
             ?>
@@ -198,7 +198,7 @@ $(function() {
         <div class="form-group">
           <label class="col-sm-2 control-label" for="inputPlaceName">会場名</label>
           <div class="col-sm-10">
-            <input id="inputPlaceName" type="text" class="form-control" name="l[name]" placeholder="例）◯◯公園" value="<?php echo e($location['name']);?>">
+            <input id="inputPlaceName" type="text" class="form-control" name="l[name]" placeholder="例）◯◯公園" value="<?php echo e($location['name']);?>" required>
             <?php
               if (isset($location_errors['name'])):
             ?>
@@ -211,7 +211,7 @@ $(function() {
         <div class="form-group form-address">
           <label class="col-sm-2 control-label" for="inputZip">ご住所</label>
           <div class="col-sm-10">
-            <input id="inputZip" type="text" class="form-control" name="l[zip]" placeholder="例）1234567" value="<?php echo $location['zip'];?>">
+            <input id="inputZip" type="text" class="form-control" name="l[zip]" placeholder="例）1234567" value="<?php echo $location['zip'];?>" required>
             <button type="submit" class="btn btn-default" onclick="AjaxZip3.zip2addr('l[zip]','','l[prefecture_id]','l[address]'); return false;">住所を検索</button>
             <select class="form-control" name="l[prefecture_id]">
               <option value="">都道府県</option>
@@ -224,7 +224,7 @@ $(function() {
                   endforeach;
               ?>
             </select>
-            <input id="inputAddress" type="text" class="form-control" name="l[address]" placeholder="住所を入力" value="<?php echo e($location['address']);?>">
+            <input id="inputAddress" type="text" class="form-control" name="l[address]" placeholder="住所を入力" value="<?php echo e($location['address']);?>" required>
             <?php if (isset($location_errors['zip'])): ?>
               <div><?php echo $location_errors['zip'];?></div>
             <?php endif; ?>
@@ -252,11 +252,11 @@ $(function() {
         <div class="form-group">
           <label class="col-sm-2 control-label" for="inputDescription">内容<br>（出店方法、募集数、料金等）</label>
           <div class="col-sm-10">
-            <textarea id="inputDescription" class="form-control" name="f[description]" rows="5" placeholder="例）車出店可能、募集ブース30、無料"><?php echo e($fleamarket['description']);?></textarea>
+            <textarea id="inputDescription" class="form-control" name="f[description]" rows="5" placeholder="例）車出店可能、募集ブース30、無料" required><?php echo e($fleamarket['description']);?></textarea>
             <?php
               if (isset($fleamarket_errors['description'])):
             ?>
-              <div><?php echo $fleamarket_errors['description'];?></div>
+          <div><?php echo '<span class="errorMessage">' .$fleamarket_errors['description']. '</span>'; ?></div>
             <?php
               endif;
             ?>
@@ -274,7 +274,7 @@ $(function() {
             <?php
               if (isset($fleamarket_errors['agreement'])):
             ?>
-              <div><?php echo $fleamarket_errors['agreement'];?></div>
+          <div><?php echo '<span class="errorMessage">' .$fleamarket_errors['agreement']. '</span>'; ?></div>
             <?php
               endif;
             ?>
