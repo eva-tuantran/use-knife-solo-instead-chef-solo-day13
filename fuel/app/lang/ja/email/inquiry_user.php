@@ -3,7 +3,7 @@
 return array(
     'from'      => 'info@rakuichi-rakuza.jp',
     'from_name' => '楽市楽座 運営事務局',
-    'subject'   => 'お問い合わせフォーム(ユーザー向け)',
+    'subject'   => '【楽市楽座】お問い合わせありがとうございます',
     'body'      => <<<'EOT'
 楽市楽座運営事務局 です。
 お問い合わせありがとうございます。

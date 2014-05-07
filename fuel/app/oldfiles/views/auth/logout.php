@@ -1,1 +1,0 @@
-<p><a href="/auth/login">ログイン画面へ戻る</a></p>
