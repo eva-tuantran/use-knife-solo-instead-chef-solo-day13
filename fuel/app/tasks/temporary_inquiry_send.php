@@ -35,6 +35,6 @@ class temporary_inquiry_send
         $params['inquiry_type_label'] = $contact->inquiry_type_label();
 
         $email = new Model_Email();
-        $email->sendMailByParams("inquiry_admin", $params);
+        $email->sendMailByParams("inquiry/admin", $params);
     }
 }

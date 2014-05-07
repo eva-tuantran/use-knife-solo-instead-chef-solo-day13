@@ -5,7 +5,7 @@ return array(
     'from_name' => '楽市楽座 運営事務局',
     'email'     => array('info@rakuichi-rakuza.jp'),
     'bcc'       => array('rakuichi-test@aucfan.com'),
-    'subject'   => 'お問い合わせを受け付けました。',
+    'subject'   => 'お問い合わせ(ID:##contact_id##):「##inquiry_type_label##」- ##last_name## 様',
     'body'      => <<<'EOT'
 以下の内容でお問い合わせフォームからの送信を受け付けました。
 内容をご確認下さい。

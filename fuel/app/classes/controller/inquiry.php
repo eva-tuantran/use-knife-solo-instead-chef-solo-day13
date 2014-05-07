@@ -157,14 +157,14 @@ class Controller_Inquiry extends Controller_Base_Template
     {
         $params = array();
 
-        foreach (array('last_name', 'first_name', 'subject', 'email', 'tel', 'contents') as $key) {
+        foreach (array('contact_id', 'last_name', 'first_name', 'subject', 'email', 'tel', 'contents') as $key) {
             $params[$key] = $contact->get($key);
         }
         $params['inquiry_type_label'] = $contact->inquiry_type_label();
 
         $email = new Model_Email();
-        $email->sendMailByParams("inquiry_user" , $params, array($contact->email));
-        $email->sendMailByParams("inquiry_admin", $params);
+        $email->sendMailByParams("inquiry/user" , $params, array($contact->email));
+        $email->sendMailByParams("inquiry/admin", $params, '', array('reply_to' => $contact->email));
     }
 }
 
