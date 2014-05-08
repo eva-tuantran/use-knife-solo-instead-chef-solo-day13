@@ -10,16 +10,6 @@
 class Model_Mail_Magazine extends Model_Base
 {
     /**
-     * メール送信の動作チェック用ファイル名
-     */
-    const PROCESS_FILE = 'process_mail_magazine';
-
-    /**
-     * メールマガジン関連ファイルディレクトリ
-     */
-    const ROOT_DIR = '/deploy/rakuichi-rakuza/fuel/app/logs/';
-
-    /**
      * メールマガジンタイプ 1全員,2:希望者全員,3:出店予約者
      */
     const MAIL_MAGAZINE_TYPE_ALL = 1;
@@ -27,10 +17,10 @@ class Model_Mail_Magazine extends Model_Base
     const MAIL_MAGAZINE_TYPE_RESEVED_ENTRY = 3;
 
     /**
-     * 送信ステータス 0:送信待ち,1:送信中,2:正常終了,3エラー終了,9:中止
+     * 送信ステータス 0:保存,1:送信待ち,2:送信中,3:正常終了,4:異常終了,9:キャンセル
      */
-    const SEND_STATUS_WAITING = 0;
-    const SEND_STATUS_SAVED = 1;
+    const SEND_STATUS_SAVED = 0;
+    const SEND_STATUS_WAITING = 1;
     const SEND_STATUS_PROGRESS = 2;
     const SEND_STATUS_NORMAL_END = 3;
     const SEND_STATUS_ERROR_END = 4;
@@ -98,6 +88,11 @@ class Model_Mail_Magazine extends Model_Base
         'deleted_at' => array(
             'form'  => array('type' => false)
         ),
+    );
+
+    protected static $_soft_delete = array(
+        'deleted_field'   => 'deleted_at',
+        'mysql_timestamp' => true,
     );
 
     protected static $_observers = array(
@@ -209,6 +204,7 @@ FROM
     mail_magazines
 {$where}
 ORDER BY
+    send_datetime DESC,
     send_status DESC,
     mail_magazine_id ASC
 {$limit}
@@ -467,48 +463,70 @@ QUERY;
     /**
      * メールマガジン送信中か確認する
      *
-     * 処理ファイルを確認
-     *
-     * @TODO: ファイル名、ディレクトリの設定を移動する
-     *
      * @access private
-     * @param
+     * @param mixed $mail_magazine_id メルマガID
      * @return bool
      * @author ida
      */
-    public static function isProcess()
+    public static function isProcess($mail_magazine_id = null)
     {
-        return file_exists(self::ROOT_DIR . self::PROCESS_FILE);
+        $where = array(
+            array('send_status', self::SEND_STATUS_PROGRESS)
+        );
+        if ($mail_magazine_id) {
+            $where[] = array('mail_magazine_id', $mail_magazine_id);
+        }
+        $mail_magazine = self::find('all', array('where' => $where));
+
+        return count($mail_magazine) > 0;
     }
 
     /**
-     * 送信実行確認ファイル処理
-     *
-     * @TODO: ファイル名、ディレクトリの設定を移動する
+     * 送信開始
      *
      * @access private
-     * @param　boolean $delete 削除（中止）
+     * @param mixed $mail_magazine_id メルマガID
      * @return void
      * @author ida
      */
-    public static function startProcess()
+    public static function startProcess($mail_magazine_id = null)
     {
-        return \File::create(self::ROOT_DIR, self::PROCESS_FILE);
+        if (! $mail_magazine_id) {
+            return false;
+        }
+
+        $mail_magazine = self::find('first', array(
+            'where' => array(
+                array('mail_magazine_id', $mail_magazine_id),
+            )
+        ));
+
+        $mail_magazine->send_status = self::SEND_STATUS_PROGRESS;
+        $mail_magazine->save();
     }
 
     /**
-     * 送信実行確認ファイル処理
-     *
-     * @TODO: ファイル名、ディレクトリの設定を移動する
+     * 送信キャンセル
      *
      * @access private
-     * @param　boolean $delete 削除（中止）
+     * @param mixed $mail_magazine_id メルマガID
      * @return void
      * @author ida
      */
-    public static function stopProcess()
+    public static function cancelProcess($mail_magazine_id = null)
     {
-        return \File::delete(self::ROOT_DIR . self::PROCESS_FILE);
+        if (! $mail_magazine_id) {
+            return false;
+        }
+
+        $mail_magazine = self::find('first', array(
+            'where' => array(
+                array('mail_magazine_id', $mail_magazine_id),
+            )
+        ));
+
+        $mail_magazine->send_status = self::SEND_STATUS_CANCEL;
+        $mail_magazine->save();
     }
 
     /*
@@ -543,7 +561,6 @@ QUERY;
             return array($conditions, $placeholders);
         }
 
-        $conditions = array();
         foreach ($condition_list as $field => $condition) {
             $operator = $condition[0];
             if (count($condition) == 1) {

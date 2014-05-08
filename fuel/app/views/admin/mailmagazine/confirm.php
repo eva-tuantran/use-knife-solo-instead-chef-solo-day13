@@ -22,9 +22,14 @@
                             break;
                         case \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_REQUEST:
                             $prefecture_name = '全国';
-                            $prefecture_id = $input_data['prefecture_id'];
-                            if (isset($prefectures[$prefecture_id])):
-                                $prefecture_name = $prefectures[$prefecture_id];
+                            if (isset($input_data['prefecture_id'])):
+                                $prefecture_name = '';
+                                foreach ($prefectures as $prefecture_id => $prefecture):
+                                    if (in_array($prefecture_id, $input_data['prefecture_id'])):
+                                        $prefecture_name .= $prefecture_name == '' ? '' : '、';
+                                        $prefecture_name .= $prefectures[$prefecture_id];
+                                    endif;
+                                endforeach;
                             endif;
                             echo  $mail_magazine_types[$type] . '－' . $prefecture_name;
                             break;
@@ -72,6 +77,12 @@
                 ?>
                 <tr>
                   <td colspan="2">対象ユーザはいません</td>
+                </tr>
+                <?php
+                    elseif ($type == \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_ALL):
+                ?>
+                <tr>
+                  <td colspan="2">全員が対象です</td>
                 </tr>
                 <?php
                     else:
@@ -149,7 +160,7 @@ $(function() {
           $("#mailmagazineForm").submit();
         }
       } else if (json.status == '200') {
-        alert("他の送信処理が実行されています");
+        alert("他のメルマガを送信中です");
       } else {
         alert("送信確認でエラーが発生しました\n" + json.message);
       }

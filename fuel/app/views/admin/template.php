@@ -39,5 +39,8 @@
         <?php echo $content; ?>
       </div>
     </div>
+    <div id="dialog" style="text-align: left; padding: 20px; display: none;">
+      <p id="message"></p>
+    </div>
   </body>
 </html>

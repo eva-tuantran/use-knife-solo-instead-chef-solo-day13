@@ -92,22 +92,23 @@
             <?php
                 if ($mail_magazine['send_status'] == \Model_Mail_Magazine::SEND_STATUS_NORMAL_END):
             ?>
-            <a class="btn btn-default dropdown-toggle" href="#" disabled="disabled">送信一覧</a>
+            <a class="btn btn-default dropdown-toggle" href="/admin/mailmagazine/userlist/<?php echo $mail_magazine_id;?>">送信一覧</a>
             <?php
                 elseif ($mail_magazine['send_status'] == \Model_Mail_Magazine::SEND_STATUS_SAVED):
             ?>
-            <a class="btn btn-default dropdown-toggle" href="#" disabled="disabled">送信する(未実装)</a>
+            <!-- <a class="btn btn-default dropdown-toggle" href="#" disabled="disabled">送信する(未実装)</a> -->
             <?php
                 elseif ($mail_magazine['send_status'] == \Model_Mail_Magazine::SEND_STATUS_CANCEL):
             ?>
-            <a class="btn btn-default dropdown-toggle" href="#" disabled="disabled">送信を再開する(未実装)</a>
+            <!-- <a class="btn btn-default dropdown-toggle" href="#" disabled="disabled">送信を再開する(未実装)</a> -->
             <?php
                 elseif ($mail_magazine['send_status'] == \Model_Mail_Magazine::SEND_STATUS_ERROR_END):
             ?>
-            <a class="btn btn-default dropdown-toggle" href="#" disabled="disabled">送信を再開する(未実装)</a>
+            <!-- <a class="btn btn-default dropdown-toggle" href="#" disabled="disabled">送信を再開する(未実装)</a> -->
             <?php
                 endif;
             ?>
+          </td>
         </tr>
       <?php
               endforeach;

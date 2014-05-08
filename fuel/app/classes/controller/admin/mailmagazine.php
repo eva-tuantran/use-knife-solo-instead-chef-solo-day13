@@ -21,7 +21,7 @@ class Controller_Admin_Mailmagazine extends Controller_Admin_Base_Template
     }
 
     /**
-     * 入力画面
+     * 一覧画面
      *
      * @access public
      * @return void
@@ -54,6 +54,37 @@ class Controller_Admin_Mailmagazine extends Controller_Admin_Base_Template
     }
 
     /**
+     * 送信先ユーザ一覧画面
+     *
+     * @access public
+     * @return void
+     */
+    public function action_userlist($mail_magazine_id = null)
+    {
+        $total_count = \Model_Mail_Magazine_User::getCountByMailMagazineId($mail_magazine_id);
+
+        // ページネーション設定
+        $pagination = \Pagination::forge(
+            'mail_magazine_user_pagination',
+            $this->getPaginationConfig($total_count)
+        );
+
+        $mail_magazine_user_list = \Model_Mail_Magazine_User::findListByMailMagazineId(
+            $mail_magazine_id,
+            $pagination->current_page,
+            $this->result_per_page
+        );
+
+        $view_model = \ViewModel::forge('admin/mailmagazine/userlist');
+        $view_model->set('mail_magazine_id', $mail_magazine_id);
+        $view_model->set(
+            'mail_magazine_user_list', $mail_magazine_user_list, false
+        );
+        $view_model->set('pagination', $pagination, false);
+        $this->template->content = $view_model;
+    }
+
+    /**
      * 入力画面
      *
      * @access public
@@ -61,6 +92,9 @@ class Controller_Admin_Mailmagazine extends Controller_Admin_Base_Template
      */
     public function action_index()
     {
+        Asset::css('jquery-ui.min.css', array(), 'add_css');
+        Asset::js('jquery-ui.min.js', array(), 'add_js');
+
         $input_data = $this->getInputData(true);
         $errors = $this->getErrorMessage();
 
@@ -180,12 +214,8 @@ class Controller_Admin_Mailmagazine extends Controller_Admin_Base_Template
         $input_data = $this->getInputData(true);
         $input_data['created_user'] = $this->administrator->administrator_id;
         $input_data['send_status'] = \Model_Mail_Magazine::SEND_STATUS_WAITING;
-        $added_info = array(
-            'fleamarket' => array(
-                'fleamarket_id' => $input_data['fleamarket_id']
-            )
-        );
-        $input_data['additional_serialize_data'] = serialize($added_info);
+        $additional_data = $this->getAdditionalData($input_data);
+        $input_data['additional_serialize_data'] = serialize($additional_data);
 
         try {
             $db = Database_Connection::instance('master');
@@ -201,7 +231,7 @@ class Controller_Admin_Mailmagazine extends Controller_Admin_Base_Template
                 $data = array(
                     'mail_magazine_id' => $mail_magazine->mail_magazine_id,
                     'user_id' => $user['user_id'],
-                    'send_status' => \Model_Mail_Magazine_User::SEND_STATUS_UNSENT,
+                    'send_status' => \Model_Mail_Magazine_User::SEND_STATUS_WAITING,
                     'created_user' => $this->administrator->administrator_id,
                 );
 
@@ -223,57 +253,8 @@ class Controller_Admin_Mailmagazine extends Controller_Admin_Base_Template
         $param = $mail_magazine->mail_magazine_id . ' ' . $this->administrator->administrator_id;
         exec('php ' . $oil_path . 'oil refine mail_magazine ' . $param . ' > /dev/null &');
 
+        $view_model->set('mail_magazine', $mail_magazine, true);
         $this->template->content = $view_model;
-    }
-
-    /**
-     * 表示に必要なデータを取得し設定する
-     *
-     * @access private
-     * @param object $view_model　ビューモデル
-     * @param array $input_data 入力データ
-     * @return array
-     * @author ida
-     */
-    private function setupData($view_model, $input_data)
-    {
-        $replace_data = array();
-        $replace_data['user'] = $this->administrator;
-
-        $type = $input_data['mail_magazine_type'];
-
-        if ($type == \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_ALL) {
-            $users = \Model_User::getActiveUsers();
-        } elseif ($type == \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_REQUEST) {
-            $users = \Model_User::getUsersByPrefectureID(
-                $input_data['prefecture_id']
-            );
-
-            $view_model->set(
-                'prefectures', \Config::get('master.prefectures'), false
-            );
-        } elseif ($type == \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_RESEVED_ENTRY) {
-            $users = \Model_Entry::getEntriesByFleamarketId(
-                $input_data['fleamarket_id']
-            );
-
-            $fleamarket = \Model_Fleamarket::find($input_data['fleamarket_id']);
-            $replace_data['fleamarket'] = $fleamarket;
-
-            $view_model->set('fleamarket', $fleamarket, false);
-        }
-        $view_model->set('users', $users, false);
-
-        $body = $input_data['body'];
-        $pattern = \Model_Mail_Magazine::getPatternParameter($type);
-        list($pattern, $replacement) = \Model_Mail_Magazine::createReplaceParameter(
-            $body, $pattern, $replace_data
-        );
-        $body = \Model_Mail_Magazine::replaceByParam($body, $pattern, $replacement);
-        $view_model->set('body', $body, false);
-        $view_model->set('input_data', $input_data, false);
-
-        return array($view_model, $replace_data);
     }
 
     /**
@@ -288,8 +269,9 @@ class Controller_Admin_Mailmagazine extends Controller_Admin_Base_Template
 
         $success = false;
         $message = '';
+        $mail_magazine_id = \Input::get('mail_magazine_id');
         try {
-            $is_process = \Model_Mail_Magazine::isProcess();
+            $is_process = \Model_Mail_Magazine::isProcess($mail_magazine_id);
             $success = true;
         } catch (\Exception $e) {
             $message = $e->getMessage();
@@ -321,10 +303,13 @@ class Controller_Admin_Mailmagazine extends Controller_Admin_Base_Template
         $this->template = '';
 
         $success = false;
+        $mail_magazine_id = \Input::post('mail_magazine_id');
         try {
-            $is_process = \Model_Mail_Magazine::isProcess();
+            $is_process = \Model_Mail_Magazine::isProcess(
+                $mail_magazine_id
+            );
             if ($is_process) {
-                \Model_Mail_Magazine::stopProcess();
+                \Model_Mail_Magazine::cancelProcess($mail_magazine_id);
             }
             $success = true;
         } catch (\Exception $e) {
@@ -356,7 +341,7 @@ class Controller_Admin_Mailmagazine extends Controller_Admin_Base_Template
      */
     private function getCondition()
     {
-        $conditions = Input::post('c', array());
+        $conditions = \Input::post('c', array());
 
         $result = array();
         foreach ($conditions as $field => $value) {
@@ -366,6 +351,83 @@ class Controller_Admin_Mailmagazine extends Controller_Admin_Base_Template
         }
 
         return $result;
+    }
+
+    /**
+     * 表示に必要なデータを取得し設定する
+     *
+     * @access private
+     * @param object $view_model　ビューモデル
+     * @param array $input_data 入力データ
+     * @return array
+     * @author ida
+     */
+    private function setupData($view_model, $input_data)
+    {
+        $replace_data = array();
+        $replace_data['user'] = $this->administrator;
+
+        $type = $input_data['mail_magazine_type'];
+
+        if ($type == \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_ALL) {
+            $users = \Model_User::getActiveUsers();
+        } elseif ($type == \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_REQUEST) {
+            $users = \Model_User::getUsersByPrefectureId(
+                $input_data['prefecture_id']
+            );
+
+            $view_model->set(
+                'prefectures', \Config::get('master.prefectures'), false
+            );
+        } elseif ($type == \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_RESEVED_ENTRY) {
+            $users = \Model_Entry::getEntriesByFleamarketId(
+                $input_data['fleamarket_id']
+            );
+
+            $fleamarket = \Model_Fleamarket::find($input_data['fleamarket_id']);
+            $replace_data['fleamarket'] = $fleamarket;
+
+            $view_model->set('fleamarket', $fleamarket, false);
+        }
+        $view_model->set('users', $users, false);
+
+        $body = $input_data['body'];
+        $pattern = \Model_Mail_Magazine::getPatternParameter($type);
+        list($pattern, $replacement) = \Model_Mail_Magazine::createReplaceParameter(
+            $body, $pattern, $replace_data
+        );
+        $body = \Model_Mail_Magazine::replaceByParam($body, $pattern, $replacement);
+        $view_model->set('body', $body, false);
+        $view_model->set('input_data', $input_data, false);
+
+        return array($view_model, $replace_data);
+    }
+
+    /**
+     * 追加データを取得する
+     *
+     * @access private
+     * @param array $input_data 入力データ
+     * @return array
+     * @author ida
+     */
+    private function getAdditionalData($input_data)
+    {
+        $additional_data = array();
+        $type = $input_data['mail_magazine_type'];
+
+        if ($type == \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_ALL) {
+        } elseif ($type == \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_REQUEST) {
+            $additional_data['prefecture'] = array(
+                'prefecture_id' => $input_data['prefecture_id']
+            );
+        } elseif ($type == \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_RESEVED_ENTRY) {
+            $additional_data['fleamarket'] = array(
+                'fleamarket_id' => $input_data['fleamarket_id']
+            );
+        }
+
+        return $additional_data;
     }
 
     /**
@@ -382,7 +444,9 @@ class Controller_Admin_Mailmagazine extends Controller_Admin_Base_Template
 
         if ($mail_magazine_type == \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_REQUEST) {
             $fieldset->add('prefecture_id')
-                ->add_rule('valid_string', array('numeric'));
+                ->add_rule('checkbox_require', 1)
+                ->add_rule('checkbox_values', \Config::get('master.prefectures'));
+            $fieldset->validation()->add_callable('Custom_Validation');
         } else if ($mail_magazine_type == \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_RESEVED_ENTRY) {
             $fieldset->add('fleamarket_id')
                 ->add_rule('required')
@@ -464,7 +528,7 @@ class Controller_Admin_Mailmagazine extends Controller_Admin_Base_Template
      */
     private function getPaginationConfig($count)
     {
-        $search_result_per_page = Input::post('search_result_per_page');
+        $search_result_per_page = Input::post('result_per_page');
         if ($search_result_per_page) {
             $this->result_per_page = $search_result_per_page;
         }

@@ -21,6 +21,13 @@
             <?php
                 endforeach;
             ?>
+            <?php
+                if (isset($errors['mail_magazine_type'])):
+            ?>
+            <div class="error-message"><?php echo $errors['mail_magazine_type'];?></div>
+            <?php
+                endif;
+            ?>
           </div>
           <div class="form-group type type3">
             <label for="selectFleamarket" class="col-md-2 control-label">フリマ</label>
@@ -47,41 +54,33 @@
               <?php
                   endif;
               ?>
-              <?php
-                  if (isset($errors['mail_magazine_type'])):
-              ?>
-              <div class="error-message"><?php echo $errors['mail_magazine_type'];?></div>
-              <?php
-                  endif;
-              ?>
             </div>
           </div>
           <div class="form-group type type2">
             <label for="selectPrefecture" class="col-md-2 control-label">都道府県</label>
-            <div class="col-md-2">
-              <select id="selectPrefecture" class="form-control" name="prefecture_id">
-                <option value="99">全国</option>
-                <?php
-                    foreach ($prefectures as $prefecture_id => $prefecture):
-                        $selected = '';
-                        if (isset($input_data['prefecture_id'])):
-                            $selected = $prefecture_id == $input_data['prefecture_id'] ? 'selected' : '';
-                        endif;
-                ?>
-                <option value="<?php echo $prefecture_id;?>" <?php echo $selected;?>><?php echo $prefecture;?></option>
-                <?php
-                    endforeach;
-                ?>
-              </select>
-            </div>
+            <div class="col-md-12">
+            <?php
+                foreach ($prefectures as $prefecture_id => $prefecture):
+                    $checked = '';
+                    if (isset($input_data['prefecture_id'])):
+                        $checked = in_array($prefecture_id, $input_data['prefecture_id']) ? 'checked' : '';
+                    endif;
+            ?>
+              <label for="prefecture<?php echo $prefecture_id;?>" class="col-md-2 control-label">
+                <input id="prefecture<?php echo $prefecture_id;?>" type="checkbox" name="prefecture_id[]" value="<?php echo $prefecture_id;?>" <?php echo $checked;?>>&nbsp;<?php echo $prefecture;?>
+              </label>
+            <?php
+                endforeach;
+            ?>
             <?php
                 if (isset($errors['prefecture_id'])):
             ?>
-            <div class="error-message">都道府県が正しくありません</div>
+            <div class="error-message">都道府県を選択してください</div>
             <?php
                 endif;
             ?>
           </div>
+        </div>
           <div class="form-group">
             <div class="col-md-6">
               <label for="inputFromMail">差出人メールアドレス</label>
@@ -164,7 +163,7 @@
             </div>
           </div>
           <p>
-            <button type="submit" class="btn btn-info">確認する</button>
+            <button id="doSubmit" type="submit" class="btn btn-info">確認する</button>
           </p>
         </div>
       </div>
@@ -188,7 +187,26 @@ $(function() {
     $(".type3").css("display", "block");
   });
 
+  $("#doSubmit").on("click", function(evt) {
+    if (! $("#inputType1").prop("checked")) {
+      return;
+    }
 
-  $("#inputType<?php echo $input_data['mail_magazine_type'] ? $input_data['mail_magazine_type'] : \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_RESEVED_ENTRY;?>").click();
+    evt.preventDefault();
+    $("#dialog #message").text("全員送信ですがよろしいですか？");
+    $("#dialog").dialog({
+      modal: true,
+      buttons: {
+        Ok: function() {
+          $("#mailmagazineForm").submit();
+        },
+        Cancel: function() {
+          $(this).dialog( "close" );
+        }
+      }
+    });
+  });
+
+  $("#inputType<?php echo isset($input_data['mail_magazine_type']) ? $input_data['mail_magazine_type'] : \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_RESEVED_ENTRY;?>").click();
 });
 </script>

@@ -1098,10 +1098,14 @@ QUERY;
 
             switch ($field) {
                 case 'register_type':
-                    $conditions['f.register_type'] = array($operator, $condition);
+                    if ($condition != 'all') {
+                        $conditions['f.register_type'] = array($operator, $condition);
+                    }
                     break;
                 case 'event_status':
-                    $conditions['f.event_status'] = array($operator, $condition);
+                    if ($condition != 'all') {
+                        $conditions['f.event_status'] = array($operator, $condition);
+                    }
                     break;
                 case 'prefecture':
                     $conditions['l.prefecture_id'] = array($operator, $condition);
