@@ -759,6 +759,15 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
             }
         }
 
+        if (! isset($result['register_type'])) {
+            $result['register_type'] = \Model_Fleamarket::REGISTER_TYPE_ADMIN;
+        }
+
+        if (! isset($result['event_status'])) {
+            $result['event_status'] =
+                \Model_Fleamarket::EVENT_STATUS_RESERVATION_RECEIPT;
+        }
+
         return $result;
     }
 

@@ -6,12 +6,12 @@
   <div class="panel-body">
     <div class="row">
       <div class="col-md-10">
-        <form class="form-horizontal" id="" action="/admin/fleamarket/list" method="post" role="form">
+        <form id="searchForm" class="form-horizontal" id="" action="/admin/fleamarket/list" method="post" role="form">
           <div class="form-group">
             <label for="register_type" class="col-md-1 control-label">種類</label>
             <div class="col-md-2">
               <select class="form-control" id="register_type" name="c[register_type]">
-                <option value=""></option>
+                <option value="all">すべて</option>
               <?php
                   foreach ($register_types as $register_type_id => $register_type_name):
                       $selected = '';
@@ -30,7 +30,7 @@
             <label for="event_status" class="col-md-1 control-label">開催状況</label>
             <div class="col-md-2">
               <select class="form-control" id="event_status" name="c[event_status]">
-                <option value=""></option>
+                <option value="all">すべて</option>
               <?php
                   foreach ($event_statuses as $event_statuse_id => $event_statuse_name):
                       $selected = '';
@@ -175,7 +175,7 @@
     <?php
         if ('' != ($pagnation =  $pagination->render())):
             echo $pagnation;
-        elseif ($mail_magazine_list):
+        elseif ($fleamarket_list):
     ?>
     <ul class="pagination">
       <li class="disabled"><a href="javascript:void(0);" rel="prev">«</a></li>
@@ -187,3 +187,12 @@
     ?>
   </div>
 </div>
+<script type="text/javascript">
+$(function() {
+  $(".pagination li", ".panel-footer").on("click", function(evt) {
+    evt.preventDefault();
+    var action = $("a", this).attr("href");
+    $("#searchForm").attr("action", action).submit();
+  });
+});
+</script>
