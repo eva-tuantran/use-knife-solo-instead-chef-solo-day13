@@ -19,9 +19,14 @@
                             break;
                         case \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_REQUEST:
                             $prefecture_name = '全国';
-                            $prefecture_id = $input_data['prefecture_id'];
-                            if (isset($prefectures[$prefecture_id])):
-                                $prefecture_name = $prefectures[$prefecture_id];
+                            if (isset($input_data['prefecture_id'])):
+                                $prefecture_name = '';
+                                foreach ($prefectures as $prefecture_id => $prefecture):
+                                    if (in_array($prefecture_id, $input_data['prefecture_id'])):
+                                        $prefecture_name .= $prefecture_name == '' ? '' : '、';
+                                        $prefecture_name .= $prefectures[$prefecture_id];
+                                    endif;
+                                endforeach;
                             endif;
                             echo  $mail_magazine_types[$type] . '－' . $prefecture_name;
                             break;
@@ -101,6 +106,7 @@ $(function() {
     $.ajax({
       type: "post",
       url: '/admin/mailmagazine/checkprocess',
+      data: {mail_magazine_id: <?php echo $mail_magazine->mail_magazine_id;?>},
       dataType: "json"
     }).done(function(json, textStatus, jqXHR) {
       if (json.status == "300") {
@@ -122,6 +128,7 @@ $(function() {
     $.ajax({
       type: "post",
       url: '/admin/mailmagazine/stop',
+      data: {mail_magazine_id: <?php echo $mail_magazine->mail_magazine_id;?>},
       dataType: "json"
     }).done(function(json, textStatus, jqXHR) {
       if (json.status == "200") {

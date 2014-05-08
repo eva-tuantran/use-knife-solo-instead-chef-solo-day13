@@ -16,6 +16,7 @@ class View_Admin_Mailmagazine_Confirm extends \ViewModel
      */
     public function view()
     {
+        $this->prefectures = \Config::get('master.prefectures');
         $this->mail_magazine_types = \Model_Mail_Magazine::getMailMagazinTypes();
     }
 }

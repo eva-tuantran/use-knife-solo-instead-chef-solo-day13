@@ -418,7 +418,7 @@ QUERY;
      * @return array
      * @author ida
      */
-    public static function getUsersByPrefectureId($prefecture_id)
+    public static function getUsersByPrefectureId($prefecture_ids)
     {
         $placeholders = array(
             ':mm_flag' => self::MM_FLAG_OK,
@@ -426,9 +426,15 @@ QUERY;
         );
 
         $where = '';
-        if ($prefecture_id != '99') {
-            $placeholders[':prefecture_id'] = $prefecture_id;
-            $where = ' AND prefecture_id = :prefecture_id';
+        if ($prefecture_ids) {
+            $placeholder_list = array();
+            foreach ($prefecture_ids as $prefecture_id) {
+                $placeholder = ':prefecture_id' . $prefecture_id;
+                $placeholders[$placeholder] = $prefecture_id;
+                $placeholder_list[] = $placeholder;
+            }
+            $placeholder_string = implode(',', $placeholder_list);
+            $where = ' AND prefecture_id IN (' . $placeholder_string . ')';
 
         }
 
