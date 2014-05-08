@@ -56,7 +56,7 @@ QUERY;
         //1段階強化するのであれば、salt =:salt AND を入れて、2つのキーから内容をチェックする
         $users = \DB::query($query)->parameters($placeholders)->as_object('Model_User')->execute()->as_array();
 
-        if (!is_null($users) && count($users) === 1) {
+        if (!is_null($users) && count($users) >= 1) {
             $this->user = reset($users);
             // $this->user->last_login = Date::forge()->format('mysql');
             // $this->user->salt       = $this->create_salt();
@@ -107,7 +107,7 @@ QUERY;
 
         $users = \DB::query($query)->parameters($placeholders)->as_object('Model_User')->execute()->as_array();
 
-        if (!is_null($users) && count($users) === 1) {
+        if (!is_null($users) && count($users) >= 1) {
             $this->user = reset($users);
             $this->user->last_login = Date::forge()->format('mysql');
             // $this->user->salt       = $this->create_salt();
