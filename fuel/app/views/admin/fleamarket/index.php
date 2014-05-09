@@ -26,6 +26,14 @@ $(function() {
       activate: function(event, ui) {}
   });
 });
+
+function add_form(){
+  $("#addLinkFromList").before('<input type="text" name="link_from_list[]" style="margin-right: 4px;"><input type="button" value="削除" onclick="remove_form()"><br>');
+}
+
+function remove_form(){
+  // $("#link_form_form").remove(elementNode.previousSibling);
+}
 </script>
 <?php
     $input  = $fieldsets['fleamarket']->input();
@@ -254,12 +262,16 @@ $(function() {
             <tr>
               <th>反響項目リスト</th>
               <td>
-                <input type="text" class="form-control" name="link_from_list" value="<?php echo e($fields['link_from_list']->value);?>">
+                <?php foreach(Config::get('master.lead_to_list') as $key => $link_from): ?>
+                  <input type="text" name="link_from_list[]" value="<?php echo $link_from;?>">
+                  <input type="button" value="削除" onclick="remove_form()"><br>
+                <?php endforeach; ?>
                 <?php
                     if (isset($errors['link_from_list'])):
                        echo '<div class="error-message">' . $errors['link_from_list'] . '</div>';
                     endif;
                 ?>
+                <button type="button" id="addLinkFromList" onclick="add_form()">さらに追加</button>
               </td>
             </tr>
             <tr>

@@ -2,6 +2,7 @@
     $input  = $fieldsets['fleamarket']->input();
     $errors = $fieldsets['fleamarket']->validation()->error_message();
     $fields = $fieldsets['fleamarket']->field();
+    $input['link_from_list'] = implode(",", $input['link_from_list']);
 
     $is_delete = array();
     if (isset($input['delete_priorities'])){
@@ -87,7 +88,9 @@
             </tr>
             <tr>
               <th>反響項目リスト</th>
-              <td><?php echo e($input['link_from_list']);?></td>
+              <td>
+              <?php echo str_replace(",", "<br>", $input['link_from_list']); ?>
+              </td>
             </tr>
             <tr>
               <th>ピックアップ</th>
