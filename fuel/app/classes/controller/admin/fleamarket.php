@@ -44,7 +44,7 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
     }
 
     /**
-     * 一覧表示
+     * フリマ一覧
      *
      * @access public
      * @param
@@ -781,9 +781,9 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
      */
     private function getPaginationConfig($count)
     {
-        $search_result_per_page = Input::post('search_result_per_page');
+        $result_per_page = \Input::post('result_per_page');
         if ($search_result_per_page) {
-            $this->result_per_page = $search_result_per_page;
+            $this->result_per_page = $result_per_page;
         }
 
         return array(

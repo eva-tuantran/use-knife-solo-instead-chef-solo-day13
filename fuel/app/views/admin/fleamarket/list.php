@@ -1,7 +1,7 @@
 <div class="panel panel-default">
   <!-- Default panel contents -->
   <div class="panel-heading">
-      <h2 class="panel-title">フリマ一覧</h2>
+    <h2 class="panel-title">フリマ一覧</h2>
   </div>
   <div class="panel-body">
     <div class="row">
@@ -65,7 +65,7 @@
               ?>
               </select>
             </div>
-            <button type="submit" class="btn btn-default" <?php echo $selected;?>><span class="glyphicon glyphicon-search"></span> 検 索</button>
+            <button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-search"></span> 検 索</button>
           </div>
           <div class="form-group">
             <label for="keyword" class="col-md-1 control-label">キーワード</label>
