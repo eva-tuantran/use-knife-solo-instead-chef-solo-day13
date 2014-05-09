@@ -42,22 +42,23 @@
 	<div class="form-group">
 	  <label class="col-sm-2 control-label">フリマ開催名</label>
 	  <div class="col-sm-10">
-	    <label class="control-label"><?php echo e($fleamarket->name); ?></label>
+	    <label class="control-label fleamarket_content"><?php echo e($fleamarket->name); ?></label>
 	  </div>
 	</div>
 
 	<div class="form-group">
 	  <label class="col-sm-2 control-label">出店方法</label>
-	  <div class="col-sm-10">
+	  <div id="radio" class="col-sm-10">
             <?php foreach ($fleamarket->fleamarket_entry_styles as $fleamarket_entry_style){ ?>
 
-            <label class="checkbox-inline">
+            <label class="checkbox-inline fleamarket_content">
               <input type="radio" name="fleamarket_entry_style_id"
 		     value="<?php echo $fleamarket_entry_style->fleamarket_entry_style_id; ?>"<?php if ($input['fleamarket_entry_style_id']
 												    == $fleamarket_entry_style->fleamarket_entry_style_id) {
                      echo ' checked';} ?>>
-            </label>
+
             <?php echo e($entry_styles[$fleamarket_entry_style->entry_style_id]); ?>
+            </label>
             <?php } ?>
             <?php if (isset($errors['fleamarket_entry_style_id'])) { ?>
             <span class="errorMessage"><?php echo $errors['fleamarket_entry_style_id']; ?></span>
@@ -100,6 +101,22 @@
 	      <?php } ?>
 	    </div>
 	  </div>
+
+  <div class="form-group">
+      <label class="col-sm-2 control-label">このフリマをどこで知りましたか?</label>
+      <div class="col-sm-10">
+        <select name="item_category" class="form-control">
+
+        </select>
+        <?php if (isset($errors['item_category'])) { ?>
+        <span class="errorMessage"><?php echo $errors['item_category']; ?></span>
+        <?php } ?>
+        <?php if (isset($errors['item_genres'])) { ?>
+        <span class="errorMessage"><?php echo $errors['item_genres']; ?></span>
+        <?php } ?>
+      </div>
+    </div>
+
 	  <input type="hidden" name="fleamarket_id" value="<?php echo e($input['fleamarket_id']); ?>">
           <div id="submitButton" class="form-group">
             <button type="submit" class="btn btn-default">内容を確認する<?php if(isset($nomail) && $nomail) {echo '(メール送信なし)';} ?></button>

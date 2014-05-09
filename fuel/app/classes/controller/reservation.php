@@ -38,7 +38,7 @@ class Controller_Reservation extends Controller_Base_Template
         $this->fleamarket = $fleamarket;
 
         if ($input['fleamarket_entry_style_id']) {
-            $this->fleamarket_entry_style = 
+            $this->fleamarket_entry_style =
                 Model_Fleamarket_Entry_Style::find('first',array(
                     'where' => array(
                         'fleamarket_entry_style_id' => $input['fleamarket_entry_style_id'],
@@ -81,7 +81,7 @@ class Controller_Reservation extends Controller_Base_Template
             Session::set_flash('reservation.error', true);
             return Response::redirect('reservation');
         }
-        
+
         if (! $this->fleamarket_entry_style) {
             throw new SystemException(\Model_Error::ER00601);
         }
@@ -243,7 +243,7 @@ class Controller_Reservation extends Controller_Base_Template
         } elseif ($this->request->action == 'waiting' ){
             $fieldset = $this->createFieldset();
         }
-        
+
         return $fieldset;
     }
 
@@ -365,7 +365,7 @@ class Controller_Reservation extends Controller_Base_Template
         $db = \Database_Connection::instance('master');
         $db->start_transaction();
 
-        $fleamarket_entry_style = 
+        $fleamarket_entry_style =
             Model_Fleamarket_Entry_Style::find('first',array(
                 'where' => array(
                     'fleamarket_entry_style_id' => Input::param('fleamarket_entry_style_id'),
@@ -374,7 +374,7 @@ class Controller_Reservation extends Controller_Base_Template
         if (! $fleamarket_entry_style) {
             return false;
         }
-                
+
         $condition = array(
             'user_id'                   => $this->login_user->user_id,
             'fleamarket_id'             => Input::param('fleamarket_id'),
@@ -405,7 +405,7 @@ class Controller_Reservation extends Controller_Base_Template
 
     public function canReserve()
     {
-        return 
+        return
             $this->login_user->canReserve($this->fleamarket) &&
             $this->fleamarket->canReserve() &&
             (! $this->fleamarket_entry_style->isFullBooth());
