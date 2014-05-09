@@ -39,7 +39,7 @@ class Model_Mail_Magazine_User extends Model_Base
         'mysql_timestamp' => true,
     );
 
-    protected static $_has_one = array(
+    protected static $_belongs_to = array(
         'user' => array(
             'model_to' => 'Model_User',
             'key_from' => 'user_id',
