@@ -204,11 +204,12 @@ class Controller_Reservation extends Controller_Base_Template
             $user_id = Auth::get_user_id();
             $entry_status = Model_Entry::ENTRY_STATUS_RESERVED;
             $item_genres = implode(',', array_map($to_label, $input['item_genres']));
+            $link_from = $input['link_from'];
 
             $input_other = array_merge($input, array(
                 'user_id'            => $user_id,
                 'reservation_number' => '',
-                'link_from'          => '',
+                'link_from'          => $link_from,
                 'entry_status'       => $entry_status,
                 'created_user'       => $user_id,
                 'updated_user'       => $user_id,
