@@ -95,6 +95,11 @@ class Model_Entry extends Model_Base
         ),
         'user' => array(
             'key_to' => 'user_id',
+            'model_to' => 'Model_User',
+            'key_from' => 'user_id',
+            'key_to' => 'user_id',
+            'cascade_save' => false,
+            'cascade_delete' => false,
         ),
     );
 
@@ -868,74 +873,205 @@ QUERY;
      * Fieldsetオブジェクトの生成
      *
      * @access public
-     * @return string
+     * @param array 入力データ
+     * @return object
+     * @autho kobayashi
      */
     public static function createFieldset($input)
     {
         $entry = self::forge($input);
         $fieldset = Fieldset::forge();
         $fieldset->add_model($entry);
+
         return $fieldset;
     }
 
-    private static function getFindByKeywordQuery($input)
-    {
-        $query = static::query();
+    /**
+     * 指定された条件で出店予約一覧を取得する
+     *
+     * 予約履歴一覧
+     *
+     * @param array $condition_list 検索条件
+     * @param mixed $page ページ
+     * @param mixed $row_count ページあたりの行数
+     * @return array
+     * @author ida
+     */
+    public static function findAdminBySearch(
+        $condition_list, $page = 0, $row_count = 0
+    ) {
+        $search_where = self::buildAdminSearchWhere($condition_list);
+        list($conditions, $placeholders) = $search_where;
 
-        $fields = array('reservation_number','user_id');
-        foreach ($fields as $field) {
-            if (! empty($input[$field])) {
-                $query->where_open();
-                $query->where($field, 'LIKE', static::makeLikeValue($input[$field]));
-                $query->or_where($field, '=', $input[$field]);
-                $query->where_close();
+        $where = '';
+        if ($conditions) {
+            $where = ' AND ';
+            $where .= implode(' AND ', $conditions);
+        }
+
+        $limit = '';
+        if (is_numeric($page) && is_numeric($row_count)) {
+            $offset = ($page - 1) * $row_count;
+            $limit = ' LIMIT ' . $offset . ', ' . $row_count;
+        }
+
+        $sql = <<<"SQL"
+SELECT
+    e.user_id,
+    u.last_name,
+    u.first_name,
+    e.fleamarket_id,
+    e.fleamarket_entry_style_id,
+    e.reservation_number,
+    e.item_category,
+    e.item_genres,
+    e.reserved_booth,
+    e.link_from,
+    e.entry_status,
+    e.created_at,
+    fes.entry_style_id
+FROM
+    entries AS e
+INNER JOIN
+    users AS u ON e.user_id = u.user_id
+INNER JOIN
+    fleamarket_entry_styles AS fes ON e.fleamarket_entry_style_id = fes.fleamarket_entry_style_id
+WHERE
+    u.deleted_at IS NULL
+{$where}
+{$limit}
+SQL;
+
+        $query = \DB::query($sql)->parameters($placeholders);
+        $result = $query->execute();
+
+        $rows = null;
+        if (! empty($result)) {
+            $rows = $result->as_array();
+        }
+
+        return $rows;
+    }
+
+    public static function getCountByAdminSearch($condition_list)
+    {
+        $search_where = self::buildAdminSearchWhere($condition_list);
+        list($conditions, $placeholders) = $search_where;
+
+        $where = '';
+        if ($conditions) {
+            $where = ' AND ';
+            $where .= implode(' AND ', $conditions);
+        }
+
+        $sql = <<<"SQL"
+SELECT
+    COUNT(e.user_id) AS cnt
+FROM
+    entries AS e
+INNER JOIN
+    users AS u ON e.user_id = u.user_id
+INNER JOIN
+    fleamarket_entry_styles AS fes ON e.fleamarket_entry_style_id = fes.fleamarket_entry_style_id
+WHERE
+    u.deleted_at IS NULL
+{$where}
+SQL;
+
+        $query = \DB::query($sql)->parameters($placeholders);
+        $result = $query->execute();
+
+        $rows = null;
+        if (! empty($result)) {
+            $rows = $result->as_array();
+        }
+
+        return $rows[0]['cnt'];
+    }
+
+    /**
+     * 検索条件を取得する
+     *
+     * @access private
+     * @param array $condition_list 検索条件
+     * @return array 検索条件
+     * @author ida
+     */
+    public static function createAdminSearchCondition(
+        $conditions = array()
+    ) {
+        $condition_list = array();
+
+        if (! $conditions) {
+            return $condition_list;
+        }
+
+        foreach ($conditions as $field => $condition) {
+            if ($condition == '') {
+                continue;
+            }
+
+            $operator = '=';
+            switch ($field) {
+                case 'reservation_number':
+                    $condition_list['e.reservation_number'] = array(
+                        ' LIKE ', $condition . '%'
+                    );
+                    break;
+                case 'user_id':
+                    $condition_list['e.user_id'] = array(
+                        ' LIKE ', $condition . '%'
+                    );
+                    break;
+                case 'user_name':
+                    $field = \DB::expr('CONCAT(u.last_name, u.first_name)');
+                    $condition_list[$field->value()] = array(' LIKE ', '%' . $condition . '%');
+                    break;
+                default:
+                    break;
             }
         }
 
-        return $query;
+        return $condition_list;
     }
 
-    private static function makeLikeValue($word)
+    private static function buildAdminSearchWhere($condition_list)
     {
-        $like = preg_replace('/([_%\\\\])/','\\\\${1}',$word);
-        $like = "%${like}%";
-        return $like;
-    }
+        $conditions = array();
+        $placeholders = array();
 
-    public static function findByKeyword($input, $limit, $offset)
-    {
-
-        $fleamarket_id = null;
-        if (isset($input['fleamarket_id']) && $input['fleamarket_id'] != '') {
-            $fleamarket_id = $input['fleamarket_id'];
-            unset($input['fleamarket_id']);
+        if (empty($condition_list)) {
+            return array($conditions, $placeholders);
         }
 
-        $query = static::getFindByKeywordQuery($input)
-            ->limit($limit)
-            ->offset($offset);
-        if ($fleamarket_id) {
-            $query->where('fleamarket_id', $fleamarket_id);
+        $conditions = array();
+        foreach ($condition_list as $field => $condition) {
+
+            $operator = $condition[0];
+            if (count($condition) == 1) {
+                $conditions[$field] = $field . $condition[0];
+            } elseif ($operator === 'IN') {
+                $placeholder = ':' . $field;
+                $values = $condition[1];
+                $placeholder_list = array();
+                foreach ($values as $key => $value) {
+                    $placeholder_in = $placeholder . $key;
+                    $placeholder_list[] = $placeholder_in;
+                    $placeholders[$placeholder_in] = $value;
+                }
+                $value = implode(',', $values);
+                $placeholder_string = implode(',', $placeholder_list);
+                $conditions[$field] = $field . ' '
+                              . $operator . ' '
+                              . '(' . $placeholder_string . ')';
+            } else {
+                $placeholder = ':' . $field;
+                $value = $condition[1];
+                $conditions[$field] = $field . $operator . $placeholder;
+                $placeholders[$placeholder] = $value;
+            }
         }
-        $result = $query->get();
 
-        return $query->get();
-    }
-
-    public static function findByKeywordCount($input)
-    {
-        $fleamarket_id = null;
-        if (isset($input['fleamarket_id']) && $input['fleamarket_id'] != '') {
-            $fleamarket_id = $input['fleamarket_id'];
-            unset($input['fleamarket_id']);
-        }
-
-        $query = static::getFindByKeywordQuery($input);
-        if ($fleamarket_id) {
-            $query->where('fleamarket_id', $fleamarket_id);
-        }
-        $count = $query->count();
-
-        return $count;
+        return array($conditions, $placeholders);
     }
 }
