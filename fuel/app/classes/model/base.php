@@ -34,20 +34,4 @@ class Model_Base extends \Orm\Model_Soft
 
         return $query;
 	}
-
-    /**
-     * デバッグ用
-     *
-     * 実行したSQLをダンプする
-     *
-     * @access public
-     * @param string $connecton 接続先DB
-     * @return void
-     * @author ida
-     */
-    public static function dumpSql($connection = 'slave')
-    {
-        $db = \Database_Connection::instance($connection);
-        var_dump($db->last_query);
-    }
 }
