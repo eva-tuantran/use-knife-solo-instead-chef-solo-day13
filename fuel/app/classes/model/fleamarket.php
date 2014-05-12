@@ -1112,7 +1112,7 @@ QUERY;
                     break;
                 case 'keyword':
                     $conditions['f.name'] = array(
-                        ' like ', '%' . $condition . '%'
+                        ' LIKE ', '%' . $condition . '%'
                     );
                     break;
                 default:

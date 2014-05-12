@@ -782,7 +782,7 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
     private function getPaginationConfig($count)
     {
         $result_per_page = \Input::post('result_per_page');
-        if ($search_result_per_page) {
+        if ($result_per_page) {
             $this->result_per_page = $result_per_page;
         }
 

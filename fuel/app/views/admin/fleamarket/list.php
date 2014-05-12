@@ -47,7 +47,7 @@
               </select>
             </div>
             <label for="prefecture" class="col-md-1 control-label">都道府県</label>
-            <div class="col-md-2">
+            <div class="col-md-1">
               <select class="form-control" id="prefecture" name="c[prefecture]">
                 <option value=""></option>
               <?php
@@ -78,7 +78,7 @@
                       $keyword = $conditions['keyword'];
                   endif;
               ?>
-              <input type="text" class="form-control" id="keyword" placeholder="フリマ名、開催地" name="c[keyword]" value="<?php echo e($keyword);?>">
+              <input type="text" class="form-control" id="keyword" placeholder="フリマ名" name="c[keyword]" value="<?php echo e($keyword);?>">
             </div>
           </div>
         </form>
