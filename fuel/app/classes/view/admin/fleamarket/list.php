@@ -40,15 +40,6 @@ class View_Admin_Fleamarket_List extends \ViewModel
             return false;
         }
 
-        $entry_style_fields = array(
-            'field' => array(
-                'entry_style_id',
-                'booth_fee',
-                'max_booth',
-                'reservation_booth_limit',
-            )
-        );
-
         $result = array();
         foreach ($fleamarket_list as $fleamarket) {
             $fleamarket_entry_styles = \Model_Fleamarket_Entry_Style::find('all', array(
