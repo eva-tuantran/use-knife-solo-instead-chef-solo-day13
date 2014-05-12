@@ -10,10 +10,6 @@
 class Model_Mail_Magazine extends Model_Base
 {
     /**
-     * メールマガジン関連ファイルディレクトリ
-     */
-    const ROOT_DIR = '/deploy/rakuichi-rakuza/fuel/app/logs/';
-    /**
      * メールマガジンタイプ 1全員,2:希望者全員,3:出店予約者
      */
     const MAIL_MAGAZINE_TYPE_ALL = 1;
@@ -21,12 +17,13 @@ class Model_Mail_Magazine extends Model_Base
     const MAIL_MAGAZINE_TYPE_RESEVED_ENTRY = 3;
 
     /**
-     * 送信ステータス 0:送信待ち,1:送信中,2:正常終了,3エラー終了,9:キャンセル
+     * 送信ステータス 0:保存,1:送信待ち,2:送信中,3:正常終了,4:異常終了,9:キャンセル
      */
-    const SEND_STATUS_WAITING = 0;
-    const SEND_STATUS_PROGRESS = 1;
-    const SEND_STATUS_NORMAL_END = 2;
-    const SEND_STATUS_ERROR_END = 3;
+    const SEND_STATUS_SAVED = 0;
+    const SEND_STATUS_WAITING = 1;
+    const SEND_STATUS_PROGRESS = 2;
+    const SEND_STATUS_NORMAL_END = 3;
+    const SEND_STATUS_ERROR_END = 4;
     const SEND_STATUS_CANCEL = 9;
 
     protected static $_table_name = 'mail_magazines';
@@ -93,6 +90,11 @@ class Model_Mail_Magazine extends Model_Base
         ),
     );
 
+    protected static $_soft_delete = array(
+        'deleted_field'   => 'deleted_at',
+        'mysql_timestamp' => true,
+    );
+
     protected static $_observers = array(
         'Orm\\Observer_CreatedAt' => array(
             'events'          => array('before_insert'),
@@ -105,6 +107,197 @@ class Model_Mail_Magazine extends Model_Base
             'property'        => 'updated_at',
         ),
     );
+
+    /**
+     * メールマガジンタイプ一覧
+     */
+    private static $mail_magazine_types = array(
+        self::MAIL_MAGAZINE_TYPE_ALL => '全員',
+        self::MAIL_MAGAZINE_TYPE_REQUEST => 'メルマガ希望者',
+        self::MAIL_MAGAZINE_TYPE_RESEVED_ENTRY => '出店予約者',
+    );
+
+    /**
+     * 送信ステータス一覧
+     */
+    private static $send_statuses = array(
+        self::SEND_STATUS_SAVED => '保存',
+        self::SEND_STATUS_WAITING => '送信待ち',
+        self::SEND_STATUS_PROGRESS => '送信中',
+        self::SEND_STATUS_NORMAL_END => '正常終了',
+        self::SEND_STATUS_ERROR_END => '異常終了',
+        self::SEND_STATUS_CANCEL => '中止',
+    );
+
+    /**
+     * メールマガジンタイプ一覧を取得する
+     *
+     * @access public
+     * @param
+     * @return array
+     * @author ida
+     */
+    public static function getMailMagazinTypes()
+    {
+        return self::$mail_magazine_types;
+    }
+
+    /**
+     * 送信ステータス一覧を取得する
+     *
+     * @access public
+     * @param
+     * @return array
+     * @author ida
+     */
+    public static function getSendStatuses()
+    {
+        return self::$send_statuses;
+    }
+
+    /**
+     * 指定された条件でフリーマーケット情報リストを取得する
+     *
+     * @access public
+     * @param array $condition_list 検索条件
+     * @param mixed $page ページ
+     * @param mixed $row_count ページあたりの行数
+     * @return array フリーマーケット情報
+     * @author ida
+     */
+    public static function findAdminBySearch(
+        $condition_list, $page = 0, $row_count = 0
+    ) {
+        $search_where = self::buildSearchWhere($condition_list);
+        list($conditions, $placeholders) = $search_where;
+
+        $where = '';
+        if ($conditions) {
+            $where = ' WHERE ';
+            $where .= implode(' AND ', $conditions);
+        }
+
+        $limit = '';
+        if (is_numeric($page) && is_numeric($row_count)) {
+            $offset = ($page - 1) * $row_count;
+            $limit = ' LIMIT ' . $offset . ', ' . $row_count;
+        }
+
+        $query = <<<"QUERY"
+SELECT
+    mail_magazine_id,
+    send_datetime,
+    mail_magazine_type,
+    query,
+    from_email,
+    from_name,
+    subject,
+    body,
+    additional_serialize_data,
+    send_status,
+    created_user,
+    updated_user,
+    created_at,
+    updated_at,
+    deleted_at
+FROM
+    mail_magazines
+{$where}
+ORDER BY
+    send_datetime DESC,
+    send_status DESC,
+    mail_magazine_id ASC
+{$limit}
+QUERY;
+
+        $statement = \DB::query($query)->parameters($placeholders);
+        $result = $statement->execute();
+
+        $rows = null;
+        if (! empty($result)) {
+            $rows = $result->as_array();
+        }
+
+        return $rows;
+    }
+
+    /**
+     * 指定された条件でフリーマーケット情報の件数を取得する
+     *
+     * @access public
+     * @param array $condition_list 検索条件
+     * @return array フリーマーケット情報
+     * @author ida
+     */
+    public static function getCountByAdminSearch($condition_list)
+    {
+        $search_where = self::buildSearchWhere($condition_list);
+        list($conditions, $placeholders) = $search_where;
+
+        $where = '';
+        if ($conditions) {
+            $where = ' WHERE ';
+            $where .= implode(' AND ', $conditions);
+        }
+
+        $query = <<<"QUERY"
+SELECT
+    COUNT(mail_magazine_id) AS cnt
+FROM
+    mail_magazines
+{$where}
+QUERY;
+
+        $statement = \DB::query($query)->parameters($placeholders);
+        $result = $statement->execute();
+
+        $rows = null;
+        if (! empty($result)) {
+            $rows = $result->as_array();
+        }
+
+        return $rows[0]['cnt'];
+    }
+
+    /**
+     * 検索条件を取得する
+     *
+     * @access private
+     * @param array $condition_list 検索条件
+     * @return array 検索条件
+     * @author ida
+     */
+    public static function createAdminSearchCondition($condition_list = array())
+    {
+        $conditions = array();
+        if (! $condition_list) {
+            return $conditions;
+        }
+
+        foreach ($condition_list as $field => $condition) {
+            if ($condition == '') {
+                continue;
+            }
+
+            $operator = '=';
+            if (is_array($condition)) {
+                $operator = 'IN';
+            }
+
+            switch ($field) {
+                case 'mail_magazine_type':
+                    $conditions['mail_magazine_type'] = array($operator, $condition);
+                    break;
+                case 'send_status':
+                    $conditions['send_status'] = array($operator, $condition);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        return $conditions;
+    }
 
     /**
      * 本文で置換するパラメータを取得する
@@ -270,56 +463,70 @@ class Model_Mail_Magazine extends Model_Base
     /**
      * メールマガジン送信中か確認する
      *
-     * 処理ファイルを確認
-     *
-     * @TODO: ファイル名、ディレクトリの設定を移動する
-     *
      * @access private
-     * @param
+     * @param mixed $mail_magazine_id メルマガID
      * @return bool
      * @author ida
      */
-    public static function isProcess()
+    public static function isProcess($mail_magazine_id = null)
     {
-        $process_file_name = 'process_mail_magazine';
+        $where = array(
+            array('send_status', self::SEND_STATUS_PROGRESS)
+        );
+        if ($mail_magazine_id) {
+            $where[] = array('mail_magazine_id', $mail_magazine_id);
+        }
+        $mail_magazine = self::find('all', array('where' => $where));
 
-        return file_exists(self::ROOT_DIR . $process_file_name);
+        return count($mail_magazine) > 0;
     }
 
     /**
-     * 送信実行確認ファイル処理
-     *
-     * @TODO: ファイル名、ディレクトリの設定を移動する
+     * 送信開始
      *
      * @access private
-     * @param　boolean $delete 削除（中止）
+     * @param mixed $mail_magazine_id メルマガID
      * @return void
      * @author ida
      */
-    public static function startProcess()
+    public static function startProcess($mail_magazine_id = null)
     {
-        $process_file_name = 'process_mail_magazine';
-        $result = \File::create(self::ROOT_DIR, $process_file_name);
+        if (! $mail_magazine_id) {
+            return false;
+        }
 
-        return $result;
+        $mail_magazine = self::find('first', array(
+            'where' => array(
+                array('mail_magazine_id', $mail_magazine_id),
+            )
+        ));
+
+        $mail_magazine->send_status = self::SEND_STATUS_PROGRESS;
+        $mail_magazine->save();
     }
 
     /**
-     * 送信実行確認ファイル処理
-     *
-     * @TODO: ファイル名、ディレクトリの設定を移動する
+     * 送信キャンセル
      *
      * @access private
-     * @param　boolean $delete 削除（中止）
+     * @param mixed $mail_magazine_id メルマガID
      * @return void
      * @author ida
      */
-    public static function stopProcess()
+    public static function cancelProcess($mail_magazine_id = null)
     {
-        $process_file_name = 'process_mail_magazine';
-        $result = \File::delete(self::ROOT_DIR . $process_file_name);
+        if (! $mail_magazine_id) {
+            return false;
+        }
 
-        return $result;
+        $mail_magazine = self::find('first', array(
+            'where' => array(
+                array('mail_magazine_id', $mail_magazine_id),
+            )
+        ));
+
+        $mail_magazine->send_status = self::SEND_STATUS_CANCEL;
+        $mail_magazine->save();
     }
 
     /*
@@ -335,5 +542,51 @@ class Model_Mail_Magazine extends Model_Base
         $fieldset->add_model(self::forge());
 
         return $fieldset;
+    }
+
+    /**
+     * 指定された検索条件よりWHERE句とプレースホルダ―を生成する
+     *
+     * @access private
+     * @param array $condition_list
+     * @return array
+     * @author ida
+     */
+    private static function buildSearchWhere($condition_list)
+    {
+        $conditions = array();
+        $placeholders = array();
+
+        if (empty($condition_list)) {
+            return array($conditions, $placeholders);
+        }
+
+        foreach ($condition_list as $field => $condition) {
+            $operator = $condition[0];
+            if (count($condition) == 1) {
+                $conditions[$field] = $field . $condition[0];
+            } elseif ($operator === 'IN') {
+                $placeholder = ':' . $field;
+                $values = $condition[1];
+                $placeholder_list = array();
+                foreach ($values as $key => $value) {
+                    $placeholder_in = $placeholder . $key;
+                    $placeholder_list[] = $placeholder_in;
+                    $placeholders[$placeholder_in] = $value;
+                }
+                $value = implode(',', $values);
+                $placeholder_string = implode(',', $placeholder_list);
+                $conditions[$field] = $field . ' '
+                              . $operator . ' '
+                              . '(' . $placeholder_string . ')';
+            } else {
+                $placeholder = ':' . $field;
+                $value = $condition[1];
+                $conditions[$field] = $field . $operator . $placeholder;
+                $placeholders[$placeholder] = $value;
+            }
+        }
+
+        return array($conditions, $placeholders);
     }
 }

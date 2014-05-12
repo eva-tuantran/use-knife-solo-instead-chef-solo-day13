@@ -20,7 +20,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a href="#" class="navbar-brand">楽市楽座</a>
+          <a href="/admin/index" class="navbar-brand">楽市楽座</a>
         </div>
         <div id="bs-example-navbar-collapse-6" class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
@@ -28,7 +28,7 @@
             <li><a href="/admin/fleamarket/list">フリマ</a></li>
             <li><a href="/admin/location/list">開催地</a></li>
             <li><a href="/admin/entry/list">予約</a></li>
-            <li><a href="/admin/mailmagazine">メールマガジン</a></li>
+            <li><a href="/admin/mailmagazine/list">メルマガ</a></li>
             <li><a href="/admin/index/logout">ログアウト</a></li>
           </ul>
         </div><!-- /.navbar-collapse -->
@@ -38,6 +38,9 @@
       <div class="container-fluid">
         <?php echo $content; ?>
       </div>
+    </div>
+    <div id="dialog" style="text-align: left; padding: 20px; display: none;">
+      <p id="message"></p>
     </div>
   </body>
 </html>

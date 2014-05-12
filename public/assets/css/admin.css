@@ -2,6 +2,10 @@
   margin-top: 70px;
 }
 
+#contents-wrap {
+  padding: 15px;
+}
+
 .fleamarket-table th {
   width: 33.33333333%;
 }

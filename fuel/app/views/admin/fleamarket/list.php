@@ -1,17 +1,17 @@
 <div class="panel panel-default">
   <!-- Default panel contents -->
   <div class="panel-heading">
-      <h2 class="panel-title">フリマ一覧</h2>
+    <h2 class="panel-title">フリマ一覧</h2>
   </div>
   <div class="panel-body">
     <div class="row">
       <div class="col-md-10">
-        <form class="form-horizontal" id="" action="/admin/fleamarket/list" method="post" role="form">
+        <form id="searchForm" class="form-horizontal" id="" action="/admin/fleamarket/list" method="post" role="form">
           <div class="form-group">
             <label for="register_type" class="col-md-1 control-label">種類</label>
             <div class="col-md-2">
               <select class="form-control" id="register_type" name="c[register_type]">
-                <option value=""></option>
+                <option value="all">すべて</option>
               <?php
                   foreach ($register_types as $register_type_id => $register_type_name):
                       $selected = '';
@@ -30,7 +30,7 @@
             <label for="event_status" class="col-md-1 control-label">開催状況</label>
             <div class="col-md-2">
               <select class="form-control" id="event_status" name="c[event_status]">
-                <option value=""></option>
+                <option value="all">すべて</option>
               <?php
                   foreach ($event_statuses as $event_statuse_id => $event_statuse_name):
                       $selected = '';
@@ -47,7 +47,7 @@
               </select>
             </div>
             <label for="prefecture" class="col-md-1 control-label">都道府県</label>
-            <div class="col-md-2">
+            <div class="col-md-1">
               <select class="form-control" id="prefecture" name="c[prefecture]">
                 <option value=""></option>
               <?php
@@ -65,7 +65,7 @@
               ?>
               </select>
             </div>
-            <button type="submit" class="btn btn-default" <?php echo $selected;?>><span class="glyphicon glyphicon-search"></span> 検 索</button>
+            <button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-search"></span> 検 索</button>
           </div>
           <div class="form-group">
             <label for="keyword" class="col-md-1 control-label">キーワード</label>
@@ -78,7 +78,7 @@
                       $keyword = $conditions['keyword'];
                   endif;
               ?>
-              <input type="text" class="form-control" id="keyword" placeholder="フリマ名、開催地" name="c[keyword]" value="<?php echo e($keyword);?>">
+              <input type="text" class="form-control" id="keyword" placeholder="フリマ名" name="c[keyword]" value="<?php echo e($keyword);?>">
             </div>
           </div>
         </form>
@@ -100,9 +100,9 @@
         </tr>
         <tr>
         <?php
-            foreach ($entry_styles as $entry_Style_name):
+            foreach ($entry_styles as $entry_style_name):
         ?>
-          <th class="small"><?php echo $entry_Style_name;?></th>
+          <th class="small"><?php echo $entry_style_name;?></th>
         <?php
             endforeach;
         ?>
@@ -173,9 +173,26 @@
   </div>
   <div class="panel-footer">
     <?php
-        if ('' != ($numbers =  $pagination->render())):
-            echo $numbers;
+        if ('' != ($pagnation =  $pagination->render())):
+            echo $pagnation;
+        elseif ($fleamarket_list):
+    ?>
+    <ul class="pagination">
+      <li class="disabled"><a href="javascript:void(0);" rel="prev">«</a></li>
+      <li class="active"><a href="javascript:void(0);">1<span class="sr-only"></span></a></li>
+      <li class="disabled"><a href="javascript:void(0);" rel="next">»</a></li>
+    </ul>
+    <?php
         endif;
     ?>
   </div>
 </div>
+<script type="text/javascript">
+$(function() {
+  $(".pagination li", ".panel-footer").on("click", function(evt) {
+    evt.preventDefault();
+    var action = $("a", this).attr("href");
+    $("#searchForm").attr("action", action).submit();
+  });
+});
+</script>

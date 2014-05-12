@@ -8,45 +8,67 @@
 
 class Controller_Admin_Entry extends Controller_Admin_Base_Template
 {
+    /**
+     * 検索結果1ページあたりの行数
+     *
+     * @var int
+     */
+    private $result_per_page = 50;
+
+    /**
+     * 予約履歴一覧
+     *
+     * @access public
+     * @param
+     * @return void
+     * @author kobayashi
+     * @author ida
+     */
     public function action_list()
     {
-        $view = View::forge('admin/entry/list');
+        $conditions = $this->getCondition();
+        $condition_list = \Model_Entry::createAdminSearchCondition($conditions);
 
-        $total = \Model_Entry::findByKeywordCount(
-            Input::all()
+        $total_count = \Model_Entry::getCountByAdminSearch($condition_list);
+
+        // ページネーション設定
+        $pagination = \Pagination::forge(
+            'entry_pagination',
+            $this->getPaginationConfig($total_count)
         );
 
-        Pagination::set_config(array(
-            'uri_segment'    => 4,
-            'num_links'      => 10,
-            'per_page'       => 50,
-            'total_items'    => $total,
-            'name'           => 'pagenation',
-        ));
-
-        $entries = \Model_Entry::findByKeyword(
-            Input::all(),
-            Pagination::get('per_page'),
-            Pagination::get('offset')
+        $entry_list = \Model_Entry::findAdminBySearch(
+            $condition_list,
+            $pagination->current_page,
+            $this->result_per_page
         );
 
-        $view->set('entries', $entries, false);
-
-        if (Input::param('fleamarket_id')) {
-            $fleamarket = Model_Fleamarket::find(Input::param('fleamarket_id'));
-            $view->set('fleamarket', $fleamarket, false);
+        $view_model = \ViewModel::forge('admin/entry/list');
+        if (\Input::param('fleamarket_id')) {
+            $fleamarket = \Model_Fleamarket::find(\Input::param('fleamarket_id'));
+            $view_model->set('fleamarket', $fleamarket, false);
         }
-
-        if (Input::param('user_id')) {
-            $user = Model_User::find(Input::param('user_id'));
-            $view->set('user', $user, false);
+        if (\Input::param('user_id')) {
+            $user = \Model_User::find(Input::param('user_id'));
+            $view_model->set('user', $user, false);
         }
-        $view->set('item_categories', \Model_Entry::getItemCategoryDefine());
-        $view->set('entry_statuses', \Model_Entry::getEntryStatuses());
-        $view->set('total', $total);
-        $this->template->content = $view;
+        $view_model->set('entry_list', $entry_list, false);
+        $view_model->set('pagination', $pagination, false);
+        $view_model->set('item_categories', \Model_Entry::getItemCategoryDefine());
+        $view_model->set('entry_statuses', \Model_Entry::getEntryStatuses());
+        $view_model->set('total_count', $total_count);
+        $this->template->content = $view_model;
     }
 
+    /**
+     * 予約履歴CSV出力
+     *
+     * @access public
+     * @param
+     * @return void
+     * @author kobayashi
+     * @author ida
+     */
     public function action_csv()
     {
         $fleamarket = Model_Fleamarket::find(Input::param('fleamarket_id'));
@@ -87,6 +109,30 @@ class Controller_Admin_Entry extends Controller_Admin_Base_Template
         return $this->response_csv($data, $fleamarket->name);
     }
 
+    /**
+     * CSV出力
+     *
+     * @access public
+     * @param
+     * @return void
+     * @author kobayashi
+     * @author ida
+     */
+    public function action_index()
+    {
+        $view = View::forge('admin/entry/index');
+        $this->template->content = $view;
+    }
+
+    /**
+     * CSV出力
+     *
+     * @access public
+     * @param
+     * @return void
+     * @author kobayashi
+     * @author ida
+     */
     protected function response_csv($data, $fleamarket_name)
     {
         $csv = mb_convert_encoding(
@@ -104,9 +150,48 @@ class Controller_Admin_Entry extends Controller_Admin_Base_Template
         return $response;
     }
 
-    public function action_index()
+    /**
+     * 検索条件を取得する
+     *
+     * @access private
+     * @param
+     * @return array
+     * @author ida
+     */
+    private function getCondition()
     {
-        $view = View::forge('admin/entry/index');
-        $this->template->content = $view;
+        $conditions = Input::all();
+
+        $result = array();
+        foreach ($conditions as $field => $value) {
+            if ($value !== '') {
+                $result[$field] = $value;
+            }
+        }
+
+        return $result;
+    }
+    /**
+     * ページネーション設定を取得する
+     *
+     * @access private
+     * @param int $count 総行数
+     * @return array
+     * @author ida
+     */
+    private function getPaginationConfig($count)
+    {
+        $result_per_page = \Input::post('result_per_page');
+        if ($result_per_page) {
+            $this->result_per_page = $result_per_page;
+        }
+
+        return array(
+            'pagination_url' => 'admin/entry/list',
+            'uri_segment'    => 4,
+            'num_links'      => 10,
+            'per_page'       => $this->result_per_page,
+            'total_items'    => $count,
+        );
     }
 }

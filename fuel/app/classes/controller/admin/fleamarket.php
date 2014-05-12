@@ -44,7 +44,7 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
     }
 
     /**
-     * 一覧表示
+     * フリマ一覧
      *
      * @access public
      * @param
@@ -67,10 +67,7 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
         $fleamarkets = \Model_Fleamarket::findAdminBySearch(
             $condition_list,
             $pagination->current_page,
-            $this->result_per_page,
-            array('order_by' => array(
-                'event_date' => 'ASC', 'event_status' => 'ASC'
-            ))
+            $this->result_per_page
         );
 
         $view_model = \ViewModel::forge('admin/fleamarket/list');
@@ -762,6 +759,15 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
             }
         }
 
+        if (! isset($result['register_type'])) {
+            $result['register_type'] = \Model_Fleamarket::REGISTER_TYPE_ADMIN;
+        }
+
+        if (! isset($result['event_status'])) {
+            $result['event_status'] =
+                \Model_Fleamarket::EVENT_STATUS_RESERVATION_RECEIPT;
+        }
+
         return $result;
     }
 
@@ -775,9 +781,9 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
      */
     private function getPaginationConfig($count)
     {
-        $search_result_per_page = Input::post('search_result_per_page');
-        if ($search_result_per_page) {
-            $this->result_per_page = $search_result_per_page;
+        $result_per_page = \Input::post('result_per_page');
+        if ($result_per_page) {
+            $this->result_per_page = $result_per_page;
         }
 
         return array(
