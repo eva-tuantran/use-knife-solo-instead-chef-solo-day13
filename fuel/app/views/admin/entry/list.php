@@ -11,15 +11,15 @@
           <div class="form-group clearfix">
             <label for="keyword" class="col-md-1 control-label">予約番号</label>
             <div class="col-md-2">
-              <input type="text" name="reservation_number" value="<?php echo e(\Input::param('reservation_number'));?>">
+              <input type="text" class="form-control" name="reservation_number" value="<?php echo e(\Input::param('reservation_number'));?>">
             </div>
             <label for="keyword" class="col-md-1 control-label">ユーザID</label>
             <div class="col-md-2">
-              <input type="text" name="user_id" value="<?php echo e(\Input::param('user_id'));?>">
+              <input type="text" class="form-control" name="user_id" value="<?php echo e(\Input::param('user_id'));?>">
             </div>
             <label for="keyword" class="col-md-1 control-label">名前</label>
             <div class="col-md-2">
-              <input type="text" name="user_name" value="<?php echo e(\Input::param('user_name'));?>">
+              <input type="text" class="form-control" name="user_name" value="<?php echo e(\Input::param('user_name'));?>">
             </div>
             <button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-search"></span> 検 索</button>
           </div>
@@ -55,57 +55,61 @@
       </div>
     </div>
     <table class="table table-hover table-condensed">
-      <tr>
-        <th>予約番号</th>
-        <th>受付日</th>
-        <th>名前</th>
-        <th>状態</th>
-        <th>出店形態</th>
-        <th>ブース数</th>
-        <th>カテゴリ</th>
-        <th>ジャンル</th>
-        <th>登録元</th>
-        <th>反響</th>
-      </tr>
+      <thead>
+        <tr>
+          <th>予約番号</th>
+          <th>受付日</th>
+          <th>名前</th>
+          <th>状態</th>
+          <th>出店形態</th>
+          <th>ブース数</th>
+          <th>カテゴリ</th>
+          <th>ジャンル</th>
+          <th>登録元</th>
+          <th>反響</th>
+        </tr>
+      </thead>
+      <tbody>
+        <?php
+            foreach ($entry_list as $entry):
+                $entry_status_class = '';
+                switch ($entry['entry_status']):
+                    case \Model_Entry::ENTRY_STATUS_RESERVED:
+                          $entry_status_class = '';
+                        break;
+                    case \Model_Entry::ENTRY_STATUS_WAITING:
+                        $entry_status_class = 'warning';
+                        break;
+                    case \Model_Entry::ENTRY_STATUS_CANCELED:
+                        $entry_status_class = 'danger';
+                        break;
+                    default:
+                        break;
+                endswitch;
+        ?>
+        <tr>
+          <td><?php echo e($entry['reservation_number']);?></td>
+          <td><?php
+              $created_at = strtotime($entry['created_at']);
+              echo e(date('Y/m/d H:i', $created_at));
+          ?></td>
+          <td>
+            <a href="/admin/user/?user_id=<?php echo $entry['user_id'];?>">
+              <?php echo e($entry['last_name'] . '&nbsp;' . $entry['first_name']);?>
+            </a>
+          </td>
+          <td class="<?php echo $entry_status_class;?>"><?php echo e(@$entry_statuses[$entry['entry_status']]);?></td>
+          <td><?php echo e(@$entry_styles[$entry['entry_style_id']]);?></td>
+          <td><?php echo e($entry['reserved_booth']);?></td>
+          <td><?php echo e(@$item_categories[$entry['item_category']]);?></td>
+          <td><?php echo e($entry['item_genres']);?></td>
+          <td><?php //echo e($entry['register_type']);?></td>
+          <td><?php echo e($entry['link_from']);?></td>
+        </tr>
       <?php
-          foreach ($entry_list as $entry):
-              $entry_status_class = '';
-              switch ($entry['entry_status']):
-                  case \Model_Entry::ENTRY_STATUS_RESERVED:
-                        $entry_status_class = '';
-                      break;
-                  case \Model_Entry::ENTRY_STATUS_WAITING:
-                      $entry_status_class = 'warning';
-                      break;
-                  case \Model_Entry::ENTRY_STATUS_CANCELED:
-                      $entry_status_class = 'danger';
-                      break;
-                  default:
-                      break;
-              endswitch;
+          endforeach;
       ?>
-      <tr>
-        <td><?php echo e($entry['reservation_number']);?></td>
-        <td><?php
-            $created_at = strtotime($entry['created_at']);
-            echo e(date('Y/m/d H:i', $created_at));
-        ?></td>
-        <td>
-          <a href="/admin/user/?user_id=<?php echo $entry['user_id'];?>">
-            <?php echo e($entry['last_name'] . '&nbsp;' . $entry['first_name']);?>
-          </a>
-        </td>
-        <td class="<?php echo $entry_status_class;?>"><?php echo e(@$entry_statuses[$entry['entry_status']]);?></td>
-        <td><?php echo e(@$entry_styles[$entry['entry_style_id']]);?></td>
-        <td><?php echo e($entry['reserved_booth']);?></td>
-        <td><?php echo e(@$item_categories[$entry['item_category']]);?></td>
-        <td><?php echo e($entry['item_genres']);?></td>
-        <td><?php //echo e($entry['register_type']);?></td>
-        <td><?php echo e($entry['link_from']);?></td>
-      </tr>
-    <?php
-        endforeach;
-    ?>
+      <tbody>
     </table>
   </div>
   <div class="panel-footer">
