@@ -953,6 +953,14 @@ SQL;
         return $rows;
     }
 
+    /**
+     * 指定された条件で出店予約情報の件数を取得する
+     *
+     * @access public
+     * @param array $condition_list 検索条件
+     * @return int
+     * @author ida
+     */
     public static function getCountByAdminSearch($condition_list)
     {
         $search_where = self::buildAdminSearchWhere($condition_list);
@@ -1035,6 +1043,14 @@ SQL;
         return $condition_list;
     }
 
+    /**
+     * 指定された検索条件よりWHERE句とプレースホルダ―を生成する
+     *
+     * @access private
+     * @param array $condition_list
+     * @return array
+     * @author ida
+     */
     private static function buildAdminSearchWhere($condition_list)
     {
         $conditions = array();
@@ -1044,7 +1060,6 @@ SQL;
             return array($conditions, $placeholders);
         }
 
-        $conditions = array();
         foreach ($condition_list as $field => $condition) {
 
             $operator = $condition[0];

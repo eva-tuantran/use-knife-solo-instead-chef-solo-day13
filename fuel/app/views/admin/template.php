@@ -24,7 +24,7 @@
         </div>
         <div id="bs-example-navbar-collapse-6" class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
-            <li><a href="/admin/user/list">ユーザー</a></li>
+            <li><a href="/admin/user/list">ユーザ</a></li>
             <li><a href="/admin/fleamarket/list">フリマ</a></li>
             <li><a href="/admin/location/list">開催地</a></li>
             <li><a href="/admin/entry/list">予約</a></li>

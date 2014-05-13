@@ -18,10 +18,10 @@
   <div class="panel-body">
     <form action="/admin/fleamarket/thanks" method="post">
       <?php echo Form::csrf(); ?>
-      <input type="hidden" name="fleamarket_id" value="<?php echo e(Input::param('fleamarket_id')); ?>">
+      <input type="hidden" name="fleamarket_id" value="<?php echo e(\Input::param('fleamarket_id')); ?>">
       <div class="row">
         <div class="col-md-6">
-          <table class="fleamarket-table table">
+          <table class="table table-fixed">
             <tr>
               <th>開催地</th>
               <td><?php
@@ -149,7 +149,7 @@
         <div class="col-md-6">
           <div>
             <h3>画像イメージ</h3>
-            <table class="fleamarket-table table">
+            <table class="table table-fixed">
               <?php foreach (range(1, 4) as $priority):?>
               <tr>
                 <th>ファイル<?php echo($priority); ?></th>
@@ -168,7 +168,7 @@
           </div>
           <div>
             <h3>説明</h3>
-            <table class="fleamarket-table table">
+            <table class="table table-fixed">
               <?php foreach (\Model_Fleamarket_About::getAboutTitles() as $id => $title):?>
               <tr>
                 <th><?php echo e($title); ?></th>
@@ -182,7 +182,7 @@
           </div>
           <div>
             <h3>出店形態</h3>
-            <table class="table">
+            <table class="table table-fixed">
               <?php foreach ($entry_styles as $id => $entry_style):?>
               <tr>
                 <th><?php echo e($entry_style); ?></th>

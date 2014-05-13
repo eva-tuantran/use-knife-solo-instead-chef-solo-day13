@@ -510,7 +510,7 @@ WHERE_QUERY;
      *
      * @access public
      * @param array $condition_list 検索条件
-     * @return array フリーマーケット情報
+     * @return int
      * @author ida
      */
     public static function getCountBySearch($condition_list)
@@ -925,7 +925,7 @@ QUERY;
      * @access public
      * @param int $user_id
      * @param int $fleamarket_id
-     * @return bool
+     * @return int
      * @author shimma
      * @author ida
      */
@@ -1034,7 +1034,7 @@ QUERY;
      *
      * @access public
      * @param array $condition_list 検索条件
-     * @return array フリーマーケット情報
+     * @return int
      * @author ida
      */
     public static function getCountByAdminSearch($condition_list)
