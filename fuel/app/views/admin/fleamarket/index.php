@@ -38,7 +38,7 @@ $(function() {
     <h2 class="panel-title">フリマ情報の入力</h2>
   </div>
   <div class="panel-body">
-    <form action="/admin/fleamarket/confirm" method="post" class="form-horizontal" enctype="multipart/form-data">
+    <form action="/admin/fleamarket/confirm" method="post" class="form-inline" enctype="multipart/form-data">
       <input type="hidden" name="fleamarket_id" value="<?php echo e(\Input::param('fleamarket_id'));?>">
       <div class="row">
         <div class="col-md-6">
@@ -46,7 +46,7 @@ $(function() {
             <tr>
               <th>開催地</th>
               <td>
-                <select name="location_id">
+                <select class="form-control" name="location_id">
                 <?php
                     if (empty($location_id) && $fields['location_id']->value != ''):
                         $location_id = $fields['location_id']->value;
@@ -67,7 +67,7 @@ $(function() {
             <tr>
               <th>フリマ名</th>
               <td>
-                <input type="text" name="name" value="<?php echo e($fields['name']->value);?>">
+                <input type="text" class="form-control" name="name" value="<?php echo e($fields['name']->value);?>">
                 <?php
                     if (isset($errors['name'])):
                        echo '<div class="error-message">' . $errors['name'] . '</div>';
@@ -78,7 +78,7 @@ $(function() {
             <tr>
               <th>主催者名</th>
               <td>
-                <input type="text" name="promoter_name" value="<?php echo e($fields['promoter_name']->value);?>">
+                <input type="text" class="form-control" name="promoter_name" value="<?php echo e($fields['promoter_name']->value);?>">
                 <?php
                     if (isset($errors['promoter_name'])):
                        echo '<div class="error-message">' . $errors['promoter_name'] . '</div>';
@@ -89,7 +89,7 @@ $(function() {
             <tr>
               <th>開催日</th>
               <td>
-                <input type="text" name="event_date" value="<?php echo e($fields['event_date']->value);?>" id="inputEventDate">
+                <input type="text" class="form-control" name="event_date" value="<?php echo e($fields['event_date']->value);?>" id="inputEventDate">
                 <?php
                     if (isset($errors['event_date'])):
                        echo '<div class="error-message">' . $errors['event_date'] . '</div>';
@@ -100,7 +100,7 @@ $(function() {
             <tr>
               <th>開催時間</th>
               <td>
-                <input type="text" name="event_time_start" value="<?php echo e($fields['event_time_start']->value);?>" id="inputEventTimeStart">
+                <input type="text" class="form-control" name="event_time_start" value="<?php echo e($fields['event_time_start']->value);?>" id="inputEventTimeStart">
                 <?php
                     if (isset($errors['event_time_start'])):
                        echo '<div class="error-message">' . $errors['event_time_start'] . '</div>';
@@ -111,7 +111,7 @@ $(function() {
             <tr>
               <th>終了時間</th>
               <td>
-                <input type="text" name="event_time_end" value="<?php echo e($fields['event_time_end']->value);?>" id="inputEventTimeEnd">
+                <input type="text" class="form-control" name="event_time_end" value="<?php echo e($fields['event_time_end']->value);?>" id="inputEventTimeEnd">
                 <?php
                     if (isset($errors['event_time_end'])):
                        echo '<div class="error-message">' . $errors['event_time_end'] . '</div>';
@@ -122,11 +122,51 @@ $(function() {
             <tr>
               <th>開催状況</th>
               <td>
-                <input type="radio" name="event_status" value="<?php echo \Model_Fleamarket::EVENT_STATUS_SCHEDULE;?>" <?php if ($fields['event_status']->value == \Model_Fleamarket::EVENT_STATUS_SCHEDULE) { echo 'checked'; } ?>>開催予定
-                <input type="radio" name="event_status" value="<?php echo \Model_Fleamarket::EVENT_STATUS_RESERVATION_RECEIPT;?>" <?php if ($fields['event_status']->value == \Model_Fleamarket::EVENT_STATUS_RESERVATION_RECEIPT) { echo 'checked'; } ?>>予約受付中
-                <input type="radio" name="event_status" value="<?php echo \Model_Fleamarket::EVENT_STATUS_RECEIPT_END;?>" <?php if ($fields['event_status']->value == \Model_Fleamarket::EVENT_STATUS_RECEIPT_END) { echo 'checked'; } ?>>受付終了
-                <input type="radio" name="event_status" value="<?php echo \Model_Fleamarket::EVENT_STATUS_CLOSE;?>" <?php if ($fields['event_status']->value == \Model_Fleamarket::EVENT_STATUS_CLOSE) { echo 'checked'; } ?>>開催終了
-                <input type="radio" name="event_status" value="<?php echo \Model_Fleamarket::EVENT_STATUS_CANCEL;?>" <?php if ($fields['event_status']->value == \Model_Fleamarket::EVENT_STATUS_CANCEL) { echo 'checked'; } ?>>中止
+                <div class="radio">
+                  <?php
+                      $checkd = '';
+                      if ($fields['event_status']->value == \Model_Fleamarket::EVENT_STATUS_SCHEDULE):
+                          $checkd = 'checked';
+                      endif;
+                  ?>
+                  <label><input type="radio" class="form-control" name="event_status" value="<?php echo \Model_Fleamarket::EVENT_STATUS_SCHEDULE;?>" <?php echo $checkd;?>>開催予定</label>
+                </div>
+                <div class="radio">
+                  <?php
+                      $checkd = '';
+                      if ($fields['event_status']->value == \Model_Fleamarket::EVENT_STATUS_RESERVATION_RECEIPT):
+                          $checkd = 'checked';
+                      endif;
+                  ?>
+                  <label><input type="radio" class="form-control" name="event_status" value="<?php echo \Model_Fleamarket::EVENT_STATUS_RESERVATION_RECEIPT;?>" <?php echo $checkd;?>>予約受付中</label>
+                </div>
+                <div class="radio">
+                  <?php
+                      $checkd = '';
+                      if ($fields['event_status']->value == \Model_Fleamarket::EVENT_STATUS_RECEIPT_END):
+                          $checkd = 'checked';
+                      endif;
+                  ?>
+                  <label><input type="radio" class="form-control" name="event_status" value="<?php echo \Model_Fleamarket::EVENT_STATUS_RECEIPT_END;?>" <?php echo $checkd;?>>受付終了</label>
+                </div>
+                <div class="radio">
+                  <?php
+                      $checkd = '';
+                      if ($fields['event_status']->value == \Model_Fleamarket::EVENT_STATUS_CLOSE):
+                          $checkd = 'checked';
+                      endif;
+                  ?>
+                  <label><input type="radio" class="form-control" name="event_status" value="<?php echo \Model_Fleamarket::EVENT_STATUS_CLOSE;?>" <?php echo $checkd;?>>開催終了</label>
+                </div>
+                <div class="radio">
+                  <?php
+                      $checkd = '';
+                      if ($fields['event_status']->value == \Model_Fleamarket::EVENT_STATUS_CANCEL):
+                          $checkd = 'checked';
+                      endif;
+                  ?>
+                  <label><input type="radio" class="form-control" name="event_status" value="<?php echo \Model_Fleamarket::EVENT_STATUS_CANCEL;?>" <?php echo $checkd;?>>中止</label>
+                </div>
                 <?php
                     if (isset($errors['event_status'])):
                        echo '<div class="error-message">' . $errors['event_status'] . '</div>';
@@ -137,7 +177,7 @@ $(function() {
             <tr>
               <th>内容</th>
               <td>
-                <textarea name="description" cols="55" rows="8"><?php echo e($fields['description']->value);?></textarea>
+                <textarea class="form-control" name="description" cols="55" rows="8"><?php echo e($fields['description']->value);?></textarea>
                 <?php
                     if (isset($errors['description'])):
                        echo '<div class="error-message">' . $errors['description'] . '</div>';
@@ -148,7 +188,7 @@ $(function() {
             <tr>
               <th>予約受付開始日</th>
               <td>
-                <input type="text" name="reservation_start" value="<?php echo e($fields['reservation_start']->value);?>" id="inputReservationStart">
+                <input type="text" class="form-control" name="reservation_start" value="<?php echo e($fields['reservation_start']->value);?>" id="inputReservationStart">
                 <?php
                     if (isset($errors['reservation_start'])):
                        echo '<div class="error-message">' . $errors['reservation_start'] . '</div>';
@@ -159,7 +199,7 @@ $(function() {
             <tr>
               <th>予約受付終了日</th>
               <td>
-                <input type="text" name="reservation_end" value="<?php echo e($fields['reservation_end']->value);?>" id="inputReservationEnd">
+                <input type="text" class="form-control" name="reservation_end" value="<?php echo e($fields['reservation_end']->value);?>" id="inputReservationEnd">
                 <?php
                     if (isset($errors['reservation_end'])):
                        echo '<div class="error-message">' . $errors['reservation_end'] . '</div>';
@@ -170,7 +210,7 @@ $(function() {
             <tr>
               <th>予約受付電話番号</th>
               <td>
-                <input type="text" name="reservation_tel" value="<?php echo e($fields['reservation_tel']->value);?>">
+                <input type="text" class="form-control" name="reservation_tel" value="<?php echo e($fields['reservation_tel']->value);?>">
                 <?php
                     if (isset($errors['reservation_tel'])):
                        echo '<div class="error-message">' . $errors['reservation_tel'] . '</div>';
@@ -181,7 +221,7 @@ $(function() {
             <tr>
               <th>予約受付E-mailアドレス</th>
               <td>
-                <input type="text" name="reservation_email" value="<?php echo e($fields['reservation_email']->value);?>">
+                <input type="text" class="form-control" name="reservation_email" value="<?php echo e($fields['reservation_email']->value);?>">
                 <?php
                     if (isset($errors['reservation_email'])):
                        echo '<div class="error-message">' . $errors['reservation_email'] . '</div>';
@@ -192,7 +232,7 @@ $(function() {
             <tr>
               <th>主催者ホームページ</th>
               <td>
-                <input type="text" name="website" value="<?php echo e($fields['website']->value);?>">
+                <input type="text" class="form-control" name="website" value="<?php echo e($fields['website']->value);?>">
                 <?php
                     if (isset($errors['website'])):
                        echo '<div class="error-message">' . $errors['website'] . '</div>';
@@ -203,7 +243,7 @@ $(function() {
             <tr>
               <th>出品物の種類</th>
               <td>
-                <input type="text" name="item_categories" value="<?php echo e($fields['item_categories']->value);?>">
+                <input type="text" class="form-control" name="item_categories" value="<?php echo e($fields['item_categories']->value);?>">
                 <?php
                     if (isset($errors['item_categories'])):
                        echo '<div class="error-message">' . $errors['item_categories'] . '</div>';
@@ -214,7 +254,7 @@ $(function() {
             <tr>
               <th>反響項目リスト</th>
               <td>
-                <input type="text" name="link_from_list" value="<?php echo e($fields['link_from_list']->value);?>">
+                <input type="text" class="form-control" name="link_from_list" value="<?php echo e($fields['link_from_list']->value);?>">
                 <?php
                     if (isset($errors['link_from_list'])):
                        echo '<div class="error-message">' . $errors['link_from_list'] . '</div>';
@@ -225,8 +265,24 @@ $(function() {
             <tr>
               <th>ピックアップ</th>
               <td>
-                <input type="radio" name="pickup_flag" value="<?php echo \Model_Fleamarket::PICKUP_FLAG_ON;?>" <?php if ($fields['pickup_flag']->value == \Model_Fleamarket::PICKUP_FLAG_ON) { echo 'checked'; }?>>対象
-                <input type="radio" name="pickup_flag" value="<?php echo \Model_Fleamarket::PICKUP_FLAG_OFF?>" <?php if ($fields['pickup_flag']->value == \Model_Fleamarket::PICKUP_FLAG_OFF) { echo 'checked'; }?>>対象外
+                <div class="radio">
+                  <?php
+                      $checkd = '';
+                      if ($fields['pickup_flag']->value == \Model_Fleamarket::PICKUP_FLAG_ON):
+                          $checkd = 'checked';
+                      endif;
+                  ?>
+                  <label><input type="radio" class="form-control" name="pickup_flag" value="<?php echo \Model_Fleamarket::PICKUP_FLAG_ON;?>" <?php echo $checkd;?>>対象</label>
+                </div>
+                <div class="radio">
+                  <?php
+                      $checkd = '';
+                      if ($fields['pickup_flag']->value == \Model_Fleamarket::PICKUP_FLAG_OFF):
+                          $checkd = 'checked';
+                      endif;
+                  ?>
+                  <label><input type="radio" class="form-control" name="pickup_flag" value="<?php echo \Model_Fleamarket::PICKUP_FLAG_OFF?>" <?php echo $checkd;?>>対象外</label>
+                </div>
                 <?php
                     if (isset($errors['pickup_flag'])):
                        echo '<div class="error-message">' . $errors['pickup_flag'] . '</div>';
@@ -237,8 +293,24 @@ $(function() {
             <tr>
               <th>出店料</th>
               <td>
-                <input type="radio" name="shop_fee_flag" value="<?php echo \Model_Fleamarket::SHOP_FEE_FLAG_FREE;?>" <?php if ($fields['shop_fee_flag']->value == \Model_Fleamarket::SHOP_FEE_FLAG_FREE) { echo 'checked'; }?>>無料
-                <input type="radio" name="shop_fee_flag" value="<?php echo \Model_Fleamarket::SHOP_FEE_FLAG_CHARGE;?>" <?php if ($fields['shop_fee_flag']->value == \Model_Fleamarket::SHOP_FEE_FLAG_CHARGE) { echo 'checked'; }?>>有料
+                <div class="radio">
+                  <?php
+                      $checkd = '';
+                      if ($fields['shop_fee_flag']->value == \Model_Fleamarket::SHOP_FEE_FLAG_FREE):
+                          $checkd = 'checked';
+                      endif;
+                  ?>
+                  <label><input type="radio" class="form-control" name="shop_fee_flag" value="<?php echo \Model_Fleamarket::SHOP_FEE_FLAG_FREE;?>" <?php echo $checkd;?>>無料</label>
+                </div>
+                <div class="radio">
+                  <?php
+                      $checkd = '';
+                      if ($fields['shop_fee_flag']->value == \Model_Fleamarket::SHOP_FEE_FLAG_CHARGE):
+                          $checkd = 'checked';
+                      endif;
+                  ?>
+                  <label><input type="radio" class="form-control" name="shop_fee_flag" value="<?php echo \Model_Fleamarket::SHOP_FEE_FLAG_CHARGE;?>" <?php echo $checkd;?>>有料</label>
+                </div>
                 <?php
                     if (isset($errors['shop_fee_flag'])):
                        echo '<div class="error-message">' . $errors['shop_fee_flag'] . '</div>';
@@ -249,8 +321,24 @@ $(function() {
             <tr>
               <th>車出店</th>
               <td>
-                <input type="radio" name="car_shop_flag" value="<?php echo \Model_Fleamarket::CAR_SHOP_FLAG_OK;?>" <?php if ($fields['car_shop_flag']->value == \Model_Fleamarket::CAR_SHOP_FLAG_OK) { echo 'checked'; }?>>OK
-                <input type="radio" name="car_shop_flag" value="<?php echo \Model_Fleamarket::CAR_SHOP_FLAG_NG;?>" <?php if ($fields['car_shop_flag']->value == \Model_Fleamarket::CAR_SHOP_FLAG_NG) { echo 'checked'; }?>>NG
+                <div class="radio">
+                  <?php
+                      $checkd = '';
+                      if ($fields['car_shop_flag']->value == \Model_Fleamarket::CAR_SHOP_FLAG_OK):
+                          $checkd = 'checked';
+                      endif;
+                  ?>
+                  <label><input type="radio" class="form-control" name="car_shop_flag" value="<?php echo \Model_Fleamarket::CAR_SHOP_FLAG_OK;?>" <?php echo $checkd;?>>OK</label>
+                </div>
+                <div class="radio">
+                  <?php
+                      $checkd = '';
+                      if ($fields['car_shop_flag']->value == \Model_Fleamarket::CAR_SHOP_FLAG_NG):
+                          $checkd = 'checked';
+                      endif;
+                  ?>
+                  <label><input type="radio" class="form-control" name="car_shop_flag" value="<?php echo \Model_Fleamarket::CAR_SHOP_FLAG_NG;?>" <?php echo $checkd;?>>NG</label>
+                </div>
                 <?php
                     if (isset($errors['car_shop_flag'])):
                        echo '<div class="error-message">' . $errors['car_shop_flag'] . '</div>';
@@ -261,8 +349,24 @@ $(function() {
             <tr>
               <th>プロ出店</th>
               <td>
-                <input type="radio" name="pro_shop_flag" value="<?php echo \Model_Fleamarket::PRO_SHOP_FLAG_OK;?>" <?php if ($fields['pro_shop_flag']->value == \Model_Fleamarket::PRO_SHOP_FLAG_OK) { echo 'checked'; }?>>OK
-                <input type="radio" name="pro_shop_flag" value="<?php echo \Model_Fleamarket::PRO_SHOP_FLAG_NG;?>" <?php if ($fields['pro_shop_flag']->value == \Model_Fleamarket::PRO_SHOP_FLAG_NG) { echo 'checked'; }?>>NG
+                <div class="radio">
+                  <?php
+                      $checkd = '';
+                      if ($fields['pro_shop_flag']->value == \Model_Fleamarket::PRO_SHOP_FLAG_OK):
+                          $checkd = 'checked';
+                      endif;
+                  ?>
+                  <label><input type="radio" class="form-control" name="pro_shop_flag" value="<?php echo \Model_Fleamarket::PRO_SHOP_FLAG_OK;?>" <?php echo $checkd;?>>OK</label>
+                </div>
+                <div class="radio">
+                  <?php
+                      $checkd = '';
+                      if ($fields['pro_shop_flag']->value == \Model_Fleamarket::PRO_SHOP_FLAG_NG):
+                          $checkd = 'checked';
+                      endif;
+                  ?>
+                  <label><input type="radio" class="form-control" name="pro_shop_flag" value="<?php echo \Model_Fleamarket::PRO_SHOP_FLAG_NG;?>" <?php echo $checkd;?>>NG</label>
+                </div>
                 <?php
                     if (isset($errors['pro_shop_flag'])):
                        echo '<div class="error-message">' . $errors['pro_shop_flag'] . '</div>';
@@ -273,8 +377,24 @@ $(function() {
             <tr>
               <th>有料駐車場</th>
               <td>
-                <input type="radio" name="charge_parking_flag" value="<?php echo \Model_Fleamarket::CHARGE_PARKING_FLAG_EXIST;?>" <?php if ($fields['charge_parking_flag']->value == \Model_Fleamarket::CHARGE_PARKING_FLAG_EXIST) { echo 'checked'; } ?>>あり
-                <input type="radio" name="charge_parking_flag" value="<?php echo \Model_Fleamarket::CHARGE_PARKING_FLAG_NONE;?>" <?php if ($fields['charge_parking_flag']->value == \Model_Fleamarket::CHARGE_PARKING_FLAG_NONE) { echo 'checked'; } ?>>なし
+                <div class="radio">
+                  <?php
+                      $checkd = '';
+                      if ($fields['charge_parking_flag']->value == \Model_Fleamarket::CHARGE_PARKING_FLAG_EXIST):
+                          $checkd = 'checked';
+                      endif;
+                  ?>
+                  <label><input type="radio" class="form-control" name="charge_parking_flag" value="<?php echo \Model_Fleamarket::CHARGE_PARKING_FLAG_EXIST;?>" <?php echo $checkd;?>>あり</label>
+                </div>
+                <div class="radio">
+                  <?php
+                      $checkd = '';
+                      if ($fields['charge_parking_flag']->value == \Model_Fleamarket::CHARGE_PARKING_FLAG_NONE):
+                          $checkd = 'checked';
+                      endif;
+                  ?>
+                  <label><input type="radio" class="form-control" name="charge_parking_flag" value="<?php echo \Model_Fleamarket::CHARGE_PARKING_FLAG_NONE;?>" <?php echo $checkd;?>>なし</label>
+                </div>
                 <?php
                     if (isset($errors['charge_parking_flag'])):
                        echo '<div class="error-message">' . $errors['charge_parking_flag'] . '</div>';
@@ -285,8 +405,24 @@ $(function() {
             <tr>
               <th>無料駐車場</th>
               <td>
-                <input type="radio" name="free_parking_flag" value="<?php echo \Model_Fleamarket::FREE_PARKING_FLAG_EXIST;?>" <?php if ($fields['free_parking_flag']->value == \Model_Fleamarket::FREE_PARKING_FLAG_EXIST) { echo 'checked'; } ?>>あり
-                <input type="radio" name="free_parking_flag" value="<?php echo \Model_Fleamarket::FREE_PARKING_FLAG_NONE;?>" <?php if ($fields['free_parking_flag']->value == \Model_Fleamarket::FREE_PARKING_FLAG_NONE) { echo 'checked'; } ?>>なし
+                <div class="radio">
+                  <?php
+                      $checkd = '';
+                      if ($fields['free_parking_flag']->value == \Model_Fleamarket::FREE_PARKING_FLAG_EXIST):
+                          $checkd = 'checked';
+                      endif;
+                  ?>
+                  <label><input type="radio" class="form-control" name="free_parking_flag" value="<?php echo \Model_Fleamarket::FREE_PARKING_FLAG_EXIST;?>" <?php echo $checkd;?>>あり</label>
+                </div>
+                <div class="radio">
+                  <?php
+                      $checkd = '';
+                      if ($fields['free_parking_flag']->value == \Model_Fleamarket::FREE_PARKING_FLAG_NONE):
+                          $checkd = 'checked';
+                      endif;
+                  ?>
+                  <label><input type="radio" class="form-control" name="free_parking_flag" value="<?php echo \Model_Fleamarket::FREE_PARKING_FLAG_NONE;?>" <?php echo $checkd;?>>なし</label>
+                </div>
                 <?php
                     if (isset($errors['free_parking_flag'])):
                        echo '<div class="error-message">' . $errors['free_parking_flag'] . '</div>';
@@ -297,8 +433,24 @@ $(function() {
             <tr>
               <th>雨天開催会場</th>
               <td>
-                <input type="radio" name="rainy_location_flag" value="<?php echo \Model_Fleamarket::RAINY_LOCATION_FLAG_EXIST;?> "<?php if ($fields['rainy_location_flag']->value == \Model_Fleamarket::RAINY_LOCATION_FLAG_EXIST) { echo 'checked'; } ?>>対象
-                <input type="radio" name="rainy_location_flag" value="<?php echo \Model_Fleamarket::RAINY_LOCATION_FLAG_NONE;?>" <?php if ($fields['rainy_location_flag']->value == \Model_Fleamarket::RAINY_LOCATION_FLAG_NONE) { echo 'checked'; } ?>>対象外
+                <div class="radio">
+                  <?php
+                      $checkd = '';
+                      if ($fields['rainy_location_flag']->value == \Model_Fleamarket::RAINY_LOCATION_FLAG_EXIST):
+                          $checkd = 'checked';
+                      endif;
+                  ?>
+                  <label><input type="radio" class="form-control" name="rainy_location_flag" value="<?php echo \Model_Fleamarket::RAINY_LOCATION_FLAG_EXIST;?>" <?php echo $checkd;?>>対象</label>
+                </div>
+                <div class="radio">
+                  <?php
+                      $checkd = '';
+                      if ($fields['rainy_location_flag']->value == \Model_Fleamarket::RAINY_LOCATION_FLAG_NONE):
+                          $checkd = 'checked';
+                      endif;
+                  ?>
+                  <label><input type="radio" class="form-control" name="rainy_location_flag" value="<?php echo \Model_Fleamarket::RAINY_LOCATION_FLAG_NONE;?>" <?php echo $checkd;?>>対象外</label>
+                </div>
                 <?php
                     if (isset($errors['rainy_location_flag'])):
                        echo '<div class="error-message">' . $errors['rainy_location_flag'] . '</div>';
@@ -309,8 +461,24 @@ $(function() {
             <tr>
               <th>表示</th>
               <td>
-                <input type="radio" name="display_flag" value="<?php echo \Model_Fleamarket::DISPLAY_FLAG_ON;?>" <?php if ($fields['display_flag']->value == \Model_Fleamarket::DISPLAY_FLAG_ON) { echo 'checked'; } ?>>表示
-                <input type="radio" name="display_flag" value="<?php echo \Model_Fleamarket::DISPLAY_FLAG_OFF;?>" <?php if ($fields['display_flag']->value == \Model_Fleamarket::DISPLAY_FLAG_OFF) { echo 'checked'; } ?>>非表示
+                <div class="radio">
+                  <?php
+                      $checkd = '';
+                      if ($fields['display_flag']->value == \Model_Fleamarket::DISPLAY_FLAG_ON):
+                          $checkd = 'checked';
+                      endif;
+                  ?>
+                  <label><input type="radio" class="form-control" name="display_flag" value="<?php echo \Model_Fleamarket::DISPLAY_FLAG_ON;?>" <?php echo $checkd;?>>表示</label>
+                </div>
+                <div class="radio">
+                  <?php
+                      $checkd = '';
+                      if ($fields['display_flag']->value == \Model_Fleamarket::DISPLAY_FLAG_OFF):
+                          $checkd = 'checked';
+                      endif;
+                  ?>
+                  <label><input type="radio" class="form-control" name="display_flag" value="<?php echo \Model_Fleamarket::DISPLAY_FLAG_OFF;?>" <?php echo $checkd;?>>非表示</label>
+                </div>
                 <?php
                     if (isset($errors['display_flag'])):
                        echo '<div class="error-message">' . $errors['display_flag'] . '</div>';
@@ -321,9 +489,33 @@ $(function() {
             <tr>
               <th>予約状況</th>
               <td>
-                <input type="radio" name="event_reservation_status" value="<?php echo \Model_Fleamarket::EVENT_RESERVATION_STATUS_ENOUGH;?>" <?php if ($fields['event_reservation_status']->value == \Model_Fleamarket::EVENT_RESERVATION_STATUS_ENOUGH) { echo 'checked'; } ?>>まだまだあります
-                <input type="radio" name="event_reservation_status" value="<?php echo \Model_Fleamarket::EVENT_RESERVATION_STATUS_FEW;?>" <?php if ($fields['event_reservation_status']->value == \Model_Fleamarket::EVENT_RESERVATION_STATUS_FEW) { echo 'checked'; } ?>>残り僅か！
-                <input type="radio" name="event_reservation_status" value="<?php echo \Model_Fleamarket::EVENT_RESERVATION_STATUS_FULL;?>" <?php if ($fields['event_reservation_status']->value == \Model_Fleamarket::EVENT_RESERVATION_STATUS_FULL) { echo 'checked'; } ?>>満員
+                <div class="radio">
+                  <?php
+                      $checkd = '';
+                      if ($fields['event_reservation_status']->value == \Model_Fleamarket::EVENT_RESERVATION_STATUS_ENOUGH):
+                          $checkd = 'checked';
+                      endif;
+                  ?>
+                  <label><input type="radio" class="form-control" name="event_reservation_status" value="<?php echo \Model_Fleamarket::EVENT_RESERVATION_STATUS_ENOUGH;?>" <?php echo $checkd;?>>まだまだあります</label>
+                </div>
+                <div class="radio">
+                  <?php
+                      $checkd = '';
+                      if ($fields['event_reservation_status']->value == \Model_Fleamarket::EVENT_RESERVATION_STATUS_FEW):
+                          $checkd = 'checked';
+                      endif;
+                  ?>
+                  <label><input type="radio" class="form-control" name="event_reservation_status" value="<?php echo \Model_Fleamarket::EVENT_RESERVATION_STATUS_FEW;?>" <?php echo $checkd;?>>残り僅か！</label>
+                </div>
+                <div class="radio">
+                  <?php
+                      $checkd = '';
+                      if ($fields['event_reservation_status']->value == \Model_Fleamarket::EVENT_RESERVATION_STATUS_FULL):
+                          $checkd = 'checked';
+                      endif;
+                  ?>
+                  <label><input type="radio" class="form-control" name="event_reservation_status" value="<?php echo \Model_Fleamarket::EVENT_RESERVATION_STATUS_FULL;?>" <?php echo $checkd;?>>満員</label>
+                </div>
                 <?php
                     if (isset($errors['event_reservation_status'])):
                         echo '<div class="error-message">' . $errors['event_reservation_status'] . '</div>';
@@ -334,8 +526,24 @@ $(function() {
             <tr>
               <th>登録タイプ</th>
               <td>
-                <input type="radio" name="register_type" value="<?php echo \Model_Fleamarket::REGISTER_TYPE_ADMIN;?>" <?php if ($fields['register_type']->value == \Model_Fleamarket::REGISTER_TYPE_ADMIN) { echo 'checked'; } ?>>運営事務局
-                <input type="radio" name="register_type" value="<?php echo \Model_Fleamarket::REGISTER_TYPE_USER;?>" <?php if ($fields['register_type']->value == \Model_Fleamarket::REGISTER_TYPE_USER) { echo 'checked'; } ?>>ユーザー投稿
+                <div class="radio">
+                  <?php
+                      $checkd = '';
+                      if ($fields['register_type']->value == \Model_Fleamarket::REGISTER_TYPE_ADMIN):
+                          $checkd = 'checked';
+                      endif;
+                  ?>
+                  <label><input type="radio" class="form-control" name="register_type" value="<?php echo \Model_Fleamarket::REGISTER_TYPE_ADMIN;?>" <?php echo $checkd;?>>運営事務局</label>
+                </div>
+                <div class="radio">
+                  <?php
+                      $checkd = '';
+                      if ($fields['register_type']->value == \Model_Fleamarket::REGISTER_TYPE_USER):
+                          $checkd = 'checked';
+                      endif;
+                  ?>
+                  <label><input type="radio" class="form-control" name="register_type" value="<?php echo \Model_Fleamarket::REGISTER_TYPE_USER;?>" <?php echo $checkd;?>>ユーザー投稿</label>
+                </div>
                 <?php
                     if (isset($errors['register_type'])):
                        echo '<div class="error-message">' . $errors['register_type'] . '</div>';
@@ -356,9 +564,9 @@ $(function() {
                   <td>
                     <?php if ($fleamarket && $fleamarket->fleamarket_image($priority)):?>
                     <img src="<?php echo $fleamarket->fleamarket_image($priority)->Url();?>" class="img-responsive">
-                    <input type="checkbox" name="delete_priorities[]" value="<?php echo $priority;?>">削除する
+                    <input type="checkbox" class="form-control" name="delete_priorities[]" value="<?php echo $priority;?>">削除する
                     <?php endif;?>
-                    <input type="file" name="upload<?php echo $priority;?>">
+                    <input type="file" class="form-control" name="upload<?php echo $priority;?>">
                   </td>
                 </tr>
                 <?php endforeach;?>
@@ -371,7 +579,7 @@ $(function() {
                 <tr>
                   <th><?php echo e($title);?></th>
                   <td>
-                    <textarea name="fleamarket_about_<?php echo $id; ?>_description" cols="55" rows="8"><?php echo e($fieldsets['fleamarket_abouts'][$id]->field('description')->value);?></textarea>
+                    <textarea name="fleamarket_about_<?php echo $id; ?>_description" class="form-control" cols="55" rows="8"><?php echo e($fieldsets['fleamarket_abouts'][$id]->field('description')->value);?></textarea>
                     <?php $errors = $fieldsets['fleamarket_abouts'][$id]->validation()->error_message();?>
                     <?php
                         if (isset($errors['description'])):
@@ -395,7 +603,7 @@ $(function() {
                       <tr>
                         <th>出店料</th>
                         <td>
-                          <input type="text" name="fleamarket_entry_style_<?php echo $id;?>_booth_fee" value="<?php echo e($fieldsets['fleamarket_entry_styles'][$id]->field('booth_fee')->value);?>">
+                          <input type="text" class="form-control" name="fleamarket_entry_style_<?php echo $id;?>_booth_fee" value="<?php echo e($fieldsets['fleamarket_entry_styles'][$id]->field('booth_fee')->value);?>">
                           <?php
                               if (isset($errors['booth_fee'])):
                                   echo '<div class="error-message">' . $errors['booth_fee'] . '</div>';
@@ -406,7 +614,7 @@ $(function() {
                       <tr>
                         <th>最大出店ブース数</th>
                         <td>
-                          <input type="text" name="fleamarket_entry_style_<?php echo $id;?>_max_booth" value="<?php echo e($fieldsets['fleamarket_entry_styles'][$id]->field('max_booth')->value);?>">
+                          <input type="text" class="form-control" name="fleamarket_entry_style_<?php echo $id;?>_max_booth" value="<?php echo e($fieldsets['fleamarket_entry_styles'][$id]->field('max_booth')->value);?>">
                           <?php
                               if (isset($errors['max_booth'])):
                                   echo '<div class="error-message">' . $errors['max_booth'] . '</div>';
@@ -417,7 +625,7 @@ $(function() {
                       <tr>
                         <th>予約可能出店ブース上限</th>
                         <td>
-                          <input type="text" name="fleamarket_entry_style_<?php echo $id;?>_reservation_booth_limit" value="<?php echo e($fieldsets['fleamarket_entry_styles'][$id]->field('reservation_booth_limit')->value);?>">
+                          <input type="text" class="form-control" name="fleamarket_entry_style_<?php echo $id;?>_reservation_booth_limit" value="<?php echo e($fieldsets['fleamarket_entry_styles'][$id]->field('reservation_booth_limit')->value);?>">
                           <?php
                               if (isset($errors['reservation_booth_limit'])):
                                   echo '<div class="error-message">' . $errors['reservation_booth_limit'] . '</div>';

@@ -29,7 +29,7 @@ $item_categories = array(
     '2' => '手作り品',
 );
 
-$lead_to_list = array(
+$link_from_list = array(
     '1' => '楽市モバイルサイト',
     '2' => '楽市PCサイト',
     '3' => '会場設置チラシ',
@@ -195,7 +195,7 @@ for ($i = 1; $i <= 2000; $i++) {
         'reservation_email'        => 'sample' . $i . '@aucfan.com',
         'website'                  => 'http://www.yahoo.co.jp',
         'item_categories'          => implode(',', $item_categories),
-        'link_from_list'           => implode(',', $lead_to_list),
+        'link_from_list'           => implode(',', $link_from_list),
         'pickup_flag'              => \Model_fleamarket::PICKUP_FLAG_ON,
         'pickup_flag'              => $pickup_list[$pickup],
         'shop_fee_flag'            => $shop_fee_list[$shop_fee],
