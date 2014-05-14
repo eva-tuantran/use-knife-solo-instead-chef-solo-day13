@@ -15,7 +15,7 @@
               <?php
                   foreach ($mail_magazine_types as $mail_magazine_type_id => $mail_magazine_type_name):
                       $selected = '';
-                      if (isset($conditions['mail_magazine_type'])
+                      if (! empty($conditions['mail_magazine_type'])
                           && $mail_magazine_type_id == $conditions['mail_magazine_type']
                       ):
                           $selected = 'selected';
@@ -34,7 +34,7 @@
               <?php
                   foreach ($send_statuses as $send_status_id => $send_status_name):
                       $selected = '';
-                      if (isset($conditions['send_status'])
+                      if (! empty($conditions['send_status'])
                           && $send_status_id == $conditions['send_status']
                       ):
                           $selected = 'selected';
@@ -59,9 +59,7 @@
           <th>種類</th>
           <th>件名</th>
           <th>状況</th>
-          <th>
-            <a class="btn btn-primary dropdown-toggle" href="/admin/mailmagazine/">新規登録</a>
-          </th>
+          <th><a class="btn btn-primary dropdown-toggle" href="/admin/mailmagazine/">新規登録</a></th>
         </tr>
       </thead>
       <tbody>
@@ -69,7 +67,7 @@
           if (! $mail_magazine_list):
       ?>
         <tr>
-          <td colspan="5">検索条件に該当するメルマガ情報はありません</td>
+          <td colspan="6">該当するメルマガ情報はありません</td>
         </tr>
       <?php
           else:
@@ -133,3 +131,12 @@
     ?>
   </div>
 </div>
+<script type="text/javascript">
+$(function() {
+  $(".pagination li", ".panel-footer").on("click", function(evt) {
+    evt.preventDefault();
+    var action = $("a", this).attr("href");
+    $("#searchForm").attr("action", action).submit();
+  });
+});
+</script>

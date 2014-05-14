@@ -307,7 +307,7 @@ class Model_Fleamarket extends Model_Base
     );
 
     /**
-     * 開催状況リストを取得する
+     * 開催状況一覧を取得する
      *
      * @access public
      * @param
@@ -320,7 +320,7 @@ class Model_Fleamarket extends Model_Base
     }
 
     /**
-     * 登録タイプリストを取得する
+     * 登録タイプ一覧を取得する
      *
      * @access public
      * @param
@@ -1107,7 +1107,7 @@ QUERY;
                         $conditions['f.event_status'] = array($operator, $condition);
                     }
                     break;
-                case 'prefecture':
+                case 'prefecture_id':
                     $conditions['l.prefecture_id'] = array($operator, $condition);
                     break;
                 case 'keyword':

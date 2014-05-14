@@ -113,14 +113,14 @@
     <div class="row">
         <div class="col-md-1">登録日時</div>
         <div class="col-md-2"><?php
-            if (isset($fleamarket)):
-               echo e($fleamarket->created_at);
+            if (isset($user)):
+               echo e($user->created_at);
             endif;
         ?></div>
         <div class="col-md-1">更新日時</div>
         <div class="col-md-2"><?php
-            if (isset($fleamarket)):
-               echo e($fleamarket->updated_at);
+            if (isset($user)):
+               echo e($user->updated_at);
             endif;
         ?></div>
     </div>

@@ -9,17 +9,35 @@
         <form id="searchForm" class="form-horizontal" id="" action="/admin/entry/list" method="post" role="form">
           <input type="hidden" name="fleamarket_id" value="<?php echo e(Input::param('fleamarket_id','')); ?>">
           <div class="form-group clearfix">
-            <label for="keyword" class="col-md-1 control-label">予約番号</label>
+            <label for="reservation_number" class="col-md-1 control-label">予約番号</label>
             <div class="col-md-2">
-              <input type="text" class="form-control" name="reservation_number" value="<?php echo e(\Input::param('reservation_number'));?>">
+              <?php
+                  $reservation_number = '';
+                  if (! empty($conditions['reservation_number'])):
+                      $reservation_number = $conditions['reservation_number'];
+                  endif;
+              ?>
+              <input type="text" id="reservation_number" class="form-control" name="c[reservation_number]" value="<?php echo e($reservation_number);?>">
             </div>
-            <label for="keyword" class="col-md-1 control-label">ユーザID</label>
+            <label for="user_id" class="col-md-1 control-label">ユーザID</label>
             <div class="col-md-2">
-              <input type="text" class="form-control" name="user_id" value="<?php echo e(\Input::param('user_id'));?>">
+              <?php
+                  $user_id = '';
+                  if (! empty($conditions['user_id'])):
+                      $user_id = $conditions['user_id'];
+                  endif;
+              ?>
+              <input type="text" id="user_id" class="form-control" name="c[user_id]" value="<?php echo e($user_id);?>">
             </div>
-            <label for="keyword" class="col-md-1 control-label">名前</label>
+            <label for="user_name" class="col-md-1 control-label">名前</label>
             <div class="col-md-2">
-              <input type="text" class="form-control" name="user_name" value="<?php echo e(\Input::param('user_name'));?>">
+              <?php
+                  $user_name = '';
+                  if (! empty($conditions['user_name'])):
+                      $user_name = $conditions['user_name'];
+                  endif;
+              ?>
+              <input type="text" id="user_name" class="form-control" name="c[user_name]" value="<?php echo e($user_name);?>">
             </div>
             <button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-search"></span> 検 索</button>
           </div>
@@ -71,6 +89,13 @@
       </thead>
       <tbody>
         <?php
+            if (! $entry_list):
+        ?>
+        <tr>
+          <td colspan="10">該当する予約履歴情報はありません</td>
+        </tr>
+        <?php
+          endif;
             foreach ($entry_list as $entry):
                 $entry_status_class = '';
                 switch ($entry['entry_status']):
@@ -106,9 +131,9 @@
           <td><?php //echo e($entry['register_type']);?></td>
           <td><?php echo e($entry['link_from']);?></td>
         </tr>
-      <?php
-          endforeach;
-      ?>
+        <?php
+            endforeach;
+        ?>
       <tbody>
     </table>
   </div>

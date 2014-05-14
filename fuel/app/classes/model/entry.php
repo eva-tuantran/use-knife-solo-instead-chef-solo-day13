@@ -176,7 +176,7 @@ class Model_Entry extends Model_Base
     );
 
     /**
-     * 出店予約状況リストを取得する
+     * 出店予約状況一覧を取得する
      *
      * @access public
      * @param
@@ -1021,6 +1021,11 @@ SQL;
 
             $operator = '=';
             switch ($field) {
+                case 'fleamarket_id':
+                    $condition_list['e.fleamarket_id'] = array(
+                        $operator, $condition
+                    );
+                    break;
                 case 'reservation_number':
                     $condition_list['e.reservation_number'] = array(
                         ' LIKE ', $condition . '%'

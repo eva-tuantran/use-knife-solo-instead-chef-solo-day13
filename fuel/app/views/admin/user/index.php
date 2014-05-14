@@ -13,7 +13,7 @@
       <input type="hidden" name="user_id" value="<?php echo e($user_id); ?>">
       <div class="row">
         <div class="col-md-6">
-          <table class="table">
+          <table class="table-fixed table">
             <tr>
               <th>ニックネーム</th>
               <td>
@@ -120,7 +120,7 @@
             <tr>
               <th>住所</th>
               <td>
-                <input type="text" class="large-width form-control" name="address" value="<?php echo e($fields['address']->value); ?>">
+                <input type="text" class="form-control large-width" name="address" value="<?php echo e($fields['address']->value); ?>">
                 <?php
                     if (isset($errors['address'])):
                         echo '<div class="error-message">' . $errors['address'] . '</div>';
@@ -142,7 +142,7 @@
             <tr>
               <th>電話番号（モバイル）</th>
               <td>
-                <input type="text" class="form-control" name="mobile_tel" value="<?php echo e($fields['mobile_tel']->value); ?>">
+                <input type="text" class="form-control large-width" name="mobile_tel" value="<?php echo e($fields['mobile_tel']->value); ?>">
                 <?php
                     if (isset($errors['mobile_tel'])):
                         echo '<div class="error-message">' . $errors['mobile_tel'] . '</div>';
@@ -308,3 +308,18 @@
     </div>
   </div>
 </div>
+<script type="text/javascript">
+$(function() {
+  var now_date = new Date();
+  var min_year = now_date.getFullYear() - 100;
+  var max_year = now_date.getFullYear();
+
+
+  $("#birthday").datepicker({
+    yearRange: min_year + ":" + max_year,
+    defaultDate: "-30y",
+    changeMonth: true,
+    changeYear: true
+  });
+});
+</script>
