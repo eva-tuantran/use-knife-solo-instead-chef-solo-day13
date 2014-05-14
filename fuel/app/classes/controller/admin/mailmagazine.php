@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Controller_Admin_Mailmagazine Controller
+ * メルマガ管理
  *
  * @extends Controller_Admin_Base_Template
  * @author ida
@@ -24,7 +24,9 @@ class Controller_Admin_Mailmagazine extends Controller_Admin_Base_Template
      * 一覧画面
      *
      * @access public
+     * @param
      * @return void
+     * @author ida
      */
     public function action_list()
     {
@@ -57,7 +59,9 @@ class Controller_Admin_Mailmagazine extends Controller_Admin_Base_Template
      * 送信先ユーザ一覧画面
      *
      * @access public
+     * @param
      * @return void
+     * @author ida
      */
     public function action_userlist($mail_magazine_id = null)
     {
@@ -88,7 +92,9 @@ class Controller_Admin_Mailmagazine extends Controller_Admin_Base_Template
      * 入力画面
      *
      * @access public
+     * @param
      * @return void
+     * @author ida
      */
     public function action_index()
     {
@@ -108,7 +114,9 @@ class Controller_Admin_Mailmagazine extends Controller_Admin_Base_Template
      * 確認画面
      *
      * @access public
+     * @param
      * @return void
+     * @author ida
      */
     public function action_confirm()
     {
@@ -145,7 +153,9 @@ class Controller_Admin_Mailmagazine extends Controller_Admin_Base_Template
      * テスト送信
      *
      * @access public
+     * @param
      * @return void
+     * @author ida
      */
     public function action_test()
     {
@@ -203,7 +213,9 @@ class Controller_Admin_Mailmagazine extends Controller_Admin_Base_Template
      * 登録＆送信
      *
      * @access public
+     * @param
      * @return void
+     * @author ida
      */
     public function action_thanks()
     {
@@ -261,7 +273,9 @@ class Controller_Admin_Mailmagazine extends Controller_Admin_Base_Template
      * 送信確認
      *
      * @access public
+     * @param
      * @return void
+     * @author ida
      */
     public function action_checkprocess()
     {
@@ -296,7 +310,9 @@ class Controller_Admin_Mailmagazine extends Controller_Admin_Base_Template
      * 送信中止
      *
      * @access public
+     * @param
      * @return void
+     * @author ida
      */
     public function action_stop()
     {
@@ -404,7 +420,7 @@ class Controller_Admin_Mailmagazine extends Controller_Admin_Base_Template
     }
 
     /**
-     * 追加データを取得する
+     * 追加条件のデータを取得する
      *
      * @access private
      * @param array $input_data 入力データ
@@ -431,7 +447,7 @@ class Controller_Admin_Mailmagazine extends Controller_Admin_Base_Template
     }
 
     /**
-     * fieldsetを取得する
+     * フィールドセットを取得する
      *
      * @access private
      * @param mixed $mail_magazine_type メールマガジンタイプ

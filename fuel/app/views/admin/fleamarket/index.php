@@ -56,7 +56,7 @@ DIV.remove();
       <input type="hidden" name="fleamarket_id" value="<?php echo e(\Input::param('fleamarket_id'));?>">
       <div class="row">
         <div class="col-md-6">
-          <table class="fleamarket-table table">
+          <table class="table-fixed table">
             <tr>
               <th>開催地</th>
               <td>
@@ -577,7 +577,7 @@ DIV.remove();
           <div id="accordion">
             <h3>画像イメージ</h3>
             <div>
-              <table class="fleamarket-table table">
+              <table class="table-fixed table">
                 <?php foreach (range(1, 4) as $priority):?>
                 <tr>
                   <th>ファイル<?php echo $priority;?></th>
@@ -594,7 +594,7 @@ DIV.remove();
             </div>
             <h3>説明</h3>
             <div>
-              <table class="fleamarket-table table">
+              <table class="table-fixed table">
                 <?php foreach (\Model_Fleamarket_About::getAboutTitles() as $id => $title):?>
                 <tr>
                   <th><?php echo e($title);?></th>
@@ -613,7 +613,7 @@ DIV.remove();
             </div>
             <h3><a class="anchor" href="#entry_style_section">出店形態</a></h3>
             <div id="entry_style_section">
-              <table class="fleamarket-table table">
+              <table class="table-fixed table">
                 <?php foreach ($entry_styles as $id => $entry_style):?>
                 <tr>
                   <th><?php echo e($entry_style);?></th>

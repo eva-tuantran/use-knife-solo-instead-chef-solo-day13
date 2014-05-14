@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * 管理機能TOP
+ *
+ * @extends  Controller_Base_Template
+ * @author Hiroyuki Kobayashi
+ */
 class Controller_Admin_Index extends Controller_Admin_Base_Template
 {
     /**
@@ -45,7 +51,7 @@ class Controller_Admin_Index extends Controller_Admin_Base_Template
 
         if ($administrator) {
             \Session::set('admin.administrator',$administrator);
-            \Response::redirect('/admin/index/index');
+            \Response::redirect('/admin/index');
         }
 
         $view = \View::forge('admin/index/login');
@@ -63,7 +69,7 @@ class Controller_Admin_Index extends Controller_Admin_Base_Template
      */
     public function action_logout()
     {
-        \Session::delete('admin.administrator');
+        \Session::destroy();
         \Response::redirect('admin/index/login');
     }
 }

@@ -15,7 +15,7 @@
               <?php
                   foreach ($register_types as $register_type_id => $register_type_name):
                       $selected = '';
-                      if (isset($conditions['register_type'])
+                      if (! empty($conditions['register_type'])
                           && $register_type_id == $conditions['register_type']
                       ):
                           $selected = 'selected';
@@ -34,7 +34,7 @@
               <?php
                   foreach ($event_statuses as $event_statuse_id => $event_statuse_name):
                       $selected = '';
-                      if (isset($conditions['event_status'])
+                      if (! empty($conditions['event_status'])
                           && $event_statuse_id == $conditions['event_status']
                       ):
                           $selected = 'selected';
@@ -46,15 +46,15 @@
               ?>
               </select>
             </div>
-            <label for="prefecture" class="col-md-1 control-label">都道府県</label>
+            <label for="prefecture_id" class="col-md-1 control-label">都道府県</label>
             <div class="col-md-1">
-              <select class="form-control" id="prefecture" name="c[prefecture]">
+              <select class="form-control" id="prefecture_id" name="c[prefecture_id]">
                 <option value=""></option>
               <?php
                   foreach ($prefectures as $prefecture_id => $prefecture_name):
                       $selected = '';
-                      if (isset($conditions['prefecture'])
-                          && $prefecture_id == $conditions['prefecture']
+                      if (! empty($conditions['prefecture_id'])
+                          && $prefecture_id == $conditions['prefecture_id']
                       ):
                           $selected = 'selected';
                       endif;
@@ -72,9 +72,7 @@
             <div class="col-md-4">
               <?php
                   $keyword = '';
-                  if (isset($conditions['keyword'])
-                      && '' !== $conditions['keyword']
-                  ):
+                  if (! empty($conditions['keyword'])):
                       $keyword = $conditions['keyword'];
                   endif;
               ?>

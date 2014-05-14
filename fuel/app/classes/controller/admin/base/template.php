@@ -1,6 +1,6 @@
 <?php
 
-class Controller_Admin_Base_Template extends Controller_Template
+class Controller_Admin_Base_Template extends \Controller_Template
 {
     /**
      * SSL通信対象のアクション名を配列で記載します
@@ -33,14 +33,15 @@ class Controller_Admin_Base_Template extends Controller_Template
     public function before()
     {
         $this->template = 'admin/template';
-
         parent::before();
 
-        if ($this->request->action != 'login') {
+        $this->template->is_login = false;
+        if ($this->request->action !== 'login') {
             $this->administrator = \Session::get('admin.administrator');
             if (! $this->administrator) {
                 \Response::redirect('admin/index/login');
             }
+            $this->template->is_login = isset($this->administrator);
         }
 
         $should_be_secure = in_array($this->request->action, $this->_secure_actions);
@@ -59,6 +60,7 @@ class Controller_Admin_Base_Template extends Controller_Template
         } elseif (! $should_be_secure && $is_secure) {
             $this->redirectToProtocol('http');
         }
+
     }
 
     /**

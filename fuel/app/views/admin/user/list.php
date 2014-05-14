@@ -12,9 +12,7 @@
             <div class="col-md-2">
               <?php
                   $user_id = '';
-                  if (isset($conditions['user_id'])
-                      && '' !== $conditions['user_id']
-                  ):
+                  if (! empty($conditions['user_id'])):
                       $user_id = $conditions['user_id'];
                   endif;
               ?>
@@ -24,9 +22,7 @@
             <div class="col-md-2">
               <?php
                   $user_old_id = '';
-                  if (isset($conditions['user_old_id'])
-                      && '' !== $conditions['user_old_id']
-                  ):
+                  if (! empty($conditions['user_old_id'])):
                       $user_old_id = $conditions['user_old_id'];
                   endif;
               ?>
@@ -36,9 +32,7 @@
             <div class="col-md-2">
               <?php
                   $user_name = '';
-                  if (isset($conditions['user_name'])
-                      && '' !== $conditions['user_name']
-                  ):
+                  if (! empty($conditions['user_name'])):
                       $user_name = $conditions['user_name'];
                   endif;
               ?>
@@ -54,7 +48,7 @@
               <?php
                   foreach ($prefectures as $prefecture_id => $prefecture_name):
                       $selected = '';
-                      if (isset($conditions['prefecture_id'])
+                      if (! empty($conditions['prefecture_id'])
                           && $prefecture_id == $conditions['prefecture_id']
                       ):
                           $selected = 'selected';
@@ -70,9 +64,7 @@
             <div class="col-md-2">
               <?php
                   $email = '';
-                  if (isset($conditions['email'])
-                      && '' !== $conditions['email']
-                  ):
+                  if (! empty($conditions['email'])):
                       $email = $conditions['email'];
                   endif;
               ?>
@@ -82,9 +74,7 @@
             <div class="col-md-2">
               <?php
                   $tel = '';
-                  if (isset($conditions['tel'])
-                      && '' !== $conditions['tel']
-                  ):
+                  if (! empty($conditions['tel'])):
                       $tel = $conditions['tel'];
                   endif;
               ?>
@@ -107,22 +97,22 @@
           <th>強制ログイン</th>
           <th>ユーザ種</th>
           <th>登録元</th>
-          <th>予約</th>
+          <th>状態</th>
           <th><a class="btn btn-primary" href="/admin/user/">新規登録</a></th>
         </tr>
       </thead>
       <tbody>
-      <?php
-          if (! $user_list):
-      ?>
+        <?php
+            if (! $user_list):
+        ?>
         <tr>
-          <td colspan="5">検索条件に該当するユーザ情報はありません</td>
+          <td colspan="12">該当するユーザ情報はありません</td>
         </tr>
-      <?php
-          endif;
-          foreach ($user_list as $user):
-              $user_id = $user['user_id'];
-      ?>
+        <?php
+            endif;
+            foreach ($user_list as $user):
+                $user_id = $user['user_id'];
+        ?>
         <tr>
           <td>
             <p><a href="/admin/user/?user_id=<?php echo $user_id;?>"><?php echo e($user['user_id']);?>
@@ -163,12 +153,12 @@
               endif;
           ?></td>
           <td><?php echo e(@$devices[$user['device']]);?></td>
-          <td><a href="/admin/entry/list?user_id=<?php echo $user_id;?>">予約</a></td>
           <td><?php echo $register_statuses[$user['register_status']];?></td>
+          <td><a class="btn btn-default" href="/admin/entry/list?user_id=<?php echo $user_id;?>">予約一覧</a></td>
         </tr>
-      <?php
-          endforeach;
-      ?>
+        <?php
+            endforeach;
+        ?>
       </tbody>
     </table>
   </div>
@@ -188,3 +178,12 @@
     ?>
   </div>
 </div>
+<script type="text/javascript">
+$(function() {
+  $(".pagination li", ".panel-footer").on("click", function(evt) {
+    evt.preventDefault();
+    var action = $("a", this).attr("href");
+    $("#searchForm").attr("action", action).submit();
+  });
+});
+</script>
