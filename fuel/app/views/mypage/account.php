@@ -1,6 +1,11 @@
 <?php $input  = $fieldset->input(); ?>
 <?php $errors = $fieldset->validation()->error_message(); ?>
 <?php $fields = $fieldset->field(); ?>
+<script>
+function popup() {
+    noty({text: '変更を保存しました。'});
+}
+</script>
 
 <!-- content -->
 <div id="contentWrap" class="container">
@@ -115,9 +120,8 @@
             </div>
 
             <div id="submitButton" class="form-group">
-              <button type="submit" class="btn btn-default">変更内容登録</button>
+              <button type="submit" onclick="popup();" class="btn btn-default">変更内容登録</button>
             </div>
-
           </form>
         </div>
       </div>

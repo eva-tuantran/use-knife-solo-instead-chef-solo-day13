@@ -199,7 +199,8 @@ class Controller_Mypage extends Controller_Base_Template
         $data['info_message'] = $this->getStatusMessage($status_code);
 
         $fieldset = $this->createFieldsetAccount();
-        Asset::js('http://ajaxzip3.googlecode.com/svn/trunk/ajaxzip3/ajaxzip3.js', array(), 'add_js');
+        Asset::js('jquery.noty.packaged.min.js', array(), 'add_js');
+        Asset::js('https://ajaxzip3.googlecode.com/svn/trunk/ajaxzip3/ajaxzip3-https.js', array(), 'add_js');
 
         $this->template->content = View::forge('mypage/account', $data);
         $this->template->content->set('fieldset', $fieldset, false);
