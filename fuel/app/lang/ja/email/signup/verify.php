@@ -3,7 +3,7 @@
 return array(
     'from'      => 'info@rakuichi-rakuza.jp',
     'from_name' => '楽市楽座 運営事務局',
-    'subject'   => '【自動返信】楽市楽座仮予約完了メール|楽市楽座運営事務局',
+    'subject'   => '【楽市楽座】楽市楽座仮予約完了のご連絡',
     'body'      => <<<'EOT'
 ##nick_name## 様
 

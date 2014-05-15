@@ -3,7 +3,7 @@
 return array(
     'from'      => 'info@rakuichi-rakuza.jp',
     'from_name' => '楽市楽座 運営事務局',
-    'subject'   => 'キャンセルに伴う空枠追加のご連絡',
+    'subject'   => '【楽市楽座】##fleamarket.name##キャンセルに伴う空枠追加のご連絡',
     'bcc'       => array('rakuichi-test@aucfan.com'),
     'body'      => <<<'EOT'
 ##user.last_name####user.first_name## 様
@@ -32,8 +32,8 @@ return array(
 　・予約ステータス： キャンセル待ち
 　・イベント： ##fleamarket.name##
 　・出店形式： ##fleamarket_entry_style.entry_style_name##
- 
-●出店予約の方法について。------------------------- 
+
+●出店予約の方法について。-------------------------
 
 ・以下のURLから出店予約が可能です。
 
