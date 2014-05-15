@@ -28,11 +28,17 @@ $(function() {
 });
 
 function add_form(){
-  $("#addLinkFromList").before('<input type="text" name="link_from_list[]" style="margin-right: 4px;"><input type="button" value="削除" onclick="remove_form()"><br>');
+  $("#addLinkFromList").before('\
+    <div>\
+      <input type="text" name="link_from_list[]" class="form-control">\
+      <input type="button" value="削除" class="form-control" onclick="remove_form(this)"><br>\
+    </div>\
+    ');
 }
 
-function remove_form(){
-  // $("#link_form_form").remove(elementNode.previousSibling);
+function remove_form(o){
+var DIV = o.parentNode;
+DIV.remove();
 }
 </script>
 <?php
@@ -263,15 +269,17 @@ function remove_form(){
               <th>反響項目リスト</th>
               <td>
                 <?php foreach(Config::get('master.lead_to_list') as $key => $link_from): ?>
-                  <input type="text" name="link_from_list[]" value="<?php echo $link_from;?>">
-                  <input type="button" value="削除" onclick="remove_form()"><br>
+                  <div>
+                    <input type="text" class="form-control" name="link_from_list[]" value="<?php echo $link_from;?>">
+                    <input type="button" class="form-control" value="削除" onclick="remove_form(this)"><br>
+                  </div>
                 <?php endforeach; ?>
                 <?php
                     if (isset($errors['link_from_list'])):
                        echo '<div class="error-message">' . $errors['link_from_list'] . '</div>';
                     endif;
                 ?>
-                <button type="button" id="addLinkFromList" onclick="add_form()">さらに追加</button>
+                <button type="button" class="form-control" id="addLinkFromList" onclick="add_form()">さらに追加</button>
               </td>
             </tr>
             <tr>
