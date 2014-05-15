@@ -1,11 +1,11 @@
 <?php
+
 /**
- *
+ * 予約履歴管理
  *
  * @extends  Controller_Base_Template
  * @author Hiroyuki Kobayashi
  */
-
 class Controller_Admin_Entry extends Controller_Admin_Base_Template
 {
     /**
@@ -28,7 +28,6 @@ class Controller_Admin_Entry extends Controller_Admin_Base_Template
     {
         $conditions = $this->getCondition();
         $condition_list = \Model_Entry::createAdminSearchCondition($conditions);
-
         $total_count = \Model_Entry::getCountByAdminSearch($condition_list);
 
         // ページネーション設定
@@ -54,8 +53,7 @@ class Controller_Admin_Entry extends Controller_Admin_Base_Template
         }
         $view_model->set('entry_list', $entry_list, false);
         $view_model->set('pagination', $pagination, false);
-        $view_model->set('item_categories', \Model_Entry::getItemCategoryDefine());
-        $view_model->set('entry_statuses', \Model_Entry::getEntryStatuses());
+        $view_model->set('conditions', $conditions, false);
         $view_model->set('total_count', $total_count);
         $this->template->content = $view_model;
     }
@@ -118,21 +116,6 @@ class Controller_Admin_Entry extends Controller_Admin_Base_Template
      * @author kobayashi
      * @author ida
      */
-    public function action_index()
-    {
-        $view = View::forge('admin/entry/index');
-        $this->template->content = $view;
-    }
-
-    /**
-     * CSV出力
-     *
-     * @access public
-     * @param
-     * @return void
-     * @author kobayashi
-     * @author ida
-     */
     protected function response_csv($data, $fleamarket_name)
     {
         $csv = mb_convert_encoding(
@@ -160,7 +143,7 @@ class Controller_Admin_Entry extends Controller_Admin_Base_Template
      */
     private function getCondition()
     {
-        $conditions = Input::all();
+        $conditions = \Input::post('c', array());
 
         $result = array();
         foreach ($conditions as $field => $value) {
@@ -169,8 +152,19 @@ class Controller_Admin_Entry extends Controller_Admin_Base_Template
             }
         }
 
+        $fleamarket_id = \Input::param('fleamarket_id');
+        if (! empty($fleamarket_id)) {
+            $result['fleamarket_id'] = $fleamarket_id;
+        }
+
+        $user_id = \Input::param('user_id');
+        if (! empty($user_id)) {
+            $result['user_id'] = $user_id;
+        }
+
         return $result;
     }
+
     /**
      * ページネーション設定を取得する
      *

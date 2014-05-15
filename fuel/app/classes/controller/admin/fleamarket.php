@@ -1,11 +1,11 @@
 <?php
+
 /**
- *
+ * フリマ管理
  *
  * @extends  Controller_Base_Template
  * @author Hiroyuki Kobayashi
  */
-
 class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
 {
     /**
@@ -303,7 +303,7 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
      * @return void
      * @author kobayashi
      */
-    public function removeFleamarketImages()
+    private function removeFleamarketImages()
     {
         $fieldsets = $this->getFieldsets();
         $fieldset  = $fieldsets['fleamarket'];
@@ -496,7 +496,7 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
      * @return void
      * @author kobayashi
      */
-    public function validateFleamarket($fieldsets)
+    private function validateFleamarket($fieldsets)
     {
         return $fieldsets['fleamarket']->validation()->run();
     }
@@ -510,7 +510,7 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
      * @author kobayashi
      * @author ida
      */
-    public function validateFleamarketAbout($fieldsets)
+    private function validateFleamarketAbout($fieldsets)
     {
         $is_valid = false;
         foreach ($fieldsets['fleamarket_abouts'] as $id => $fieldset) {
@@ -535,7 +535,7 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
      * @author kobayashi
      * @author ida
      */
-    public function validateFleamarketEntryStyle($fieldsets)
+    private function validateFleamarketEntryStyle($fieldsets)
     {
         $is_valid = false;
         $entry_styles = \Config::get('master.entry_styles');

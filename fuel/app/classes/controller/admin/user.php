@@ -1,11 +1,11 @@
 <?php
+
 /**
- *
+ * ユーザ管理
  *
  * @extends  Controller_Base_Template
  * @author Hiroyuki Kobayashi
  */
-
 class Controller_Admin_User extends Controller_Admin_Base_Template
 {
     protected $_secure_actions = array(
@@ -20,6 +20,7 @@ class Controller_Admin_User extends Controller_Admin_Base_Template
     private $result_per_page = 50;
 
     /**
+     * ユーザ情報
      *
      * @var object
      */
@@ -100,7 +101,7 @@ class Controller_Admin_User extends Controller_Admin_Base_Template
             $this->user = \Model_User::find(\Input::post('user_id'));
         }
 
-       $fieldset = $this->getFieldset();
+        $fieldset = $this->getFieldset();
         \Session::set_flash('admin.user.fieldset', $fieldset);
 
         if (! $fieldset->validation()->run()) {
@@ -187,11 +188,8 @@ class Controller_Admin_User extends Controller_Admin_Base_Template
     private function setAssets()
     {
         Asset::css('jquery-ui.min.css', array(), 'add_css');
-        Asset::css('jquery-ui-timepicker.css', array(), 'add_css');
         Asset::js('jquery-ui.min.js', array(), 'add_js');
         Asset::js('jquery.ui.datepicker-ja.js', array(), 'add_js');
-        Asset::js('jquery-ui-timepicker.js', array(), 'add_js');
-        Asset::js('jquery-ui-timepicker-ja.js', array(), 'add_js');
     }
 
     /**
@@ -262,9 +260,14 @@ class Controller_Admin_User extends Controller_Admin_Base_Template
             $user = \Model_User::forge();
         }
 
+        $administrator_id = $this->administrator->administrator_id;
         if (! empty($user_id)) {
+            $data['updated_user'] = $administrator_id;
             unset($data['password']);
+            unset($data['created_at']);
+            unset($data['created_user']);
         } else {
+            $data['created_user'] = $administrator_id;
             $data['password'] = $user->setPassword($data['password']);
         }
         unset($data['mm_flag']);
