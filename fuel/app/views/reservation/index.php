@@ -106,7 +106,7 @@
       <label class="col-sm-2 control-label">このフリマをどこで知りましたか?</label>
       <div class="col-sm-10">
         <select name="link_from" class="form-control">
-        <?php foreach(Config::get('master.lead_to_list') as $key => $link_from): ?>
+        <?php foreach(\Model_Entry::getLinkFromList() as $key => $link_from): ?>
           <option value="<?php echo e($link_from); ?>"
           <?php if($input['link_from'] == $link_from){ echo 'selected'; } ?>>
           <?php echo e($link_from); ?></option>

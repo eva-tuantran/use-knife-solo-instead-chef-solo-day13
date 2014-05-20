@@ -268,7 +268,7 @@ DIV.remove();
             <tr>
               <th>反響項目リスト</th>
               <td>
-                <?php foreach(Config::get('master.lead_to_list') as $key => $link_from): ?>
+                <?php foreach(\Model_Entry::getLinkFromList() as $key => $link_from): ?>
                   <div>
                     <input type="text" class="form-control" name="link_from_list[]" value="<?php echo $link_from;?>">
                     <input type="button" class="form-control" value="削除" onclick="remove_form(this)"><br>
