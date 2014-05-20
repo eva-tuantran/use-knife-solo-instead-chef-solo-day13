@@ -1,11 +1,11 @@
 <?php
 
 /**
- * View_Search_Detail ViewModel
+ * View_Location_Detail ViewModel
  *
  * @author ida
  */
-class View_Search_Detail extends ViewModel
+class View_Location_Detail extends ViewModel
 {
     /**
      * view method

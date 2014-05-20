@@ -8,6 +8,10 @@
  */
 class Controller_Admin_Index extends Controller_Admin_Base_Template
 {
+    protected $_secure_actions = array(
+        'index', 'login'
+    );
+
     /**
      * 初期画面
      *

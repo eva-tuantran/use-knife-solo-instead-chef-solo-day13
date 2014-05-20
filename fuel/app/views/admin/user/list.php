@@ -154,7 +154,10 @@
           ?></td>
           <td><?php echo e(@$devices[$user['device']]);?></td>
           <td><?php echo $register_statuses[$user['register_status']];?></td>
-          <td><a class="btn btn-default" href="/admin/entry/list?user_id=<?php echo $user_id;?>">予約一覧</a></td>
+          <td>
+            <a class="btn btn-default" href="/admin/entry/list?user_id=<?php echo $user_id;?>">予約一覧</a>
+            <a class="btn btn-danger doDelete" href="/admin/user/delete?user_id=<?php echo $user_id;?>">削除</a>
+          </td>
         </tr>
         <?php
             endforeach;
@@ -180,10 +183,65 @@
 </div>
 <script type="text/javascript">
 $(function() {
+  var $dialog = $("#dialog");
+
   $(".pagination li", ".panel-footer").on("click", function(evt) {
     evt.preventDefault();
     var action = $("a", this).attr("href");
     $("#searchForm").attr("action", action).submit();
   });
+
+  $(".doDelete").on("click", function(evt) {
+    evt.preventDefault();
+    var href = $(this).attr("href");
+    $("#message", $dialog).text("削除してもよろしいですか？");
+
+    $dialog.dialog({
+      modal: true,
+      buttons: {
+        "キャンセル": function() {
+          $(this).dialog( "close" );
+        },
+        "実行": function() {
+          doDelete(href);
+          $(this).dialog( "close" );
+        }
+      }
+    });
+  });
+
+  var doDelete = function(url) {
+    var url = location.protocol + "//" + location.host + url;
+    $.ajax({
+      type: "post",
+      url: url,
+      dataType: "json"
+    }).done(function(json, textStatus, jqXHR) {
+      if (json.status == 200) {
+        message = '削除しました';
+      } else if (json.status == 400) {
+        message = '削除に失敗しました';
+      }
+      confirmDialog(message, json.status);
+    }).fail(function(jqXHR, textStatus, errorThrown) {
+      confirmDialog('削除に失敗しました');
+    });
+  };
+
+  var confirmDialog = function(message, status) {
+    $("#message", $dialog).text(message);
+    $dialog.dialog({
+      modal: true,
+      buttons: {
+        Ok: function() {
+          $(this).dialog( "close" );
+          if (status == 200) {
+            var action = location.href;
+            $("#searchForm").attr("action", action).submit();
+          }
+        }
+      }
+    });
+  };
 });
 </script>

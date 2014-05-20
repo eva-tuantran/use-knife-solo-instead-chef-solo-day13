@@ -32,9 +32,9 @@ $entry_statuses = \Model_Entry::getEntryStatuses();
 
 $fleamarkets = \Model_Fleamarket::find('all', array(
     'select' => array('fleamarket_id'),
-    'where' => array(
-        array('event_status', Model_Fleamarket::EVENT_STATUS_RESERVATION_RECEIPT)
-    )
+//    'where' => array(
+//        array('event_status', Model_Fleamarket::EVENT_STATUS_RESERVATION_RECEIPT)
+//    )
 ));
 
 $users = \Model_User::find('all', array(
@@ -46,17 +46,24 @@ for ($i = 1; $i < 1000; $i++) {
     $item_genre = array_rand($item_genres);
     $link_from = array_rand($link_from_list);
     $entry_status = array_rand($entry_statuses);
-    $fleamarket_key = array_rand($fleamarkets);
-    $fleamarket = $fleamarkets[$fleamarket_key];
 
-    $fleamarket_entry_styles = \Model_Fleamarket_Entry_Style::find('all', array(
-        'select' => array('fleamarket_entry_style_id'),
-        'where' => array(
-            array('fleamarket_id', $fleamarket->fleamarket_id),
-        ),
-    ));
-    $fleamarket_entry_style_key = array_rand($fleamarket_entry_styles);
-    $fleamarket_entry_style = $fleamarket_entry_styles[$fleamarket_entry_style_key];
+    while (true) {
+        $fleamarket_key = array_rand($fleamarkets);
+        $fleamarket = $fleamarkets[$fleamarket_key];
+
+        $fleamarket_entry_styles = \Model_Fleamarket_Entry_Style::find('all', array(
+            'select' => array('fleamarket_entry_style_id'),
+            'where' => array(
+                array('fleamarket_id', $fleamarket->fleamarket_id),
+            ),
+        ));
+
+        if ($fleamarket_entry_styles) {
+            $fleamarket_entry_style_key = array_rand($fleamarket_entry_styles);
+            $fleamarket_entry_style = $fleamarket_entry_styles[$fleamarket_entry_style_key];
+            break;
+        }
+    }
 
     $user_key = array_rand($users);
     $user = $users[$user_key];

@@ -91,10 +91,9 @@
       </div>
     </div>
     <!-- /search -->
-
     <div id="resultTitle">
     <?php
-        switch (Input::get('type')) {
+        switch (Input::get('type')):
             case 'finished':
                 echo "これまで参加したフリマ一覧";
                 break;
@@ -113,55 +112,82 @@
             default:
                 echo "フリマ一覧";
                 break;
-        }
+        endswitch;
     ?>
     </div>
-
-    <?php if(empty($fleamarkets_view)): ?>
-        <div class="box"><p>一覧はありません</p></div>
+    <?php if (empty($fleamarkets_view)):?>
+    <div class="box"><p>一覧はありません</p></div>
     <?php else: ?>
-        <?php foreach ($fleamarkets_view as $fleamarket_view) { echo $fleamarket_view; }; ?>
-
-        <!-- pagination -->
-        <?php if ('' != ($pagnation =  $pagination->render())): ?>
-        <?php echo $pagnation; ?>
-        <?php else: ?>
+        <?php
+            foreach ($fleamarkets_view as $fleamarket_view):
+                echo $fleamarket_view;
+            endforeach;
+        ?>
+        <?php
+            if ('' != ($pagnation =  $pagination->render())):
+                echo $pagnation;
+            elseif ($fleamarkets_view):
+        ?>
         <ul class="pagination">
             <li class="disabled"><a href="javascript:void(0);" rel="prev">«</a></li>
             <li class="active"><a href="javascript:void(0);">1<span class="sr-only"></span></a></li>
             <li class="disabled"><a href="javascript:void(0);" rel="next">»</a></li>
         </ul>
-        <?php endif; ?>
-        <!-- /pagination -->
+        <?php
+            endif;
+        ?>
     <?php endif; ?>
-
   </div>
   <!-- /searchResult -->
 </div>
+<div id="information-dialog" class="afDialog">
+  <p id="message" class="message"></p>
 </div>
-
-
-
-
-
-<script>
-
-$('.fleamarket_cancel').click(function() {
-  var href = $(this).attr('href');
-  $('#dialog_confirm').dialog({
-    buttons: {
-      "はい": function(event){
-         location.href = href;
-       },
-      "いいえ": function(event){
-        $(this).dialog("close");
-       }
-    }
-  });
-  return false;
-});
-
+<div id="dialog_confirm" class="afDialog">
+  <p id="message" class="message">出店予約をキャンセルしてもよろしいですか？</p>
+</div>
+<script type="text/javascript">
 $(function() {
+  $('.fleamarket_cancel').click(function() {
+    var href = $(this).attr('href');
+    $('#dialog_confirm').dialog({
+      buttons: {
+        "はい": function(event){
+          location.href = href;
+        },
+        "いいえ": function(event){
+          $(this).dialog("close");
+        }
+      }
+    });
+
+    return false;
+  });
+
+  $(".mylist_remove").click(function(evt) {
+    evt.preventDefault();
+    var id = $(this).attr('id');
+    id = id.match(/^fleamarket_id_(\d+)/)[1];
+
+    $.ajax({
+      type: "post",
+      url: '/favorite/delete',
+      dataType: "json",
+      data: {fleamarket_id: id}
+    }).done(function(json, textStatus, jqXHR) {
+      if (json == 'nologin' || json == 'nodata') {
+        openDialog("マイリストを解除するためにはログインが必要です");
+        $('#dialog_need_login').dialog();
+      }else if(json){
+        openDialog("マイリストを解除しました");
+      }else{
+        openDialog("マイリストを解除できませんでした");
+      }
+    }).fail(function(jqXHR, textStatus, errorThrown) {
+      openDialog("マイリストを解除できませんでした");
+    });
+  });
+
   Calendar.init();
   Search.init();
 });
@@ -187,8 +213,6 @@ var Calendar = {
       url: url,
       dataType: "html"
     }).done(function(html, textStatus, jqXHR) {
-      // $("#calendar").empty();
-      // $("#calendar").html(html);
       $("#calendar-search").empty();
       $("#calendar-search").html(html);
     }).fail(function(jqXHR, textStatus, errorThrown) {
@@ -224,41 +248,21 @@ var Search = {
   }
 };
 
-$(function () {
-  $(".mylist_remove").click(function(){
-      var id = $(this).attr('id');
-      id = id.match(/^fleamarket_id_(\d+)/)[1];
-      $.ajax({
-          type: "post",
-          url: '/favorite/delete',
-          dataType: "json",
-          data: {fleamarket_id: id}
-      }).done(function(json, textStatus, jqXHR) {
-          if(json == 'nologin' || json == 'nodata'){
-              $('#dialog_need_login').dialog();
-          }else if(json){
-              $('#dialog_success').dialog({
-                  close: function(event){ location.reload(); }
-              });
-          }else{
-              $('#dialog_fail').dialog();
-          }
-      }).fail(function(jqXHR, textStatus, errorThrown) {
-          $('#dialog_fail').dialog();
-      });
+var openDialog = function(message, reload) {
+  if (typeof reload == 'undefined') {
+    reload = false;
+  }
+  $("#information-dialog #message").text(message);
+  $("#information-dialog").dialog({
+    modal: true,
+    buttons: {
+      Ok: function() {
+        if (reload) {
+          location.reload();
+        }
+        $(this).dialog( "close" );
+      }
+    }
   });
-});
+};
 </script>
-
-<div id="dialog_success" style="display: none;">
-マイリストを解除しました
-</div>
-<div id="dialog_fail" style="display: none;">
-マイリストを解除できませんでした
-</div>
-<div id="dialog_need_login" style="display: none;">
-マイリストを解除するためにはログインが必要です
-</div>
-<div id="dialog_confirm" style="display: none;">
-フリーマーケットをキャンセルします。よろしいですか？
-</div>

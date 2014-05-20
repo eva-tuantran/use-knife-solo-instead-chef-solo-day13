@@ -26,6 +26,9 @@ class Controller_Admin_Entry extends Controller_Admin_Base_Template
      */
     public function action_list()
     {
+        Asset::css('jquery-ui.min.css', array(), 'add_css');
+        Asset::js('jquery-ui.min.js', array(), 'add_js');
+
         $conditions = $this->getCondition();
         $condition_list = \Model_Entry::createAdminSearchCondition($conditions);
         $total_count = \Model_Entry::getCountByAdminSearch($condition_list);
@@ -59,6 +62,43 @@ class Controller_Admin_Entry extends Controller_Admin_Base_Template
     }
 
     /**
+     * 指定した出店予約をキャンセルする
+     *
+     * @access public
+     * @param
+     * @return void
+     * @author kobayashi
+     * @author ida
+     */
+    public function action_cancel()
+    {
+        $this->template = '';
+
+        $user_id = \Input::get('user_id');
+        $fleamarket_id = \Input::get('fleamarket_id');
+        $sendmail = \Input::get('sendmail');
+        $status = 400;
+
+        if (! empty($user_id) && ! empty($fleamarket_id)) {
+            try {
+                $user = \Model_User::find($user_id);
+                $user->cancelEntry($fleamarket_id);
+                if ($sendmail == 1) {
+                    $email_params = array(
+                        'nick_name' => $user->nick_name,
+                    );
+                    $user->sendmail('common/user_cancel_fleamarket', $email_params);
+                }
+                $status = 200;
+            } catch (\Exception $e) {
+                $status = 400;
+            }
+        }
+
+        return $this->response_json(array('status' => $status));
+    }
+
+    /**
      * 予約履歴CSV出力
      *
      * @access public
@@ -74,9 +114,10 @@ class Controller_Admin_Entry extends Controller_Admin_Base_Template
 
         $data = array($csv['header']);
 
-        $prefectures = Config::get('master.prefectures');
-        $entry_styles = Config::get('master.entry_styles');
+        $prefectures = \Config::get('master.prefectures');
+        $entry_styles = \Config::get('master.entry_styles');
         $entry_statuses = \Model_Entry::getEntryStatuses();
+        $gender_list = \Model_User::getGenderList();
 
         foreach ($fleamarket->entries as $entry) {
             if ($entry->user && $entry->fleamarket_entry_style) {
@@ -97,8 +138,9 @@ class Controller_Admin_Entry extends Controller_Admin_Base_Template
                     $entry->user->zip,
                     $prefecture_name,
                     $entry->user->address,
+                    $entry->user->tel,
+                    @$gender_list[$entry->user->gender],
                     $entry->user->email,
-                    $entry->user->mobile_email,
                     $entry_statuses[$entry->entry_status]
                 );
             }

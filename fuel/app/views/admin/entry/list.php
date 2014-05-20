@@ -77,7 +77,8 @@
         <tr>
           <th>予約番号</th>
           <th>受付日</th>
-          <th>名前</th>
+          <th>フリマ名</th>
+          <th>予約者</th>
           <th>状態</th>
           <th>出店形態</th>
           <th>ブース数</th>
@@ -85,6 +86,7 @@
           <th>ジャンル</th>
           <th>登録元</th>
           <th>反響</th>
+          <th>&nbsp;</th>
         </tr>
       </thead>
       <tbody>
@@ -92,7 +94,7 @@
             if (! $entry_list):
         ?>
         <tr>
-          <td colspan="10">該当する予約履歴情報はありません</td>
+          <td colspan="11">該当する予約履歴情報はありません</td>
         </tr>
         <?php
           endif;
@@ -118,6 +120,7 @@
               $created_at = strtotime($entry['created_at']);
               echo e(date('Y/m/d H:i', $created_at));
           ?></td>
+          <td><?php echo e($entry['name']);?></td>
           <td>
             <a href="/admin/user/?user_id=<?php echo $entry['user_id'];?>">
               <?php echo e($entry['last_name'] . '&nbsp;' . $entry['first_name']);?>
@@ -130,6 +133,15 @@
           <td><?php echo e($entry['item_genres']);?></td>
           <td><?php //echo e($entry['register_type']);?></td>
           <td><?php echo e($entry['link_from']);?></td>
+          <td>
+            <?php
+                if ($entry['entry_status'] == \Model_Entry::ENTRY_STATUS_RESERVED):
+            ?>
+            <a class="btn btn-warning doCancel" href="/admin/entry/cancel?user_id=<?php echo $entry['user_id'];?>&fleamarket_id=<?php echo $entry['fleamarket_id'];?>">予約解除</a>
+            <?php
+                endif;
+            ?>
+          </td>
         </tr>
         <?php
             endforeach;
@@ -155,10 +167,73 @@
 </div>
 <script type="text/javascript">
 $(function() {
+  var $dialog = $("#dialog");
+
   $(".pagination li", ".panel-footer").on("click", function(evt) {
     evt.preventDefault();
     var action = $("a", this).attr("href");
     $("#searchForm").attr("action", action).submit();
   });
+
+  $(".doCancel").on("click", function(evt) {
+    evt.preventDefault();
+    var href = $(this).attr("href");
+    $dialog_clone = $dialog.clone();
+    $("#message", $dialog_clone).text("予約解除してもよろしいですか？");
+    $dialog_clone.append(
+      '<label><input id="sendmail" type="checkbox" name="send_mail">解除メールも送信する</label>'
+    );
+
+    $dialog_clone.dialog({
+      modal: true,
+      buttons: {
+        "キャンセル": function() {
+          $(this).dialog( "close" );
+        },
+        "実行": function() {
+          doCancel(href, $("#sendmail").prop('checked'));
+          $(this).dialog( "close" );
+        }
+      }
+    });
+  });
+
+  var doCancel = function(url, sendmail) {
+    var url = location.protocol + "//" + location.host + url;
+    if (sendmail) {
+      url += '&sendmail=1'
+    }
+
+    $.ajax({
+      type: "post",
+      url: url,
+      dataType: "json"
+    }).done(function(json, textStatus, jqXHR) {
+      if (json.status == 200) {
+        message = '予約解除しました';
+      } else if (json.status == 400) {
+        message = '予約解除に失敗しました';
+      }
+      confirmDialog(message, json.status);
+    }).fail(function(jqXHR, textStatus, errorThrown) {
+      confirmDialog('予約解除に失敗しました');
+    });
+  };
+
+  var confirmDialog = function(message, status) {
+    $("#message", $dialog).text(message);
+    $dialog.dialog({
+      modal: true,
+      buttons: {
+        Ok: function() {
+          $(this).dialog( "close" );
+          if (status == 200) {
+            var action = location.href;
+            $("#searchForm").attr("action", action).submit();
+          }
+        }
+      }
+    });
+  };
 });
 </script>

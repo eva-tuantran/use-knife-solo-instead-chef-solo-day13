@@ -346,8 +346,8 @@ class Model_User extends Model_Base
     private static $register_statuses = array(
         self::REGISTER_STATUS_INACTIVATED => '仮登録',
         self::REGISTER_STATUS_ACTIVATED   => '本登録',
-        self::REGISTER_STATUS_STOPPED     => '退会',
-        self::REGISTER_STATUS_BANNED      => '強制退会',
+//        self::REGISTER_STATUS_STOPPED     => '退会',
+//        self::REGISTER_STATUS_BANNED      => '強制退会',
     );
 
     /**
@@ -784,7 +784,7 @@ QUERY;
      */
     public function cancelEntry($fleamarket_id)
     {
-        return \Model_Entry::cancelUserEntry($this->user_id, $fleamarket_id);
+        return \Model_Entry::cancel($this->user_id, $fleamarket_id);
     }
 
     /**
