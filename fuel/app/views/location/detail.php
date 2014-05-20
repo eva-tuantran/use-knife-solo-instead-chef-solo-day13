@@ -125,15 +125,7 @@ Map.prototype = {
           <strong><img src="/assets/img/resultPush.png" alt="楽市楽座主催" width="78" height="14"></strong>
           <?php endif;?><?php echo e($fleamarket['name']);?>
         </h2>
-        <p class="date"><?php
-            echo e(date('Y年n月j日', strtotime($fleamarket['event_date'])));
-            echo '(' . $week_list[date('w', strtotime($fleamarket['event_date']))] . ')';
-            echo '&nbsp;';
-            echo e(date('G:i', strtotime($fleamarket['event_time_start'])));
-            if ($fleamarket['event_time_end']):
-                echo '～' . e(date('G:i', strtotime($fleamarket['event_time_end'])));
-            endif;
-        ?></p>
+        <p class="date">&nbsp;</p>
         <ul class="mylist">
           <li class="button addMylist"><a href="#" id="fleamarket_id_<?php echo $fleamarket_id;?>"><i></i>マイリストに追加</a></li>
           <li class="button gotoMylist"><a href="/mypage/list?type=mylist"><i></i>マイリストを見る</a></li>
@@ -234,12 +226,17 @@ Map.prototype = {
 ?>
         <dt>開催日程</dt>
         <dd><?php
-            if ($fleamarket['event_date']):
-                echo e(date('Y年n月j日', strtotime($fleamarket['event_date'])));
-                echo '(' . $week_list[date('w', strtotime($fleamarket['event_date']))] . ')';
-            else:
-                echo '-';
-            endif;
+            foreach ($fleamarket_date_list as $fleamarket_date):
+                if ($fleamarket_date['event_date']):
+            ?>
+            <p>
+                <a href="/detail/<?php echo $fleamarket_date['fleamarket_id'];?>">
+                <?php echo e(date('Y年n月j日', strtotime($fleamarket_date['event_date']))) . '(' . $week_list[date('w', strtotime($fleamarket_date['event_date']))] . ')';?>
+                </a>
+            </p>
+            <?php
+                endif;
+            endforeach;
         ?></dd>
         <dt>開催時間</dt>
         <dd><?php
@@ -347,9 +344,6 @@ Map.prototype = {
   </div>
 </div>
 <!-- /table -->
-<div id="information-dialog" class="afDialog">
-  <p id="message" class="message"></p>
-</div>
 <script type="text/javascript">
 $(function() {
   $(".addMylist a").click(function(evt){
@@ -390,3 +384,6 @@ $(function() {
   };
 });
 </script>
+<div id="information-dialog" style="text-align: left; padding: 20px; display: none;">
+  <p id="message"></p>
+</div>

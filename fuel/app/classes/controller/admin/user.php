@@ -9,7 +9,7 @@
 class Controller_Admin_User extends Controller_Admin_Base_Template
 {
     protected $_secure_actions = array(
-        'list', 'index', 'confirm', 'thanks',
+        'list', 'index', 'confirm', 'thanks', 'delete'
     );
 
     /**
@@ -42,6 +42,9 @@ class Controller_Admin_User extends Controller_Admin_Base_Template
      */
     public function action_list()
     {
+        Asset::css('jquery-ui.min.css', array(), 'add_css');
+        Asset::js('jquery-ui.min.js', array(), 'add_js');
+
         $conditions = $this->getCondition();
         $condition_list = \Model_User::createAdminSearchCondition($conditions);
         $total_count = \Model_User::getCountByAdminSearch($condition_list);
@@ -153,6 +156,31 @@ class Controller_Admin_User extends Controller_Admin_Base_Template
         \Auth::force_login(\Input::param('user_id'));
         \Session::set('admin.user.nomail', (bool) Input::param('nomail'));
         \Response::redirect('/');
+    }
+
+    /**
+     * 指定したユーザを削除する
+     *
+     * @access public
+     * @param
+     * @return void
+     * @author kobayashi
+     */
+    public function action_delete()
+    {
+        $this->template = '';
+
+        $user_id = \Input::get('user_id');
+        try {
+            $user = \Model_User::find($user_id);
+            $user->deleted_at = \DB::expr('CURRENT_DATE()');
+            $user->save();
+            $status = 200;
+        } catch (\Exception $e) {
+            $status = 400;
+        }
+
+        return $this->response_json(array('status' => $status));
     }
 
     /**

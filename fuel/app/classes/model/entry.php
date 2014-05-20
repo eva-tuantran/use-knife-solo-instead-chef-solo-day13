@@ -463,6 +463,7 @@ SELECT
     f.name,
     f.promoter_name,
     e.fleamarket_entry_style_id,
+    e.reservation_number,
     f.event_date,
     f.event_time_start,
     f.event_time_end,
@@ -810,9 +811,8 @@ QUERY;
      * @return bool
      * @author shimma
      */
-    public static function cancelUserEntry($user_id, $fleamarket_id)
+    public static function cancel($user_id, $fleamarket_id)
     {
-
         try {
             $entry = self::find('last', array(
                 'where' => array(
@@ -822,8 +822,8 @@ QUERY;
             ));
             $entry->entry_status = self::ENTRY_STATUS_CANCELED;
             $entry->save();
-        } catch (Exception $e) {
-            return false;
+        } catch (\Exception $e) {
+            throw $e;
         }
 
         return true;
@@ -917,10 +917,12 @@ QUERY;
 
         $sql = <<<"SQL"
 SELECT
+    e.entry_id,
     e.user_id,
     u.last_name,
     u.first_name,
     e.fleamarket_id,
+    f.name,
     e.fleamarket_entry_style_id,
     e.reservation_number,
     e.item_category,
@@ -934,6 +936,8 @@ FROM
     entries AS e
 INNER JOIN
     users AS u ON e.user_id = u.user_id
+INNER JOIN
+    fleamarkets AS f ON e.fleamarket_id = f.fleamarket_id
 INNER JOIN
     fleamarket_entry_styles AS fes ON e.fleamarket_entry_style_id = fes.fleamarket_entry_style_id
 WHERE
@@ -979,6 +983,8 @@ FROM
     entries AS e
 INNER JOIN
     users AS u ON e.user_id = u.user_id
+INNER JOIN
+    fleamarkets AS f ON e.fleamarket_id = f.fleamarket_id
 INNER JOIN
     fleamarket_entry_styles AS fes ON e.fleamarket_entry_style_id = fes.fleamarket_entry_style_id
 WHERE

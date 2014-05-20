@@ -57,6 +57,12 @@
     </a>
   </div>
   <div class="resultDetail">
+      <?php if ($type === 'reserved' && ! empty($fleamarket['reservation_number'])):?>
+      <dl class="col-md-12">
+        <dt>予約番号</dt>
+        <dd class="text-success"><?php echo e($fleamarket['reservation_number']);?></dd>
+      </dl>
+      <?php endif;?>
       <?php if ($is_official): ?>
       <dl class="col-md-6">
         <dt>出店ブース数</dt>

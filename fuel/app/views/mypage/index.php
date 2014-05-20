@@ -1,5 +1,4 @@
 <div id="contentMypage" class="row">
-
   <!-- mypageProfile -->
   <div id="calendar" class="col-sm-3">
     <div class="box clearfix" id="calendar-search">
@@ -12,14 +11,11 @@
         <li><a href="/mypage/password">パスワード変更</a></li>
       </ul>
     </div>
-
     <!-- ad -->
     <!-- <div class="ad clearfix"> <a href="#"><img src="http://dummyimage.com/220x150/ccc/fff.jpg" class="img-responsive"></a></div> -->
     <!-- /ad -->
   </div>
   <!-- /mypageProfile -->
-
-
   <!-- searchResult -->
   <div id="searchResult" class="col-sm-9">
     <!-- pills -->
@@ -40,7 +36,6 @@
                 <input type="text" class="form-control" id="keywordInput" placeholder="キーワードを入力" name="conditions[keyword]">
               </div>
               <div id="searchCheckbox">
-
                 <label for="form_shop_fee">
                   <input id="form_shop_fee" type="checkbox" name="conditions[shop_fee]" value="<?php echo \Model_Fleamarket::SHOP_FEE_FLAG_FREE;?>">出店無料
                 </label>
@@ -59,7 +54,6 @@
                 <label for="form_free_parking">
                   <input id="form_free_parking" type="checkbox" name="conditions[free_parking]" value="<?php echo \Model_Fleamarket::FREE_PARKING_FLAG_EXIST;?>">無料駐車場あり
                 </label>
-
               </div>
             </div>
             <div id="searchSelect" class="col-md-3">
@@ -143,7 +137,6 @@
       </div>
     </div>
     <!-- /tabGroup -->
-
     <!-- nav-tabs -->
     <ul class="nav nav-tabs">
       <li class="active"><a href="#reservation" data-toggle="tab">出店予約中のフリマ</a></li>
@@ -188,48 +181,70 @@
               <li><a href="/mypage/list?type=mylist">続きを見る</a></li>
             </ul>
           </div>
+        </div>
       </div>
-    </div>
-    <div id="contribution" class="box clearfix">
-      <h3>開催投稿したフリマ</h3>
+      <div id="contribution" class="box clearfix">
+        <h3>開催投稿したフリマ</h3>
         <?php if (empty($fleamarkets_view['myfleamarket'])): ?>
-            <p>開催投稿したフリマはありません</p>
+        <p>開催投稿したフリマはありません</p>
         <?php else: ?>
-            <?php foreach ($fleamarkets_view['myfleamarket'] as $fleamarket_view) { echo $fleamarket_view; }; ?>
+          <?php foreach ($fleamarkets_view['myfleamarket'] as $fleamarket_view) { echo $fleamarket_view; }; ?>
         <?php endif; ?>
-      <ul class="more">
-        <li><a href="/mypage/list?type=myfleamarket">続きを見る</a></li>
-      </ul>
+        <ul class="more">
+          <li><a href="/mypage/list?type=myfleamarket">続きを見る</a></li>
+        </ul>
+      </div>
+      <!-- /contribution -->
     </div>
-
-    <!-- /contribution -->
+    <!-- /searchResult -->
   </div>
-  <!-- /searchResult -->
 </div>
+<div id="information-dialog" class="afDialog">
+  <p id="message" class="message"></p>
 </div>
+<div id="dialog_confirm" class="afDialog">
+  <p id="message" class="message">出店予約をキャンセルしてもよろしいですか？</p>
 </div>
-</div>
-
-
-<script>
-
-$('.fleamarket_cancel').click(function() {
-  var href = $(this).attr('href');
-  $('#dialog_confirm').dialog({
-    buttons: {
-      "はい": function(event){
-         location.href = href;
-       },
-      "いいえ": function(event){
-        $(this).dialog("close");
-       }
-    }
-  });
-  return false;
-});
-
-
+<script type="text/javascript">
 $(function() {
+  $('.fleamarket_cancel').click(function() {
+    var href = $(this).attr('href');
+    $('#dialog_confirm').dialog({
+      buttons: {
+        "はい": function(event){
+          location.href = href;
+        },
+        "いいえ": function(event){
+          $(this).dialog("close");
+        }
+      }
+    });
+    return false;
+  });
+
+  $(".mylist_remove").click(function(evt) {
+    evt.preventDefault();
+    var id = $(this).attr('id');
+    id = id.match(/^fleamarket_id_(\d+)/)[1];
+
+    $.ajax({
+      type: "post",
+      url: '/favorite/delete',
+      dataType: "json",
+      data: {fleamarket_id: id}
+    }).done(function(json, textStatus, jqXHR) {
+      if (json == 'nologin' || json == 'nodata') {
+        openDialog("マイリストを解除するためにはログインが必要です");
+      }else if(json){
+        openDialog("マイリストを解除しました", true);
+      }else{
+        openDialog("マイリストを解除できませんでした");
+      }
+    }).fail(function(jqXHR, textStatus, errorThrown) {
+      openDialog("マイリストを解除できませんでした");
+    });
+  });
+
   Calendar.init();
   Carousel.start();
   Search.init();
@@ -256,8 +271,6 @@ var Calendar = {
       url: url,
       dataType: "html"
     }).done(function(html, textStatus, jqXHR) {
-      // $("#calendar").empty();
-      // $("#calendar").html(html);
       $("#calendar-search").empty();
       $("#calendar-search").html(html);
     }).fail(function(jqXHR, textStatus, errorThrown) {
@@ -314,41 +327,21 @@ var Carousel = {
   }
 };
 
-$(function () {
-  $(".mylist_remove").click(function(){
-    var id = $(this).attr('id');
-    id = id.match(/^fleamarket_id_(\d+)/)[1];
-
-    $.ajax({
-      type: "post",
-      url: '/favorite/delete',
-      dataType: "json",
-      data: {fleamarket_id: id}
-    }).done(function(json, textStatus, jqXHR) {
-      if (json == 'nologin' || json == 'nodata') {
-        $('#dialog_need_login').dialog();
-      } else if (json) {
-        $('#dialog_success').dialog({close: function(event){ location.reload(); }});
-      } else {
-        $('#dialog_fail').dialog();
+var openDialog = function(message, reload) {
+  if (typeof reload == 'undefined') {
+    reload = false;
+  }
+  $("#information-dialog #message").text(message);
+  $("#information-dialog").dialog({
+    modal: true,
+    buttons: {
+      Ok: function() {
+        if (reload) {
+          location.reload();
+        }
+        $(this).dialog( "close" );
       }
-    }).fail(function(jqXHR, textStatus, errorThrown) {
-      $('#dialog_fail').dialog();
-    });
+    }
   });
-});
+};
 </script>
-
-<div id="dialog_success" style="display: none;">
-マイリストを解除しました
-</div>
-<div id="dialog_fail" style="display: none;">
-マイリストを解除できませんでした
-</div>
-<div id="dialog_need_login" style="display: none;">
-マイリストを解除するためにはログインが必要です
-</div>
-
-<div id="dialog_confirm" style="display: none;">
-フリーマーケットをキャンセルします。よろしいですか？
-</div>
