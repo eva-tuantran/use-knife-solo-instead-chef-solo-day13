@@ -17,7 +17,7 @@ class View_Admin_Entry_List extends \ViewModel
     public function view()
     {
         $this->entry_styles = \Config::get('master.entry_styles');
-        $this->item_categories = \Model_Entry::getItemCategoryDefine();
+        $this->item_categories = \Model_Entry::getItemCategories();
         $this->entry_statuses = \Model_Entry::getEntryStatuses();
     }
 }

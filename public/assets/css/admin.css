@@ -28,9 +28,25 @@
 .form-inline .form-control.small-width {
   width: 10em
 }
+
 .form-inline .form-control.medium-width {
   width: 15em
 }
+
 .form-inline .form-control.large-width {
   width: 20em
+}
+
+.afDialog {
+    display: none;
+}
+
+.afDialog .message {
+    text-align: left;
+    margin: 1em 0.5em;
+}
+
+.afDialog .contents {
+    text-align: left;
+    margin: 1em 0.5em;
 }

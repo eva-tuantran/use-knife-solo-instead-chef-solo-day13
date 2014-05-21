@@ -62,6 +62,44 @@ class Controller_Admin_Entry extends Controller_Admin_Base_Template
     }
 
     /**
+     * 特定の出店予約にメールを送信する
+     *
+     * @access public
+     * @param
+     * @return void
+     * @author ida
+     */
+    public function action_sendmail()
+    {
+        $this->template = '';
+
+        $entry_id = \Input::get('entry_id');
+        $mails = \Input::get('mails');
+
+        $status = 400;
+        if (! empty($entry_id) && ! empty($mails)) {
+            try {
+                $entry = \Model_Entry::find($entry_id);
+                $user = \Model_User::find($entry->user_id);
+                foreach ($mails as $mail) {
+                    switch ($mail) {
+                        case 'reservation':
+                            $entry->sendmail($user, 'reservation');
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                $status = 200;
+            } catch (\Exception $e) {
+                $status = 400;
+            }
+        }
+
+        return $this->response_json(array('status' => $status));
+    }
+
+    /**
      * 指定した出店予約をキャンセルする
      *
      * @access public
@@ -74,22 +112,24 @@ class Controller_Admin_Entry extends Controller_Admin_Base_Template
     {
         $this->template = '';
 
-        $user_id = \Input::get('user_id');
-        $fleamarket_id = \Input::get('fleamarket_id');
+        $entry_id = \Input::get('entry_id');
         $sendmail = \Input::get('sendmail');
-        $status = 400;
 
-        if (! empty($user_id) && ! empty($fleamarket_id)) {
+        $status = 400;
+        if (! empty($entry_id)) {
             try {
-                $user = \Model_User::find($user_id);
-                $user->cancelEntry($fleamarket_id);
+                $entry = \Model_Entry::find($entry_id);
+                $entry->cancel($entry_id, $this->administrator->administrator_id);
                 if ($sendmail == 1) {
-                    $email_params = array(
-                        'nick_name' => $user->nick_name,
+                    $email_template_params = array(
+                        'nick_name' => $entry->user->nick_name,
+                        'fleamarket.name' => $entry->fleamarket->name,
                     );
-                    $user->sendmail('common/user_cancel_fleamarket', $email_params);
+                    $entry->user->sendmail('common/user_cancel_fleamarket', $email_template_params);
                 }
                 $status = 200;
+            } catch (\SystemException $e) {
+                $status = 300;
             } catch (\Exception $e) {
                 $status = 400;
             }

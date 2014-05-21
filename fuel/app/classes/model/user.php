@@ -609,8 +609,8 @@ QUERY;
         try {
             $email = new \Model_Email();
             $email->sendMailByParams($template_name, $params, $this->email);
-        } catch (Exception $e) {
-            throw new SystemException(\Model_Error::ER00303);
+        } catch (\Exception $e) {
+            throw new \SystemException(\Model_Error::ER00303);
         }
     }
 
@@ -777,14 +777,14 @@ QUERY;
     /**
      * 対象のフリマIDのフリマ予約をキャンセルします
      *
-     * @param int $fleamarket_id
      * @access public
+     * @param int $fleamarket_id
      * @return void
      * @author shimma
      */
-    public function cancelEntry($fleamarket_id)
+    public function cancelEntry($entry_id, $updated_user = null)
     {
-        return \Model_Entry::cancel($this->user_id, $fleamarket_id);
+        return \Model_Entry::cancel($entry_id, $updated_user);
     }
 
     /**
