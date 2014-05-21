@@ -1085,6 +1085,12 @@ li.inquiry i {
 #radio input{
 	margin-right: 3px;
 }
+#radio .checkbox-inline {
+	padding-left: 0px !important;
+}
+.fleamarket_content {
+	margin-top: -12px !important;
+}
 /* --------------------contentMypage-------------------- */
 
 #contentMypage .more {

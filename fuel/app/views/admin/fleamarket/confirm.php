@@ -87,7 +87,9 @@
             </tr>
             <tr>
               <th>反響項目リスト</th>
-              <td><?php echo e($input['link_from_list']);?></td>
+              <td>
+              <?php echo implode("<br>", $input['link_from_list']); ?>
+              </td>
             </tr>
             <tr>
               <th>ピックアップ</th>

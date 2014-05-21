@@ -48,6 +48,24 @@ class Model_Entry extends Model_Base
     const ITEM_GENRES_COMMIC   = 15;
 
     /**
+     * 反響項目ジャンル
+     */
+    const LINK_FROM_MOBILE          = '楽市モバイルサイト';
+    const LINK_FROM_PC              = '楽市PCサイト';
+    const LINK_FROM_PAMPHLET        = '会場設置チラシ';
+    const LINK_FROM_FRIEND          = '友人・知人から聞いて';
+    const LINK_FROM_SEARCH          = 'GOOGLE・YAHOO検索';
+    const LINK_FROM_NEWSPAPER       = '地域情報誌';
+    const LINK_FROM_FLYER           = '新聞折り込み';
+    const LINK_FROM_GOTOFREEMARKET  = 'フリーマーケットへ行こう';
+    const LINK_FROM_FREEMARKETGUIDE = 'フリーマーケットガイド(モバフリ)';
+    const LINK_FROM_POSTER          = 'ポスター';
+    const LINK_FROM_MAILMAGAZINE    = '楽市メルマガ';
+    const LINK_FROM_BLOG            = '楽市ブログ';
+    const LINK_FROM_FACEBOOK        = 'Facebook';
+    const LINK_FROM_MIXI            = 'mixi';
+
+    /**
      * 出品物ジャンルの最大・最少ID
      */
     const ITEM_GENRES_MIN = 1;
@@ -81,6 +99,27 @@ class Model_Entry extends Model_Base
         self::ITEM_GENRES_GOODS    => 'タレントグッズ',
         self::ITEM_GENRES_COMMIC   => 'コミック、アニメグッズ',
     );
+
+    /**
+     * 反響項目リスト
+     */
+    private static $link_from_list = array(
+        self::LINK_FROM_MOBILE          => '楽市モバイルサイト',
+        self::LINK_FROM_PC              => '楽市PCサイト',
+        self::LINK_FROM_PAMPHLET        => '会場設置チラシ',
+        self::LINK_FROM_FRIEND          => '友人・知人から聞いて',
+        self::LINK_FROM_SEARCH          => 'GOOGLE・YAHOO検索',
+        self::LINK_FROM_NEWSPAPER       => '地域情報誌',
+        self::LINK_FROM_FLYER           => '新聞折り込み',
+        self::LINK_FROM_GOTOFREEMARKET  => 'フリーマーケットへ行こう',
+        self::LINK_FROM_FREEMARKETGUIDE => 'フリーマーケットガイド(モバフリ)',
+        self::LINK_FROM_POSTER          => 'ポスター',
+        self::LINK_FROM_MAILMAGAZINE    => '楽市メルマガ',
+        self::LINK_FROM_BLOG            => '楽市ブログ',
+        self::LINK_FROM_FACEBOOK        => 'Facebook',
+        self::LINK_FROM_MIXI            => 'mixi',
+    );
+
 
     protected static $_table_name = 'entries';
 
@@ -186,6 +225,19 @@ class Model_Entry extends Model_Base
     public static function getEntryStatuses()
     {
         return self::$entry_statuses;
+    }
+
+    /**
+     * ｄ
+     *
+     * @access public
+     * @param
+     * @return array
+     * @author nakata
+     */
+    public static function getLinkFromList()
+    {
+        return self::$link_from_list;
     }
 
     /**
