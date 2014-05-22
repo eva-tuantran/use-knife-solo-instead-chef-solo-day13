@@ -72,6 +72,13 @@ class Model_Entry extends Model_Base
     const ITEM_GENRES_MAX = 15;
 
     /**
+     * 登録元 0:不明,1:WEB,3:電話
+     */
+    const DEVICE_OTHER = 0;
+    const DEVICE_WEB = 1;
+    const DEVICE_TEL = 2;
+
+    /**
      * 出品物種類リスト
      */
     private static $item_categories = array(
@@ -206,6 +213,15 @@ class Model_Entry extends Model_Base
     );
 
     /**
+     * 登録元一覧
+     */
+    private static $devices = array(
+        self::DEVICE_OTHER => '不明',
+        self::DEVICE_WEB => 'WEB',
+        self::DEVICE_TEL => '電話',
+    );
+
+    /**
      * 開催状況リスト
      */
     protected static $entry_statuses = array(
@@ -213,6 +229,19 @@ class Model_Entry extends Model_Base
         self::ENTRY_STATUS_WAITING  => 'キャンセル待ち',
         self::ENTRY_STATUS_CANCELED => 'キャンセル',
     );
+
+    /**
+     * 登録元一覧を取得する
+     *
+     * @access public
+     * @param
+     * @return array
+     * @author ida
+     */
+    public static function getDevices()
+    {
+        return self::$devices;
+    }
 
     /**
      * 出店予約状況一覧を取得する
@@ -983,6 +1012,7 @@ SELECT
     e.reserved_booth,
     e.link_from,
     e.entry_status,
+    e.device,
     e.created_at,
     fes.entry_style_id
 FROM

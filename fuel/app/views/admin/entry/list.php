@@ -120,7 +120,7 @@
               $created_at = strtotime($entry['created_at']);
               echo e(date('Y/m/d H:i', $created_at));
           ?></td>
-          <td style="width: 15em;"><?php echo e($entry['name']);?></td>
+          <td style="width: 20em;"><?php echo e($entry['name']);?></td>
           <td>
             <a href="/admin/user/?user_id=<?php echo $entry['user_id'];?>">
               <?php echo e($entry['last_name'] . '&nbsp;' . $entry['first_name']);?>
@@ -130,8 +130,8 @@
           <td><?php echo e(@$entry_styles[$entry['entry_style_id']]);?></td>
           <td><?php echo e($entry['reserved_booth']);?></td>
           <td><?php echo e(@$item_categories[$entry['item_category']]);?></td>
-          <td style="width: 10em;"><?php echo e($entry['item_genres']);?></td>
-          <td><?php //echo e($entry['register_type']);?></td>
+          <td style="width: 12em;"><?php echo e($entry['item_genres']);?></td>
+          <td><?php echo e(@$devices[$entry['device']]);?></td>
           <td><?php echo e($entry['link_from']);?></td>
           <td>
             <?php
