@@ -46,14 +46,13 @@ class Mail_Magazine
         $error_count = 0;
 
         foreach ($mail_magazine_users as $mail_magazine_user) {
-            if (! \Model_Mail_Magazine::isProcess($mail_magazine_id)) {
-                $is_stop = true;
-                $this->log($user->user_id . ": cancel.\n");
-                break;
-            }
-
             try {
-                usleep(200000);
+                usleep(250000);
+                if (! \Model_Mail_Magazine::isProcess($mail_magazine_id)) {
+                    $is_stop = true;
+                    $this->log($mail_magazine_user->user_id . ": cancel.\n");
+                    break;
+                }
                 $send_result = $this->send($mail_magazine_user, $mail_magazine);
 
                 $this->log($mail_magazine_user->user_id . ": success\n");
@@ -123,7 +122,7 @@ class Mail_Magazine
         if ($type == \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_ALL) {
         } elseif ($type == \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_REQUEST) {
         } elseif ($type == \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_RESEVED_ENTRY) {
-            $fleamarket_id = $add_data['fleamarket']['fleamarket_id'];
+            $fleamarket_id = $add_data['fleamarket_id'];
             $fleamarket = \Model_Fleamarket::find($fleamarket_id);
             $replace_data['fleamarket'] = $fleamarket;
         }

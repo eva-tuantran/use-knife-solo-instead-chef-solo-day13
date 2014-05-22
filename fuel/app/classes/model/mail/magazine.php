@@ -205,6 +205,7 @@ FROM
 {$where}
 ORDER BY
     send_datetime DESC,
+    created_at DESC,
     send_status DESC,
     mail_magazine_id ASC
 {$limit}

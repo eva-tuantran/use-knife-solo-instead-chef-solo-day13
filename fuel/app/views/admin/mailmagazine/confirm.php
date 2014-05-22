@@ -6,7 +6,7 @@
   <div class="panel-body">
     <form id="mailmagazineForm" role="form" action="/admin/mailmagazine/thanks" method="post" class="form-horizontal">
       <?php
-          echo Form::hidden(Config::get('security.csrf_token_key'), Security::fetch_token());
+          echo \Form::hidden(\Config::get('security.csrf_token_key'), \Security::fetch_token());
       ?>
       <div id="contents-wrap" class="row">
         <div class="col-md-6">
@@ -14,13 +14,25 @@
             <tbody>
               <tr>
                 <th>送信対象</th>
-                <td><?php
+                <td>
+                  <p><?php
                     $type = $input_data['mail_magazine_type'];
+                    $target = $mail_magazine_types[$type];
                     switch ($type):
                         case \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_ALL:
-                            echo $mail_magazine_types[$type];
+                            echo $target;
                             break;
                         case \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_REQUEST:
+                            echo $target . '<br>';
+                            if (isset($input_data['organization_flag'])):
+                                if ($input_data['organization_flag'] == \Model_User::ORGANIZATION_FLAG_OFF):
+                                    echo '－' . '個人';
+                                elseif ($input_data['organization_flag'] == \Model_User::ORGANIZATION_FLAG_ON):
+                                    echo '－' . '企業・団体';
+                                endif;
+                                echo '<br>';
+                            endif;
+
                             $prefecture_name = '全国';
                             if (isset($input_data['prefecture_id'])):
                                 $prefecture_name = '';
@@ -30,14 +42,16 @@
                                         $prefecture_name .= $prefectures[$prefecture_id];
                                     endif;
                                 endforeach;
+                                echo '－' . $prefecture_name;
                             endif;
-                            echo  $mail_magazine_types[$type] . '－' . $prefecture_name;
                             break;
                         case \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_RESEVED_ENTRY:
-                            echo $mail_magazine_types[$type] . '－' . $fleamarket['name'];
+                            echo $target . '<br>';
+                            echo '－' . $fleamarket['name'];
                             break;
                     endswitch;
-                ?></td>
+                  ?></p>
+                </td>
               </tr>
               <tr>
                 <th>差出人メールアドレス</th>
@@ -118,8 +132,10 @@
 </div>
 <script type="text/javascript">
 $(function() {
+  var $dialog = $("#dialog");
+
   $("#doTestSend").on("click", function(evt) {
-    var deliveredTo = prompt("送信先メールアドレス", "あなたのメールアドレス@aucfan.com");
+    var deliveredTo = prompt("送信先メールアドレス", "テスト送信するアドレス@aucfan.com");
     if (! deliveredTo) {
       return false;
     }
@@ -131,12 +147,12 @@ $(function() {
       dataType: "json"
     }).done(function(json, textStatus, jqXHR) {
       if (json.status == '200') {
-        alert("送信しました");
+        showDialog("送信しました");
       } else {
-        alert("送信に失敗しました\n" + json.message);
+        showDialog("送信に失敗しました\n" + json.message);
       }
     }).fail(function(jqXHR, textStatus, errorThrown) {
-      alert("送信に失敗しました");
+      showDialog("送信に失敗しました");
     });
   });
 
@@ -146,7 +162,7 @@ $(function() {
 
   $("#doSend").on("click", function(evt) {
     if (! $("#sendCheck").prop("checked")) {
-      alert("チェックしてください");
+      showDialog("チェックをしてください");
       return false;
     }
 
@@ -156,17 +172,46 @@ $(function() {
       dataType: "json"
     }).done(function(json, textStatus, jqXHR) {
       if (json.status == '300') {
-        if (confirm("送信を開始します。よろしいですか？")) {
-          $("#mailmagazineForm").submit();
-        }
+        confirmDialog("送信を開始します。よろしいですか？");
       } else if (json.status == '200') {
-        alert("他のメルマガを送信中です");
+        showDialog("他のメルマガを送信中です");
       } else {
-        alert("送信確認でエラーが発生しました\n" + json.message);
+        showDialog("送信確認でエラーが発生しました\n" + json.message);
       }
     }).fail(function(jqXHR, textStatus, errorThrown) {
-      alert("送信確認でエラーが発生しました\n" + textStatus);
+      showDialog("送信確認でエラーが発生しました\n" + textStatus);
     });
   });
+
+  var showDialog = function(message) {
+    var $dialog_clone = $dialog.clone();
+    $(".message", $dialog_clone).text(message);
+    $dialog_clone.dialog({
+      modal: true,
+      buttons: {
+        Ok: function() {
+          $(this).dialog("destroy");
+        }
+      }
+    });
+  };
+
+  var confirmDialog = function(message) {
+    var $dialog_clone = $dialog.clone();
+    $(".message", $dialog_clone).text(message);
+    $dialog_clone.dialog({
+      modal: true,
+      buttons: {
+        "キャンセル": function() {
+          $(this).dialog("destroy");
+        },
+        "送信": function() {
+          $(this).dialog("destroy");
+          var action = location.href;
+　        $("#mailmagazineForm").submit();
+        }
+      }
+    });
+  };
 });
 </script>

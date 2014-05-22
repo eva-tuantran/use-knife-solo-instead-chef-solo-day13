@@ -102,6 +102,8 @@
 </div>
 <script type="text/javascript">
 $(function() {
+  var $dialog = $("#dialog");
+
   var timer = setInterval(function() {
     $.ajax({
       type: "post",
@@ -120,11 +122,10 @@ $(function() {
 
   $("#doStop").on("click", function(evt) {
     evt.preventDefault();
+    confirmDialog("メール送信を停止してもよろしいですか？");
+  });
 
-    if (! confirm("送信を停止します。よろしいですか？")) {
-      return false;
-    }
-
+  var doStop = function() {
     $.ajax({
       type: "post",
       url: '/admin/mailmagazine/stop',
@@ -132,13 +133,43 @@ $(function() {
       dataType: "json"
     }).done(function(json, textStatus, jqXHR) {
       if (json.status == "200") {
-        alert("送信を停止しました");
+        showDialog("メール送信を停止しました");
       } else if (json.status == "300") {
-        alert("送信が終了しています");
+        showDialog("メール送信は終了しています");
       }
     }).fail(function(jqXHR, textStatus, errorThrown) {
-      alert("送信を停止できませんでした\n" + json.message);
+      showDialog("メール送信を停止できませんでした\n" + json.message);
     });
-  });
+  };
+
+  var showDialog = function(message) {
+    var $dialog_clone = $dialog.clone();
+    $(".message", $dialog_clone).text(message);
+    $dialog_clone.dialog({
+      modal: true,
+      buttons: {
+        Ok: function() {
+          $(this).dialog("destroy");
+        }
+      }
+    });
+  };
+
+  var confirmDialog = function(message) {
+    var $dialog_clone = $dialog.clone();
+    $(".message", $dialog_clone).text(message);
+    $dialog_clone.dialog({
+      modal: true,
+      buttons: {
+        "キャンセル": function() {
+          $(this).dialog("destroy");
+        },
+        "停止": function() {
+          doStop();
+          $(this).dialog("destroy");
+        }
+      }
+    });
+  };
 });
 </script>
