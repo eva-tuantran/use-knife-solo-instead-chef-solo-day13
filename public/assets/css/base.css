@@ -664,21 +664,21 @@ li.inquiry i {
 	padding-bottom: 80px;
 }
 #newMarket .market {
-	width: 180px;
-	float: left;
-	display:block;
-  height: 230px;
-	margin: 0 15px;
+    width: 180px;
+    float: left;
+    display:block;
+    height: 230px;
+    margin: 0 15px;
 }
 #contentHome #newMarket {
-	width: 500px;
-  height: 230px;
-	overflow:hidden;
-	position: absolute;
-	top:60px;
-	left: 60px;
-	margin: 0;
-	padding: 0;
+    width: 500px;
+    height: 230px;
+    overflow:hidden;
+    position: absolute;
+    top:60px;
+    left: 60px;
+    margin: 0;
+    padding: 0;
 }
 #newMarket .market .state {
 	float: left;
@@ -712,6 +712,7 @@ li.inquiry i {
 }
 #scrollControl {
 	margin: 0 auto;
+	height: 230px;
 }
 #scrollControl #prev,
 #scrollControl #next {
