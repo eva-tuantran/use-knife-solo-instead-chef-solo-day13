@@ -865,6 +865,8 @@ FROM
 WHERE
     u.deleted_at IS NULL
 {$where}
+ORDER BY
+    u.created_at DESC
 {$limit}
 SQL;
 

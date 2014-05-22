@@ -120,7 +120,7 @@
               $created_at = strtotime($entry['created_at']);
               echo e(date('Y/m/d H:i', $created_at));
           ?></td>
-          <td><?php echo e($entry['name']);?></td>
+          <td style="width: 15em;"><?php echo e($entry['name']);?></td>
           <td>
             <a href="/admin/user/?user_id=<?php echo $entry['user_id'];?>">
               <?php echo e($entry['last_name'] . '&nbsp;' . $entry['first_name']);?>
@@ -130,7 +130,7 @@
           <td><?php echo e(@$entry_styles[$entry['entry_style_id']]);?></td>
           <td><?php echo e($entry['reserved_booth']);?></td>
           <td><?php echo e(@$item_categories[$entry['item_category']]);?></td>
-          <td><?php echo e($entry['item_genres']);?></td>
+          <td style="width: 10em;"><?php echo e($entry['item_genres']);?></td>
           <td><?php //echo e($entry['register_type']);?></td>
           <td><?php echo e($entry['link_from']);?></td>
           <td>
@@ -140,8 +140,8 @@
                     $disabled = 'disabled';
                 endif;
             ?>
-            <a class="btn btn-default doSendmail <?php echo $disabled;?>" href="/admin/entry/sendmail?entry_id=<?php echo $entry['entry_id'];?>">メール送信</a>
-            <a class="btn btn-warning doCancel <?php echo $disabled;?>" href="/admin/entry/cancel?entry_id=<?php echo $entry['entry_id'];?>">予約解除</a>
+            <a class="btn btn-default btn-sm doSendmail <?php echo $disabled;?>" href="/admin/entry/sendmail?entry_id=<?php echo $entry['entry_id'];?>">メール送信</a>
+            <a class="btn btn-warning btn-sm doCancel <?php echo $disabled;?>" href="/admin/entry/cancel?entry_id=<?php echo $entry['entry_id'];?>">予約解除</a>
           </td>
         </tr>
         <?php
