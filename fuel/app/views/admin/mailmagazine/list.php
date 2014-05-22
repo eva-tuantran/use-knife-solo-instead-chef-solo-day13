@@ -60,7 +60,7 @@
           <th>件名</th>
           <th>送信状態</th>
           <th>登録日時</th>
-          <th><a class="btn btn-primary dropdown-toggle" href="/admin/mailmagazine/">新規登録</a></th>
+          <th><a class="btn btn-primary btn-sm" href="/admin/mailmagazine/">新規登録</a></th>
         </tr>
       </thead>
       <tbody>
@@ -93,7 +93,7 @@
               endif;
           ?></td>
           <td>
-            <a class="btn btn-default dropdown-toggle" href="/admin/mailmagazine/userlist/<?php echo $mail_magazine_id;?>">送信一覧</a>
+            <a class="btn btn-default btn-sm dropdown-toggle" href="/admin/mailmagazine/userlist/<?php echo $mail_magazine_id;?>">送信一覧</a>
             <?php
                 if ($mail_magazine['send_status'] == \Model_Mail_Magazine::SEND_STATUS_SAVED):
             ?>

@@ -78,7 +78,7 @@
           <th>会場名</th>
           <th>都道府県</th>
           <th>住所</th>
-          <th><a class="btn btn-primary" href="/admin/location/">新規登録</a></th>
+          <th><a class="btn btn-primary btn-sm" href="/admin/location/">新規登録</a></th>
         </tr>
       </thead>
       <tbody>
@@ -98,7 +98,7 @@
           <td><a href="/admin/location/?location_id=<?php echo $location_id;?>"><?php echo e($location['name']);?></a></td>
           <td><?php echo $prefectures[$location['prefecture_id']];?></td>
           <td><?php echo e($location['address']);?></td>
-          <td><a class="btn btn-default" href="/admin/fleamarket/?location_id=<?php echo $location_id; ?>">フリマ登録</a></td>
+          <td><a class="btn btn-default btn-sm" href="/admin/fleamarket/?location_id=<?php echo $location_id; ?>">フリマ登録</a></td>
       </tr>
       <?php
           endforeach;

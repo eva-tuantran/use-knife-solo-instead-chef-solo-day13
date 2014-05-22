@@ -98,7 +98,7 @@
           <th>ユーザ種別</th>
           <th>登録元</th>
           <th>状態</th>
-          <th><a class="btn btn-primary" href="/admin/user/">新規登録</a></th>
+          <th><a class="btn btn-primary btn-sm" href="/admin/user/">新規登録</a></th>
         </tr>
       </thead>
       <tbody>
@@ -155,8 +155,8 @@
           <td><?php echo e(@$devices[$user['device']]);?></td>
           <td><?php echo $register_statuses[$user['register_status']];?></td>
           <td>
-            <a class="btn btn-default" href="/admin/entry/list?user_id=<?php echo $user_id;?>">予約一覧</a>
-            <a class="btn btn-danger doDelete" href="/admin/user/delete?user_id=<?php echo $user_id;?>">削除</a>
+            <a class="btn btn-default btn-sm" href="/admin/entry/list?user_id=<?php echo $user_id;?>">予約一覧</a>
+            <a class="btn btn-danger btn-sm doDelete" href="/admin/user/delete?user_id=<?php echo $user_id;?>">削除</a>
           </td>
         </tr>
         <?php

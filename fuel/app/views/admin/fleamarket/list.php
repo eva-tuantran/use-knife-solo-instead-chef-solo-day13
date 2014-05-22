@@ -93,7 +93,7 @@
           <th colspan="<?php echo count($entry_styles) + 1;?>">予約</th>
           <th rowspan="2">開催状況</th>
           <th rowspan="2">
-            <a class="btn btn-primary" href="/admin/fleamarket/">新規登録</a>
+            <a class="btn btn-primary btn-sm" href="/admin/fleamarket/">新規登録</a>
           </th>
         </tr>
         <tr>
@@ -158,8 +158,8 @@
           </td>
           <td><?php echo e(@$event_statuses[$fleamarket['event_status']]);?></td>
           <td>
-            <a class="btn btn-default" href="/admin/entry/list?fleamarket_id=<?php echo $fleamarket_id;?>">予約一覧</a>
-            <a class="btn btn-default" href="/admin/entry/csv?fleamarket_id=<?php echo e($fleamarket_id);?>">CSV</a>
+            <a class="btn btn-default btn-sm" href="/admin/entry/list?fleamarket_id=<?php echo $fleamarket_id;?>">予約一覧</a>
+            <a class="btn btn-default btn-sm" href="/admin/entry/csv?fleamarket_id=<?php echo e($fleamarket_id);?>">CSV</a>
           </td>
         </tr>
       <?php
