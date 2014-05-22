@@ -13,7 +13,7 @@
             ?>
             <div class="col-md-3">
               <div class="radio">
-                <label for="inputType<?php echo $mail_magazine_type_id;?>" class=control-label">
+                <label for="inputType<?php echo $mail_magazine_type_id;?>" class="control-label">
                   <input id="inputType<?php echo $mail_magazine_type_id;?>" type="radio" name="mail_magazine_type" value="<?php echo $mail_magazine_type_id;?>"><?php echo $mail_magazine_type_name;?>
                 </label>
               </div>
@@ -57,21 +57,55 @@
             </div>
           </div>
           <div class="form-group type type2">
-            <label for="selectPrefecture" class="col-md-2 control-label">都道府県</label>
+            <label for="organization_flag" class="col-md-2">ユーザ種別</label>
             <div class="col-md-12">
-            <?php
-                foreach ($prefectures as $prefecture_id => $prefecture):
-                    $checked = '';
-                    if (isset($input_data['prefecture_id'])):
-                        $checked = in_array($prefecture_id, $input_data['prefecture_id']) ? 'checked' : '';
+              <div class="col-md-12 col-md-offset-1 radio clearfix">
+                <?php
+                    $oraganization_flag_off = 'checked';
+                    $oraganization_flag_on = '';
+                    if (! empty($input_data['organization_flag'])):
+                        if ($input_data['organization_flag'] == \Model_User::ORGANIZATION_FLAG_OFF):
+                            $oraganization_flag_off = 'checked';
+                            $oraganization_flag_on = '';
+                        elseif ($input_data['organization_flag'] == \Model_User::ORGANIZATION_FLAG_ON):
+                            $oraganization_flag_off = '';
+                            $oraganization_flag_on = 'checked';
+                        endif;
                     endif;
-            ?>
-              <label for="prefecture<?php echo $prefecture_id;?>" class="col-md-2 control-label">
-                <input id="prefecture<?php echo $prefecture_id;?>" type="checkbox" name="prefecture_id[]" value="<?php echo $prefecture_id;?>" <?php echo $checked;?>>&nbsp;<?php echo $prefecture;?>
-              </label>
-            <?php
-                endforeach;
-            ?>
+                ?>
+                <label class="col-md-2">
+                  <input type="radio" name="organization_flag" value="<?php echo \Model_User::ORGANIZATION_FLAG_OFF;?>" <?php echo $oraganization_flag_off;?>>個人
+                </label>
+
+                <label class="col-md-2">
+                  <input type="radio" name="organization_flag" value="<?php echo \Model_User::ORGANIZATION_FLAG_ON;?>" <?php echo $oraganization_flag_on;?>>企業・団体
+                </label>
+              </div>
+              <?php
+                  if (isset($errors['organization_flag'])):
+              ?>
+              <div class="error-message">ユーザ種別を選択してください</div>
+              <?php
+                  endif;
+              ?>
+            </div>
+            <label for="selectPrefecture" class="col-md-2">都道府県</label>
+            <div class="col-md-12">
+              <div class="col-md-12 clearfix">
+              <?php
+                  foreach ($prefectures as $prefecture_id => $prefecture):
+                      $checked = '';
+                      if (isset($input_data['prefecture_id'])):
+                          $checked = in_array($prefecture_id, $input_data['prefecture_id']) ? 'checked' : '';
+                      endif;
+              ?>
+                <label for="prefecture<?php echo $prefecture_id;?>" class="col-md-2 control-label">
+                  <input id="prefecture<?php echo $prefecture_id;?>" type="checkbox" name="prefecture_id[]" value="<?php echo $prefecture_id;?>" <?php echo $checked;?>>&nbsp;<?php echo $prefecture;?>
+                </label>
+              <?php
+                  endforeach;
+              ?>
+              </div>
             <?php
                 if (isset($errors['prefecture_id'])):
             ?>
@@ -79,8 +113,8 @@
             <?php
                 endif;
             ?>
+            </div>
           </div>
-        </div>
           <div class="form-group">
             <div class="col-md-6">
               <label for="inputFromMail">差出人メールアドレス</label>
@@ -166,8 +200,8 @@
             <button id="doSubmit" type="submit" class="btn btn-info">確認する</button>
           </p>
         </div>
-      </div>
-    </form>
+      </form>
+    </div>
   </div>
 </div>
 <script type="text/javascript">

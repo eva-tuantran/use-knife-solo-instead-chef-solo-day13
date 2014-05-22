@@ -437,19 +437,21 @@ QUERY;
      *  'deleted_at' => NULL
      *
      * @access public
-     * @param mixed $prefecture_id 都道府県ID
+     * @param mixed $prefecture_id 都道府県IDリスト
+     * @param mixed $organization_flag 都道府県ID
      * @return array
      * @author ida
      */
-    public static function getUsersByPrefectureId($prefecture_ids)
-    {
+    public static function getMailMagazineUserBy(
+        $prefecture_ids, $organization_flag
+    ) {
         $placeholders = array(
             ':mm_flag' => self::MM_FLAG_OK,
             ':register_status' => self::REGISTER_STATUS_ACTIVATED,
         );
 
         $where = '';
-        if ($prefecture_ids) {
+        if (! empty($prefecture_ids)) {
             $placeholder_list = array();
             foreach ($prefecture_ids as $prefecture_id) {
                 $placeholder = ':prefecture_id' . $prefecture_id;
@@ -459,6 +461,11 @@ QUERY;
             $placeholder_string = implode(',', $placeholder_list);
             $where = ' AND prefecture_id IN (' . $placeholder_string . ')';
 
+        }
+        if (isset($organization_flag) && $organization_flag !== '') {
+            $placeholder = ':organization_flag';
+            $placeholders[$placeholder] = $organization_flag;
+            $where = ' AND organization_flag = ' . $placeholder;
         }
 
         $query = <<<"QUERY"
@@ -609,8 +616,8 @@ QUERY;
         try {
             $email = new \Model_Email();
             $email->sendMailByParams($template_name, $params, $this->email);
-        } catch (Exception $e) {
-            throw new SystemException(\Model_Error::ER00303);
+        } catch (\Exception $e) {
+            throw new \SystemException(\Model_Error::ER00303);
         }
     }
 
@@ -777,14 +784,14 @@ QUERY;
     /**
      * 対象のフリマIDのフリマ予約をキャンセルします
      *
-     * @param int $fleamarket_id
      * @access public
+     * @param int $fleamarket_id
      * @return void
      * @author shimma
      */
-    public function cancelEntry($fleamarket_id)
+    public function cancelEntry($entry_id, $updated_user = null)
     {
-        return \Model_Entry::cancel($this->user_id, $fleamarket_id);
+        return \Model_Entry::cancel($entry_id, $updated_user);
     }
 
     /**

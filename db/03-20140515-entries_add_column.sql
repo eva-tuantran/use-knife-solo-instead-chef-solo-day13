@@ -1,1 +1,1 @@
-ALTER TABLE `entries` ADD `device` TINYINT NOT NULL DEFAULT 0 comment '登録タイプ 0:不明,1:WEB,2:電話' AFTER `remarks`;
+ALTER TABLE `entries` ADD `device` TINYINT NOT NULL DEFAULT 1 comment '登録タイプ 0:不明,1:WEB,2:電話' AFTER `remarks`;

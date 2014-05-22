@@ -241,7 +241,7 @@
               </td>
             </tr>
             <tr>
-              <th>企業・団体フラグ</th>
+              <th>ユーザ種別</th>
               <td>
                 <div class="radio">
                   <label><input type="radio" class="form-control" name="organization_flag" value="0" <?php echo $fields['organization_flag']->value ? '' : 'checked';?>>個人</label>

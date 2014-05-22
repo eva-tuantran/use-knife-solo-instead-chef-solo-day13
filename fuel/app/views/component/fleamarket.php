@@ -125,7 +125,7 @@
     <?php if ($is_official):?>
       <!-- <li class="button change makeReservation"><a href="/mypage/change?fleamarket_id=<?php echo $fleamarket_id;?>"><i></i>予約変更</a></li> -->
         <?php if ($fleamarket['event_status'] == \Model_Fleamarket::EVENT_STATUS_RESERVATION_RECEIPT):?>
-      <li class="button cancel"><a href="/mypage/cancel?fleamarket_id=<?php echo $fleamarket_id;?>" class="fleamarket_cancel"><i></i>予約解除</a></li>
+      <li class="button cancel"><a href="/mypage/cancel?entry_id=<?php echo $fleamarket['entry_id'];?>" class="fleamarket_cancel"><i></i>予約解除</a></li>
         <?php endif;?>
     <?php endif;?>
 <?php elseif ($type == 'waiting'):?>

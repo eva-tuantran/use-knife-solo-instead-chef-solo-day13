@@ -13,7 +13,7 @@ class Model_Email extends \Model
      *
      * @para $name メールの識別子 $params 差し込むデータ $to 送り先(指定しなければ langの値を使用) $options Fuel準拠のEmailオプション
      * @access protected
-     * @return void
+     * @return bool
      * @author kobayasi
      * @author shimma
      */
@@ -54,7 +54,7 @@ class Model_Email extends \Model
             }
         }
 
-        $email->send();
+        return $email->send();
     }
 
     /**

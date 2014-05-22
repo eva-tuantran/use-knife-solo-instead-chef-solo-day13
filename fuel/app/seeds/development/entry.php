@@ -9,24 +9,9 @@ $item_categories = array(
     '2' => '手作り品',
 );
 
-$item_genres = \Model_Entry::getItemGenresDefine();
+$item_genres = \Model_Entry::getItemGenres();
 
-$link_from_list = array(
-    '1' => '楽市モバイルサイト',
-    '2' => '楽市PCサイト',
-    '3' => '会場設置チラシ',
-    '4' => '友人・知人から聞いて',
-    '5' => 'GOOGLE・YAHOO検索',
-    '6' => '地域情報誌',
-    '7' => '新聞折り込み',
-    '8' => 'フリーマーケットへ行こう',
-    '9' => 'フリーマーケットガイド(モバフリ)',
-    '10' => 'ポスター',
-    '11' => '楽市メルマガ',
-    '12' => '楽市ブログ',
-    '13' => 'Facebook',
-    '14' => 'mixi',
-);
+$link_from_list = \Model_Entry::getLinkFromList();
 
 $entry_statuses = \Model_Entry::getEntryStatuses();
 

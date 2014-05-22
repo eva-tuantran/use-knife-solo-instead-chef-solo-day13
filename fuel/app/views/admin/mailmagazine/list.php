@@ -58,7 +58,8 @@
           <th>送信日時</th>
           <th>種類</th>
           <th>件名</th>
-          <th>状況</th>
+          <th>送信状態</th>
+          <th>登録日時</th>
           <th><a class="btn btn-primary dropdown-toggle" href="/admin/mailmagazine/">新規登録</a></th>
         </tr>
       </thead>
@@ -86,13 +87,15 @@
           <!-- <td><a href="/admin/mailmagazine/index?mail_magazine_id=<?php echo $mail_magazine_id;?>"><?php echo e($mail_magazine['subject']);?></a></td>-->
           <td><?php echo e($mail_magazine['subject']);?></td>
           <td><?php echo e(@$send_statuses[$mail_magazine['send_status']]);?></td>
+          <td><?php
+              if (! empty($mail_magazine['created_at'])):
+                  echo e(date('Y年m月d日 H:i', strtotime($mail_magazine['created_at'])));
+              endif;
+          ?></td>
           <td>
-            <?php
-                if ($mail_magazine['send_status'] == \Model_Mail_Magazine::SEND_STATUS_NORMAL_END):
-            ?>
             <a class="btn btn-default dropdown-toggle" href="/admin/mailmagazine/userlist/<?php echo $mail_magazine_id;?>">送信一覧</a>
             <?php
-                elseif ($mail_magazine['send_status'] == \Model_Mail_Magazine::SEND_STATUS_SAVED):
+                if ($mail_magazine['send_status'] == \Model_Mail_Magazine::SEND_STATUS_SAVED):
             ?>
             <!-- <a class="btn btn-default dropdown-toggle" href="#" disabled="disabled">送信する(未実装)</a> -->
             <?php

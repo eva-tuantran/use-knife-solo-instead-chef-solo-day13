@@ -74,7 +74,7 @@ class Model_Entry extends Model_Base
     /**
      * 出品物種類リスト
      */
-    private static $item_category_define = array(
+    private static $item_categories = array(
         self::ITEM_CATEGORY_RECYCLE  => 'リサイクル品',
         self::ITEM_CATEGORY_HANDMADE => '手作り品',
     );
@@ -82,7 +82,7 @@ class Model_Entry extends Model_Base
     /**
      * 出品物ジャンルリスト
      */
-    private static $item_genres_define = array(
+    private static $item_genres = array(
         self::ITEM_GENRES_COMPUTER => 'コンピュータ',
         self::ITEM_GENRES_AV       => '家電、AV',
         self::ITEM_GENRES_CAMERA   => 'カメラ',
@@ -247,9 +247,9 @@ class Model_Entry extends Model_Base
      * @return array
      * @author kobayasi
      */
-    public static function getItemCategoryDefine()
+    public static function getItemCategories()
     {
-        return self::$item_category_define;
+        return self::$item_categories;
     }
 
     /**
@@ -259,9 +259,9 @@ class Model_Entry extends Model_Base
      * @return array
      * @author kobayasi
      */
-    public static function getItemGenresDefine()
+    public static function getItemGenres()
     {
-        return self::$item_genres_define;
+        return self::$item_genres;
     }
 
     /**
@@ -511,6 +511,7 @@ QUERY;
 
         $query = <<<QUERY
 SELECT
+    e.entry_id,
     f.fleamarket_id,
     f.name,
     f.promoter_name,
@@ -855,24 +856,24 @@ QUERY;
     }
 
     /**
-     * 特定のユーザの出店予約をキャンセルします
+     * 特定の出店予約をキャンセルします
      *
      * @access public
-     * @param int $user_id
-     * @param int $fleamarket_id
+     * @param mixed $entry_id
+     * @param mixed $updated_user
      * @return bool
      * @author shimma
      */
-    public static function cancel($user_id, $fleamarket_id)
+    public static function cancel($entry_id, $updated_user)
     {
         try {
             $entry = self::find('last', array(
                 'where' => array(
-                    array('user_id' => $user_id),
-                    array('fleamarket_id' => $fleamarket_id),
+                    array('entry_id' => $entry_id),
                 )
             ));
             $entry->entry_status = self::ENTRY_STATUS_CANCELED;
+            $entry->updated_user = $updated_user;
             $entry->save();
         } catch (\Exception $e) {
             throw $e;
@@ -1104,6 +1105,82 @@ SQL;
         }
 
         return $condition_list;
+    }
+
+    /**
+     * ユーザーにメールを送信
+     *
+     * 渡されていない場合、entry_statusで決める
+     * 渡されてきた場合、$mail_typeで決める
+     *
+     * @access private
+     * @para object $user ユーザ情報
+     * @para string $template_name 送信するメール名（テンプレート名）
+     * @return void
+     * @author kobayashi
+     * @author ida
+     */
+    public function sendmail($user = null, $template_name = null)
+    {
+        if (empty($user)) {
+            return false;
+        }
+
+        $params = array();
+        $objects = array(
+            'entry'                  => $this,
+            'fleamarket'             => $this->fleamarket,
+            'fleamarket_entry_style' => $this->fleamarket_entry_style,
+            'user'                   => $this->user,
+            'location'               => $this->fleamarket->location,
+        );
+
+        $fleamarket_abouts = array();
+        foreach ($this->fleamarket->fleamarket_abouts as $fleamarket_about) {
+            $fleamarket_abouts[$fleamarket_about->about_id] = $fleamarket_about;
+        }
+
+        foreach (Model_Fleamarket_About::getAboutTitles() as $id => $title){
+            if (isset($fleamarket_abouts[$id])) {
+                $objects["fleamarket_about_${id}"] = $fleamarket_abouts[$id];
+            }else{
+                $params["fleamarket_about_${id}.description"] = '';
+            }
+        }
+
+        foreach ($objects as $name => $obj) {
+            foreach (array_keys($obj->properties()) as $column) {
+                $params["${name}.${column}"] = $obj->get($column);
+            }
+        }
+
+        $entry_styles = \Config::get('master.entry_styles');
+        $params['fleamarket_entry_style.entry_style_name']
+            = $entry_styles[$this->fleamarket_entry_style->entry_style_id];
+
+        // 出店形態を成形
+        $entry_style_list = array_map(function($obj) use ($entry_styles) {
+            return $entry_styles[$obj->entry_style_id];
+        }, $this->fleamarket->fleamarket_entry_styles);
+        $params['fleamarket_entry_styles.entry_style_name'] = implode('/', $entry_style_list);
+
+        // 出店形態:金額を成形
+        $fee_list = array_map(function($obj) use ($entry_styles) {
+            return $entry_styles[$obj->entry_style_id] . ':' . number_format($obj->booth_fee);
+        }, $this->fleamarket->fleamarket_entry_styles);
+        $params['fleamarket_entry_styles.fee'] = implode('/', $fee_list);
+
+        foreach (array('fleamarket.event_time_start','fleamarket.event_time_end') as $column) {
+            $params[$column] = substr($params[$column], 0, 5);
+        }
+
+        if ($template_name) {
+            $user->sendmail($template_name, $params);
+        } elseif ($this->entry_status == \Model_Entry::ENTRY_STATUS_RESERVED) {
+            $user->sendmail('reservation', $params);
+        } elseif ($this->entry_status == \Model_Entry::ENTRY_STATUS_WAITING) {
+            $user->sendmail('waiting', $params);
+        }
     }
 
     /**

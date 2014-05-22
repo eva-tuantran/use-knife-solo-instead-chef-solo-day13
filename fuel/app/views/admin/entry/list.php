@@ -135,12 +135,13 @@
           <td><?php echo e($entry['link_from']);?></td>
           <td>
             <?php
-                if ($entry['entry_status'] == \Model_Entry::ENTRY_STATUS_RESERVED):
-            ?>
-            <a class="btn btn-warning doCancel" href="/admin/entry/cancel?user_id=<?php echo $entry['user_id'];?>&fleamarket_id=<?php echo $entry['fleamarket_id'];?>">予約解除</a>
-            <?php
+                $disabled = '';
+                if ($entry['entry_status'] != \Model_Entry::ENTRY_STATUS_RESERVED):
+                    $disabled = 'disabled';
                 endif;
             ?>
+            <a class="btn btn-default doSendmail <?php echo $disabled;?>" href="/admin/entry/sendmail?entry_id=<?php echo $entry['entry_id'];?>">メール送信</a>
+            <a class="btn btn-warning doCancel <?php echo $disabled;?>" href="/admin/entry/cancel?entry_id=<?php echo $entry['entry_id'];?>">予約解除</a>
           </td>
         </tr>
         <?php
@@ -175,33 +176,43 @@ $(function() {
     $("#searchForm").attr("action", action).submit();
   });
 
-  $(".doCancel").on("click", function(evt) {
+  $(".doSendmail").on("click", function(evt) {
     evt.preventDefault();
+
     var href = $(this).attr("href");
-    $dialog_clone = $dialog.clone();
-    $("#message", $dialog_clone).text("予約解除してもよろしいですか？");
+    var $dialog_clone = $dialog.clone();
+
+    $(".message", $dialog_clone).text("メールを送信します");
     $dialog_clone.append(
-      '<label><input id="sendmail" type="checkbox" name="send_mail">解除メールも送信する</label>'
+      '<label><input class="mails" type="checkbox" name="mails" value="reservation">出店予約メール</label>'
     );
 
     $dialog_clone.dialog({
       modal: true,
       buttons: {
         "キャンセル": function() {
-          $(this).dialog( "close" );
+          $(this).dialog("destroy");
         },
         "実行": function() {
-          doCancel(href, $("#sendmail").prop('checked'));
-          $(this).dialog( "close" );
+          if (! $(".mails:checked").prop('checked')) {
+            confirmDialog("送信するメールを選択してください");
+            return;
+          }
+          doSendmail(href);
+          $(this).dialog("destroy");
         }
       }
     });
   });
 
-  var doCancel = function(url, sendmail) {
+  var doSendmail = function(url) {
     var url = location.protocol + "//" + location.host + url;
-    if (sendmail) {
-      url += '&sendmail=1'
+    var mail = '';
+    $(".mails:checked").each(function(index, checkbox) {
+      mail += "&" + $(this).attr("name") + "[]=" + $(this).val();
+    });
+    if (mail) {
+      url += encodeURI(mail);
     }
 
     $.ajax({
@@ -210,27 +221,75 @@ $(function() {
       dataType: "json"
     }).done(function(json, textStatus, jqXHR) {
       if (json.status == 200) {
-        message = '予約解除しました';
+        message = 'メールを送信しました';
       } else if (json.status == 400) {
-        message = '予約解除に失敗しました';
+        message = 'メールの送信に失敗しました';
       }
       confirmDialog(message, json.status);
     }).fail(function(jqXHR, textStatus, errorThrown) {
-      confirmDialog('予約解除に失敗しました');
+      confirmDialog('メールの送信に失敗しました');
+    });
+  };
+
+  $(".doCancel").on("click", function(evt) {
+    evt.preventDefault();
+
+    var href = $(this).attr("href");
+    var $dialog_clone = $dialog.clone();
+
+    $(".message", $dialog_clone).text("予約解除してもよろしいですか？");
+    $(".contents", $dialog_clone).append(
+      '<label><input id="sendmail" type="checkbox" name="sendmail">予約解除メールを送信する</label>'
+    );
+
+    $dialog_clone.dialog({
+      modal: true,
+      buttons: {
+        "キャンセル": function() {
+          $(this).dialog("destroy");
+        },
+        "実行": function() {
+          doCancel(href);
+          $(this).dialog("destroy");
+        }
+      }
+    });
+  });
+
+  var doCancel = function(url) {
+    var url = location.protocol + "//" + location.host + url;
+    if ($("#sendmail").prop('checked')) {
+      url += "&sendmail=1";
+    }
+
+    $.ajax({
+      type: "post",
+      url: url,
+      dataType: "json"
+    }).done(function(json, textStatus, jqXHR) {
+      if (json.status == 200) {
+        message = '出店予約を解除しました';
+      } else if (json.status == 300) {
+        message = '出店予約を解除しましたが、メールの送信に失敗しました。';
+      } else if (json.status == 400) {
+        message = '出店予約の解除に失敗しました';
+      }
+      confirmDialog(message, json.status);
+    }).fail(function(jqXHR, textStatus, errorThrown) {
+      confirmDialog('出店予約の解除に失敗しました');
     });
   };
 
   var confirmDialog = function(message, status) {
-    $("#message", $dialog).text(message);
-    $dialog.dialog({
+    var $dialog_clone = $dialog.clone();
+    $(".message", $dialog_clone).text(message);
+    $dialog_clone.dialog({
       modal: true,
       buttons: {
         Ok: function() {
-          $(this).dialog( "close" );
-          if (status == 200) {
-            var action = location.href;
-            $("#searchForm").attr("action", action).submit();
-          }
+          $(this).dialog("destroy");
+          var action = location.href;
+　        $("#searchForm").attr("action", action).submit();
         }
       }
     });

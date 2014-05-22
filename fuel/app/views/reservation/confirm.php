@@ -36,16 +36,16 @@
 	  <label class="col-sm-2 control-label">出品予定品目</label>
 	  <div class="col-sm-10">
 	    <?php
-	       $item_category_define = Model_Entry::getItemCategoryDefine();
+	       $item_category_define = \Model_Entry::getItemCategories();
 	       echo e($item_category_define[$input['item_category']]);
-            ?>
+        ?>
 	    <br>
 	    <?php
-	       $item_genres_define = Model_Entry::getItemGenresDefine();
+	       $item_genres_define = \Model_Entry::getItemGenres();
 	       foreach ($input['item_genres'] as $item_genre) {
 	       echo e($item_genres_define[$item_genre]) . "<br />";
 	       }
-            ?>
+        ?>
 	  </div>
 	</div>
     <div class="form-group">
