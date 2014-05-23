@@ -1,19 +1,3 @@
-<style type="text/css">
-.reserved {
-  margin: 0 5px 0 5px;
-  padding: 10px 0;
-  width: 130px;
-  font-size: 100%;
-  background-color: #f59000;
-  color: #fff;
-  border: none;
-  border-radius: 3px;
-  -webkit-border-radius: 3px;
-  -moz-border-radius: 3px;
-  text-align: center;
-  cursor: default;
-}
-</style>
 <!-- result -->
 <?php
     $fleamarket_id = $fleamarket['fleamarket_id'];
@@ -57,65 +41,65 @@
     </a>
   </div>
   <div class="resultDetail">
-      <?php if ($type === 'reserved' && ! empty($fleamarket['reservation_number'])):?>
-      <dl class="col-md-12">
-        <dt>予約番号</dt>
-        <dd class="text-success"><?php echo e($fleamarket['reservation_number']);?></dd>
-      </dl>
-      <?php endif;?>
-      <?php if ($is_official): ?>
-      <dl class="col-md-6">
-        <dt>出店ブース数</dt>
-        <dd><?php echo $fleamarket['total_booth'] ? $fleamarket['total_booth'] .'ブース' : '-'; ?></dd>
-      </dl>
-      <?php endif; ?>
-      <dl class="col-md-6">
-        <dt>開催時間</dt>
-        <dd><?php
-                if ($fleamarket['event_time_start']):
-                    echo e(date('G:i', strtotime($fleamarket['event_time_start'])));
-                else:
-                    echo '-';
-                endif;
-                if ($fleamarket['event_time_end']):
-                    echo '～' . e(date('G:i', strtotime($fleamarket['event_time_end'])));
-                endif;
-        ?></dd>
-      </dl>
-      <?php if ($is_official): ?>
-      <dl class="col-md-6">
-        <dt>出店形態</dt>
-        <dd><?php
-            if (isset($fleamarket['entry_style_name_list'])):
-               echo e(implode('/', $fleamarket['entry_style_name_list']));
-            else:
-                echo '-';
-            endif;
-        ?></dd>
-      </dl>
-      <dl class="col-md-6">
-        <dt>出店料金</dt>
-        <dd><?php
-            if (isset($fleamarket['booth_fee_list'])):
-               echo e(implode('/', $fleamarket['booth_fee_list']));
-            else:
-                echo '-';
-            endif;
-        ?></dd>
-      </dl>
-      <?php endif; ?>
-      <dl class="col-md-11">
-        <dt>交通</dt>
-        <dd><?php echo e($fleamarket['about_access']);?></dd>
-      </dl>
-      <?php if ($is_official): ?>
-      <ul class="facilitys">
-        <li class="facility1 <?php echo $fleamarket['car_shop_flag']       ? 'on' : 'off'; ?>">車出店可能</li>
-        <li class="facility2 <?php echo $fleamarket['charge_parking_flag'] ? 'on' : 'off'; ?>">有料駐車場</li>
-        <li class="facility3 <?php echo $fleamarket['free_parking_flag']   ? 'on' : 'off'; ?>">無料駐車場</li>
-        <li class="facility4 <?php echo $fleamarket['rainy_location_flag'] ? 'on' : 'off'; ?>">雨天開催会場</li>
-      </ul>
-      <?php endif;?>
+    <?php if ($type === 'reserved' && ! empty($fleamarket['reservation_number'])):?>
+    <dl class="col-md-12 reservationNumber">
+      <dt>予約番号</dt>
+      <dd><span class="text-success"><?php echo e($fleamarket['reservation_number']);?></span></dd>
+    </dl>
+    <?php endif;?>
+    <?php if ($is_official): ?>
+    <dl class="col-md-6">
+      <dt>出店ブース数</dt>
+      <dd><?php echo $fleamarket['total_booth'] ? $fleamarket['total_booth'] .'ブース' : '-'; ?></dd>
+    </dl>
+    <?php endif; ?>
+    <dl class="col-md-6">
+      <dt>開催時間</dt>
+      <dd><?php
+          if ($fleamarket['event_time_start']):
+              echo e(date('G:i', strtotime($fleamarket['event_time_start'])));
+          else:
+              echo '-';
+          endif;
+          if ($fleamarket['event_time_end']):
+              echo '～' . e(date('G:i', strtotime($fleamarket['event_time_end'])));
+          endif;
+      ?></dd>
+    </dl>
+    <?php if ($is_official): ?>
+    <dl class="col-md-6">
+      <dt>出店形態</dt>
+      <dd><?php
+          if (isset($fleamarket['entry_style_name_list'])):
+              echo e(implode('/', $fleamarket['entry_style_name_list']));
+          else:
+              echo '-';
+          endif;
+      ?></dd>
+    </dl>
+    <dl class="col-md-6">
+      <dt>出店料金</dt>
+      <dd><?php
+          if (isset($fleamarket['booth_fee_list'])):
+              echo e(implode('/', $fleamarket['booth_fee_list']));
+          else:
+              echo '-';
+          endif;
+      ?></dd>
+    </dl>
+    <?php endif; ?>
+    <dl class="col-md-11">
+      <dt>交通</dt>
+      <dd><?php echo e($fleamarket['about_access']);?></dd>
+    </dl>
+    <?php if ($is_official): ?>
+    <ul class="facilitys">
+      <li class="facility1 <?php echo $fleamarket['car_shop_flag']       ? 'on' : 'off'; ?>">車出店可能</li>
+      <li class="facility2 <?php echo $fleamarket['charge_parking_flag'] ? 'on' : 'off'; ?>">有料駐車場</li>
+      <li class="facility3 <?php echo $fleamarket['free_parking_flag']   ? 'on' : 'off'; ?>">無料駐車場</li>
+      <li class="facility4 <?php echo $fleamarket['rainy_location_flag'] ? 'on' : 'off'; ?>">雨天開催会場</li>
+    </ul>
+    <?php endif;?>
     <ul class="detailLink">
       <li><a href="/detail/<?php echo $fleamarket_id ?>">詳細情報を見る<i></i></a></li>
     </ul>
