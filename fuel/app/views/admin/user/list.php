@@ -194,7 +194,7 @@ $(function() {
   $(".doDelete").on("click", function(evt) {
     evt.preventDefault();
     var href = $(this).attr("href");
-    $("#message", $dialog).text("削除してもよろしいですか？");
+    $(".message", $dialog).text("削除してもよろしいですか？");
 
     $dialog.dialog({
       modal: true,
@@ -229,7 +229,7 @@ $(function() {
   };
 
   var confirmDialog = function(message, status) {
-    $("#message", $dialog).text(message);
+    $(".message", $dialog).text(message);
     $dialog.dialog({
       modal: true,
       buttons: {

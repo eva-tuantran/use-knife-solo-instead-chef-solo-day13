@@ -227,15 +227,15 @@ $(function() {
     }
 
     evt.preventDefault();
-    $("#dialog #message").text("全員送信ですがよろしいですか？");
+    $("#dialog .message").text("全員送信ですがよろしいですか？");
     $("#dialog").dialog({
       modal: true,
       buttons: {
-        Ok: function() {
-          $("#mailmagazineForm").submit();
-        },
-        Cancel: function() {
+        "キャンセル": function() {
           $(this).dialog( "close" );
+        },
+        "Ok": function() {
+          $("#mailmagazineForm").submit();
         }
       }
     });

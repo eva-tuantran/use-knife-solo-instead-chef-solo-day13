@@ -50,12 +50,13 @@ $(function() {
   });
 
   $("#doSearch").on("click", function(evt) {
-    var $form = $("#searchLocationForm");
-    var data = $form.serialize();
     $.ajax({
       type: "post",
-      url: $form.attr("action"),
-      data: data,
+      url: "/admin/fleamarket/searchlocation",
+      data: {
+        name: $.trim($("#locationName").val()),
+        prefecture_id: $("#prefectureId").val()
+      },
       dataType: "html"
     }).done(function(html, textStatus, jqXHR) {
       if (jqXHR.status === 200) {
@@ -743,34 +744,32 @@ var remove_form = function(o) {
 </div>
 <div id="searchLocationDialog" class="afDialog">
   <div class="contents">
-    <form id="searchLocationForm" action="/admin/fleamarket/searchlocation" method="post" class="form-inline" enctype="multipart/form-data">
-      <div class="form-group">
-        <div class="col-md-2">
-          <input type="text" class="form-control" name="name" placeholder="会場名">
-        </div>
+    <div class="form-group">
+      <div class="col-md-5">
+        <input id="locationName" type="text" class="form-control col-md-3" name="name" placeholder="会場名">
       </div>
-      <div class="form-group">
-        <div class="col-md-1">
-          <select class="form-control" id="prefecture" name="prefecture_id">
-            <option value="">都道府県</option>
-          <?php
-              foreach ($prefectures as $prefecture_id => $prefecture_name):
-                  $selected = '';
-                  if (! empty($conditions['prefecture_id'])
-                      && $prefecture_id == $conditions['prefecture_id']
-                  ):
-                      $selected = 'selected';
-                  endif;
-          ?>
-            <option value="<?php echo $prefecture_id;?>" <?php echo $selected;?>><?php echo $prefecture_name;?></option>
-          <?php
-              endforeach;
-          ?>
-          </select>
-        </div>
+    </div>
+    <div class="form-group">
+      <div class="col-md-3">
+        <select id="prefectureId" class="form-control" id="prefecture" name="prefecture_id">
+          <option value="">都道府県</option>
+        <?php
+            foreach ($prefectures as $prefecture_id => $prefecture_name):
+                $selected = '';
+                if (! empty($conditions['prefecture_id'])
+                    && $prefecture_id == $conditions['prefecture_id']
+                ):
+                    $selected = 'selected';
+                endif;
+        ?>
+          <option value="<?php echo $prefecture_id;?>" <?php echo $selected;?>><?php echo $prefecture_name;?></option>
+        <?php
+            endforeach;
+        ?>
+        </select>
       </div>
-      <button id="doSearch" type="button" class="btn btn-default"><span class="glyphicon glyphicon-search"></span> 検 索</button>
-    </form>
+    </div>
+    <button id="doSearch" type="button" class="btn btn-default"><span class="glyphicon glyphicon-search"></span> 検 索</button>
     <div class="container-fluid">
       <div class="row">
         <div id="contents" class="col-md-12">
