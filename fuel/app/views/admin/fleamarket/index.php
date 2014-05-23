@@ -23,23 +23,72 @@ $(function() {
 
   $("#accordion").accordion({
       heightStyle: "content",
-      activate: function(event, ui) {}
+      collapsible: true
   });
+
+  $("#addLinkFromList").on("click", function(evt) {
+    $(this).before('\
+      <div>\
+        <input type="text" name="link_from_list[]" class="form-control">\
+        <input type="button" value="削除" class="form-control" onclick="remove_form(this)">\
+      </div>\
+    ');
+  });
+
+  var $search_dialog = $("#searchLocationDialog");
+  $("#doLocationSearch").on("click", function(evt) {
+    $search_dialog.dialog({
+      modal: true,
+      width: 800,
+      height: 550,
+      buttons: {
+        "閉じる": function() {
+          $(this).dialog("close");
+        }
+      }
+    });
+  });
+
+  $("#doSearch").on("click", function(evt) {
+    var $form = $("#searchLocationForm");
+    var data = $form.serialize();
+    $.ajax({
+      type: "post",
+      url: $form.attr("action"),
+      data: data,
+      dataType: "html"
+    }).done(function(html, textStatus, jqXHR) {
+      if (jqXHR.status === 200) {
+        $("#contents", $search_dialog).empty();
+        $("#contents", $search_dialog).append(html);
+      } else {
+        showDialog("会場情報の取得に失敗しました");
+      }
+    }).fail(function(jqXHR, textStatus, errorThrown) {
+      showDialog("会場情報の取得に失敗しました");
+    });
+  });
+
+  var $dialog = $("#dialog");
+  var showDialog = function(message) {
+    var $dialog_clone = $dialog.clone();
+    $(".message", $dialog_clone).text(message);
+    $dialog_clone.dialog({
+      modal: true,
+      buttons: {
+        Ok: function() {
+          $(this).dialog("destroy");
+        }
+      }
+    });
+  };
+
 });
 
-function add_form(){
-  $("#addLinkFromList").before('\
-    <div>\
-      <input type="text" name="link_from_list[]" class="form-control">\
-      <input type="button" value="削除" class="form-control" onclick="remove_form(this)"><br>\
-    </div>\
-    ');
-}
-
-function remove_form(o){
-var DIV = o.parentNode;
-DIV.remove();
-}
+var remove_form = function(o) {
+  var parentNode = o.parentNode;
+  parentNode.remove();
+};
 </script>
 <?php
     $input  = $fieldsets['fleamarket']->input();
@@ -58,9 +107,9 @@ DIV.remove();
         <div class="col-md-6">
           <table class="table-fixed table">
             <tr>
-              <th>開催地</th>
+              <th>会場</th>
               <td>
-                <select class="form-control" name="location_id">
+                <select id="location_id" class="form-control" name="location_id">
                 <?php
                     if (empty($location_id) && $fields['location_id']->value != ''):
                         $location_id = $fields['location_id']->value;
@@ -76,6 +125,12 @@ DIV.remove();
                     endforeach;
                 ?>
                 </select>
+                <button id="doLocationSearch" type="button" class="btn btn-default">会場検索</button>
+                <?php
+                    if (isset($errors['location_id'])):
+                       echo '<div class="error-message">' . $errors['location_id'] . '</div>';
+                    endif;
+                ?>
               </td>
             </tr>
             <tr>
@@ -279,7 +334,9 @@ DIV.remove();
                        echo '<div class="error-message">' . $errors['link_from_list'] . '</div>';
                     endif;
                 ?>
-                <button type="button" class="form-control" id="addLinkFromList" onclick="add_form()">さらに追加</button>
+                <p>
+                  <button id="addLinkFromList" type="button" class="form-control">さらに追加</button>
+                </p>
               </td>
             </tr>
             <tr>
@@ -681,6 +738,44 @@ DIV.remove();
                echo e($fleamarket->updated_at);
             endif;
         ?></div>
+    </div>
+  </div>
+</div>
+<div id="searchLocationDialog" class="afDialog">
+  <div class="contents">
+    <form id="searchLocationForm" action="/admin/fleamarket/searchlocation" method="post" class="form-inline" enctype="multipart/form-data">
+      <div class="form-group">
+        <div class="col-md-2">
+          <input type="text" class="form-control" name="name" placeholder="会場名">
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="col-md-1">
+          <select class="form-control" id="prefecture" name="prefecture_id">
+            <option value="">都道府県</option>
+          <?php
+              foreach ($prefectures as $prefecture_id => $prefecture_name):
+                  $selected = '';
+                  if (! empty($conditions['prefecture_id'])
+                      && $prefecture_id == $conditions['prefecture_id']
+                  ):
+                      $selected = 'selected';
+                  endif;
+          ?>
+            <option value="<?php echo $prefecture_id;?>" <?php echo $selected;?>><?php echo $prefecture_name;?></option>
+          <?php
+              endforeach;
+          ?>
+          </select>
+        </div>
+      </div>
+      <button id="doSearch" type="button" class="btn btn-default"><span class="glyphicon glyphicon-search"></span> 検 索</button>
+    </form>
+    <div class="container-fluid">
+      <div class="row">
+        <div id="contents" class="col-md-12">
+        </div>
+      </div>
     </div>
   </div>
 </div>

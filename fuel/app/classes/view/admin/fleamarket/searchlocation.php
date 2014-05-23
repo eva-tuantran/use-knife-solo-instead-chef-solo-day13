@@ -5,7 +5,7 @@
  *
  * @author ida
  */
-class View_Admin_Fleamarket_Index extends \ViewModel
+class View_Admin_Fleamarket_Searchlocation extends \ViewModel
 {
     /**
      * view method
@@ -17,8 +17,5 @@ class View_Admin_Fleamarket_Index extends \ViewModel
     public function view()
     {
         $this->prefectures = \Config::get('master.prefectures');
-        $this->entry_styles = \Config::get('master.entry_styles');
-        $this->event_statuses = \Model_Fleamarket::getEventStatuses();
-        $this->locations = \Model_Location::find('all');
     }
 }

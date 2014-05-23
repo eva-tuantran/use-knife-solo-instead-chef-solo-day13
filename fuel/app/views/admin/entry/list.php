@@ -19,7 +19,7 @@
               ?>
               <input type="text" id="reservation_number" class="form-control" name="c[reservation_number]" value="<?php echo e($reservation_number);?>">
             </div>
-            <label for="user_id" class="col-md-1 control-label">ユーザID</label>
+            <label for="user_id" class="col-md-1 control-label">会員番号</label>
             <div class="col-md-2">
               <?php
                   $user_id = '';
@@ -78,7 +78,7 @@
           <th>予約番号</th>
           <th>受付日</th>
           <th>フリマ名</th>
-          <th>予約者</th>
+          <th>出店者</th>
           <th>状態</th>
           <th>出店形態</th>
           <th>ブース数</th>

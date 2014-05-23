@@ -46,7 +46,7 @@
               ?>
               </select>
             </div>
-            <button type="submit" class="btn btn-default" <?php echo $selected;?>><span class="glyphicon glyphicon-search"></span> 検 索</button>
+            <button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-search"></span> 検 索</button>
           </div>
         </form>
       </div>

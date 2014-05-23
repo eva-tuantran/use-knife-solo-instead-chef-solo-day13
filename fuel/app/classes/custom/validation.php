@@ -131,4 +131,22 @@ class Custom_Validation
 
         return true;
     }
+
+
+    /**
+     * 会場IDの存在チェック
+     *
+     * @access public
+     * @param  mixed $loocation_id 会場ID
+     * @return bool
+     * @author ida
+     */
+    public static function _validation_location_exists($location_id)
+    {
+        $count = \Model_Location::query()->where(array(
+            'location_id' => $location_id,
+        ))->count();
+
+        return $count == 1;
+    }
 }
