@@ -1437,3 +1437,29 @@ li.inquiry i {
 	height: 3em;
 }
 }
+
+/* -------------------- aucfan.com add-------------------- */
+.reserved {
+  margin: 0 5px 0 5px;
+  padding: 10px 0;
+  width: 130px;
+  font-size: 100%;
+  background-color: #f59000;
+  color: #fff;
+  border: none;
+  border-radius: 3px;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  text-align: center;
+  cursor: default;
+}
+.reservationNumber {
+  margin-bottom: 5px;
+  font-size: 16px;
+  font-weight: 200;
+  line-height: 1.4;
+}
+.reservationNumber dt,
+.reservationNumber dd {
+  float: left;
+}
