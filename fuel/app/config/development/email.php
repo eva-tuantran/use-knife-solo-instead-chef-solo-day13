@@ -24,7 +24,7 @@ return array(
         /**
          * Email charset
          */
-        'charset'		=> 'jis',
+        'charset'		=> 'iso-2022-jp',
 
         /**
          * Wether to encode subject and recipient names.
@@ -123,7 +123,7 @@ return array(
     'setups' => array(
         'default' => array(),
         'jis' => array(
-            'charset'  => 'ISO-2022-JP',
+            'charset'  => 'jis',
             'encoding' => '7bit',
         ),
 

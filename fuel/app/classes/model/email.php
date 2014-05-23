@@ -53,7 +53,6 @@ class Model_Email extends \Model
                 }
             }
         }
-
         return $email->send();
     }
 
@@ -70,7 +69,7 @@ class Model_Email extends \Model
         foreach ( $params as $key => $value ) {
             $body = str_replace("##{$key}##",$value,$body);
         }
-        return mb_convert_encoding($body, 'jis');
+        return mb_convert_encoding($body, 'iso-2022-jp');
     }
 }
 
