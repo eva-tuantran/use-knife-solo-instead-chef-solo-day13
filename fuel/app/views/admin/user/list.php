@@ -8,7 +8,7 @@
       <div class="col-md-10">
         <form id="searchForm" class="form-horizontal" id="" action="/admin/user/list" method="post" role="form">
           <div class="form-group">
-            <label for="user_id" class="col-md-1 control-label">ユーザID</label>
+            <label for="user_id" class="col-md-1 control-label">会員番号</label>
             <div class="col-md-2">
               <?php
                   $user_id = '';
@@ -18,7 +18,7 @@
               ?>
               <input type="text" class="form-control" id="user_id" placeholder="ユーザID" name="c[user_id]" value="<?php echo e($user_id);?>">
             </div>
-            <label for="user_old_id" class="col-md-1 control-label">旧ユーザID</label>
+            <label for="user_old_id" class="col-md-1 control-label">旧会員番号</label>
             <div class="col-md-2">
               <?php
                   $user_old_id = '';
@@ -87,7 +87,7 @@
     <table class="table table-hover table-condensed" style="">
       <thead>
         <tr>
-          <th>ID<br>(旧ID)</th>
+          <th>会員番号<br>(旧会員番号)</th>
           <th>氏名</th>
           <th>性別</th>
           <th>都道府県</th>

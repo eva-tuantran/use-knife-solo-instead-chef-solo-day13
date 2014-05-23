@@ -1303,6 +1303,7 @@ QUERY;
             $fieldset->add('reservation_email_confirm')
                 ->add_rule('match_field', 'reservation_email');
         }
+
         return $fieldset;
     }
 

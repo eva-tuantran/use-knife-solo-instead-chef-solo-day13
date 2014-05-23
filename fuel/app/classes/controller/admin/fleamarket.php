@@ -173,6 +173,30 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
         $this->template->content = $view;
     }
 
+    public function action_searchlocation()
+    {
+        $this->template = '';
+
+        $prefecture_id = \Input::post('prefecture_id');
+        $name = \Input::post('name');
+
+        $query = \Model_Location::query()->select(
+            'location_id', 'name', 'address'
+        );
+
+        if ($prefecture_id) {
+            $query->where(array('prefecture_id' => $prefecture_id));
+        }
+        if ($name) {
+            $query->where(array('name', 'LIKE', '%' . $name . '%'));
+        }
+        $locations = $query->get();
+
+        $view_model = \ViewModel::forge('admin/fleamarket/searchlocation');
+        $view_model->set('location_list', $locations, false);
+        return $view_model;
+    }
+
     /**
      * js、cssを追加する
      *
@@ -610,6 +634,7 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
      * @param
      * @return void
      * @author kobayashi
+     * @author ida
      */
     private function createFieldsetFleamarket()
     {
@@ -640,6 +665,9 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
         }
 
         $fieldset->validation()->add_callable('Custom_Validation');
+        $fieldset->field('location_id')
+            ->add_rule('location_exists');
+
         $fieldset->add('delete_priorities');
         $fieldset->repopulate();
 
