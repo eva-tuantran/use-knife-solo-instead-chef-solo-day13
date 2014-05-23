@@ -42,9 +42,9 @@
   </div>
   <div class="resultDetail">
     <?php if ($type === 'reserved' && ! empty($fleamarket['reservation_number'])):?>
-    <dl class="col-md-12 reservationNumber">
+    <dl class="col-md-11 reservationNumber clearfix">
       <dt>予約番号</dt>
-      <dd><span class="text-success"><?php echo e($fleamarket['reservation_number']);?></span></dd>
+      <dd><?php echo e($fleamarket['reservation_number']);?></dd>
     </dl>
     <?php endif;?>
     <?php if ($is_official): ?>
