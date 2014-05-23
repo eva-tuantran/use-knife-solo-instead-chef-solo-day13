@@ -28,7 +28,7 @@
   </div>
   <p class="date"><?php echo e(date('n月j日', strtotime($fleamarket['event_date'])));?>(<?php echo $week_list[date('w', strtotime($fleamarket['event_date']))];?>)</p>
   <h3><a href="/detail/<?php echo e($fleamarket_id);?>"><?php echo e($fleamarket['name']);?></a></h3>
-  <p class="place"><?php echo e($fleamarket['location_name']);?></p>
+  <!-- <p class="place"><?php echo e($fleamarket['location_name']);?></p> -->
 </div>
 <!-- /market -->
 <?php
