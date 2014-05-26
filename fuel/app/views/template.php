@@ -17,7 +17,7 @@
 <?php if (! empty($meta)) { echo Html::meta($meta); }; ?>
 <link href="/assets/css/bootstrap.min.css" rel="stylesheet">
 <link href="/assets/css/reset.css" rel="stylesheet">
-<link href="/assets/css/base.css" rel="stylesheet">
+<link href="/assets/css/base.css?20140526" rel="stylesheet">
 <script src="/assets/js/jquery.min.js"></script>
 <script src="/assets/js/bootstrap.min.js"></script>
 <?php echo Asset::render('add_css', false);?>
