@@ -1308,7 +1308,7 @@ QUERY;
     }
 
     /**
-     * event_reservation_status の更新
+     * 予約状況の更新
      *
      * @access public
      * @param bool $save
@@ -1317,43 +1317,80 @@ QUERY;
      */
     public function updateEventReservationStatus($save = true)
     {
-        $is_full = true;
+        $max_booth = 0;
+        $remain_booth = 0;
         foreach ($this->fleamarket_entry_styles as $fleamarket_entry_style) {
-            if (! $fleamarket_entry_style->isFullBooth()){
-                $is_full = false;
-                break;
-            }
+            $max_booth += $fleamarket_entry_style->max_booth;
+            $remain_booth += $fleamarket_entry_style->remainBooth('master');
         }
-        if ($is_full) {
-            $this->event_reservation_status = self::EVENT_RESERVATION_STATUS_FULL;
-            if ($save) {
-                $this->save();
-            }
-        }
-    }
 
-    public function incrementReservationSerial($save = true)
-    {
-        $this->reservation_serial = DB::expr('reservation_serial + 1');
-        if ($save) {
+        $is_save = false;
+        if ($remain_booth == 0) {
+            $is_save = true;
+            $this->event_reservation_status = self::EVENT_RESERVATION_STATUS_FULL;
+        } elseif (($max_booth * 0.2) >= $remain_booth) {
+            $is_save = true;
+            $this->event_reservation_status = self::EVENT_RESERVATION_STATUS_FEW;
+        }
+
+        if ($save && $is_save) {
             $this->save();
         }
     }
 
-    public function fleamarket_image($n)
+    /**
+     * 予約番号を採番する
+     *
+     * @access private
+     * @param bool $save 保存フラグ
+     * @return string
+     * @author kobayashi
+     * @author ida
+     */
+    public function makeReservationNumber($save = true)
+    {
+        $this->reservation_serial++;
+
+        $reservation_number = sprintf(
+            '%05d-%05d',
+            $this->fleamarket_id,
+            $this->reservation_serial
+        );
+
+        return $reservation_number;
+    }
+
+    /**
+     * イメージを取得する
+     *
+     * @access public
+     * @param int $priority 取得するイメージの番号
+     * @return vobject
+     * @author kobayasi
+     */
+    public function fleamarket_image($priority)
     {
         foreach ($this->fleamarket_images as $fleamarket_image) {
-            if ($fleamarket_image->priority == $n) {
+            if ($fleamarket_image->priority == $priority) {
                 return $fleamarket_image;
             }
         }
+
         return null;
     }
 
+    /**
+     * 出店予約判定
+     *
+     * @access public
+     * @param
+     * @return bool
+     * @author kobayasi
+     */
     public function canReserve()
     {
         return
-            $this->event_status             == Model_Fleamarket::EVENT_STATUS_RESERVATION_RECEIPT &&
-            $this->event_reservation_status != Model_Fleamarket::EVENT_RESERVATION_STATUS_FULL;
+            $this->event_status == \Model_Fleamarket::EVENT_STATUS_RESERVATION_RECEIPT
+            && $this->event_reservation_status != \Model_Fleamarket::EVENT_RESERVATION_STATUS_FULL;
     }
 }

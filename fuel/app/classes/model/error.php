@@ -28,6 +28,15 @@ class Model_Error extends \Model
     const ER00405 = 'ER00405';
     const ER00406 = 'ER00406';
 
+    const ER00501 = 'ER00501';
+    const ER00502 = 'ER00502';
+    const ER00503 = 'ER00503';
+    const ER00504 = 'ER00504';
+    const ER00505 = 'ER00505';
+    const ER00506 = 'ER00506';
+    const ER00507 = 'ER00507';
+    const ER00508 = 'ER00508';
+
     const ER00601 = 'ER00601';
     const ER00602 = 'ER00602';
     const ER00603 = 'ER00603';

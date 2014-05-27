@@ -1,19 +1,3 @@
-<style type="text/css">
-.reserved {
-  margin: 0 5px 0 5px;
-  padding: 10px 0;
-  width: 130px;
-  font-size: 100%;
-  background-color: #f59000;
-  color: #fff;
-  border: none;
-  border-radius: 3px;
-  -webkit-border-radius: 3px;
-  -moz-border-radius: 3px;
-  text-align: center;
-  cursor: default;
-}
-</style>
 <script type='text/javascript'>
 var googletag = googletag || {};
 googletag.cmd = googletag.cmd || [];
@@ -233,7 +217,7 @@ googletag.enableServices();
           <li><a href="/detail/<?php echo $fleamarket_id;?>">詳細情報を見る<i></i></a></li>
         </ul>
         <ul class="rightbutton">
-    <?php if ($user && $user->hasEntry($fleamarket_id)):?>
+    <?php if ($user && $user->hasReserved($fleamarket_id)):?>
           <li class="button reserved">出店予約中</li>
     <?php elseif ($user && $user->hasWaiting($fleamarket_id)):?>
           <li class="button reserved">キャンセル待ち中</li>

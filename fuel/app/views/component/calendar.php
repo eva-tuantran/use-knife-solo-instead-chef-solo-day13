@@ -7,24 +7,22 @@
 <table class="calendar_table">
   <thead>
     <tr>
-    <?php foreach($calendar['days'] as $name): ?>
-      <th><?php echo $name; ?></th>
-    <?php endforeach; ?>
+    <?php foreach ($calendar['days'] as $name):?>
+      <th><?php echo $name;?></th>
+    <?php endforeach;?>
     </tr>
   </thead>
   <tbody>
-    <?php foreach($calendar['calendar'] as $week): ?>
+  <?php foreach ($calendar['calendar'] as $week):?>
     <tr>
-      <?php foreach($week as $day): ?>
-      <td>
+    <?php foreach ($week as $day):?>
         <?php if (isset($day['is_event']) && $day['is_event'] === true):?>
-          <a href="/search/1?calendar=<?php echo $day['date'];?>"><?php echo $day['day'];?></a>
+          <td><a href="/search/1?calendar=<?php echo $day['date'];?>"><?php echo $day['day'];?></a></td>
         <?php else:?>
-          <?php echo $day['day']; ?>
+          <td><?php echo $day['day']; ?></td>
         <?php endif;?>
-      </td>
-      <?php endforeach; ?>
+    <?php endforeach;?>
     </tr>
-    <?php endforeach; ?>
+  <?php endforeach;?>
 </table>
 </div>

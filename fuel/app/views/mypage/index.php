@@ -202,34 +202,38 @@
 <div id="information-dialog" class="afDialog">
   <p id="message" class="message"></p>
 </div>
-<div id="dialog_confirm" class="afDialog">
-  <p id="message" class="message">出店予約をキャンセルしてもよろしいですか？</p>
+<div id="dialog_confirm" class="afDialog" title="解除">
+  <p id="message" class="message">解除してもよろしいですか？</p>
 </div>
 <script type="text/javascript">
 $(function() {
-  $('.fleamarket_cancel').click(function() {
-    var href = $(this).attr('href');
-    $('#dialog_confirm').dialog({
+  $('.cancel_reservation, .cancel_waiting').click(function(evt) {
+    evt.preventDefault();
+
+    var cancel = $(this).attr("class").replace("cancel_", "");
+    var href = $(this).attr("href");
+    $("#dialog_confirm").dialog({
       buttons: {
         "はい": function(event){
-          location.href = href;
+          location.href = href + "&cancel=" + cancel;
         },
         "いいえ": function(event){
           $(this).dialog("close");
         }
       }
     });
+
     return false;
   });
 
   $(".mylist_remove").click(function(evt) {
     evt.preventDefault();
-    var id = $(this).attr('id');
+    var id = $(this).attr("id");
     id = id.match(/^fleamarket_id_(\d+)/)[1];
 
     $.ajax({
       type: "post",
-      url: '/favorite/delete',
+      url: "/favorite/delete",
       dataType: "json",
       data: {fleamarket_id: id}
     }).done(function(json, textStatus, jqXHR) {
@@ -291,7 +295,7 @@ var Search = {
 
       $.ajax({
         type: "get",
-        url: '/search/prefecture',
+        url: "/search/prefecture",
         dataType: "json",
         data: {region_id: region_id}
       }).done(function(json, textStatus, jqXHR) {
@@ -328,7 +332,7 @@ var Carousel = {
 };
 
 var openDialog = function(message, reload) {
-  if (typeof reload == 'undefined') {
+  if (typeof reload == "undefined") {
     reload = false;
   }
   $("#information-dialog #message").text(message);
@@ -339,7 +343,7 @@ var openDialog = function(message, reload) {
         if (reload) {
           location.reload();
         }
-        $(this).dialog( "close" );
+        $(this).dialog("close");
       }
     }
   });
