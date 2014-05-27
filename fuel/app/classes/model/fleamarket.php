@@ -1192,6 +1192,9 @@ QUERY;
                     );
                     break;
                 case 'event_status':
+                    if (in_array(\Model_Fleamarket::EVENT_STATUS_CLOSE, $condition)) {
+                        $is_event_date = true;
+                    }
                     $conditions['event_status'] = array($operator, $condition);
                     break;
                 case 'entry_style':
