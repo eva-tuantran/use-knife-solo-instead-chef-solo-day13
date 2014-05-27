@@ -712,7 +712,7 @@ li.inquiry i {
 }
 #scrollControl {
 	margin: 0 auto;
-	height: 230px;
+    height: 230px;
 }
 #scrollControl #prev,
 #scrollControl #next {
