@@ -1,257 +1,332 @@
-<?php $prefectures = Config::get('master.prefectures'); ?>
+<?php
+    $input  = $fieldset->input();
+    $errors = $fieldset->validation()->error_message();
+    $fields = $fieldset->field();
+?>
+<div class="panel panel-default">
+  <!-- Default panel contents -->
+  <div class="panel-heading">
+    <h2 class="panel-title">ユーザ情報の入力</h2>
+  </div>
+  <div class="panel-body">
+    <form action="/admin/user/confirm" method="post" class="form-inline" enctype="multipart/form-data" role="form">
+      <input type="hidden" name="user_id" value="<?php echo e($user_id); ?>">
+      <div class="row">
+        <div class="col-md-6">
+          <table class="table-fixed table">
+            <tr>
+              <th>ニックネーム</th>
+              <td>
+                <input type="text" class="form-control" name="nick_name" value="<?php echo e($fields['nick_name']->value); ?>">
+                <?php
+                    if (isset($errors['nick_name'])):
+                        echo '<div class="error-message">' . $errors['nick_name'] . '</div>';
+                    endif;
+                ?>
+              </td>
+            </tr>
+            <tr>
+              <th>名前</th>
+              <td>
+                <input type="text" class="form-control" name="last_name" value="<?php echo e($fields['last_name']->value); ?>">
+                <input type="text" class="form-control" name="first_name" value="<?php echo e($fields['first_name']->value); ?>">
+                <?php
+                    if (isset($errors['last_name'])):
+                        echo '<div class="error-message">' . $errors['last_name'] . '</div>';
+                    endif;
+                    if (isset($errors['first_name'])):
+                        echo '<div class="error-message">' . $errors['first_name'] . '</div>';
+                    endif;
+                ?>
+              </td>
+            </tr>
+            <tr>
+              <th>フリガナ</th>
+              <td>
+                <input type="text" class="form-control" name="last_name_kana" value="<?php echo e($fields['last_name_kana']->value); ?>">
+                <input type="text" class="form-control" name="first_name_kana" value="<?php echo e($fields['first_name_kana']->value); ?>">
+                <?php
+                    if (isset($errors['last_name_kana'])):
+                        echo '<div class="error-message">' . $errors['last_name_kana'] . '</div>';
+                    endif;
+                    if (isset($errors['first_name_kana'])):
+                        echo '<div class="error-message">' . $errors['first_name_kana'] . '</div>';
+                    endif;
+                ?>
+                </td>
+            </tr>
+            <tr>
+              <th>誕生日</th>
+              <td>
+                <input id="birthday" type="text" class="form-control small-width" name="birthday" value="<?php echo e($fields['birthday']->value); ?>">
+                <?php
+                    if (isset($errors['birthday'])):
+                        echo '<div class="error-message">' . $errors['birthday'] . '</div>';
+                    endif;
+                ?>
+              </td>
+            </tr>
+            <tr>
+              <th>性別</th>
+              <td>
+                <div class="radio">
+                  <label><input type="radio" class="form-control" name="gender" value="1"<?php if ($fields['gender']->value == 1) { echo ' checked'; } ?>>男性</label>
+                </div>
+                <div class="radio">
+                  <label><input type="radio" class="form-control" name="gender" value="2"<?php if ($fields['gender']->value == 2) { echo ' checked'; } ?>>女性</label>
+                </div>
+                <?php
+                    if (isset($errors['gender'])):
+                        echo '<div class="error-message">' . $errors['gender'] . '</div>';
+                    endif;
+                ?>
+              </td>
+            </tr>
+            <tr>
+              <th>郵便番号</th>
+              <td>
+                <input type="text" class="form-control small-width" name="zip" value="<?php echo e($fields['zip']->value); ?>">
+                <?php
+                    if (isset($errors['zip'])):
+                        echo '<div class="error-message">' . $errors['zip'] . '</div>';
+                    endif;
+                ?>
+              </td>
+            </tr>
+            <tr>
+              <th>都道府県</th>
+              <td>
+                <select class="form-control" name="prefecture_id">
+                  <option value=""></option>
+                  <?php
+                      foreach ($prefectures as $prefecture_id => $prefecture):
+                          $selected = '';
+                          if ($prefecture_id == $fields['prefecture_id']->value):
+                              $selected = 'selected';
+                          endif;
+                  ?>
+                  <option value="<?php echo $prefecture_id;?>"<?php echo $selected;?>><?php echo $prefecture;?></option>
+                  <?php
+                      endforeach;
+                  ?>
+                </select>
+                <?php
+                    if (isset($errors['prefecture_id'])):
+                        echo '<div class="error-message">' . $errors['prefecture_id'] . '</div>';
+                    endif;
+                ?>
+              </td>
+            </tr>
+            <tr>
+              <th>住所</th>
+              <td>
+                <input type="text" class="form-control large-width" name="address" value="<?php echo e($fields['address']->value); ?>">
+                <?php
+                    if (isset($errors['address'])):
+                        echo '<div class="error-message">' . $errors['address'] . '</div>';
+                    endif;
+                ?>
+              </td>
+            </tr>
+            <tr>
+              <th>電話番号</th>
+              <td>
+                <input id="inputTel" type="text" class="form-control" name="tel" value="<?php echo e($fields['tel']->value); ?>">
+                <?php
+                    if (isset($errors['tel'])):
+                        echo '<div class="error-message">' . $errors['tel'] . '</div>';
+                    endif;
+                ?>
+              </td>
+            </tr>
+            <tr>
+              <th>電話番号（モバイル）</th>
+              <td>
+                <input type="text" class="form-control" name="mobile_tel" value="<?php echo e($fields['mobile_tel']->value); ?>">
+                <?php
+                    if (isset($errors['mobile_tel'])):
+                        echo '<div class="error-message">' . $errors['mobile_tel'] . '</div>';
+                    endif;
+                ?>
+              </td>
+            </tr>
+            <tr>
+              <th>メールアドレス</th>
+              <td>
+                <input type="text" class="form-control large-width" name="email" value="<?php echo e($fields['email']->value); ?>">
+                <?php
+                    if (isset($errors['email'])):
+                        echo '<div class="error-message">' . $errors['email'] . '</div>';
+                    endif;
+                ?>
+              </td>
+            </tr>
+            <tr>
+              <th>メールアドレス（モバイル）</th>
+              <td>
+                <input type="text" class="form-control large-width" name="mobile_email" value="<?php echo e($fields['mobile_email']->value); ?>">
+                <?php
+                    if (isset($errors['mobile_email'])):
+                        echo '<div class="error-message">' . $errors['mobile_email'] . '</div>';
+                    endif;
+                ?>
+              </td>
+            </tr>
+            <?php
+                if (empty($user_id)):
+            ?>
+            <tr>
+              <th>パスワード</th>
+              <td>
+                <input id="inputPassword" type="text" class="form-control" name="password" value="<?php echo e($fields['password']->value); ?>">
+                <?php
+                    if (isset($errors['password'])):
+                        echo '<div class="error-message">' . $errors['password'] . '</div>';
+                    endif;
+                ?>
+              </td>
+            </tr>
+            <?php
+                endif;
+            ?>
+            <tr>
+              <th>登録元</th>
+              <td>
+                <select class="form-control" name="device">
+                  <option value=""></option>
+                  <?php
+                      foreach ($devices as $device_key => $device):
+                          $selected = '';
+                          if ($device_key == $fields['device']->value):
+                              $selected = 'selected';
+                          endif;
+                  ?>
+                  <option value="<?php echo $device_key;?>"<?php echo $selected;?>><?php echo $device;?></option>
+                  <?php
+                      endforeach;
+                  ?>
+                </select>
+                <?php
+                    if (isset($errors['device'])):
+                        echo '<div class="error-message">' . $errors['device'] . '</div>';
+                    endif;
+                ?>
+              </td>
+            </tr>
+            <tr>
+              <th>メールマガジン購読</th>
+              <td>
+                <div class="radio">
+                  <label><input type="radio" class="form-control" name="mm_flag" value="1" <?php echo $fields['mm_flag']->value ? 'checked' : '';?>>購読する</label>
+                </div>
+                <div class="radio">
+                  <label><input type="radio" class="form-control" name="mm_flag" value="0" <?php echo $fields['mm_flag']->value ? '' : 'checked';?>>購読しない</label>
+                </div>
+                <?php
+                    if (isset($errors['mm_flag'])):
+                        echo '<div class="error-message">' . $errors['mm_flag'] . '</div>';
+                    endif;
+                ?>
+              </td>
+            </tr>
+            <tr>
+              <th>管理者メモ</th>
+              <td>
+                <textarea class="form-control" name="admin_memo" cols="50" rows="5"><?php echo e($fields['admin_memo']->value); ?></textarea>
+                <?php
+                    if (isset($errors['admin_memo'])):
+                        echo '<div class="error-message">' . $errors['admin_memo'] . '</div>';
+                    endif;
+                ?>
+              </td>
+            </tr>
+            <tr>
+              <th>ユーザ種別</th>
+              <td>
+                <div class="radio">
+                  <label><input type="radio" class="form-control" name="organization_flag" value="0" <?php echo $fields['organization_flag']->value ? '' : 'checked';?>>個人</label>
+                </div>
+                <div class="radio">
+                  <label><input type="radio" class="form-control" name="organization_flag" value="1" <?php echo $fields['organization_flag']->value ? 'checked' : '';?>>企業・団体</label>
+                </div>
+                <?php
+                    if (isset($errors['organization_flag'])):
+                        echo '<div class="error-message">' . $errors['organization_flag'] . '</div>';
+                    endif;
+                ?>
+              </td>
+            </tr>
+            <tr>
+              <th>登録ステータス</th>
+              <td>
+                <?php
+                    foreach ($register_statuses as $register_status_key => $register_status):
+                        $checked = '';
+                        if ($register_status_key == $fields['register_status']->value):
+                            $checked = 'checked';
+                        endif;
+                ?>
+                <div class="radio">
+                  <label><input type="radio" class="form-control" name="register_status" value="<?php echo $register_status_key;?>"<?php echo $checked;?>><?php echo $register_status;?></label>
+                </div>
+                <?php
+                    endforeach;
+                ?>
+                <?php
+                    if (isset($errors['register_status'])):
+                        echo '<div class="error-message">' . $errors['register_status'] . '</div>';
+                    endif;
+                ?>
+              </td>
+            </tr>
+            <tr>
+              <th>最終ログイン時刻</th>
+              <td> <?php echo e($fields['last_login']->value); ?></td>
+            </tr>
+          </table>
+        </div>
+        <div class="col-md-12 btn-group">
+          <button type="submit" class="btn btn-info">内容を確認する</button>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="panel-footer">
+    <div class="row">
+        <div class="col-md-1">登録日時</div>
+        <div class="col-md-2"><?php
+            if (isset($fields)):
+               echo e($fields['created_at']->value);
+            endif;
+        ?></div>
+        <div class="col-md-1">更新日時</div>
+        <div class="col-md-2"><?php
+            if (isset($fields)):
+               echo e($fields['updated_at']->value);
+            endif;
+        ?></div>
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+$(function() {
+  var now_date = new Date();
+  var min_year = now_date.getFullYear() - 100;
+  var max_year = now_date.getFullYear();
 
-<?php $input  = $fieldset->input(); ?>
-<?php $errors = $fieldset->validation()->error_message(); ?>
-<?php $fields = $fieldset->field(); ?>
 
-<h3></h3>
+  $("#birthday").datepicker({
+    yearRange: min_year + ":" + max_year,
+    defaultDate: "-30y",
+    changeMonth: true,
+    changeYear: true
+  });
 
-<form action="/admin/user/confirm" method="POST" class="form-horizontal" enctype="multipart/form-data">
-  <table>
-    <tr>
-      <td>ニックネーム</td>
-      <td>
-	<input type="text" name="nick_name" value="<?php echo e($fields['nick_name']->value); ?>">
-	<?php
-	   if (isset($errors['nick_name'])) {
-	       echo $errors['nick_name'];
-    	   }
-	?>
-      </td>
-    </tr>
-    <tr>
-      <td>氏名(姓/名)</td>
-      <td>
-	<input type="text" name="last_name" value="<?php echo e($fields['last_name']->value); ?>">
-	<input type="text" name="first_name" value="<?php echo e($fields['first_name']->value); ?>">
-	<?php
-	   if (isset($errors['last_name'])) {
-	       echo $errors['last_name'];
-    	   }
-	   if (isset($errors['first_name'])) {
-	       echo $errors['first_name'];
-    	   }
-	?>
-      </td>
-    </tr>
-    <tr>
-      <td>シメイ（セイ/メイ）</td>
-      <td>
-	<input type="text" name="last_name_kana" value="<?php echo e($fields['last_name_kana']->value); ?>">
-	<input type="text" name="first_name_kana" value="<?php echo e($fields['first_name_kana']->value); ?>">
-	<?php
-	   if (isset($errors['last_name_kana'])) {
-	       echo $errors['last_name_kana'];
-    	   }
-	   if (isset($errors['first_name_kana'])) {
-	       echo $errors['first_name_kana'];
-    	   }
-	?>
-      </td>
-    </tr>
-    <tr>
-      <td>誕生日</td>
-      <td>
-	<input type="text" name="birthday" value="<?php echo e($fields['birthday']->value); ?>">
-	<?php
-	   if (isset($errors['birthday'])) {
-	       echo $errors['birthday'];
-    	   }
-	?>
-      </td>
-    </tr>
-    <tr>
-      <td>性別</td>
-      <td>
-	<input type="radio" name="gender" value="1"<?php if ($fields['gender']->value == 1) { echo ' checked'; } ?>>男性
-	<input type="radio" name="gender" value="2"<?php if ($fields['gender']->value == 2) { echo ' checked'; } ?>>女性
-	<?php
-	   if (isset($errors['gender'])) {
-	       echo $errors['gender'];
-    	   }
-	?>
-      </td>
-    </tr>
-    <tr>
-      <td>郵便番号</td>
-      <td>
-	<input type="text" name="zip" value="<?php echo e($fields['zip']->value); ?>">
-	<?php
-	   if (isset($errors['zip'])) {
-	       echo $errors['zip'];
-    	   }
-	?>
-      </td>
-    </tr>
-    <tr>
-      <td>都道府県</td>
-      <td>
-	<select name="prefecture_id">
-	  <option value=""></option>
-	  <?php foreach ($prefectures as $id => $prefecture) { ?>
-	  <option value="<?php echo $id; ?>"<?php if ($id == $fields['prefecture_id']->value) echo ' selected=selected';?>><?php echo e($prefecture); ?></option>
-	  <?php } ?>
-	</select>
-      </td>
-    </tr>
-    <tr>
-      <td>住所</td>
-      <td>
-	<input type="text" name="address" value="<?php echo e($fields['address']->value); ?>">
-	<?php
-	   if (isset($errors['address'])) {
-	       echo $errors['address'];
-    	   }
-	?>
-      </td>
-    </tr>
-    <tr>
-      <td>電話番号</td>
-      <td>
-	<input type="text" name="tel" value="<?php echo e($fields['tel']->value); ?>">
-	<?php
-	   if (isset($errors['tel'])) {
-	       echo $errors['tel'];
-    	   }
-	?>
-      </td>
-    </tr>
-    <tr>
-      <td>携帯電話</td>
-      <td>
-	<input type="text" name="mobile_tel" value="<?php echo e($fields['mobile_tel']->value); ?>">
-	<?php
-	   if (isset($errors['mobile_tel'])) {
-	       echo $errors['mobile_tel'];
-    	   }
-	?>
-      </td>
-    </tr>
-    <tr>
-      <td>メールアドレス</td>
-      <td>
-	<input type="text" name="email" value="<?php echo e($fields['email']->value); ?>">
-	<?php
-	   if (isset($errors['email'])) {
-	       echo $errors['email'];
-    	   }
-	?>
-      </td>
-    </tr>
-    <tr>
-      <td>携帯メールアドレス</td>
-      <td>
-	<input type="text" name="mobile_email" value="<?php echo e($fields['mobile_email']->value); ?>">
-	<?php
-	   if (isset($errors['mobile_email'])) {
-	       echo $errors['mobile_email'];
-    	   }
-	?>
-      </td>
-    </tr>
-    <tr>
-      <td>携帯端末</td>
-      <td>
-	<input type="text" name="device" value="<?php echo e($fields['device']->value); ?>">
-	<?php
-	   if (isset($errors['device'])) {
-	       echo $errors['device'];
-    	   }
-	?>
-      </td>
-    </tr>
-    <tr>
-      <td>メールマガジン購読</td>
-      <td>
-    <input type="radio" name="mm_flag" value="1" <?php echo $fields['mm_flag']->value ? 'checked' : ''; ?>>購読する
-    <input type="radio" name="mm_flag" value="0" <?php echo $fields['mm_flag']->value ? '' : 'checked'; ?>>購読しない
-	<?php
-	   if (isset($errors['mm_flag'])) {
-	       echo $errors['mm_flag'];
-    	   }
-	?>
-      </td>
-    </tr>
-    <tr>
-      <td>メルマガ受信端末</td>
-      <td>
-	<input type="text" name="mm_device" value="<?php echo e($fields['mm_device']->value); ?>">
-	<?php
-	   if (isset($errors['mm_device'])) {
-	       echo $errors['mm_device'];
-    	   }
-	?>
-      </td>
-    </tr>
-    <tr>
-      <td>メルマガエラーフラグ</td>
-      <td><?php echo e($fields['mm_error_flag']->value); ?></td>
-    </tr>
-    <tr>
-      <td>mobile_carrier</td>
-      <td>
-	<input type="text" name="mobile_carrier" value="<?php echo e($fields['mobile_carrier']->value); ?>">
-	<?php
-	   if (isset($errors['mobile_carrier'])) {
-	       echo $errors['mobile_carrier'];
-    	   }
-	?>
-      </td>
-    </tr>
-    <tr>
-      <td>mobile_uid</td>
-      <td>
-	<input type="text" name="mobile_uid" value="<?php echo e($fields['mobile_uid']->value); ?>">
-	<?php
-	   if (isset($errors['mobile_uid'])) {
-	       echo $errors['mobile_uid'];
-    	   }
-	?>
-      </td>
-    </tr>
-    <tr>
-      <td>パスワード(暗号化済)</td>
-      <td><?php echo e($fields['password']->value); ?></td>
-    </tr>
-    <tr>
-      <td>管理者メモ</td>
-      <td>
-	<input type="text" name="admin_memo" value="<?php echo e($fields['admin_memo']->value); ?>">
-	<?php
-	   if (isset($errors['admin_memo'])) {
-	       echo $errors['admin_memo'];
-    	   }
-	?>
-      </td>
-    </tr>
-    <tr>
-      <td>organization_flag(未使用)</td>
-      <td>
-	<input type="text" name="organization_flag" value="<?php echo e($fields['organization_flag']->value); ?>">
-	<?php
-	   if (isset($errors['organization_flag'])) {
-	       echo $errors['organization_flag'];
-    	   }
-	?>
-      </td>
-    </tr>
-    <tr>
-      <td>会員ステータス</td>
-      <td>
-	<input type="text" name="register_status" value="<?php echo e($fields['register_status']->value); ?>">
-	<?php
-	   if (isset($errors['register_status'])) {
-	       echo $errors['register_status'];
-    	   }
-	?>
-      </td>
-    </tr>
-    <tr>
-      <td>最終ログイン時刻</td>
-      <td> <?php echo e($fields['last_login']->value); ?>
-      </td>
-    </tr>
-  </table>
-  <input type="submit" value="add">
-  <input type="hidden" name="user_id" value="<?php echo e(Input::param('user_id')); ?>">
-</form>
+  $("#inputTel").blur(function() {
+     var tel = $(this).val();
+     if (tel) {
+         $("#inputPassword").val(tel);
+     }
+  });
+});
+</script>

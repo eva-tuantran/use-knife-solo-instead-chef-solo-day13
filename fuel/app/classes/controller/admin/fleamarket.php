@@ -1,11 +1,11 @@
 <?php
+
 /**
- *
+ * フリマ管理
  *
  * @extends  Controller_Base_Template
  * @author Hiroyuki Kobayashi
  */
-
 class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
 {
     /**
@@ -44,7 +44,7 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
     }
 
     /**
-     * 一覧表示
+     * フリマ一覧
      *
      * @access public
      * @param
@@ -67,10 +67,7 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
         $fleamarkets = \Model_Fleamarket::findAdminBySearch(
             $condition_list,
             $pagination->current_page,
-            $this->result_per_page,
-            array('order_by' => array(
-                'event_date' => 'ASC', 'event_status' => 'ASC'
-            ))
+            $this->result_per_page
         );
 
         $view_model = \ViewModel::forge('admin/fleamarket/list');
@@ -174,6 +171,30 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
         }
 
         $this->template->content = $view;
+    }
+
+    public function action_searchlocation()
+    {
+        $this->template = '';
+
+        $prefecture_id = \Input::post('prefecture_id');
+        $name = \Input::post('name');
+
+        $query = \Model_Location::query()->select(
+            'location_id', 'name', 'address'
+        );
+
+        if ($prefecture_id) {
+            $query->where(array('prefecture_id' => $prefecture_id));
+        }
+        if ($name) {
+            $query->where(array('name', 'LIKE', '%' . $name . '%'));
+        }
+        $locations = $query->get();
+
+        $view_model = \ViewModel::forge('admin/fleamarket/searchlocation');
+        $view_model->set('location_list', $locations, false);
+        return $view_model;
     }
 
     /**
@@ -306,7 +327,7 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
      * @return void
      * @author kobayashi
      */
-    public function removeFleamarketImages()
+    private function removeFleamarketImages()
     {
         $fieldsets = $this->getFieldsets();
         $fieldset  = $fieldsets['fleamarket'];
@@ -499,7 +520,7 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
      * @return void
      * @author kobayashi
      */
-    public function validateFleamarket($fieldsets)
+    private function validateFleamarket($fieldsets)
     {
         return $fieldsets['fleamarket']->validation()->run();
     }
@@ -513,7 +534,7 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
      * @author kobayashi
      * @author ida
      */
-    public function validateFleamarketAbout($fieldsets)
+    private function validateFleamarketAbout($fieldsets)
     {
         $is_valid = false;
         foreach ($fieldsets['fleamarket_abouts'] as $id => $fieldset) {
@@ -538,7 +559,7 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
      * @author kobayashi
      * @author ida
      */
-    public function validateFleamarketEntryStyle($fieldsets)
+    private function validateFleamarketEntryStyle($fieldsets)
     {
         $is_valid = false;
         $entry_styles = \Config::get('master.entry_styles');
@@ -613,6 +634,7 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
      * @param
      * @return void
      * @author kobayashi
+     * @author ida
      */
     private function createFieldsetFleamarket()
     {
@@ -643,6 +665,9 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
         }
 
         $fieldset->validation()->add_callable('Custom_Validation');
+        $fieldset->field('location_id')
+            ->add_rule('location_exists');
+
         $fieldset->add('delete_priorities');
         $fieldset->repopulate();
 
@@ -738,8 +763,8 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
 
         $fieldset = $fieldsets['fleamarket'];
         $input = $fieldset->validation()->validated();
+        $input['link_from_list'] = implode(",", $input['link_from_list']);
         $input['group_code'] = '';
-
         return $input;
     }
 
@@ -762,6 +787,15 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
             }
         }
 
+        if (! isset($result['register_type'])) {
+            $result['register_type'] = \Model_Fleamarket::REGISTER_TYPE_ADMIN;
+        }
+
+        if (! isset($result['event_status'])) {
+            $result['event_status'] =
+                \Model_Fleamarket::EVENT_STATUS_RESERVATION_RECEIPT;
+        }
+
         return $result;
     }
 
@@ -775,9 +809,9 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
      */
     private function getPaginationConfig($count)
     {
-        $search_result_per_page = Input::post('search_result_per_page');
-        if ($search_result_per_page) {
-            $this->result_per_page = $search_result_per_page;
+        $result_per_page = \Input::post('result_per_page');
+        if ($result_per_page) {
+            $this->result_per_page = $result_per_page;
         }
 
         return array(

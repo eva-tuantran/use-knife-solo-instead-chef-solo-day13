@@ -1,101 +1,190 @@
 <?php
+
 /**
- *
+ * 会場管理
  *
  * @extends  Controller_Base_Template
  * @author Hiroyuki Kobayashi
  */
-
 class Controller_Admin_Location extends Controller_Admin_Base_Template
 {
+
+    /**
+     * 検索結果1ページあたりの行数
+     *
+     * @var int
+     */
+    private $result_per_page = 50;
+
+    /**
+     * 会場情報
+     *
+     * @var object
+     */
     protected $location = null;
 
     public function before()
     {
         parent::before();
-        if (Input::param('location_id')) {
-            $this->location =
-                Model_Location::find(Input::param('location_id'));
-        }
     }
 
     /**
-     * 初期画面
+     * 一覧
      *
      * @access public
+     * @param
      * @return void
+     * @author kobayashi
+     */
+    public function action_list()
+    {
+        $conditions = $this->getCondition();
+        $condition_list = \Model_Location::createAdminSearchCondition($conditions);
+        $total_count = \Model_Location::getCountByAdminSearch($condition_list);
+
+        // ページネーション設定
+        $pagination = \Pagination::forge(
+            'location_pagination',
+            $this->getPaginationConfig($total_count)
+        );
+
+        $location_list = \Model_Location::findAdminBySearch(
+            $condition_list,
+            $pagination->current_page,
+            $this->result_per_page
+        );
+
+        $view_model = \ViewModel::forge('admin/location/list');
+        $view_model->set('location_list', $location_list, false);
+        $view_model->set('pagination', $pagination, false);
+        $view_model->set('conditions', $conditions, false);
+        $this->template->content = $view_model;
+    }
+
+    /**
+     * 入力
+     *
+     * @access public
+     * @param
+     * @return void
+     * @author kobayashi
      */
     public function action_index()
     {
-        $this->setAssets();
-        $view = View::forge('admin/location/index');
+        if (\Input::get('location_id')) {
+            $this->location = \Model_Location::find(\Input::get('location_id'));
+        }
+
+        $view_model = \ViewModel::forge('admin/location/index');
         $fieldset = $this->getFieldset();
-        $view->set('fieldset', $fieldset, false);
-        $view->set('location', $this->location, false);
-        $this->template->content = $view;
+        $view_model->set('fieldset', $fieldset, false);
+        $view_model->set('location', $this->location, false);
+        $this->template->content = $view_model;
     }
+
     /**
-     * 確認画面
+     * 確認
      *
      * @access public
+     * @param
      * @return void
+     * @author kobayashi
      */
     public function post_confirm()
     {
-        $fieldset = $this->getFieldset();
-        Session::set_flash('admin.location.fieldset', $fieldset);
-
-        if (! $fieldset->validation()->run()) {
-            return Response::redirect('admin/location/?location_id=' . Input::param('location_id',''));
+        if (\Input::post('location_id')) {
+            $this->location = \Model_Location::find(\Input::post('location_id'));
         }
 
-        $view = View::forge('admin/location/confirm');
-        $view->set('fieldset', $fieldset, false);
-        $view->set('location', $this->location, false);
+        $fieldset = $this->getFieldset();
+        \Session::set_flash('admin.location.fieldset', $fieldset);
 
-        $this->template->content = $view;
+        if (! $fieldset->validation()->run()) {
+            \Response::redirect('admin/location/?location_id=' . \Input::param('location_id',''));
+        }
+
+        $view_model = \ViewModel::forge('admin/location/confirm');
+        $view_model->set('fieldset', $fieldset, false);
+        $view_model->set('location', $this->location, false);
+        $this->template->content = $view_model;
     }
 
     /**
-     * 完了画面
+     * 完了
      *
      * @access public
+     * @param
      * @return void
+     * @author kobayashi
      */
     public function post_thanks()
     {
         if (! Security::check_token()) {
-            return Response::redirect('errors/doubletransmission');
+            \Response::redirect('errors/doubletransmission');
         }
-
-        $view = View::forge('admin/location/thanks');
-        $this->template->content = $view;
 
         try {
             $location = $this->registerLocation();
         } catch ( Exception $e ) {
             throw $e;
-            //$view->set('error', $e, false);
         }
+
+        $view = View::forge('admin/location/thanks');
+        $this->template->content = $view;
     }
 
+    /**
+     * 検索条件を取得する
+     *
+     * @access private
+     * @param
+     * @return array
+     * @author ida
+     */
+    private function getCondition()
+    {
+        $conditions = Input::post('c', array());
+
+        $result = array();
+        foreach ($conditions as $field => $value) {
+            if ($value !== '') {
+                $result[$field] = $value;
+            }
+        }
+
+        if (! isset($result['register_type'])) {
+            $result['register_type'] = \Model_Location::REGISTER_TYPE_ADMIN;
+        }
+
+        return $result;
+    }
+
+    /**
+     * フィールドセットを取得する
+     *
+     * @access public
+     * @param
+     * @return void
+     * @author kobayashi
+     */
     private function getFieldset()
     {
         if ($this->request->action == 'index') {
-            $fieldset = Session::get_flash('admin.location.fieldset');
+            $fieldset = \Session::get_flash('admin.location.fieldset');
             if (! $fieldset) {
                 $fieldset = $this->createFieldset();
             }
         } elseif ($this->request->action == 'confirm') {
             $fieldset = $this->createFieldset();
         } elseif ($this->request->action == 'thanks') {
-            $fieldset = Session::get_flash('admin.location.fieldset');
+            $fieldset = \Session::get_flash('admin.location.fieldset');
         }
+
         return $fieldset;
     }
 
     /**
-     * fieldsetの作成
+     * フィールドセットを生成する
      *
      * @access private
      * @return Fieldsetオブジェクト
@@ -103,53 +192,58 @@ class Controller_Admin_Location extends Controller_Admin_Base_Template
     private function createFieldset()
     {
         if ($this->location) {
-            $fieldset = Fieldset::forge('location');
-            $fieldset->add_model($this->location)->populate($this->location,true);
+            $fieldset = \Fieldset::forge('location');
+            $fieldset->add_model($this->location)->populate($this->location, true);
         } else {
-            $fieldset = Model_Location::createFieldset(true);
+            $fieldset = \Model_Location::createFieldset(true);
         }
-
         $fieldset->repopulate();
 
         return $fieldset;
     }
 
     /**
-     * locations テーブルへの登録
+     * 会場情報を登録する
      *
      * @access private
-     * @return Model_Locationオブジェクト
+     * @param
+     * @return object
+     * @author kobayashi
      */
     private function registerLocation()
     {
         $data = $this->getLocationData();
         if (! $data) {
-            throw new Exception(\Model_Error::ER00402);
-        } else {
-            if (Input::param('location_id')) {
-                $location = Model_Location::find(Input::param('location_id'));
-                $data['updated_user'] = $this->administrator->administrator_id;
-            } else {
-                $location = Model_Location::forge();
-                $data['created_user'] = $this->administrator->administrator_id;
-                $data['updated_user'] = $this->administrator->administrator_id;
-            }
-
-            $data['register_type'] = Model_Location::REGISTER_TYPE_ADMIN;
-
-            if ($location) {
-                $location->set($data);
-                $location->save();
-            }
-            return $location;
+            throw new \Exception(\Model_Error::ER00402);
         }
+
+        if (\Input::param('location_id')) {
+            $location = \Model_Location::find(\Input::post('location_id'));
+            $data['updated_user'] = $this->administrator->administrator_id;
+            unset($data['register_type']);
+            unset($data['created_at']);
+            unset($data['created_user']);
+        } else {
+            $location = \Model_Location::forge();
+            $data['created_user'] = $this->administrator->administrator_id;
+            $data['register_type'] = \Model_Location::REGISTER_TYPE_ADMIN;
+        }
+
+
+        if ($location) {
+            $location->set($data)->save();
+        }
+
+        return $location;
     }
 
     /**
-     * セッションからlocationのデータを取得、整形
+     * セッションから会場情報を取得する
      *
      * @access private
-     * @return array locationのデータ
+     * @param
+     * @return array
+     * @author kobayashi
      */
     private function getLocationData()
     {
@@ -158,27 +252,32 @@ class Controller_Admin_Location extends Controller_Admin_Base_Template
         if (! $fieldset) {
             return false;
         }
-
         $input = $fieldset->validation()->validated();
 
         return $input;
     }
 
-    public function setAssets()
+    /**
+     * ページネーション設定を取得する
+     *
+     * @access private
+     * @param int $count 総行数
+     * @return array
+     * @author ida
+     */
+    private function getPaginationConfig($count)
     {
-        Asset::css('jquery-ui.min.css', array(), 'add_css');
-        Asset::css('jquery-ui-timepicker.css', array(), 'add_css');
-        Asset::js('jquery-ui.min.js', array(), 'add_js');
-        Asset::js('jquery.ui.datepicker-ja.js', array(), 'add_js');
-        Asset::js('jquery-ui-timepicker.js', array(), 'add_js');
-        Asset::js('jquery-ui-timepicker-ja.js', array(), 'add_js');
-    }
+        $result_per_page = \Input::post('result_per_page');
+        if ($result_per_page) {
+            $this->result_per_page = $result_per_page;
+        }
 
-    public function action_list()
-    {
-        $view = View::forge('admin/location/list');
-        $this->template->content = $view;
-        $locations = Model_Location::find('all');
-        $view->set('locations', $locations, false);
+        return array(
+            'pagination_url' => 'admin/location/list',
+            'uri_segment'    => 4,
+            'num_links'      => 10,
+            'per_page'       => $this->result_per_page,
+            'total_items'    => $count,
+        );
     }
 }

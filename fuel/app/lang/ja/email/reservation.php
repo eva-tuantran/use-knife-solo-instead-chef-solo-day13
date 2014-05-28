@@ -3,7 +3,7 @@
 return array(
     'from'      => 'info@rakuichi-rakuza.jp',
     'from_name' => '楽市楽座 運営事務局',
-    'subject'   => '【自動返信】出店予約完了メール',
+    'subject'   => '【楽市楽座】##fleamarket.name##出店予約完了のご連絡',
     'bcc'       => array('rakuichi-test@aucfan.com'),
     'body'      => <<<'EOT'
 
@@ -57,7 +57,7 @@ return array(
 
 ▼出店形態
 ##fleamarket_entry_styles.entry_style_name##
- 
+
 ▼出店料金
 ##fleamarket_entry_styles.fee##
 
@@ -69,14 +69,14 @@ return array(
 
 ▼出店料金について
 ##fleamarket_about_5.description##
-    
+
 ▼出店に際してのご注意
 ##fleamarket_about_6.description##
 
 ▼駐車場について
 ##fleamarket_about_7.description##
- 
-●ご予約の変更・キャンセルについて。------------------------- 
+
+●ご予約の変更・キャンセルについて。-------------------------
 
 ・ウェブサイトにログイン後、マイページにて予約の変更・取消が可能です。
 

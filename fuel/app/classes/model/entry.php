@@ -48,15 +48,40 @@ class Model_Entry extends Model_Base
     const ITEM_GENRES_COMMIC   = 15;
 
     /**
+     * 反響項目ジャンル
+     */
+    const LINK_FROM_MOBILE          = '楽市モバイルサイト';
+    const LINK_FROM_PC              = '楽市PCサイト';
+    const LINK_FROM_PAMPHLET        = '会場設置チラシ';
+    const LINK_FROM_FRIEND          = '友人・知人から聞いて';
+    const LINK_FROM_SEARCH          = 'GOOGLE・YAHOO検索';
+    const LINK_FROM_NEWSPAPER       = '地域情報誌';
+    const LINK_FROM_FLYER           = '新聞折り込み';
+    const LINK_FROM_GOTOFREEMARKET  = 'フリーマーケットへ行こう';
+    const LINK_FROM_FREEMARKETGUIDE = 'フリーマーケットガイド(モバフリ)';
+    const LINK_FROM_POSTER          = 'ポスター';
+    const LINK_FROM_MAILMAGAZINE    = '楽市メルマガ';
+    const LINK_FROM_BLOG            = '楽市ブログ';
+    const LINK_FROM_FACEBOOK        = 'Facebook';
+    const LINK_FROM_MIXI            = 'mixi';
+
+    /**
      * 出品物ジャンルの最大・最少ID
      */
     const ITEM_GENRES_MIN = 1;
     const ITEM_GENRES_MAX = 15;
 
     /**
+     * 登録元 0:不明,1:WEB,3:電話
+     */
+    const DEVICE_OTHER = 0;
+    const DEVICE_WEB = 1;
+    const DEVICE_TEL = 2;
+
+    /**
      * 出品物種類リスト
      */
-    private static $item_category_define = array(
+    private static $item_categories = array(
         self::ITEM_CATEGORY_RECYCLE  => 'リサイクル品',
         self::ITEM_CATEGORY_HANDMADE => '手作り品',
     );
@@ -64,7 +89,7 @@ class Model_Entry extends Model_Base
     /**
      * 出品物ジャンルリスト
      */
-    private static $item_genres_define = array(
+    private static $item_genres = array(
         self::ITEM_GENRES_COMPUTER => 'コンピュータ',
         self::ITEM_GENRES_AV       => '家電、AV',
         self::ITEM_GENRES_CAMERA   => 'カメラ',
@@ -82,6 +107,27 @@ class Model_Entry extends Model_Base
         self::ITEM_GENRES_COMMIC   => 'コミック、アニメグッズ',
     );
 
+    /**
+     * 反響項目リスト
+     */
+    private static $link_from_list = array(
+        self::LINK_FROM_MOBILE          => '楽市モバイルサイト',
+        self::LINK_FROM_PC              => '楽市PCサイト',
+        self::LINK_FROM_PAMPHLET        => '会場設置チラシ',
+        self::LINK_FROM_FRIEND          => '友人・知人から聞いて',
+        self::LINK_FROM_SEARCH          => 'GOOGLE・YAHOO検索',
+        self::LINK_FROM_NEWSPAPER       => '地域情報誌',
+        self::LINK_FROM_FLYER           => '新聞折り込み',
+        self::LINK_FROM_GOTOFREEMARKET  => 'フリーマーケットへ行こう',
+        self::LINK_FROM_FREEMARKETGUIDE => 'フリーマーケットガイド(モバフリ)',
+        self::LINK_FROM_POSTER          => 'ポスター',
+        self::LINK_FROM_MAILMAGAZINE    => '楽市メルマガ',
+        self::LINK_FROM_BLOG            => '楽市ブログ',
+        self::LINK_FROM_FACEBOOK        => 'Facebook',
+        self::LINK_FROM_MIXI            => 'mixi',
+    );
+
+
     protected static $_table_name = 'entries';
 
     protected static $_primary_key  = array('entry_id');
@@ -95,6 +141,11 @@ class Model_Entry extends Model_Base
         ),
         'user' => array(
             'key_to' => 'user_id',
+            'model_to' => 'Model_User',
+            'key_from' => 'user_id',
+            'key_to' => 'user_id',
+            'cascade_save' => false,
+            'cascade_delete' => false,
         ),
     );
 
@@ -162,6 +213,15 @@ class Model_Entry extends Model_Base
     );
 
     /**
+     * 登録元一覧
+     */
+    private static $devices = array(
+        self::DEVICE_OTHER => '不明',
+        self::DEVICE_WEB => 'WEB',
+        self::DEVICE_TEL => '電話',
+    );
+
+    /**
      * 開催状況リスト
      */
     protected static $entry_statuses = array(
@@ -171,7 +231,20 @@ class Model_Entry extends Model_Base
     );
 
     /**
-     * 出店予約状況リストを取得する
+     * 登録元一覧を取得する
+     *
+     * @access public
+     * @param
+     * @return array
+     * @author ida
+     */
+    public static function getDevices()
+    {
+        return self::$devices;
+    }
+
+    /**
+     * 出店予約状況一覧を取得する
      *
      * @access public
      * @param
@@ -184,15 +257,28 @@ class Model_Entry extends Model_Base
     }
 
     /**
+     * ｄ
+     *
+     * @access public
+     * @param
+     * @return array
+     * @author nakata
+     */
+    public static function getLinkFromList()
+    {
+        return self::$link_from_list;
+    }
+
+    /**
      * カテゴリの番号と名前の連想配列を返す
      *
      * @access public
      * @return array
      * @author kobayasi
      */
-    public static function getItemCategoryDefine()
+    public static function getItemCategories()
     {
-        return self::$item_category_define;
+        return self::$item_categories;
     }
 
     /**
@@ -202,9 +288,9 @@ class Model_Entry extends Model_Base
      * @return array
      * @author kobayasi
      */
-    public static function getItemGenresDefine()
+    public static function getItemGenres()
     {
-        return self::$item_genres_define;
+        return self::$item_genres;
     }
 
     /**
@@ -454,10 +540,12 @@ QUERY;
 
         $query = <<<QUERY
 SELECT
+    e.entry_id,
     f.fleamarket_id,
     f.name,
     f.promoter_name,
     e.fleamarket_entry_style_id,
+    e.reservation_number,
     f.event_date,
     f.event_time_start,
     f.event_time_end,
@@ -797,28 +885,27 @@ QUERY;
     }
 
     /**
-     * 特定のユーザの出店予約をキャンセルします
+     * 特定の出店予約をキャンセルします
      *
      * @access public
-     * @param int $user_id
-     * @param int $fleamarket_id
+     * @param mixed $entry_id
+     * @param mixed $updated_user
      * @return bool
      * @author shimma
      */
-    public static function cancelUserEntry($user_id, $fleamarket_id)
+    public static function cancel($entry_id, $updated_user)
     {
-
         try {
             $entry = self::find('last', array(
                 'where' => array(
-                    array('user_id' => $user_id),
-                    array('fleamarket_id' => $fleamarket_id),
+                    array('entry_id' => $entry_id),
                 )
             ));
             $entry->entry_status = self::ENTRY_STATUS_CANCELED;
+            $entry->updated_user = $updated_user;
             $entry->save();
-        } catch (Exception $e) {
-            return false;
+        } catch (\Exception $e) {
+            throw $e;
         }
 
         return true;
@@ -868,74 +955,308 @@ QUERY;
      * Fieldsetオブジェクトの生成
      *
      * @access public
-     * @return string
+     * @param array 入力データ
+     * @return object
+     * @autho kobayashi
      */
     public static function createFieldset($input)
     {
         $entry = self::forge($input);
         $fieldset = Fieldset::forge();
         $fieldset->add_model($entry);
+
         return $fieldset;
     }
 
-    private static function getFindByKeywordQuery($input)
-    {
-        $query = static::query();
+    /**
+     * 指定された条件で出店予約一覧を取得する
+     *
+     * 予約履歴一覧
+     *
+     * @param array $condition_list 検索条件
+     * @param mixed $page ページ
+     * @param mixed $row_count ページあたりの行数
+     * @return array
+     * @author ida
+     */
+    public static function findAdminBySearch(
+        $condition_list, $page = 0, $row_count = 0
+    ) {
+        $search_where = self::buildAdminSearchWhere($condition_list);
+        list($conditions, $placeholders) = $search_where;
 
-        $fields = array('reservation_number','user_id');
-        foreach ($fields as $field) {
-            if (! empty($input[$field])) {
-                $query->where_open();
-                $query->where($field, 'LIKE', static::makeLikeValue($input[$field]));
-                $query->or_where($field, '=', $input[$field]);
-                $query->where_close();
+        $where = '';
+        if ($conditions) {
+            $where = ' AND ';
+            $where .= implode(' AND ', $conditions);
+        }
+
+        $limit = '';
+        if (is_numeric($page) && is_numeric($row_count)) {
+            $offset = ($page - 1) * $row_count;
+            $limit = ' LIMIT ' . $offset . ', ' . $row_count;
+        }
+
+        $sql = <<<"SQL"
+SELECT
+    e.entry_id,
+    e.user_id,
+    u.last_name,
+    u.first_name,
+    e.fleamarket_id,
+    f.name,
+    e.fleamarket_entry_style_id,
+    e.reservation_number,
+    e.item_category,
+    e.item_genres,
+    e.reserved_booth,
+    e.link_from,
+    e.entry_status,
+    e.device,
+    e.created_at,
+    fes.entry_style_id
+FROM
+    entries AS e
+INNER JOIN
+    users AS u ON e.user_id = u.user_id
+INNER JOIN
+    fleamarkets AS f ON e.fleamarket_id = f.fleamarket_id
+INNER JOIN
+    fleamarket_entry_styles AS fes ON e.fleamarket_entry_style_id = fes.fleamarket_entry_style_id
+WHERE
+    u.deleted_at IS NULL
+{$where}
+{$limit}
+SQL;
+
+        $query = \DB::query($sql)->parameters($placeholders);
+        $result = $query->execute();
+
+        $rows = null;
+        if (! empty($result)) {
+            $rows = $result->as_array();
+        }
+
+        return $rows;
+    }
+
+    /**
+     * 指定された条件で出店予約情報の件数を取得する
+     *
+     * @access public
+     * @param array $condition_list 検索条件
+     * @return int
+     * @author ida
+     */
+    public static function getCountByAdminSearch($condition_list)
+    {
+        $search_where = self::buildAdminSearchWhere($condition_list);
+        list($conditions, $placeholders) = $search_where;
+
+        $where = '';
+        if ($conditions) {
+            $where = ' AND ';
+            $where .= implode(' AND ', $conditions);
+        }
+
+        $sql = <<<"SQL"
+SELECT
+    COUNT(e.user_id) AS cnt
+FROM
+    entries AS e
+INNER JOIN
+    users AS u ON e.user_id = u.user_id
+INNER JOIN
+    fleamarkets AS f ON e.fleamarket_id = f.fleamarket_id
+INNER JOIN
+    fleamarket_entry_styles AS fes ON e.fleamarket_entry_style_id = fes.fleamarket_entry_style_id
+WHERE
+    u.deleted_at IS NULL
+{$where}
+SQL;
+
+        $query = \DB::query($sql)->parameters($placeholders);
+        $result = $query->execute();
+
+        $rows = null;
+        if (! empty($result)) {
+            $rows = $result->as_array();
+        }
+
+        return $rows[0]['cnt'];
+    }
+
+    /**
+     * 検索条件を取得する
+     *
+     * @access private
+     * @param array $condition_list 検索条件
+     * @return array 検索条件
+     * @author ida
+     */
+    public static function createAdminSearchCondition(
+        $conditions = array()
+    ) {
+        $condition_list = array();
+
+        if (! $conditions) {
+            return $condition_list;
+        }
+
+        foreach ($conditions as $field => $condition) {
+            if ($condition == '') {
+                continue;
+            }
+
+            $operator = '=';
+            switch ($field) {
+                case 'fleamarket_id':
+                    $condition_list['e.fleamarket_id'] = array(
+                        $operator, $condition
+                    );
+                    break;
+                case 'reservation_number':
+                    $condition_list['e.reservation_number'] = array(
+                        ' LIKE ', $condition . '%'
+                    );
+                    break;
+                case 'user_id':
+                    $condition_list['e.user_id'] = array(
+                        ' LIKE ', $condition . '%'
+                    );
+                    break;
+                case 'user_name':
+                    $field = \DB::expr('CONCAT(u.last_name, u.first_name)');
+                    $condition_list[$field->value()] = array(' LIKE ', '%' . $condition . '%');
+                    break;
+                default:
+                    break;
             }
         }
 
-        return $query;
+        return $condition_list;
     }
 
-    private static function makeLikeValue($word)
+    /**
+     * ユーザーにメールを送信
+     *
+     * 渡されていない場合、entry_statusで決める
+     * 渡されてきた場合、$mail_typeで決める
+     *
+     * @access private
+     * @para object $user ユーザ情報
+     * @para string $template_name 送信するメール名（テンプレート名）
+     * @return void
+     * @author kobayashi
+     * @author ida
+     */
+    public function sendmail($user = null, $template_name = null)
     {
-        $like = preg_replace('/([_%\\\\])/','\\\\${1}',$word);
-        $like = "%${like}%";
-        return $like;
+        if (empty($user)) {
+            return false;
+        }
+
+        $params = array();
+        $objects = array(
+            'entry'                  => $this,
+            'fleamarket'             => $this->fleamarket,
+            'fleamarket_entry_style' => $this->fleamarket_entry_style,
+            'user'                   => $this->user,
+            'location'               => $this->fleamarket->location,
+        );
+
+        $fleamarket_abouts = array();
+        foreach ($this->fleamarket->fleamarket_abouts as $fleamarket_about) {
+            $fleamarket_abouts[$fleamarket_about->about_id] = $fleamarket_about;
+        }
+
+        foreach (Model_Fleamarket_About::getAboutTitles() as $id => $title){
+            if (isset($fleamarket_abouts[$id])) {
+                $objects["fleamarket_about_${id}"] = $fleamarket_abouts[$id];
+            }else{
+                $params["fleamarket_about_${id}.description"] = '';
+            }
+        }
+
+        foreach ($objects as $name => $obj) {
+            foreach (array_keys($obj->properties()) as $column) {
+                $params["${name}.${column}"] = $obj->get($column);
+            }
+        }
+
+        $entry_styles = \Config::get('master.entry_styles');
+        $params['fleamarket_entry_style.entry_style_name']
+            = $entry_styles[$this->fleamarket_entry_style->entry_style_id];
+
+        // 出店形態を成形
+        $entry_style_list = array_map(function($obj) use ($entry_styles) {
+            return $entry_styles[$obj->entry_style_id];
+        }, $this->fleamarket->fleamarket_entry_styles);
+        $params['fleamarket_entry_styles.entry_style_name'] = implode('/', $entry_style_list);
+
+        // 出店形態:金額を成形
+        $fee_list = array_map(function($obj) use ($entry_styles) {
+            return $entry_styles[$obj->entry_style_id] . ':' . number_format($obj->booth_fee);
+        }, $this->fleamarket->fleamarket_entry_styles);
+        $params['fleamarket_entry_styles.fee'] = implode('/', $fee_list);
+
+        foreach (array('fleamarket.event_time_start','fleamarket.event_time_end') as $column) {
+            $params[$column] = substr($params[$column], 0, 5);
+        }
+
+        if ($template_name) {
+            $user->sendmail($template_name, $params);
+        } elseif ($this->entry_status == \Model_Entry::ENTRY_STATUS_RESERVED) {
+            $user->sendmail('reservation', $params);
+        } elseif ($this->entry_status == \Model_Entry::ENTRY_STATUS_WAITING) {
+            $user->sendmail('waiting', $params);
+        }
     }
 
-    public static function findByKeyword($input, $limit, $offset)
+    /**
+     * 指定された検索条件よりWHERE句とプレースホルダ―を生成する
+     *
+     * @access private
+     * @param array $condition_list
+     * @return array
+     * @author ida
+     */
+    private static function buildAdminSearchWhere($condition_list)
     {
+        $conditions = array();
+        $placeholders = array();
 
-        $fleamarket_id = null;
-        if (isset($input['fleamarket_id']) && $input['fleamarket_id'] != '') {
-            $fleamarket_id = $input['fleamarket_id'];
-            unset($input['fleamarket_id']);
+        if (empty($condition_list)) {
+            return array($conditions, $placeholders);
         }
 
-        $query = static::getFindByKeywordQuery($input)
-            ->limit($limit)
-            ->offset($offset);
-        if ($fleamarket_id) {
-            $query->where('fleamarket_id', $fleamarket_id);
+        foreach ($condition_list as $field => $condition) {
+
+            $operator = $condition[0];
+            if (count($condition) == 1) {
+                $conditions[$field] = $field . $condition[0];
+            } elseif ($operator === 'IN') {
+                $placeholder = ':' . $field;
+                $values = $condition[1];
+                $placeholder_list = array();
+                foreach ($values as $key => $value) {
+                    $placeholder_in = $placeholder . $key;
+                    $placeholder_list[] = $placeholder_in;
+                    $placeholders[$placeholder_in] = $value;
+                }
+                $value = implode(',', $values);
+                $placeholder_string = implode(',', $placeholder_list);
+                $conditions[$field] = $field . ' '
+                              . $operator . ' '
+                              . '(' . $placeholder_string . ')';
+            } else {
+                $placeholder = ':' . $field;
+                $value = $condition[1];
+                $conditions[$field] = $field . $operator . $placeholder;
+                $placeholders[$placeholder] = $value;
+            }
         }
-        $result = $query->get();
 
-        return $query->get();
-    }
-
-    public static function findByKeywordCount($input)
-    {
-        $fleamarket_id = null;
-        if (isset($input['fleamarket_id']) && $input['fleamarket_id'] != '') {
-            $fleamarket_id = $input['fleamarket_id'];
-            unset($input['fleamarket_id']);
-        }
-
-        $query = static::getFindByKeywordQuery($input);
-        if ($fleamarket_id) {
-            $query->where('fleamarket_id', $fleamarket_id);
-        }
-        $count = $query->count();
-
-        return $count;
+        return array($conditions, $placeholders);
     }
 }

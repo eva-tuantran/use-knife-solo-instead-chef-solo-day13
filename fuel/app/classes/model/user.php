@@ -8,12 +8,30 @@
  */
 class Model_User extends Model_Base
 {
+    /**
+     * 性別 1:男性,2:女性
+     */
+    const GENDER_MALE = 1;
+    const GENDER_FEMALE = 2;
+
+    /**
+     * 登録元 0:不明,1:WEB,3:電話
+     */
+    const DEVICE_OTHER = 0;
+    const DEVICE_WEB = 1;
+    const DEVICE_TEL = 2;
 
     /**
      * メールマガジン 0:不要,1:必要
      */
     const MM_FLAG_NG = 0;
     const MM_FLAG_OK = 1;
+
+    /**
+     * 企業・団体 0:個人,1:企業・団体
+     */
+    const ORGANIZATION_FLAG_OFF = 0;
+    const ORGANIZATION_FLAG_ON = 1;
 
     /**
      * 登録ステータス 0:仮登録,1:本登録.2:退会,3:強制退会
@@ -50,9 +68,6 @@ class Model_User extends Model_Base
                 'required',
                 'max_length' => array(50),
             ),
-            'form' => array(
-                'type' => 'text'
-            ),
         ),
         'first_name' => array(
             'label' => '名',
@@ -60,9 +75,6 @@ class Model_User extends Model_Base
                 'trim',
                 'required',
                 'max_length' => array(50),
-            ),
-            'form' => array(
-                'type' => 'text'
             ),
         ),
         'last_name_kana' => array(
@@ -73,9 +85,6 @@ class Model_User extends Model_Base
                 'required',
                 'valid_kana',
             ),
-            'form' => array(
-                'type' => 'text'
-            ),
         ),
         'first_name_kana' => array(
             'label' => 'メイ',
@@ -85,9 +94,6 @@ class Model_User extends Model_Base
                 'required',
                 'valid_kana',
             ),
-            'form' => array(
-                'type' => 'text'
-            ),
         ),
         'nick_name' => array(
             'label' => 'ニックネーム',
@@ -96,9 +102,6 @@ class Model_User extends Model_Base
                 'required',
                 'max_length' => array(50),
             ),
-            'form' => array(
-                'type' => 'text'
-            ),
         ),
         'birthday' => array(
             'label' => '誕生日',
@@ -106,9 +109,6 @@ class Model_User extends Model_Base
                 'trim',
                 'strip_tags',
                 'max_length' => array(10),
-            ),
-            'form' => array(
-                'type' => 'text'
             ),
         ),
         'gender' => array(
@@ -119,13 +119,6 @@ class Model_User extends Model_Base
                 'numeric_min'  => array(0),
                 'numeric_max'  => array(5),
                 'valid_string' => array('numeric'),
-            ),
-            'form' => array(
-                'type' => 'select',
-                'options' => array(
-                    '1' => '男性',
-                    '2' => '女性',
-                ),
             ),
         ),
         'zip' => array(
@@ -184,11 +177,6 @@ class Model_User extends Model_Base
                 'valid_email',
                 'max_length' => array(50),
             ),
-            'form'       => array(
-                'type'  => 'text',
-                'class' => 'pretty_input',
-                'style' => 'ime-mode:disabled',
-            ),
         ),
         'mobile_email' => array(
             'label' => '携帯電話アドレス',
@@ -196,11 +184,6 @@ class Model_User extends Model_Base
                 'trim',
                 'valid_email',
                 'max_length'    => array(30),
-            ),
-            'form'       => array(
-                'type'  => 'text',
-                'class' => 'pretty_input',
-                'style' => 'ime-mode:disabled',
             ),
         ),
         'device' => array(
@@ -217,26 +200,11 @@ class Model_User extends Model_Base
                 'numeric_max'  => array(100),
                 'valid_string' => array('numeric'),
             ),
-            'form' => array(
-                'type' => 'select',
-                'options' => array(
-                    1 => '購読する',
-                    2 => '未購読しない',
-                ),
-            ),
         ),
         'mm_device' => array(
             'label' => 'メルマガ端末',
             'validation' => array(
                 'trim',
-            ),
-            'form' => array(
-                'type' => 'select',
-                'options' => array(
-                    1 => 'PC',
-                    2 => '携帯電話',
-                    3 => '両方',
-                ),
             ),
         ),
         'mm_error_flag' => array(
@@ -248,14 +216,7 @@ class Model_User extends Model_Base
         'mobile_carrier' => array(
             'label' => '携帯キャリア',
             'form' => array(
-                'type' => 'select',
-                'options' => array(
-                    1 => 'docomo',
-                    2 => 'au',
-                    3 => 'softbank',
-                    4 => 'emobile',
-                    5 => 'その他',
-                ),
+                'type' => false
             ),
         ),
         'mobile_uid' => array(
@@ -270,10 +231,6 @@ class Model_User extends Model_Base
                 // 'required', //現在passwordのrequiredをどうするか検討中
                 'min_length' => array(6),
                 'max_length' => array(50),
-            ),
-            'form' => array(
-                'type' => 'password',
-                'style' => 'ime-mode:disabled',
             ),
         ),
         'admin_memo' => array(
@@ -293,7 +250,7 @@ class Model_User extends Model_Base
             'default' => self::REGISTER_STATUS_INACTIVATED,
             'validation' => array(
                 'numeric_min' => array(0),
-                'numeric_max' => array(5),
+                'numeric_max' => array(3),
             ),
             'form' => array(
                 'type' => false,
@@ -360,11 +317,77 @@ class Model_User extends Model_Base
     protected $has_entry = array();
 
     /**
-     * ユーザがキャンセル中のフリマ
+     * ユーザがキャンセル待ちしたフリマ
      *
      * @var array
      */
     protected $has_waiting = array();
+
+    /**
+     * 性別一覧
+     */
+    private static $gender_list = array(
+        self::GENDER_MALE => '男性',
+        self::GENDER_FEMALE => '女性',
+    );
+
+    /**
+     * 登録元一覧
+     */
+    private static $devices = array(
+        self::DEVICE_OTHER => '不明',
+        self::DEVICE_WEB => 'WEB',
+        self::DEVICE_TEL => '電話',
+    );
+
+    /**
+     * 登録ステータス一覧
+     */
+    private static $register_statuses = array(
+        self::REGISTER_STATUS_INACTIVATED => '仮登録',
+        self::REGISTER_STATUS_ACTIVATED   => '本登録',
+//        self::REGISTER_STATUS_STOPPED     => '退会',
+//        self::REGISTER_STATUS_BANNED      => '強制退会',
+    );
+
+    /**
+     * 性別一覧を取得する
+     *
+     * @access public
+     * @param
+     * @return array
+     * @author ida
+     */
+    public static function getGenderList()
+    {
+        return self::$gender_list;
+    }
+
+    /**
+     * 登録元一覧を取得する
+     *
+     * @access public
+     * @param
+     * @return array
+     * @author ida
+     */
+    public static function getDevices()
+    {
+        return self::$devices;
+    }
+
+    /**
+     * 登録ステータス一覧を取得する
+     *
+     * @access public
+     * @param
+     * @return array
+     * @author ida
+     */
+    public static function getRegisterStatuses()
+    {
+        return self::$register_statuses;
+    }
 
     /**
      * 登録ステータスが本登録のユーザを取得する
@@ -414,22 +437,35 @@ QUERY;
      *  'deleted_at' => NULL
      *
      * @access public
-     * @param mixed $prefecture_id 都道府県ID
+     * @param mixed $prefecture_id 都道府県IDリスト
+     * @param mixed $organization_flag 都道府県ID
      * @return array
      * @author ida
      */
-    public static function getUsersByPrefectureId($prefecture_id)
-    {
+    public static function getMailMagazineUserBy(
+        $prefecture_ids, $organization_flag
+    ) {
         $placeholders = array(
             ':mm_flag' => self::MM_FLAG_OK,
             ':register_status' => self::REGISTER_STATUS_ACTIVATED,
         );
 
         $where = '';
-        if ($prefecture_id != '99') {
-            $placeholders[':prefecture_id'] = $prefecture_id;
-            $where = ' AND prefecture_id = :prefecture_id';
+        if (! empty($prefecture_ids)) {
+            $placeholder_list = array();
+            foreach ($prefecture_ids as $prefecture_id) {
+                $placeholder = ':prefecture_id' . $prefecture_id;
+                $placeholders[$placeholder] = $prefecture_id;
+                $placeholder_list[] = $placeholder;
+            }
+            $placeholder_string = implode(',', $placeholder_list);
+            $where = ' AND prefecture_id IN (' . $placeholder_string . ')';
 
+        }
+        if (isset($organization_flag) && $organization_flag !== '') {
+            $placeholder = ':organization_flag';
+            $placeholders[$placeholder] = $organization_flag;
+            $where = ' AND organization_flag = ' . $placeholder;
         }
 
         $query = <<<"QUERY"
@@ -580,8 +616,8 @@ QUERY;
         try {
             $email = new \Model_Email();
             $email->sendMailByParams($template_name, $params, $this->email);
-        } catch (Exception $e) {
-            throw new SystemException(\Model_Error::ER00303);
+        } catch (\Exception $e) {
+            throw new \SystemException(\Model_Error::ER00303);
         }
     }
 
@@ -748,14 +784,14 @@ QUERY;
     /**
      * 対象のフリマIDのフリマ予約をキャンセルします
      *
-     * @param int $fleamarket_id
      * @access public
+     * @param int $fleamarket_id
      * @return void
      * @author shimma
      */
-    public function cancelEntry($fleamarket_id)
+    public function cancelEntry($entry_id, $updated_user = null)
     {
-        return \Model_Entry::cancelUserEntry($this->user_id, $fleamarket_id);
+        return \Model_Entry::cancel($entry_id, $updated_user);
     }
 
     /**
@@ -777,51 +813,228 @@ QUERY;
         }
     }
 
-    private static function getFindByKeywordQuery($input)
+    /**
+     * 指定された条件でユーザ一覧を取得する
+     *
+     * 予約履歴一覧
+     *
+     * @param array $condition_list 検索条件
+     * @param mixed $page ページ
+     * @param mixed $row_count ページあたりの行数
+     * @return array
+     * @author ida
+     */
+    public static function findAdminBySearch(
+        $condition_list, $page = 0, $row_count = 0
+    ) {
+        $search_where = self::buildAdminSearchWhere($condition_list);
+        list($conditions, $placeholders) = $search_where;
+
+        $where = '';
+        if ($conditions) {
+            $where = ' AND ';
+            $where .= implode(' AND ', $conditions);
+        }
+
+        $limit = '';
+        if (is_numeric($page) && is_numeric($row_count)) {
+            $offset = ($page - 1) * $row_count;
+            $limit = ' LIMIT ' . $offset . ', ' . $row_count;
+        }
+
+        $sql = <<<"SQL"
+SELECT
+    u.user_id,
+    u.user_old_id,
+    u.last_name,
+    u.first_name,
+    u.last_name_kana,
+    u.first_name_kana,
+    u.gender,
+    u.prefecture_id,
+    u.address,
+    u.email,
+    u.tel,
+    u.device,
+    u.organization_flag,
+    u.register_status,
+    u.created_at,
+    u.updated_at
+FROM
+    users AS u
+WHERE
+    u.deleted_at IS NULL
+{$where}
+ORDER BY
+    u.created_at DESC
+{$limit}
+SQL;
+
+$db = \Database_Connection::instance();
+        $query = \DB::query($sql)->parameters($placeholders);
+        $result = $query->execute();
+
+        $rows = null;
+        if (! empty($result)) {
+            $rows = $result->as_array();
+        }
+
+        return $rows;
+    }
+
+    /**
+     * 指定された条件でユーザ情報の件数を取得する
+     *
+     * @access public
+     * @param array $condition_list 検索条件
+     * @return int
+     * @author ida
+     */
+    public static function getCountByAdminSearch($condition_list)
     {
-        $query = static::query();
+        $search_where = self::buildAdminSearchWhere($condition_list);
+        list($conditions, $placeholders) = $search_where;
 
-        if(! empty($input['name'])){
-            $query->and_where_open();
-            $query->where(\DB::expr("CONCAT(last_name,first_name)"), 'LIKE', str_replace(' ','', static::makeLikeValue($input['name'])));
-            $query->and_where_close();
+        $where = '';
+        if ($conditions) {
+            $where = ' AND ';
+            $where .= implode(' AND ', $conditions);
         }
 
-        if(! empty($input['tel'])){
-            $query->and_where_open();
-            $query->where   (\DB::expr("REPLACE(tel,'-','')"), '=', str_replace('-','',$input['tel']));
-            $query->or_where(\DB::expr("REPLACE(tel,'-','')"), 'LIKE', '%'.str_replace('-','',$input['tel']).'%');
-            $query->and_where_close();
+        $sql = <<<"SQL"
+SELECT
+    COUNT(u.user_id) AS cnt
+FROM
+    users AS u
+WHERE
+    u.deleted_at IS NULL
+{$where}
+SQL;
+
+        $query = \DB::query($sql)->parameters($placeholders);
+        $result = $query->execute();
+
+        $rows = null;
+        if (! empty($result)) {
+            $rows = $result->as_array();
         }
 
-        foreach (array('address', 'email', 'user_old_id') as $field) {
-            if(! empty($input[$field])){
-                $query->where($field, 'LIKE', static::makeLikeValue($input[$field]));
+        return $rows[0]['cnt'];
+    }
+
+    /**
+     * 検索条件を取得する
+     *
+     * @access private
+     * @param array $condition_list 検索条件
+     * @return array 検索条件
+     * @author ida
+     */
+    public static function createAdminSearchCondition(
+        $conditions = array()
+    ) {
+        $condition_list = array();
+
+        if (! $conditions) {
+            return $condition_list;
+        }
+
+        foreach ($conditions as $field => $condition) {
+            if ($condition == '') {
+                continue;
+            }
+
+            $operator = '=';
+            switch ($field) {
+                case 'user_id':
+                    $condition_list['u.user_id'] = array(
+                        ' LIKE ', $condition . '%'
+                    );
+                    break;
+                case 'user_old_id':
+                    $condition_list['u.user_old_id'] = array(
+                        ' LIKE ', $condition . '%'
+                    );
+                    break;
+                case 'user_name':
+                    $field = \DB::expr('CONCAT(u.last_name, u.first_name)');
+                    $condition = str_replace(' ', '', mb_convert_kana($condition, 's'));
+
+                    $condition_list[$field->value()] = array(
+                        ' LIKE ', '%' . $condition . '%'
+                    );
+                    break;
+                case 'prefecture_id':
+                    $condition_list['u.prefecture_id'] = array(
+                        $operator, $condition
+                    );
+                    break;
+                case 'email':
+                    $condition_list['u.email'] = array(
+                        ' LIKE ', '%' . $condition . '%'
+                    );
+                    break;
+                case 'tel':
+                    $field = \DB::expr("REPLACE(u.tel, '-', '')");
+                    $condition = str_replace('-', '', $condition);
+
+                    $condition_list[$field->value()] = array(
+                        ' LIKE ', '%' . $condition . '%'
+                    );
+                    break;
+                default:
+                    break;
             }
         }
 
-        return $query;
+        return $condition_list;
     }
 
-    private static function makeLikeValue($word)
+    /**
+     * 指定された検索条件よりWHERE句とプレースホルダ―を生成する
+     *
+     * @access private
+     * @param array $condition_list
+     * @return array
+     * @author ida
+     */
+    private static function buildAdminSearchWhere($condition_list)
     {
-        $like = preg_replace('/([_%\\\\])/','\\\\${1}',$word);
-        $like = "%${like}%";
-        return $like;
-    }
+        $conditions = array();
+        $placeholders = array();
 
-    public static function findByKeyword($input, $limit, $offset)
-    {
-        $query = static::getFindByKeywordQuery($input)
-            ->limit($limit)
-            ->offset($offset);
+        if (empty($condition_list)) {
+            return array($conditions, $placeholders);
+        }
 
-        return $query->get();
-    }
+        foreach ($condition_list as $field => $condition) {
 
-    public static function findByKeywordCount($input)
-    {
-        return static::getFindByKeywordQuery($input)->count();
+            $operator = $condition[0];
+            if (count($condition) == 1) {
+                $conditions[$field] = $field . $condition[0];
+            } elseif ($operator === 'IN') {
+                $placeholder = ':' . $field;
+                $values = $condition[1];
+                $placeholder_list = array();
+                foreach ($values as $key => $value) {
+                    $placeholder_in = $placeholder . $key;
+                    $placeholder_list[] = $placeholder_in;
+                    $placeholders[$placeholder_in] = $value;
+                }
+                $value = implode(',', $values);
+                $placeholder_string = implode(',', $placeholder_list);
+                $conditions[$field] = $field . ' '
+                              . $operator . ' '
+                              . '(' . $placeholder_string . ')';
+            } else {
+                $placeholder = ':' . $field;
+                $value = $condition[1];
+                $conditions[$field] = $field . $operator . $placeholder;
+                $placeholders[$placeholder] = $value;
+            }
+        }
+
+        return array($conditions, $placeholders);
     }
 
     /**
@@ -870,6 +1083,14 @@ QUERY;
         return in_array($fleamarket_id, $this->has_waiting);
     }
 
+    /**
+     * 予約判定
+     *
+     * @access public
+     * @param mixed $fleamarket_id
+     * @return bool
+     * @author kobayasi
+     */
     public function canReserve($fleamarket)
     {
         return

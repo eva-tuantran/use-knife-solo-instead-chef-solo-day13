@@ -1,180 +1,141 @@
-<style type="text/css">
-#container {
-  text-align: center;
-}
-
-.contents {
-  margin: 0 auto 30px;
-  position: relative;
-  padding: 45px 15px 15px;
-  background-color: #fff;
-  border-width: 1px;
-  border-color: #ddd;
-  border-radius: 4px 4px 0 0;
-  box-shadow: none;
-  width: 40%;
-  text-align: left;
-}
-
-.users {
-  margin: 0 auto 30px;
-  position: relative;
-  padding: 45px 15px 15px;
-  background-color: #fff;
-  border-width: 1px;
-  border-color: #ddd;
-  border-radius: 4px 4px 0 0;
-  box-shadow: none;
-  width: 100%;
-  text-align: left;
-  height: 300px;
-  overflow: scroll;
-}
-
-.btn-list {
-  margin: 0 auto 30px;
-  width: 100%;
-  list-style: none;
-}
-
-.btn-list li {
-  margin-left: 20px;
-  float: left;
-}
-
-.mail-item {
-  padding: 10px;
-  border: 1px solid #e6e6fa;
-  border-radius: 5px;
-  -webkit-border-radius: 5px;
-  -moz-border-radius: 5px;
-  background-color: #ffffe0;
-}
-
-.mail-body {
-  min-height: 500px;
-}
-
-</style>
-<div id="container">
-  <div class="contents">
+<div class="panel panel-default">
+  <!-- Default panel contents -->
+  <div class="panel-heading">
+    <h2 class="panel-title">メルマガ確認</h2>
+  </div>
+  <div class="panel-body">
     <form id="mailmagazineForm" role="form" action="/admin/mailmagazine/thanks" method="post" class="form-horizontal">
       <?php
-          echo Form::hidden(Config::get('security.csrf_token_key'), Security::fetch_token());
+          echo \Form::hidden(\Config::get('security.csrf_token_key'), \Security::fetch_token());
       ?>
-      <div class="form-group">
-        <label>送信種類</label>
-        <p class="mail-item"><?php
-            switch ($input_data['mail_magazine_type']):
-                case \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_ALL:
-                    echo '全員';
-                    break;
-                case \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_REQUEST:
-                    $pref_name = 'すべて';
-                    if ($input_data['prefecture_id'] != '99'):
-                        $pref_name = $prefectures[$input_data['prefecture_id']];
+      <div id="contents-wrap" class="row">
+        <div class="col-md-6">
+          <table class="table">
+            <tbody>
+              <tr>
+                <th>送信対象</th>
+                <td>
+                  <p><?php
+                    $type = $input_data['mail_magazine_type'];
+                    $target = $mail_magazine_types[$type];
+                    switch ($type):
+                        case \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_ALL:
+                            echo $target;
+                            break;
+                        case \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_REQUEST:
+                            echo $target . '<br>';
+                            if (isset($input_data['organization_flag'])):
+                                if ($input_data['organization_flag'] == \Model_User::ORGANIZATION_FLAG_OFF):
+                                    echo '－' . '個人';
+                                elseif ($input_data['organization_flag'] == \Model_User::ORGANIZATION_FLAG_ON):
+                                    echo '－' . '企業・団体';
+                                endif;
+                                echo '<br>';
+                            endif;
+
+                            $prefecture_name = '全国';
+                            if (isset($input_data['prefecture_id'])):
+                                $prefecture_name = '';
+                                foreach ($prefectures as $prefecture_id => $prefecture):
+                                    if (in_array($prefecture_id, $input_data['prefecture_id'])):
+                                        $prefecture_name .= $prefecture_name == '' ? '' : '、';
+                                        $prefecture_name .= $prefectures[$prefecture_id];
+                                    endif;
+                                endforeach;
+                                echo '－' . $prefecture_name;
+                            endif;
+                            break;
+                        case \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_RESEVED_ENTRY:
+                            echo $target . '<br>';
+                            echo '－' . $fleamarket['name'];
+                            break;
+                    endswitch;
+                  ?></p>
+                </td>
+              </tr>
+              <tr>
+                <th>差出人メールアドレス</th>
+                <td><?php echo $input_data['from_email'];?></td>
+              </tr>
+              <tr>
+                <th>差出人</th>
+                <td><?php echo $input_data['from_name'];?></td>
+              </tr>
+              <tr>
+                <th>件名</th>
+                <td><?php echo $input_data['subject'];?></td>
+              </tr>
+              <tr>
+                <th>本文</th>
+                <td><?php echo nl2br(e($body));?></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="col-md-3">
+          <h3>メルマガ対象者</h3>
+          <div class="users" style="height: 500px; overflow: scroll;">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>対象者数</th>
+                  <td><?php echo count($users);?></td>
+                </tr>
+                <tr>
+                  <th colspan="2">名前</th>
+                </tr>
+              </thead>
+              <tbody>
+                <?php
+                    if (! isset($users) || count($users) == 0):
+                ?>
+                <tr>
+                  <td colspan="2">対象ユーザはいません</td>
+                </tr>
+                <?php
+                    elseif ($type == \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_ALL):
+                ?>
+                <tr>
+                  <td colspan="2">全員が対象です</td>
+                </tr>
+                <?php
+                    else:
+                        foreach ($users as $user):
+                ?>
+                <tr>
+                  <td colspan="2"><?php echo e($user['last_name'] . ' ' . $user['first_name']);?></td>
+                </tr>
+                <?php
+                        endforeach;
                     endif;
-                    echo '希望者【' . $pref_name . '】';
-                    break;
-                case \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_RESEVED_ENTRY:
-                    echo '出店予約者';
-                    break;
-            endswitch;
-        ?></p>
-      </div>
-      <div class="form-group">
-        <label>送信メールアドレス</label>
-        <p class="mail-item"><?php echo $input_data['from_email'];?></p>
-      </div>
-      <div class="form-group">
-        <label>送信名</label>
-        <p class="mail-item"><?php echo $input_data['from_name'];?></p>
-      </div>
-      <div class="form-group">
-        <label>件名</label>
-        <p class="mail-item"><?php echo $input_data['subject'];?></p>
-      </div>
-      <div class="form-group">
-        <label for="exampleInputFile">本文</label>
-        <p class="mail-item mail-body"><?php echo nl2br(e($body));?></p>
-      </div>
-      <?php
-          $type = $input_data['mail_magazine_type'];
-          if ($type == \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_REQUEST
-              || $type == \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_RESEVED_ENTRY
-          ):
-              if ($type == \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_REQUEST):
-      ?>
-      <div class="form-group">
-        <label>都道府県</label>
-        <p class="mail-item"><?php echo $pref_name;?></p>
-      </div>
-      <?php
-              elseif ($type == \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_RESEVED_ENTRY):
-      ?>
-      <div class="form-group">
-        <label>フリーマーケット</label>
-        <p class="mail-item"><?php echo $fleamarket['name'];?></p>
-      </div>
-      <?php
-              endif;
-      ?>
-      <div class="form-group">
-        <label>対象者数</label>
-        <p class="mail-item"><?php echo count($users);?></p>
-      </div>
-      <div class="form-group">
-        <label>対象者一覧</label>
-      </div>
-      <div class="users">
-        <table class="table table-striped">
-          <thead>
-            <tr>
-              <th>名前</th>
-            </tr>
-          </thead>
-          <tbody>
+                ?>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="col-md-12">
+          <p>
+            <a href="/admin/mailmagazine" class="btn btn-default">入力に戻る</a>
             <?php
-                if (! isset($users) || count($users) == 0):
+                if (! isset($users) || (isset($users) && count($users) > 0)):
             ?>
-            <tr>
-              <td colspan="2">対象ユーザはいません</td>
-            </tr>
+            <button id="doTestSend" type="button" class="btn btn-info">テスト送信する</button>
+            <button id="doSend" type="button" class="btn btn-danger"><input id="sendCheck"type="checkbox">送信する</button>
             <?php
-                else:
-                    foreach ($users as $user):
-            ?>
-            <tr>
-              <td><?php echo e($user['last_name'] . ' ' . $user['first_name']);?></td>
-            </tr>
-            <?php
-                    endforeach;
                 endif;
             ?>
-          </tbody>
-        </table>
+          </p>
+        </div>
       </div>
-      <?php
-          endif;
-      ?>
-      <ul class="btn-list clearfix">
-        <li><a href="/admin/mailmagazine" class="btn btn-default">入力に戻る</a></li>
-        <?php
-            if (! isset($users) || (isset($users) && count($users) > 0)):
-        ?>
-        <li><button id="doTestSend" type="button" class="btn btn-success">テスト送信する</button></li>
-        <li><button id="doSend" type="button" class="btn btn-success"><input id="sendCheck"type="checkbox">送信する</button></li>
-        <?php
-            endif;
-        ?>
-      </ul>
     </form>
   </div>
 </div>
 <script type="text/javascript">
 $(function() {
+  var $dialog = $("#dialog");
+
   $("#doTestSend").on("click", function(evt) {
-    var deliveredTo = prompt("送信先メールアドレス", "ida@aucfan.com");
+    var deliveredTo = prompt("送信先メールアドレス", "テスト送信するアドレス@aucfan.com");
     if (! deliveredTo) {
       return false;
     }
@@ -186,12 +147,12 @@ $(function() {
       dataType: "json"
     }).done(function(json, textStatus, jqXHR) {
       if (json.status == '200') {
-        alert('送信しました');
+        showDialog("送信しました");
       } else {
-        alert('送信に失敗しました\n' + json.message);
+        showDialog("送信に失敗しました\n" + json.message);
       }
     }).fail(function(jqXHR, textStatus, errorThrown) {
-      alert('送信に失敗しました');
+      showDialog("送信に失敗しました");
     });
   });
 
@@ -201,8 +162,8 @@ $(function() {
 
   $("#doSend").on("click", function(evt) {
     if (! $("#sendCheck").prop("checked")) {
-        alert("チェックしてください");
-        return false;
+      showDialog("チェックをしてください");
+      return false;
     }
 
     $.ajax({
@@ -210,18 +171,47 @@ $(function() {
       url: '/admin/mailmagazine/checkprocess',
       dataType: "json"
     }).done(function(json, textStatus, jqXHR) {
-      if (json.status == '200') {
-        if (confirm("送信を開始してよろしいでつか？")) {
-            $("#mailmagazineForm").submit();
-        }
-      } else if (json.status == '300') {
-        alert('他の送信処理が実行されています');
+      if (json.status == '300') {
+        confirmDialog("送信を開始します。よろしいですか？");
+      } else if (json.status == '200') {
+        showDialog("他のメルマガを送信中です");
       } else {
-        alert('送信確認でエラーが発生しました\n' + json.message);
+        showDialog("送信確認でエラーが発生しました\n" + json.message);
       }
     }).fail(function(jqXHR, textStatus, errorThrown) {
-      alert('送信確認でエラーが発生しました\n' + textStatus);
+      showDialog("送信確認でエラーが発生しました\n" + textStatus);
     });
   });
+
+  var showDialog = function(message) {
+    var $dialog_clone = $dialog.clone();
+    $(".message", $dialog_clone).text(message);
+    $dialog_clone.dialog({
+      modal: true,
+      buttons: {
+        Ok: function() {
+          $(this).dialog("destroy");
+        }
+      }
+    });
+  };
+
+  var confirmDialog = function(message) {
+    var $dialog_clone = $dialog.clone();
+    $(".message", $dialog_clone).text(message);
+    $dialog_clone.dialog({
+      modal: true,
+      buttons: {
+        "キャンセル": function() {
+          $(this).dialog("destroy");
+        },
+        "送信": function() {
+          $(this).dialog("destroy");
+          var action = location.href;
+　        $("#mailmagazineForm").submit();
+        }
+      }
+    });
+  };
 });
 </script>

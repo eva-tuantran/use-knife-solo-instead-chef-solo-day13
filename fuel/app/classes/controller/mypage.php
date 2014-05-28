@@ -155,28 +155,32 @@ class Controller_Mypage extends Controller_Base_Template
 
 
     /**
-     * フリーマーケットのキャンセル
+     * 出店予約のキャンセル
      *
      * @access public
+     * @param
      * @return void
      * @author shimma
+     * @autho ida
      */
     public function get_cancel()
     {
-        $fleamarket_id = Input::get('fleamarket_id');
+        $entry_id = \Input::get('entry_id');
 
-        if (! $fleamarket_id) {
-            Session::set_flash('notice', \STATUS_FLEAMARKET_CANCEL_FAILED);
-
-            return \Response::redirect('/mypage', 'refresh');
+        if (! $entry_id) {
+            \Session::set_flash('notice', \STATUS_FLEAMARKET_CANCEL_FAILED);
+            \Response::redirect('/mypage', 'refresh');
         }
 
-        if (! $this->login_user->cancelEntry($fleamarket_id)) {
-            Session::set_flash('notice', \STATUS_FLEAMARKET_CANCEL_FAILED);
+        $entry = \Model_Entry::find($entry_id);
+        if (! $this->login_user->cancelEntry($entry_id, $this->login_user->user_id)) {
+            \Session::set_flash('notice', \STATUS_FLEAMARKET_CANCEL_FAILED);
         } else {
-            Session::set_flash('notice', \STATUS_FLEAMARKET_CANCEL_SUCCESS);
+            \Session::set_flash('notice', \STATUS_FLEAMARKET_CANCEL_SUCCESS);
+            $entry = \Model_Entry::find($entry_id);
             $email_template_params = array(
                 'nick_name' => $this->login_user->nick_name,
+                'fleamarket.name' => $entry->fleamarket->name,
             );
             $this->login_user->sendmail('common/user_cancel_fleamarket', $email_template_params);
         };
@@ -199,7 +203,8 @@ class Controller_Mypage extends Controller_Base_Template
         $data['info_message'] = $this->getStatusMessage($status_code);
 
         $fieldset = $this->createFieldsetAccount();
-        Asset::js('http://ajaxzip3.googlecode.com/svn/trunk/ajaxzip3/ajaxzip3.js', array(), 'add_js');
+        Asset::js('jquery.noty.packaged.min.js', array(), 'add_js');
+        Asset::js('https://ajaxzip3.googlecode.com/svn/trunk/ajaxzip3/ajaxzip3-https.js', array(), 'add_js');
 
         $this->template->content = View::forge('mypage/account', $data);
         $this->template->content->set('fieldset', $fieldset, false);

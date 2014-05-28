@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS `rakuichi_rakuza`.`users` (
   `mobile_tel` VARCHAR(20) NULL COMMENT '携帯電話',
   `email` VARCHAR(255) NULL COMMENT 'メールアドレス',
   `mobile_email` VARCHAR(255) NULL COMMENT '携帯メールアドレス',
-  `device` TINYINT NULL COMMENT '1:sp,2:fp,3:pc,4:phone',
+  `device` TINYINT NULL COMMENT '登録元 0:不明,1:WEB,3:電話',
   `mm_flag` TINYINT NULL DEFAULT 0 COMMENT 'メールマガジン 0:不要,1:必要',
   `mm_device` TINYINT NULL DEFAULT 0 COMMENT 'メールマガジン送信先 1:pc,2:mobile',
   `mm_error_flag` TINYINT NULL DEFAULT 0 COMMENT 'メールマガジン送信エラー 0:エラーなし,1:鰓ーあり:',
@@ -143,12 +143,12 @@ CREATE TABLE IF NOT EXISTS `rakuichi_rakuza`.`fleamarkets` (
   `item_categories` VARCHAR(255) NOT NULL COMMENT '出店可能な出品物の種類',
   `link_from_list` VARCHAR(511) NULL COMMENT 'フリーマーケット開催を知った導線リスト',
   `pickup_flag` TINYINT NOT NULL DEFAULT 0 COMMENT 'ピックアップ 0:対象外,1:対象',
-  `shop_fee_flag` TINYINT NOT NULL DEFAULT 0 COMMENT '出店料 0:有料,1:無料',
+  `shop_fee_flag` TINYINT NOT NULL DEFAULT 0 COMMENT '出店料 0:無料,1:有料',
   `car_shop_flag` TINYINT NOT NULL DEFAULT 0 COMMENT '車出店 0:NG,1:OK',
   `pro_shop_flag` TINYINT NOT NULL DEFAULT 0 COMMENT 'プロ出店 0:NG,1:OK',
   `charge_parking_flag` TINYINT NOT NULL DEFAULT 0 COMMENT '有料駐車場 0:なし,1:あり',
   `free_parking_flag` TINYINT NOT NULL DEFAULT 0 COMMENT '無料駐車場 0:なし,1:あり',
-  `rainy_location_flag` TINYINT NOT NULL DEFAULT 0 COMMENT '雨天開催会場 0:NG 1:OK',
+  `rainy_location_flag` TINYINT NOT NULL DEFAULT 0 COMMENT '雨天開催会場 0:対象 1:対象外',
   `donation_fee` INT NULL COMMENT '寄付金',
   `donation_point` VARCHAR(50) NULL COMMENT '寄付先',
   `register_type` TINYINT NULL COMMENT '登録タイプ 1:運営者,2:ユーザ投稿',
@@ -181,6 +181,7 @@ CREATE TABLE IF NOT EXISTS `rakuichi_rakuza`.`entries` (
   `reserved_booth` TINYINT NOT NULL COMMENT '予約ブース数',
   `link_from` VARCHAR(50) NOT NULL COMMENT 'フリーマーケット開催を知った導線',
   `remarks` VARCHAR(511) NULL COMMENT '予約時メッセージ',
+  `device` TINYINT NOT NULL COMMENT '登録タイプ 1:WEB,2:電話',
   `entry_status` TINYINT NOT NULL COMMENT 'エントリーステータス 1:エントリ,2:キャンセル待ち,3:キャンセル',
   `created_user` INT NOT NULL COMMENT '作成したユーザID、一般ユーザ:10000000以上,管理者：10000000未満',
   `updated_user` INT NULL COMMENT '更新したユーザID、一般ユーザ:10000000以上,管理者：10000000未満',
@@ -445,19 +446,41 @@ CREATE TABLE IF NOT EXISTS `rakuichi_rakuza`.`mail_magazines` (
   `mail_magazine_id` INT NOT NULL AUTO_INCREMENT,
   `send_datetime` DATETIME NULL,
   `mail_magazine_type` TINYINT NOT NULL DEFAULT 0 COMMENT 'メールマガジンタイプ 1全員,2:希望者全員,3:出店予約者',
-  `query` TEXT NOT NULL,
-  `from_email` VARCHAR(255) NOT NULL,
-  `from_name` VARCHAR(255) NOT NULL,
+  `query` TEXT NOT NULL COMMENT '送信者を取得するSQL',
+  `from_email` VARCHAR(255) NOT NULL COMMENT '差出人メールアドレス',
+  `from_name` VARCHAR(255) NOT NULL COMMENT '差出人',
   `subject` VARCHAR(255) NOT NULL,
-  `body` TEXT NOT NULL COMMENT '本文が格納されたディレクトリ',
+  `body` TEXT NOT NULL COMMENT '本文',
   `additional_serialize_data` VARCHAR(255) NULL COMMENT 'メール本文に掲載する情報を取得するためのパラメータをserializeして保存',
-  `send_status` TINYINT NOT NULL DEFAULT 0 COMMENT '送信ステータス 0:送信待ち,1:送信中,2:送信済,3エラー終了,9:キャンセル',
+  `send_status` TINYINT NOT NULL DEFAULT 0 COMMENT '送信ステータス 0:保存,1:送信待ち,2:送信中,3:正常終了,4:異常終了,9:キャンセル',
   `created_user` INT NOT NULL COMMENT '作成したユーザID、一般ユーザ:10000000以上,管理者：10000000未満',
   `updated_user` INT NULL COMMENT '更新したユーザID、一般ユーザ:10000000以上,管理者：10000000未満',
   `created_at` DATETIME NOT NULL COMMENT '作成日時',
   `updated_at` DATETIME NULL COMMENT '更新日時',
   `deleted_at` DATETIME NULL COMMENT '削除日時',
-  PRIMARY KEY (`mail_magazine_id`))
+  PRIMARY KEY (`mail_magazine_id`),
+  INDEX `idx_mail_magazines_01` (`mail_magazine_type` ASC, `send_status` ASC))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `rakuichi_rakuza`.`mail_magazine_users`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `rakuichi_rakuza`.`mail_magazine_users` ;
+
+CREATE TABLE IF NOT EXISTS `rakuichi_rakuza`.`mail_magazine_users` (
+  `mail_magazine_user_id` INT NOT NULL AUTO_INCREMENT,
+  `mail_magazine_id` INT NOT NULL,
+  `user_id` INT NOT NULL,
+  `send_status` TINYINT NOT NULL DEFAULT 0 COMMENT '送信ステータス 0:未送信(未処理),1:送信済,2:送信エラー',
+  `error` VARCHAR(255) NULL,
+  `created_user` INT NOT NULL COMMENT '作成したユーザID、一般ユーザ:10000000以上,管理者：10000000未満',
+  `updated_user` INT NULL COMMENT '更新したユーザID、一般ユーザ:10000000以上,管理者：10000000未満',
+  `created_at` DATETIME NOT NULL COMMENT '作成日時',
+  `updated_at` DATETIME NULL COMMENT '更新日時',
+  `deleted_at` DATETIME NULL COMMENT '削除日時',
+  PRIMARY KEY (`mail_magazine_user_id`),
+  INDEX `idx_mail_magazine_users_01` (`mail_magazine_id` ASC, `user_id` ASC))
 ENGINE = InnoDB;
 
 

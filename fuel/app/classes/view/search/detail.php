@@ -20,6 +20,7 @@ class View_Search_Detail extends ViewModel
         $fleamarket['abouts'] = $this->createAbouts();
         $this->fleamarket = $fleamarket;
         $this->week_list = \Config::get('master.week');
+        $this->event_statuses = \Model_Fleamarket::getEventStatuses();
         $this->entry_styles = \Config::get('master.entry_styles');
         $this->image_files = $this->createFileNames($this->fleamarket_images);
     }

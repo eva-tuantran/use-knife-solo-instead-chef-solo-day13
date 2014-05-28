@@ -3,7 +3,7 @@
 return array(
     'from'      => 'info@rakuichi-rakuza.jp',
     'from_name' => '楽市楽座 運営事務局',
-    'subject'   => '【自動返信】パスワード再登録について| 楽市楽座運営事務局',
+    'subject'   => '【楽市楽座】パスワード再登録のご連絡',
     'body'      => <<<'EOT'
 楽市楽座運営事務局 です。
 

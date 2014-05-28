@@ -390,6 +390,9 @@ googletag.enableServices();
     endif;
 ?>
 <!-- /pagination -->
+<div id="information-dialog" class="afDialog">
+  <p id="message" class="message"></p>
+</div>
 <script type="text/javascript">
 $(function() {
   $(".pagination li").on("click", function(evt) {
@@ -441,7 +444,3 @@ $(function() {
   };
 });
 </script>
-
-<div id="information-dialog" style="text-align: left; padding: 20px; display: none;">
-  <p id="message"></p>
-</div>

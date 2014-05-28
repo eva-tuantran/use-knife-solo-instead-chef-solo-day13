@@ -19,11 +19,13 @@
       <?php endif ?>
       <form id="login" action="/login/auth?rurl=<?php echo $return_url; ?>" accept-charset="utf-8" method="post">
         <?php echo \Form::csrf(); ?>
-        <div class="form-group">
-          <input type="text" class="form-control" id="mail" placeholder="メールアドレス(ログインID)" name="email">
-          <input type="password" class="form-control" id="password" placeholder="パスワード" name="password">
-          <button type="submit" class="btn btn-default">ログイン</button>
+        <div class="form-group text-left">
+          <label for="mail" class="text-left">メールアドレス(ログインID)</label>
+          <input type="text" class="form-control" id="mail" name="email">
+          <label for="password">パスワード</label>
+          <input type="password" class="form-control" id="password" name="password">
         </div>
+        <button type="submit" class="btn btn-default">ログイン</button>
       </form>
       <ul>
         <li><a href="/reminder" target="_blank">パスワードを忘れた方はこちら</a></li>
