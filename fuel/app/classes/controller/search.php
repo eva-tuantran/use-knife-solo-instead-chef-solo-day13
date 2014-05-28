@@ -212,6 +212,13 @@ class Controller_Search extends Controller_Base_Template
             unset($conditions['shop_fee']);
         }
 
+        if (empty($add_conditions['event_status'])) {
+            $add_conditions['event_status'] = array(
+                \Model_Fleamarket::EVENT_STATUS_SCHEDULE,
+                \Model_Fleamarket::EVENT_STATUS_RESERVATION_RECEIPT,
+            );
+        }
+
         return array($conditions, $add_conditions);
     }
 
