@@ -56,13 +56,11 @@
     <dl class="col-md-6">
       <dt>開催時間</dt>
       <dd><?php
-          if ($fleamarket['event_time_start']):
-              echo e(date('G:i', strtotime($fleamarket['event_time_start'])));
+         if ($fleamarket['event_time_start'] && $fleamarket['event_time_start'] != '00:00:00'
+              && $fleamarket['event_time_end'] && $fleamarket['event_time_end'] != '00:00:00'):
+              echo e(substr($fleamarket['event_time_start'], 0, 5)) . '～' . e(substr($fleamarket['event_time_end'], 0, 5));
           else:
               echo '-';
-          endif;
-          if ($fleamarket['event_time_end']):
-              echo '～' . e(date('G:i', strtotime($fleamarket['event_time_end'])));
           endif;
       ?></dd>
     </dl>

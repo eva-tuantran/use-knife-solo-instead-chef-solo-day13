@@ -1466,7 +1466,28 @@ li.inquiry i {
 }
 
 /* -------------------- aucfan.com add-------------------- */
-.titleLeft strong {
+.reserved {
+  margin: 0 5px 0 5px;
+  padding: 10px 0;
+  width: 130px;
+  font-size: 100%;
+  background-color: #f59000;
+  color: #fff;
+  border: none;
+  border-radius: 3px;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  text-align: center;
+  cursor: default;
+}
+#contentDetail .reserved {
+  margin: 0;
+  padding: 1em 0;
+  width: 200px;
+  font-size: 116%;
+}
+#contentDetail .titleLeft strong,
+#my-tab-content h3 strong {
   background-color: #b7d316;
   padding: 0 3px 5px 3px;
   height: 14px;
