@@ -58,8 +58,106 @@ class Model_Fleamarket_Image extends Model_Base
         return $result;
     }
 
+    /**
+     * アップロードファイルを指定のフォルダに移動する
+     *
+     * @access public
+     * @param array $options アップロードの設定
+     * @return void
+     * @author kobayashi
+     * @author ida
+     */
+    public static function move($options)
+    {
+        $default = array(
+            'ext_whitelist' => array('jpg'),
+            'randomize'      => true,
+        );
+        $options = $default + $options;
+
+        \Upload::process($options);
+
+        $result = array();
+        if (\Upload::is_valid()) {
+            \Upload::save();
+            $files = \Upload::get_files();
+
+            foreach ($files as $file) {
+                $result[$file['field']] = $file;
+            }
+        } else {
+            foreach (\Upload::get_errors() as $file) {
+                foreach ($file['errors'] as $error) {
+                    if ($error['error'] != \Upload::UPLOAD_ERR_NO_FILE) {
+                        return false;
+                    }
+                }
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * アップロードファイルを指定のフォルダに移動する
+     *
+     * @access private
+     * @param array $files アップロードファイル情報
+     * @return void
+     * @author kobayashi
+     * @author ida
+     */
+    public static function store($files, $src, $dest)
+    {
+        if (! $files) {
+            return false;
+        }
+
+        self::checkPath($src);
+        self::checkPath($dest);
+
+        foreach ($files as $file) {
+            \File::rename(
+                DOCROOT . 'files/admin/fleamarket/img/' . $file['saved_as'],
+                DOCROOT . 'files/fleamarket/img/'       . $file['saved_as']
+            );
+            $this->makeThumbnail($file['saved_as']);
+        }
+
+        return $files;
+    }
+
+    /**
+     * パスの存在チェック
+     *
+     * 存在しない場合は作成する
+     *
+     * @access private
+     * @param string $path チェックするパス
+     * @return void
+     * @author ida
+     */
+    private static function checkPath($path)
+    {
+        if (! file_exists($path)) {
+            mkdir($path, 0755, true);
+        }
+    }
+
+    /**
+     * 保存先URL(path)を取得する
+     *
+     * @access public
+     * @param
+     * @return string
+     * @author kobayashi
+     * @author ida
+     */
     public function Url()
     {
-        return '/files/fleamarket/img/' . $this->file_name;
+        $path = \Config::get('master.image_path.store');
+        $path .= $this->fleamarket_id .'/';
+
+        return $path . $this->file_name;
     }
 }

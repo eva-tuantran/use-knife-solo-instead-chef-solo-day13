@@ -17,7 +17,7 @@ class Controller_Fleamarket extends Controller_Base_Template
     }
 
     /**
-     * フリーマーケット入力画面
+     * フリマ入力画面
      *
      * @access public
      * @return void
@@ -71,7 +71,7 @@ class Controller_Fleamarket extends Controller_Base_Template
     }
 
     /**
-     * 入力内容の確認画面
+     * 確認画面
      *
      * @access public
      * @return void
@@ -226,7 +226,7 @@ class Controller_Fleamarket extends Controller_Base_Template
     }
 
     /**
-     * フリーマーケット情報を取得する
+     * フリマ情報を取得する
      *
      * @access private
      * @param
@@ -248,7 +248,7 @@ class Controller_Fleamarket extends Controller_Base_Template
     }
 
     /**
-     * フリーマーケット説明情報を取得する
+     * フリマ説明情報を取得する
      *
      * @access private
      * @param
@@ -270,7 +270,7 @@ class Controller_Fleamarket extends Controller_Base_Template
     }
 
     /**
-     * 開催地情報を取得する
+     * 会場情報を取得する
      *
      * @access private
      * @param
@@ -292,7 +292,7 @@ class Controller_Fleamarket extends Controller_Base_Template
     }
 
     /**
-     * フリーマーケット情報の登録用配列を生成する
+     * フリマ情報の登録用配列を生成する
      *
      * @access private
      * @param mixed $location_id 開催地ID
@@ -343,7 +343,7 @@ class Controller_Fleamarket extends Controller_Base_Template
     }
 
     /**
-     * フリーマーケット説明情報の登録用配列を生成する
+     * フリマ説明情報の登録用配列を生成する
      *
      * @access private
      * @param mixed $fleamarket_id フリーマーケットID
@@ -371,7 +371,7 @@ class Controller_Fleamarket extends Controller_Base_Template
     }
 
     /**
-     * 開催地情報の登録用配列を生成する
+     * 会場情報の登録用配列を生成する
      *
      * @access private
      * @param mixed $user_id ユーザID
@@ -398,7 +398,7 @@ class Controller_Fleamarket extends Controller_Base_Template
     }
 
     /**
-     * 各モデルから
+     * フリマ情報のフィールドセットを取得する
      *
      * @access private
      * @param
@@ -417,7 +417,7 @@ class Controller_Fleamarket extends Controller_Base_Template
     }
 
     /**
-     * フリーマーケット説明情報のフィールドセットを取得する
+     * フリマ説明情報のフィールドセットを取得する
      *
      * @access private
      * @param
@@ -435,7 +435,7 @@ class Controller_Fleamarket extends Controller_Base_Template
     }
 
     /**
-     * 開催地情報のフィールドセットを取得する
+     * 会場情報のフィールドセットを取得する
      *
      * @access private
      * @param

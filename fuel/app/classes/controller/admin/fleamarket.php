@@ -119,7 +119,7 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
             );
         }
 
-        $files = $this->saveUploadedImages();
+        $files = $this->moveImages();
 
         if (! is_array($files)) {
             \Response::redirect(
@@ -223,33 +223,12 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
      * @return void
      * @author kobayashi
      */
-    private function saveUploadedImages()
+    private function moveImages()
     {
-        Upload::process(array(
-            'path' => DOCROOT . 'files/admin/fleamarket/img/',
-            'ext_whitelist' => array('jpg'),
-            'randomize'      => true,
-        ));
-
-        $result = array();
-        if (\Upload::is_valid()) {
-            \Upload::save();
-            $files = \Upload::get_files();
-
-            foreach ($files as $file) {
-                $result[$file['field']] = $file;
-            }
-
-            \Session::set_flash('admin.fleamarket.files', $result);
-        } else {
-            foreach (\Upload::get_errors() as $file) {
-                foreach ($file['errors'] as $error) {
-                    if ($error['error'] != \Upload::UPLOAD_ERR_NO_FILE) {
-                        return false;
-                    }
-                }
-            }
-        }
+        $options = array(
+            'path' => DOCROOT . \Config::get('master.image_path.'),
+        );
+        $result = \Model_Fleamarket_Image::move($options);
 
         return $result;
     }
@@ -262,7 +241,7 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
      * @return void
      * @author kobayashi
      */
-    private function moveUploadedImages()
+    private function storeUploadedImages()
     {
         $files = \Session::get_flash('admin.fleamarket.files');
         if (! $files) {

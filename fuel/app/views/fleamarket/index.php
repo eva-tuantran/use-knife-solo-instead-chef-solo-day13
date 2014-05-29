@@ -263,6 +263,15 @@ $(function() {
           </div>
         </div>
         <div class="form-group">
+          <label class="col-sm-2 control-label" for="inputImage">イメージ画像</label>
+          <div class="col-sm-10">
+            <input id="exampleInputFile1" type="file" name="image1">
+            <input id="exampleInputFile2" type="file" name="image2">
+            <input id="exampleInputFile3" type="file" name="image3">
+            <input id="exampleInputFile4" type="file" name="image4">
+          </div>
+        </div>
+        <div class="form-group">
           <label class="col-sm-2 control-label" for="terms">利用規約</label>
           <div class="col-sm-10">
             <div class="checkbox">
