@@ -17,9 +17,10 @@ class Controller_Fleamarket extends Controller_Base_Template
     }
 
     /**
-     * フリマ入力画面
+     * フリマ情報入力
      *
      * @access public
+     * @param mixed $fleamarket_id フリマID
      * @return void
      * @author ida
      */
@@ -36,18 +37,12 @@ class Controller_Fleamarket extends Controller_Base_Template
             }
         }
 
+        $this->setAssets();
+
         $errors = array();
         $fleamarket = $this->getFleamarketData();
         $fleamarket_about = $this->getFleamarketAboutData();
         $location = $this->getLocationData();
-
-        Asset::css('jquery-ui.min.css', array(), 'add_css');
-        Asset::css('jquery-ui-timepicker.css', array(), 'add_css');
-        Asset::js('jquery-ui.min.js', array(), 'add_js');
-        Asset::js('jquery.ui.datepicker-ja.js', array(), 'add_js');
-        Asset::js('jquery-ui-timepicker.js', array(), 'add_js');
-        Asset::js('jquery-ui-timepicker-ja.js', array(), 'add_js');
-        Asset::js('http://ajaxzip3.googlecode.com/svn/trunk/ajaxzip3/ajaxzip3.js', array(), 'add_js');
 
         $view_model = \ViewModel::forge('fleamarket/index');
         $view_model->set('fleamarket_id', $fleamarket_id, false);
@@ -80,25 +75,14 @@ class Controller_Fleamarket extends Controller_Base_Template
     public function post_confirm()
     {
         $fleamarket_id      = Input::post('fleamarket_id');
-        $fleamarket         = Input::post('f');
         $fleamarket_about_id = Input::post('fleamarket_about_id');
         $fleamarket_about   = Input::post('fa');
         $location_id        = Input::post('location_id');
         $location           = Input::post('l');
 
         $location_fieldset = $this->getLocationFieldset();
-        $fleamarket_fieldset = $this->getFleamarketFieldset();
         $fleamarket_about_fieldset = $this->getFleamarketAboutFieldset();
 
-        $fleamarket_validation = $fleamarket_fieldset->validation();
-        $fleamarket_validation->add_callable('Custom_Validation');
-
-        // 出店予約のバリデーション整合性のためセット
-        $fleamarket['event_status'] = \Model_Fleamarket::EVENT_STATUS_SCHEDULE;
-        $fleamarket['event_reservation_status'] =
-            \Model_Fleamarket::EVENT_RESERVATION_STATUS_ENOUGH;
-
-        $fleamarket_result = $fleamarket_validation->run($fleamarket);
 
         $fleamarket_about_validation = $fleamarket_about_fieldset->validation();
         $fleamarket_about_result = $fleamarket_about_validation->run(
@@ -139,6 +123,8 @@ class Controller_Fleamarket extends Controller_Base_Template
             Response::redirect('fleamarket');
         }
 
+        $this->moveImages();
+
         $fleamarket = $fleamarket_validation->validated();
         $fleamarket['fleamarket_id'] = $fleamarket_id;
         $fleamarket_about = $fleamarket_about_validation->validated();
@@ -156,6 +142,20 @@ class Controller_Fleamarket extends Controller_Base_Template
         $view_model->set('location', $location, false);
 
         $this->template->content = $view_model;
+    }
+
+    private function validateFleamarket()
+    {
+        $fleamarket         = Input::post('f');
+        $fleamarket_fieldset = $this->getFleamarketFieldset();
+        $fleamarket_validation = $fleamarket_fieldset->validation();
+        $fleamarket_validation->add_callable('Custom_Validation');
+        // 出店予約のバリデーション整合性のためセット
+        $fleamarket['event_status'] = \Model_Fleamarket::EVENT_STATUS_SCHEDULE;
+        $fleamarket['event_reservation_status'] =
+            \Model_Fleamarket::EVENT_RESERVATION_STATUS_ENOUGH;
+
+        return $fleamarket_validation->run($fleamarket);
     }
 
     /**
@@ -226,6 +226,44 @@ class Controller_Fleamarket extends Controller_Base_Template
     }
 
     /**
+     * js、cssを追加する
+     *
+     * @access private
+     * @param
+     * @return void
+     * @author ida
+     */
+    private function setAssets()
+    {
+        \Asset::css('jquery-ui.min.css', array(), 'add_css');
+        \Asset::css('jquery-ui-timepicker.css', array(), 'add_css');
+        \Asset::js('jquery-ui.min.js', array(), 'add_js');
+        \Asset::js('jquery.ui.datepicker-ja.js', array(), 'add_js');
+        \Asset::js('jquery-ui-timepicker.js', array(), 'add_js');
+        \Asset::js('jquery-ui-timepicker-ja.js', array(), 'add_js');
+        \Asset::js('http://ajaxzip3.googlecode.com/svn/trunk/ajaxzip3/ajaxzip3.js', array(), 'add_js');
+    }
+
+
+    /**
+     * アップロードファイルを指定のフォルダに移動する
+     *
+     * @access private
+     * @param
+     * @return void
+     * @author kobayashi
+     */
+    private function moveImages()
+    {
+        $options = array(
+            'path' => DOCROOT . \Config::get('master.image_path.'),
+        );
+        $result = \Model_Fleamarket_Image::move($options);
+
+        return $result;
+    }
+
+    /**
      * フリマ情報を取得する
      *
      * @access private
@@ -235,9 +273,9 @@ class Controller_Fleamarket extends Controller_Base_Template
      */
     private function getFleamarketData()
     {
-        $data = Session::get_flash('fleamarket.data');
+        $data = \Session::get_flash('fleamarket.data');
         if (! $data) {
-            $fieldset = Session::get_flash('fleamarket.fieldset');
+            $fieldset = \Session::get_flash('fleamarket.fieldset');
             if (! $fieldset) {
                 $fieldset = \Model_Fleamarket::createFieldset();
             }
@@ -257,9 +295,9 @@ class Controller_Fleamarket extends Controller_Base_Template
      */
     private function getFleamarketAboutData()
     {
-        $data = Session::get_flash('fleamarket_about.data');
+        $data = \Session::get_flash('fleamarket_about.data');
         if (! $data) {
-            $fieldset = Session::get_flash('fleamarket_about.fieldset');
+            $fieldset = \Session::get_flash('fleamarket_about.fieldset');
             if (! $fieldset) {
                 $fieldset = \Model_Fleamarket_About::createFieldset();
             }
@@ -281,7 +319,7 @@ class Controller_Fleamarket extends Controller_Base_Template
     {
         $data = Session::get_flash('location.data');
         if (! $data) {
-            $fieldset = Session::get_flash('location.fieldset');
+            $fieldset = \Session::get_flash('location.fieldset');
             if (! $fieldset) {
                 $fieldset = \Model_Location::createFieldset();
             }
@@ -302,7 +340,7 @@ class Controller_Fleamarket extends Controller_Base_Template
      */
     private function createFleamarket($location_id, $user_id)
     {
-        $data = Session::get_flash('fleamarket.data');
+        $data = \Session::get_flash('fleamarket.data');
         $fleamarket = array(
             'location_id'       => $location_id,
             'group_code'        => '',
@@ -380,8 +418,8 @@ class Controller_Fleamarket extends Controller_Base_Template
      */
     private function createLocation($user_id)
     {
-        $data = Session::get_flash('location.data');
-        $prefectures = Config::get('master.prefectures');
+        $data = \Session::get_flash('location.data');
+        $prefectures = \Config::get('master.prefectures');
         $prefecture = $prefectures[$data['prefecture_id']];
         $address = $prefecture . $data['address'];
         $location = array(
@@ -407,7 +445,7 @@ class Controller_Fleamarket extends Controller_Base_Template
      */
     private function getFleamarketFieldset()
     {
-        $fieldset = Session::get_flash('fleamarket.fieldset');
+        $fieldset = \Session::get_flash('fleamarket.fieldset');
         if (! $fieldset) {
             $fieldset = \Model_Fleamarket::createFieldset();
             $fieldset->add('agreement', '利用規約')->add_rule('required');
@@ -426,7 +464,7 @@ class Controller_Fleamarket extends Controller_Base_Template
      */
     private function getFleamarketAboutFieldset($input = array())
     {
-        $fieldset = Session::get_flash('fleamarket_about.fieldset');
+        $fieldset = \Session::get_flash('fleamarket_about.fieldset');
         if (! $fieldset) {
             $fieldset = \Model_Fleamarket_About::createFieldset();
         }
@@ -444,7 +482,7 @@ class Controller_Fleamarket extends Controller_Base_Template
      */
     private function getLocationFieldset()
     {
-        $fieldset = Session::get_flash('location.fieldset');
+        $fieldset = \Session::get_flash('location.fieldset');
         if (! $fieldset) {
             $fieldset = \Model_Location::createFieldset();
         }
@@ -467,6 +505,6 @@ class Controller_Fleamarket extends Controller_Base_Template
             return $error_message;
         }
 
-        return Session::get_flash($name . '.error_message', array());
+        return \Session::get_flash($name . '.error_message', array());
     }
 }

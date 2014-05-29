@@ -459,13 +459,12 @@ QUERY;
                 $placeholder_list[] = $placeholder;
             }
             $placeholder_string = implode(',', $placeholder_list);
-            $where = ' AND prefecture_id IN (' . $placeholder_string . ')';
-
+            $where .= ' AND prefecture_id IN (' . $placeholder_string . ')';
         }
         if (isset($organization_flag) && $organization_flag !== '') {
             $placeholder = ':organization_flag';
             $placeholders[$placeholder] = $organization_flag;
-            $where = ' AND organization_flag = ' . $placeholder;
+            $where .= ' AND organization_flag = ' . $placeholder;
         }
 
         $query = <<<"QUERY"

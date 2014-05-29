@@ -1301,6 +1301,7 @@ QUERY;
     {
         $fieldset = \Fieldset::forge('fleamarket');
         $fieldset->add_model('Model_Fleamarket');
+        $fieldset->validation()->add_callable('Custom_Validation');
 
         if (! $is_admin) {
             $fieldset->add('reservation_email_confirm')
@@ -1352,13 +1353,12 @@ QUERY;
      */
     public function makeReservationNumber($save = true)
     {
-        $this->reservation_serial++;
-
         $reservation_number = sprintf(
             '%05d-%05d',
             $this->fleamarket_id,
             $this->reservation_serial
         );
+        $this->reservation_serial =  DB::expr('reservation_serial + 1');
 
         return $reservation_number;
     }
