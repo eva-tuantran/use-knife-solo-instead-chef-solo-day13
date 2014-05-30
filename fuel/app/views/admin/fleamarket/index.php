@@ -92,7 +92,6 @@ var remove_form = function(o) {
 };
 </script>
 <?php
-    $input  = $fieldsets['fleamarket']->input();
     $fields = $fieldsets['fleamarket']->field();
     $errors = $fieldsets['fleamarket']->validation()->error_message();
 ?>

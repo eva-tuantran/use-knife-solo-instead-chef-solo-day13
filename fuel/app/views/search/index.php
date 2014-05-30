@@ -203,7 +203,7 @@ googletag.enableServices();
           <dt>交通</dt>
           <dd><?php
             if (isset($fleamarket['about_access']) && $fleamarket['about_access'] != ''):
-                echo e($fleamarket['about_access']);
+                echo nl2br(e($fleamarket['about_access']));
             else:
                 echo '-';
             endif;

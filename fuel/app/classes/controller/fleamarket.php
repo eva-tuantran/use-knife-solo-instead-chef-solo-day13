@@ -33,34 +33,19 @@ class Controller_Fleamarket extends Controller_Base_Template
             );
 
             if (! $fleamarket) {
-                \Response::redirect('errors/badrequest');
+                \Response::redirect('errors/notfound', 'location', 301);
             }
         }
 
         $this->setAssets();
 
-        $errors = array();
-        $fleamarket = $this->getFleamarketData();
-        $fleamarket_about = $this->getFleamarketAboutData();
-        $location = $this->getLocationData();
-
         $view_model = \ViewModel::forge('fleamarket/index');
         $view_model->set('fleamarket_id', $fleamarket_id, false);
         $view_model->set('user_id', $user_id, false);
-        $view_model->set('fleamarket', $fleamarket, false);
-        $view_model->set('fleamarket_about', $fleamarket_about, false);
-        $view_model->set('location', $location, false);
-        $view_model->set(
-            'fleamarket_errors', $this->getErrorMessage('fleamarket'), false
-        );
-        $view_model->set(
-            'fleamarket_about_errors',
-            $this->getErrorMessage('fleamarket_about'),
-            false
-        );
-        $view_model->set(
-            'location_errors', $this->getErrorMessage('location'), false
-        );
+        $view_model->set('location_fieldset', $this->getLocationFieldset(), false);
+        $view_model->set('fleamarket_fieldset', $this->getFleamarketFieldset(), false);
+        $view_model->set('fleamarket_about_fieldset', $this->getFleamarketAboutFieldset(), false);
+        $view_model->set('fleamarket_image_fieldset', $this->getFleamarketImageFieldset(), false);
 
         $this->template->content = $view_model;
     }

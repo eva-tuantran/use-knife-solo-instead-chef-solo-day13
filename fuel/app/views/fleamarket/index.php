@@ -14,6 +14,19 @@ $(function() {
   });
 });
 </script>
+<?php
+    $location_fields = $locationtFieldset->field();
+    $location_errors = $locationFieldset->validation()->error_message();
+
+    $fleamarket_fields = $fleamarketFieldset->field();
+    $fleamarket_errors = $fleamarketFieldset->validation()->error_message();
+
+    $fleamarket_about_fields = $fleamarket_about_fieldset->field();
+    $fleamarket_about_errors = $fleamarket_about_fieldset->validation()->error_message();
+
+    $fleamarket_image_fields = $fleamarket_image_fieldset->field();
+    $fleamarket_image_errors = $$fleamarket_image_fieldset->validation()->error_message();
+?>
 <div id="contentForm" class="row">
   <!-- flow -->
   <div id="flow" class="row hidden-xs">
@@ -34,40 +47,34 @@ $(function() {
       <h3>開催情報の入力</h3>
       <form class="form-horizontal" action="/fleamarket/confirm/" method="post">
         <?php
-          if (isset($fleamarket['fleamarket_id'])
-              && ! empty($fleamarket['fleamarket_id'])
-          ):
+          if (! empty($fleamarket_fields['fleamarket_id']->value)):
         ?>
-            <input type="hidden" name="fleamarket_id" value="<?php echo e($fleamarket['fleamarket_id']);?>">
+            <input type="hidden" name="fleamarket_id" value="<?php echo e($fleamarket_fields['fleamarket_id']->value);?>">
         <?php
           endif;
         ?>
         <?php
-          if (isset($fleamarket_about['fleamarket_about_id'])
-              && ! empty($fleamarket_about['fleamarket_about_id'])
-          ):
+          if (! empty($fleamarket_about_fields['fleamarket_about_id']->value)):
         ?>
-            <input type="hidden" name="fleamarket_about_id" value="<?php echo e($fleamarket_about['fleamarket_about_id']);?>">
+            <input type="hidden" name="fleamarket_about_id" value="<?php echo e($fleamarket_about_fields['fleamarket_about_id']->value);?>">
         <?php
           endif;
         ?>
         <?php
-          if (isset($location['location_id'])
-              && ! empty($location['location_id'])
-          ):
+          if (! empty($location_fields['location_id']->value)):
         ?>
-            <input type="hidden" name="location_id" value="<?php echo e($location['location_id']);?>">
+            <input type="hidden" name="location_id" value="<?php echo e($location_fields['location_id']->value);?>">
         <?php
           endif;
         ?>
         <div class="form-group">
             <label class="col-sm-2 control-label" for="inputPromoterName">主催者名</label>
             <div class="col-sm-10">
-              <input id="inputPromoterName" type="text" class="form-control" name="f[promoter_name]" placeholder="主催者名を入力" value="<?php echo e($fleamarket['promoter_name']);?>" required>
+              <input id="inputPromoterName" type="text" class="form-control" name="f[promoter_name]" placeholder="主催者名を入力" value="<?php echo e($fleamarket_fields['promoter_name']->value);?>" required>
             <?php
               if (isset($fleamarket_errors['promoter_name'])):
             ?>
-          <div><?php echo '<span class="errorMessage">' .$fleamarket_errors['promoter_name']. '</span>'; ?></div>
+          <div><?php echo '<span class="errorMessage">' . $fleamarket_errors['promoter_name']. '</span>'; ?></div>
             <?php
               endif;
             ?>
@@ -76,11 +83,11 @@ $(function() {
         <div class="form-group">
           <label class="col-sm-2 control-label" for="inputWebsite">主催者ホームページ</label>
           <div class="col-sm-10">
-            <input id="inputWebsite" type="text" class="form-control" name="f[website]" placeholder="例）http://◯◯◯◯.com" value="<?php echo e($fleamarket['website']);?>">
+            <input id="inputWebsite" type="text" class="form-control" name="f[website]" placeholder="例）http://◯◯◯◯.com" value="<?php echo e($fleamarket_fields['website']->value);?>">
             <?php
               if (isset($fleamarket_errors['website'])):
             ?>
-          <div><?php echo '<span class="errorMessage">' .$fleamarket_errors['website']. '</span>'; ?></div>
+          <div><?php echo '<span class="errorMessage">' . $fleamarket_errors['website']. '</span>'; ?></div>
             <?php
               endif;
             ?>
@@ -89,11 +96,11 @@ $(function() {
         <div class="form-group">
           <label class="col-sm-2 control-label" for="inputReservationTel">予約受付電話番号</label>
           <div class="col-sm-10">
-            <input id="inputReservationTel" type="text" class="form-control" name="f[reservation_tel]" placeholder="例）03-1234-5678　半角英数字で入力してください" value="<?php echo e($fleamarket['reservation_tel']);?>" required>
+            <input id="inputReservationTel" type="text" class="form-control" name="f[reservation_tel]" placeholder="例）03-1234-5678　半角英数字で入力してください" value="<?php echo e($fleamarket_fields['reservation_tel']->value);?>" required>
             <?php
               if (isset($fleamarket_errors['reservation_tel'])):
             ?>
-          <div><?php echo '<span class="errorMessage">' .$fleamarket_errors['reservation_tel']. '</span>'; ?></div>
+          <div><?php echo '<span class="errorMessage">' . $fleamarket_errors['reservation_tel']. '</span>'; ?></div>
             <?php
               endif;
             ?>
@@ -102,7 +109,7 @@ $(function() {
         <div class="form-group">
           <label class="col-sm-2 control-label" for="inputReservationEmail">予約受付<br>E-mailアドレス</label>
           <div class="col-sm-10">
-            <input id="inputReservationEmail" type="email" class="form-control" name="f[reservation_email]" placeholder="例）your@email.com　半角英数字で入力してください" value="<?php echo e($fleamarket['reservation_email']);?>" required>
+            <input id="inputReservationEmail" type="email" class="form-control" name="f[reservation_email]" placeholder="例）your@email.com　半角英数字で入力してください" value="<?php echo e($fleamarket_fields['reservation_email']->value);?>" required>
             <?php
               if (isset($fleamarket_errors['reservation_email'])):
             ?>

@@ -72,7 +72,7 @@
   </dl>
   <dl class="col-md-9">
     <dt>交通</dt>
-    <dd><?php echo e(@$fleamarket['about_access']);?></dd>
+    <dd><?php echo nl2br(e(@$fleamarket['about_access']));?></dd>
   </dl>
   <ul>
     <li><a href="/detail/<?php echo e($fleamarket['fleamarket_id']);?>">詳細情報を見る<i></i></a></li>
