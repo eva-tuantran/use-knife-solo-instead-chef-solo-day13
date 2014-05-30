@@ -310,14 +310,14 @@ class Model_User extends Model_Base
     );
 
     /**
-     * ユーザが出店予約したフリマ
+     * 出店予約したフリマID一覧
      *
      * @var array
      */
-    protected $has_entry = array();
+    protected $has_reserved = array();
 
     /**
-     * ユーザがキャンセル待ちしたフリマ
+     * キャンセル待ちしたフリマID一覧
      *
      * @var array
      */
@@ -870,7 +870,6 @@ ORDER BY
 {$limit}
 SQL;
 
-$db = \Database_Connection::instance();
         $query = \DB::query($sql)->parameters($placeholders);
         $result = $query->execute();
 
@@ -1038,30 +1037,31 @@ SQL;
     }
 
     /**
-     * 予約済みか
+     * 予約済み判定
      *
      * @access public
      * @param mixed $fleamarket_id
      * @return bool
      * @author kobayasi
      */
-    public function hasEntry($fleamarket_id)
+    public function hasReserved($fleamarket_id)
     {
-        if (! $this->has_entry) {
-            $has_entry = array();
-            foreach ($this->entries as $entry) {
-                if ($entry->entry_status == Model_Entry::ENTRY_STATUS_RESERVED) {
-                    $has_entry[] = $entry->fleamarket_id;
+        if (! $this->has_reserved) {
+            $entries = \Model_Entry::getUserEntriesByEntryStatus(
+                $this->user_id, \Model_Entry::ENTRY_STATUS_RESERVED
+            );
+            foreach ($entries as $entry) {
+                if ($entry['entry_status'] == Model_Entry::ENTRY_STATUS_RESERVED) {
+                    $this->has_reserved[] = $entry['fleamarket_id'];
                 }
             }
-            $this->has_entry = $has_entry;
         }
 
-        return in_array($fleamarket_id, $this->has_entry);
+        return in_array($fleamarket_id, $this->has_reserved);
     }
 
     /**
-     * キャンセル待ちか
+     * キャンセル待ち判定
      *
      * @access public
      * @param mixed $fleamarket_id
@@ -1071,13 +1071,14 @@ SQL;
     public function hasWaiting($fleamarket_id)
     {
         if (! $this->has_waiting) {
-            $has_waiting = array();
-            foreach ($this->entries as $entry) {
-                if ($entry->entry_status == Model_Entry::ENTRY_STATUS_WAITING) {
-                    $has_waiting[] = $entry->fleamarket_id;
+            $entries = \Model_Entry::getUserEntriesByEntryStatus(
+                $this->user_id, \Model_Entry::ENTRY_STATUS_WAITING
+            );
+            foreach ($entries as $entry) {
+                if ($entry['entry_status'] == Model_Entry::ENTRY_STATUS_WAITING) {
+                    $this->has_waiting[] = $entry['fleamarket_id'];
                 }
             }
-            $this->has_waiting = $has_waiting;
         }
 
         return in_array($fleamarket_id, $this->has_waiting);
@@ -1094,7 +1095,7 @@ SQL;
     public function canReserve($fleamarket)
     {
         return
-            (! $this->hasEntry($fleamarket->fleamarket_id)) &&
+            (! $this->hasReserved($fleamarket->fleamarket_id)) &&
             (! $this->hasWaiting($fleamarket->fleamarket_id));
     }
 }

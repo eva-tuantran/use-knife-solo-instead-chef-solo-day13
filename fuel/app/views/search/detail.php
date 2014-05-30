@@ -1,29 +1,3 @@
-<style type="text/css">
-.reserved {
-  padding: 1em 0;
-  width: 200px;
-  font-size: 116%;
-  background-color: #f59000;
-  color: #fff;
-  border: none;
-  border-radius: 3px;
-  -webkit-border-radius: 3px;
-  -moz-border-radius: 3px;
-  text-align: center;
-  cursor: default;
-}
-
-.titleLeft strong {
-  background-color: #b7d316;
-  padding: 0 3px 5px 3px;
-  height: 14px;
-  margin-right: 5px;
-  border-radius: 2px;
-  -webkit-border-radius: 2px;
-  -moz-border-radius: 2px;
-  line-height: 0;
-}
-</style>
 <script type='text/javascript' src='http://maps.google.com/maps/api/js?sensor=false'></script>
 <script type="text/javascript">
 $(function() {
@@ -127,11 +101,12 @@ Map.prototype = {
         </h2>
         <p class="date"><?php
             echo e(date('Y年n月j日', strtotime($fleamarket['event_date'])));
-            echo '(' . $week_list[date('w', strtotime($fleamarket['event_date']))] . ')';
-            echo '&nbsp;';
-            echo e(date('G:i', strtotime($fleamarket['event_time_start'])));
-            if ($fleamarket['event_time_end']):
-                echo '～' . e(date('G:i', strtotime($fleamarket['event_time_end'])));
+            echo '(' . $week_list[date('w', strtotime($fleamarket['event_date']))] . ')&nbsp';
+            if ($fleamarket['event_time_start'] && $fleamarket['event_time_start'] != '00:00:00'
+                && $fleamarket['event_time_end'] && $fleamarket['event_time_end'] != '00:00:00'):
+                echo e(substr($fleamarket['event_time_start'], 0, 5)) . '～' . e(substr($fleamarket['event_time_end'], 0, 5));
+            else:
+                echo '-';
             endif;
         ?></p>
         <ul class="mylist">
@@ -140,10 +115,10 @@ Map.prototype = {
         </ul>
       </div>
       <ul class="rightbutton">
-    <?php if ($user && $user->hasEntry($fleamarket_id)):?>
-        <li class="button reserved">出店予約中</li>
+    <?php if ($user && $user->hasReserved($fleamarket_id)):?>
+        <li class="button eventStatusReserved">出店予約中</li>
     <?php elseif ($user && $user->hasWaiting($fleamarket_id)):?>
-        <li class="button reserved">キャンセル待ち中</li>
+        <li class="button eventStatusWaiting">キャンセル待ち中</li>
     <?php elseif ($is_official):?>
         <?php if ($fleamarket['event_status'] == \Model_Fleamarket::EVENT_STATUS_CLOSE):?>
         <li class="eventStatusClose"><?php echo @$event_statuses[$fleamarket['event_status']];?></li>
@@ -335,7 +310,7 @@ Map.prototype = {
         <li class="button gotoMylist"><a href="/mypage/list?type=mylist"><i></i>マイリストを見る</a></li>
       </ul>
       <ul class="rightbutton">
-    <?php if ($user && $user->hasEntry($fleamarket_id)):?>
+    <?php if ($user && $user->hasReserved($fleamarket_id)):?>
         <li class="button reserved">出店予約中</li>
     <?php elseif ($user && $user->hasWaiting($fleamarket_id)):?>
         <li class="button reserved">キャンセル待ち中</li>

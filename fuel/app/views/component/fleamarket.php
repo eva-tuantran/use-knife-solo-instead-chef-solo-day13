@@ -56,13 +56,11 @@
     <dl class="col-md-6">
       <dt>開催時間</dt>
       <dd><?php
-          if ($fleamarket['event_time_start']):
-              echo e(date('G:i', strtotime($fleamarket['event_time_start'])));
+         if ($fleamarket['event_time_start'] && $fleamarket['event_time_start'] != '00:00:00'
+              && $fleamarket['event_time_end'] && $fleamarket['event_time_end'] != '00:00:00'):
+              echo e(substr($fleamarket['event_time_start'], 0, 5)) . '～' . e(substr($fleamarket['event_time_end'], 0, 5));
           else:
               echo '-';
-          endif;
-          if ($fleamarket['event_time_end']):
-              echo '～' . e(date('G:i', strtotime($fleamarket['event_time_end'])));
           endif;
       ?></dd>
     </dl>
@@ -104,21 +102,29 @@
       <li><a href="/detail/<?php echo $fleamarket_id ?>">詳細情報を見る<i></i></a></li>
     </ul>
     <ul class="rightbutton">
-<?php if ($type == 'finished'):?>
-<?php elseif ($type == 'reserved'):?>
+<?php
+    if ($type == 'finished'):
+?>
+<?php
+    elseif ($type == 'reserved'):
+?>
     <?php if ($is_official):?>
       <!-- <li class="button change makeReservation"><a href="/mypage/change?fleamarket_id=<?php echo $fleamarket_id;?>"><i></i>予約変更</a></li> -->
-        <?php if ($fleamarket['event_status'] == \Model_Fleamarket::EVENT_STATUS_RESERVATION_RECEIPT):?>
-      <li class="button cancel"><a href="/mypage/cancel?entry_id=<?php echo $fleamarket['entry_id'];?>" class="fleamarket_cancel"><i></i>予約解除</a></li>
-        <?php endif;?>
+      <li class="button cancel"><a href="/mypage/cancel?entry_id=<?php echo $fleamarket['entry_id'];?>" class="cancel_reservation"><i></i>予約解除</a></li>
     <?php endif;?>
-<?php elseif ($type == 'waiting'):?>
-      <li class="button reserved">キャンセル待ち中</li>
-<?php elseif ($type == 'mylist'):?>
-    <?php if ($user && $user->hasEntry($fleamarket_id)):?>
-      <li class="button reserved">出店予約中</li>
+<?php
+    elseif ($type == 'waiting'):
+?>
+    <?php if ($is_official):?>
+      <li class="button cancel"><a href="/mypage/cancel?entry_id=<?php echo $fleamarket['entry_id'];?>" class="cancel_waiting"><i></i>キャンセル待ち解除</a></li>
+    <?php endif;?>
+<?php
+    elseif ($type == 'mylist'):
+?>
+    <?php if ($user && $user->hasReserved($fleamarket_id)):?>
+      <li class="button cancel"><a href="/mypage/cancel?entry_id=<?php echo $fleamarket['entry_id'];?>" class="fleamarket_cancel"><i></i>予約解除</a></li>
     <?php elseif ($user && $user->hasWaiting($fleamarket_id)):?>
-      <li class="button reserved">キャンセル待ち中</li>
+      <li class="button cancel"><a href="/mypage/cancel?entry_id=<?php echo $fleamarket['entry_id'];?>" class="fleamarket_cancel"><i></i>キャンセル待ち解除</a></li>
     <?php elseif ($fleamarket['event_status'] == \Model_Fleamarket::EVENT_STATUS_RESERVATION_RECEIPT):?>
         <?php if ($fleamarket['event_reservation_status'] == \Model_Fleamarket::EVENT_RESERVATION_STATUS_FULL):?>
       <li class="button makeReservation"><a href="/reservation?fleamarket_id=<?php echo $fleamarket_id;?>">キャンセル待ちをする</a></li>
@@ -127,9 +133,13 @@
         <?php endif;?>
     <?php endif;?>
       <li class="button cancel"><a href="#" class="mylist_remove" id="fleamarket_id_<?php echo $fleamarket_id;?>"><i></i>マイリスト解除</a></li>
-<?php elseif ($type == 'myfleamarket'):?>
+<?php
+    elseif ($type == 'myfleamarket'):
+?>
       <li class="button makeReservation change"><a href="/fleamarket/<?php echo $fleamarket_id;?>"><i></i>内容変更</a></li>
-<?php endif;?>
+<?php
+    endif;
+?>
     </ul>
   </div>
 </div>

@@ -392,6 +392,30 @@ QUERY;
     }
 
     /**
+     * 特定のユーザ、開催状況の一覧を取得する
+     *
+     * @access public
+     * @param mixed $user_id ユーザID
+     * @param int $entry_status 出店予約状況
+     * @return array
+     * @author ida
+     */
+    public static function getUserEntriesByEntryStatus($user_id, $entry_status)
+    {
+        $query = \DB::select('e.fleamarket_id', 'e.entry_status', array('f.event_date', 'event_date'))
+            ->from(array('entries', 'e'))
+            ->join(array('fleamarkets', 'f'), 'inner')
+            ->on('e.fleamarket_id', '=', 'f.fleamarket_id')
+            ->where(array(
+                array('e.user_id', '=', $user_id),
+                array('e.entry_status', '=', $entry_status),
+                array('f.event_date', '>=', \DB::expr('CURDATE()')),
+            ));
+
+        return $query->execute()->as_array();
+    }
+
+    /**
      * 特定のユーザの出店（予約）したフリマ情報の件数を取得します
      *
      * @param mixed $user_id
@@ -667,6 +691,7 @@ QUERY;
 
         $query = <<<QUERY
 SELECT
+    e.entry_id,
     f.fleamarket_id,
     f.name,
     f.promoter_name,

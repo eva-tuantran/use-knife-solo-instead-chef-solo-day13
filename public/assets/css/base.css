@@ -253,7 +253,6 @@ h2 i {
 	float: left;
 	margin-right: 10px;
 }
-
 .makeReservation a {
 	font-size: 116%;
 	background-color: #78bd36;
@@ -267,6 +266,19 @@ h2 i {
 	background-position: -60px 0;
 	margin-right: 5px;
 	height: 20px;
+}
+.reserved {
+    margin: 0 5px 0 5px;
+	padding: 10px 10px;
+	width: auto;
+    min-width: 120px;
+	border-radius: 3px;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	background-color: #f59000;
+	font-size: 100%;
+    text-align: center;
+	color: #fff;
 }
 .print a {
 	border: 1px #b7d316 solid;
@@ -1007,16 +1019,14 @@ li.inquiry i {
 	float: right;
 }
 .result .rightbutton li a {
-	width: 130px;
+    margin: 0 5px 0 5px;
+	padding: 10px 10px;
+	width: auto;
+    min-width: 120px;
 	font-size: 100%;
-	padding: 10px 0;
 	border: none;
 }
-.result .rightbutton .makeReservation {
-	margin:0 5px 0 5px;
-	width: 120px;
-}
-.result .makeReservation i {
+.result .rightbutton li i {
 	height: 15px;
 	background-position: -30px 0;
 	margin-right: 2px;
@@ -1223,6 +1233,18 @@ li.inquiry i {
 #contentLogin #ad {
   margin-bottom: 10px;
 }
+.eventStatusClose {
+    padding: 1.0em 0;
+    width: 200px;
+    border-radius: 3px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    text-align: center;
+    background-color: #f59000;
+    font-size: 116%;
+    color: #fff;
+    display: block;
+}
 
 .eventStatusClose {
     padding: 1.0em 0;
@@ -1236,14 +1258,19 @@ li.inquiry i {
     color: #fff;
     display: block;
 }
-.afDialog {
-    display: none;
+.eventStatusReserved,
+.eventStatusWaiting {
+    padding: 1.0em 0;
+    width: 200px;
+    border-radius: 3px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    text-align: center;
+    background-color: #f59000;
+    font-size: 116%;
+    color: #fff;
+    display: block;
 }
-.afDialog .message {
-    text-align: left;
-    margin: 1em 0.5em;
-}
-
 /* ################### small screen #################### */
 
 @media screen and (max-width: 767px) {
@@ -1453,6 +1480,23 @@ li.inquiry i {
   text-align: center;
   cursor: default;
 }
+#contentDetail .reserved {
+  margin: 0;
+  padding: 1em 0;
+  width: 200px;
+  font-size: 116%;
+}
+#contentDetail .titleLeft strong,
+#my-tab-content h3 strong {
+  background-color: #b7d316;
+  padding: 0 3px 5px 3px;
+  height: 14px;
+  margin-right: 5px;
+  border-radius: 2px;
+  -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
+  line-height: 0;
+}
 .reservationNumber {
   margin-bottom: 5px;
   font-size: 16px;
@@ -1462,4 +1506,11 @@ li.inquiry i {
 .reservationNumber dt,
 .reservationNumber dd {
   float: left;
+}
+.afDialog {
+    display: none;
+}
+.afDialog .message {
+    text-align: left;
+    margin: 1em 0.5em;
 }

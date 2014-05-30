@@ -1,19 +1,3 @@
-<style type="text/css">
-.reserved {
-  margin: 0 5px 0 5px;
-  padding: 10px 0;
-  width: 130px;
-  font-size: 100%;
-  background-color: #f59000;
-  color: #fff;
-  border: none;
-  border-radius: 3px;
-  -webkit-border-radius: 3px;
-  -moz-border-radius: 3px;
-  text-align: center;
-  cursor: default;
-}
-</style>
 <script type='text/javascript'>
 var googletag = googletag || {};
 googletag.cmd = googletag.cmd || [];
@@ -187,9 +171,11 @@ googletag.enableServices();
         <dl class="col-md-6">
           <dt>開催時間</dt>
           <dd><?php
-            echo e(date('G:i', strtotime($fleamarket['event_time_start'])));
-            if ($fleamarket['event_time_end'] != ''):
-                echo '～' . e(date('G:i', strtotime($fleamarket['event_time_end'])));
+            if ($fleamarket['event_time_start'] && $fleamarket['event_time_start'] != '00:00:00'
+                && $fleamarket['event_time_end'] && $fleamarket['event_time_end'] != '00:00:00'):
+                echo e(substr($fleamarket['event_time_start'], 0, 5)) . '～' . e(substr($fleamarket['event_time_end'], 0, 5));
+            else:
+                echo '-';
             endif;
           ?></dd>
         </dl>
@@ -233,7 +219,7 @@ googletag.enableServices();
           <li><a href="/detail/<?php echo $fleamarket_id;?>">詳細情報を見る<i></i></a></li>
         </ul>
         <ul class="rightbutton">
-    <?php if ($user && $user->hasEntry($fleamarket_id)):?>
+    <?php if ($user && $user->hasReserved($fleamarket_id)):?>
           <li class="button reserved">出店予約中</li>
     <?php elseif ($user && $user->hasWaiting($fleamarket_id)):?>
           <li class="button reserved">キャンセル待ち中</li>

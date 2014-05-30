@@ -26,14 +26,14 @@ class Controller_Reservation extends Controller_Base_Template
 
         $this->fieldset = $this->getFieldset();
         if (! $this->fieldset) {
-            throw new \SystemException(\Model_Error::ER00601);
+            throw new \SystemException(\Model_Error::ER00501);
         }
 
         $input = $this->fieldset->input();
         $fleamarket = \Model_Fleamarket::find($input['fleamarket_id']);
 
         if (! $fleamarket) {
-            throw new \SystemException(\Model_Error::ER00601);
+            throw new \SystemException(\Model_Error::ER00501);
         }
         $this->fleamarket = $fleamarket;
 
@@ -76,7 +76,7 @@ class Controller_Reservation extends Controller_Base_Template
      */
     public function post_confirm()
     {
-        Session::set_flash('reservation.fieldset', $this->fieldset);
+        \Session::set_flash('reservation.fieldset', $this->fieldset);
 
         if (! $this->fieldset->validation()->run() || ! $this->canReserve()) {
             \Session::set_flash('reservation.error', true);
@@ -105,7 +105,7 @@ class Controller_Reservation extends Controller_Base_Template
      */
     public function post_thanks()
     {
-        if (! Security::check_token()) {
+        if (! \Security::check_token()) {
             \Response::redirect('errors/doubletransmission');
         }
 
@@ -115,20 +115,29 @@ class Controller_Reservation extends Controller_Base_Template
 
         $data = $this->getEntryData();
         if (! $data) {
-            throw new \SystemException(\Model_Error::ER00605);
+            throw new \SystemException(\Model_Error::ER00502);
         }
 
         try {
+            $db = \Database_Connection::instance('master');
+            $db->start_transaction();
+
             $entry = $this->registerEntry($data);
+            if (! $entry) {
+                throw new \SystemException(\Model_Error::ER00503);
+            }
+
+            $db->commit_transaction();
         } catch (\Exception $e) {
-            throw new \SystemException(\Model_Error::ER00603);
+            $db->rollback_transaction();
+            throw new \SystemException(\Model_Error::ER00504);
         }
 
         if ($entry && ! \Session::get('admin.user.nomail')){
             try {
                 $entry->sendmail($this->login_user);
             } catch (\Exception $e) {
-                throw new \SystemException(\Model_Error::ER00604);
+                throw new \SystemException(\Model_Error::ER00507);
             }
         }
 
@@ -148,24 +157,24 @@ class Controller_Reservation extends Controller_Base_Template
      */
     public function post_waiting()
     {
-        if (! Security::check_token()) {
+        if (! \Security::check_token()) {
             \Response::redirect('errors/doubletransmission');
         }
 
         try {
             $entry = $this->registerWaitingEntry();
         } catch (\Exception $e) {
-            throw new \SystemException(\Model_Error::ER00603);
+            throw new \SystemException(\Model_Error::ER00505);
         }
 
         if ($entry && ! \Session::get('admin.user.nomail')){
             try {
                 $entry->sendmail($this->login_user);
             } catch (\Exception $e) {
-                throw new \SystemException(\Model_Error::ER00604);
+                throw new \SystemException(\Model_Error::ER00508);
             }
         } elseif (! $entry) {
-            throw new \SystemException(\Model_Error::ER00603);
+            throw new \SystemException(\Model_Error::ER00506);
         }
 
         $view = \View::forge('reservation/waiting');
@@ -174,7 +183,23 @@ class Controller_Reservation extends Controller_Base_Template
     }
 
     /**
-     * entries テーブルへの登録
+     * 出店予約判定
+     *
+     * @access private
+     * @param
+     * @return bool
+     * @author kobayashi
+     */
+    public function canReserve()
+    {
+        return
+            $this->login_user->canReserve($this->fleamarket)
+            && $this->fleamarket->canReserve()
+            && (! $this->fleamarket_entry_style->isFullBooth('master'));
+    }
+
+    /**
+     * 出店予約情報の登録
      *
      * @access private
      * @param array $data 登録データ
@@ -184,16 +209,8 @@ class Controller_Reservation extends Controller_Base_Template
      */
     private function registerEntry($data)
     {
-        $db = \Database_Connection::instance('master');
-        $db->start_transaction();
-
-        $fleamarket = \Model_Fleamarket::find($data['fleamarket_id']);
-
-        $data['reservation_number'] = sprintf(
-            '%05d-%05d',
-            $data['fleamarket_id'],
-            $fleamarket->reservation_serial
-        );
+        // 予約番号の採番
+        $data['reservation_number'] = $this->fleamarket->makeReservationNumber();
 
         $condition = array(
             'user_id'                   => $data['user_id'],
@@ -204,57 +221,55 @@ class Controller_Reservation extends Controller_Base_Template
         if (! $entry) {
             $entry = \Model_Entry::forge();
         }
-
         $entry->set($data)->save();
 
-        $fleamarket->incrementReservationSerial(false);
-        $fleamarket->updateEventReservationStatus(false);
-        $fleamarket->save();
+        $this->fleamarket->updateEventReservationStatus(false);
+        $this->fleamarket->save();
 
         if ($entry->fleamarket_entry_style->isOverReservationLimit('master')) {
-            $db->rollback_transaction();
             return false;
         } else {
-            $db->commit_transaction();
             return $entry;
         }
     }
 
     /**
-     * entries テーブルへの登録
+     * 出店予約情報の登録
      *
      * @access private
      * @param
-     * @return Model_Entryオブジェクト
+     * @return object
      * @author kobayashi
      * @author ida
      */
-    public function registerWaitingEntry()
+    private function registerWaitingEntry()
     {
-        try {
-            $db = \Database_Connection::instance('master');
-            $db->start_transaction();
+        $fleamarket_id = \Input::post('fleamarket_id');
+        $fleamarket_entry_style_id = \Input::post('fleamarket_entry_style_id');
 
-            $fleamarket_entry_style = Model_Fleamarket_Entry_Style::find('first', array(
-                'where' => array(
-                    'fleamarket_entry_style_id' => \Input::param('fleamarket_entry_style_id'),
-                    'fleamarket_id'             => \Input::param('fleamarket_id'),
-                )
+        $fleamarket_entry_style = \Model_Fleamarket_Entry_Style::find('first', array(
+            'where' => array(
+                'fleamarket_entry_style_id' => $fleamarket_entry_style_id,
+                'fleamarket_id'             => $fleamarket_id,
+            )
+        ));
+        if (! $fleamarket_entry_style) {
+            return false;
+        }
+
+        $condition = array(
+            'user_id'                   => $this->login_user->user_id,
+            'fleamarket_id'             => $fleamarket_id,
+            'fleamarket_entry_style_id' => $fleamarket_entry_style_id,
+        );
+        $entry = \Model_Entry::findBy($condition);
+
+        if ($entry) {
+            $entry->set(array(
+                'entry_status' => Model_Entry::ENTRY_STATUS_WAITING,
+                'updated_user' => $this->login_user->user_id,
             ));
-            if (! $fleamarket_entry_style) {
-                return false;
-            }
-
-            $condition = array(
-                'user_id'                   => $this->login_user->user_id,
-                'fleamarket_id'             => \Input::param('fleamarket_id'),
-                'fleamarket_entry_style_id' => \Input::param('fleamarket_entry_style_id'),
-            );
-            $entry = \Model_Entry::findBy($condition);
-            if ($entry) {
-                return false;
-            }
-
+        } else {
             $entry = \Model_Entry::forge($condition);
             $entry->set(array(
                 'reservation_number' => '',
@@ -266,12 +281,8 @@ class Controller_Reservation extends Controller_Base_Template
                 'remarks'            => '',
                 'created_user'       => $this->login_user->user_id,
             ));
-            $entry->save();
-
-            $db->commit_transaction();
-        } catch (\Exceptio $e) {
-            $db->rollback_transaction();
         }
+        $entry->save();
 
         return $entry;
     }
@@ -345,7 +356,7 @@ class Controller_Reservation extends Controller_Base_Template
     }
 
     /**
-     * fieldsetをInput::allから作成する
+     * フィールドセットを入力データから作成する
      *
      * @access private
      * @param
@@ -358,13 +369,5 @@ class Controller_Reservation extends Controller_Base_Template
         $fieldset->repopulate();
 
         return $fieldset;
-    }
-
-    public function canReserve()
-    {
-        return
-            $this->login_user->canReserve($this->fleamarket) &&
-            $this->fleamarket->canReserve() &&
-            (! $this->fleamarket_entry_style->isFullBooth());
     }
 }
