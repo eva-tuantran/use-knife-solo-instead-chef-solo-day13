@@ -7,8 +7,15 @@
  */
 class Controller_Fleamarket extends Controller_Base_Template
 {
+    protected $_secure_actions = array(
+        'index',
+        'confirm',
+        'thanks'
+    );
     protected $_login_actions = array(
-        'index', 'confirm', 'thanks',
+        'index',
+        'confirm',
+        'thanks',
     );
 
     public function before()
