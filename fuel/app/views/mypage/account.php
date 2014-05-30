@@ -96,7 +96,7 @@
             <div class="form-group">
               <label class="col-sm-2 control-label" for="inputNickname">ニックネーム</label>
               <div class="col-sm-10">
-                <input name="nick_name" class="form-control" id="inputNickname" pattern="[^!-/:-@[-`{-~]" title="ニックネームでは記号は利用できません。" value="<?php echo e($fields['nick_name']->value); ?>" required>
+                <input name="nick_name" class="form-control" id="inputNickname" maxlength="10" value="<?php echo e($fields['nick_name']->value); ?>" required>
                 <?php
                 if (isset($errors['nick_name'])) {
                   echo '<span class="errorMessage">' .$errors['nick_name']. '</span>';
@@ -127,7 +127,6 @@
 </div>
 
 <script>
-
 $("form").submit(function() {
     noty({text: '変更を保存しました。'});
 });
