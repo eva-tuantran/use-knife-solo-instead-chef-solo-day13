@@ -115,7 +115,7 @@
             </div>
 
             <div id="submitButton" class="form-group">
-              <button type="submit" class="btn btn-default">変更内容登録</button>
+              <button type="submit" class="btn btn-default" onclick="popup(); return false;">変更内容登録</button>
             </div>
           </form>
         </div>
@@ -127,7 +127,12 @@
 </div>
 
 <script>
-$("form").submit(function() {
+function popup() {
     noty({text: '変更を保存しました。'});
-});
+    setTimeout("submit()", 1300);
+}
+
+function submit() {
+    $('.form-horizontal').submit();
+}
 </script>
