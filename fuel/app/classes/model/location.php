@@ -153,7 +153,6 @@ WHERE
 {$limit}
 SQL;
 
-$db = \Database_Connection::instance();
         $query = \DB::query($sql)->parameters($placeholders);
         $result = $query->execute();
 
@@ -245,9 +244,11 @@ SQL;
                     );
                     break;
                 case 'register_type':
-                    $condition_list['register_type'] = array(
-                        $operator, $condition
-                    );
+                    if ($condition != 'all') {
+                        $condition_list['register_type'] = array(
+                            $operator, $condition
+                        );
+                    }
                     break;
                 default:
                     break;
