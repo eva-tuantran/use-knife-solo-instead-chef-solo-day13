@@ -24,6 +24,7 @@ class View_Search_Index extends ViewModel
         $this->entry_styles = \Config::get('master.entry_styles');
         $this->regions = \Config::get('master.regions');
         $this->prefectures = \Config::get('master.prefectures');
+        $this->image_path = '/' . \Config::get('master.image_path.store');
     }
 
     /**

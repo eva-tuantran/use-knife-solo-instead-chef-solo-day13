@@ -149,7 +149,7 @@ class Controller_Search extends Controller_Base_Template
             $result = $prefectures;
         }
 
-        $this->response_json($result, true);
+        $this->responseJson($result, true);
     }
 
     /**

@@ -105,7 +105,13 @@ class Model_Fleamarket extends Model_Base
     );
 
     protected static $_properties = array(
-        'fleamarket_id',
+        'fleamarket_id' => array(
+            'label' => 'フリマID',
+            'validation' => array(
+                'required',
+            )
+        ),
+
         'location_id',
         'group_code',
         'name' => array(

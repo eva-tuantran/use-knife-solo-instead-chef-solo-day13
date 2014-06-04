@@ -18,7 +18,7 @@ class Controller_Errors extends Controller_Template
     public function action_index($error_code, $error_message)
     {
         $this->template->title = $error_code;
-        $this->template->content = View::forge(
+        $this->template->content = \View::forge(
             'errors/index',
             array(
                 'error_code' => $error_code,
@@ -41,7 +41,7 @@ class Controller_Errors extends Controller_Template
         $error_message = $error_list[$error_code];
 
         $this->template->title = $error_code;
-        $this->template->content = View::forge(
+        $this->template->content = \View::forge(
             'errors/index',
             array(
                 'error_code' => $error_code,
@@ -60,7 +60,7 @@ class Controller_Errors extends Controller_Template
     public function action_forbidden()
     {
         $this->template->title = 'アクセスが許可されておりません';
-        $this->template->content = View::forge(
+        $this->template->content = \View::forge(
             'errors/content',
             array(
                 'error_code' => '',
@@ -78,8 +78,9 @@ class Controller_Errors extends Controller_Template
      */
     public function action_notfound()
     {
+        $this->response_status = 404;
         $this->template->title = '該当ページが見つかりませんでした';
-        $this->template->content = View::forge(
+        $this->template->content = \View::forge(
             'errors/content',
             array(
                 'error_code' => '',
@@ -98,7 +99,7 @@ class Controller_Errors extends Controller_Template
     public function action_badrequest()
     {
         $this->template->title = '不正なアクセスです';
-        $this->template->content = View::forge(
+        $this->template->content = \View::forge(
             'errors/content',
             array(
                 'error_code' => '',
@@ -117,7 +118,7 @@ class Controller_Errors extends Controller_Template
     public function action_doublesubmit()
     {
         $this->template->title = '2重投稿です';
-        $this->template->content = View::forge(
+        $this->template->content = \View::forge(
             'errors/content',
             array(
                 'error_code' => '',

@@ -23,6 +23,7 @@ class View_Search_Detail extends ViewModel
         $this->event_statuses = \Model_Fleamarket::getEventStatuses();
         $this->entry_styles = \Config::get('master.entry_styles');
         $this->image_files = $this->createFileNames($this->fleamarket_images);
+        $this->image_path = '/' . \Config::get('master.image_path.store');
     }
 
     private function createFileNames($images)

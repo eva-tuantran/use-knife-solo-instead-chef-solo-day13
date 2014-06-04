@@ -139,25 +139,25 @@ Map.prototype = {
     <?php
         if (count($image_files) > 0):
             $first_image_name = $image_files[0];
-            $first_image = '/files/fleamarket/img/l_' . $first_image_name;
+            $first_image_path = $image_path . '/' . $fleamarket_id .'/l_' . $first_image_name;
 
-            if (! file_exists('.' . $first_image)):
-                $first_image ='/assets/img/noimage.jpg';
+            if (! file_exists('.' . $first_image_path)):
+                $first_image_path ='/assets/img/noimage.jpg';
             endif;
     ?>
     <div class="mainPhoto">
-      <img src="<?php echo $first_image;?>" style="width: 460px; height: 300px;" class="img-responsive">
+      <img src="<?php echo $first_image_path;?>" style="width: 460px; height: 300px;" class="img-responsive">
     </div>
     <ul class="thumbnailPhoto">
     <?php
             foreach ($image_files as $image_file_name):
-                $image_file = '/files/fleamarket/img/l_' . $image_file_name;
+                $full_path = $image_path . '/' . $fleamarket_id .'/l_' . $image_file_name;
 
-                if (! file_exists('.' . $image_file)):
-                    $image_file ='/assets/img/noimage.jpg';
+                if (! file_exists('.' . $full_path)):
+                    $full_path ='/assets/img/noimage.jpg';
                 endif;
     ?>
-      <li><img src="<?php echo $image_file;?>" style="width: 100px; height: 65px;"></li>
+      <li><img src="<?php echo $full_path;?>" style="width: 100px; height: 65px;"></li>
     <?php
             endforeach;
     ?>

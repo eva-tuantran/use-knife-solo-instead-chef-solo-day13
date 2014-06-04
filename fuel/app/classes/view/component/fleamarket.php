@@ -27,6 +27,7 @@ class View_Component_Fleamarket extends \ViewModel
             }
         }
         $this->is_official = $is_official;
+        $this->image_path = '/' . \Config::get('master.image_path.store');
     }
 
     /**

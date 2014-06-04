@@ -4,7 +4,7 @@ return array(
     'image_path' => array(
         'temporary_admin' => 'files/admin/fleamarket/img/',
         'temporary_user' => 'files/user/fleamarket/img/',
-        'store' => '/files/fleamarket/',
+        'store' => 'files/fleamarket/',
     ),
     'week' => array('日', '月', '火', '水', '木', '金', '土'),
     'regions' => array(

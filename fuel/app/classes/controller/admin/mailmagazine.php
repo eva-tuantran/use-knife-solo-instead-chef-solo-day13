@@ -207,7 +207,7 @@ class Controller_Admin_Mailmagazine extends Controller_Admin_Base_Template
             $response = array('status' => 400, 'message' => $message);
         }
 
-        return $this->response_json($response);
+        return $this->responseJson($response);
     }
 
     /**
@@ -307,7 +307,7 @@ class Controller_Admin_Mailmagazine extends Controller_Admin_Base_Template
             $response = array('status' => 400, 'message' => $message);
         }
 
-        return $this->response_json($response);
+        return $this->responseJson($response);
     }
 
     /**
@@ -348,7 +348,7 @@ class Controller_Admin_Mailmagazine extends Controller_Admin_Base_Template
             $response = array('status' => 400, 'message' => $message);
         }
 
-        return $this->response_json($response);
+        return $this->responseJson($response);
     }
 
     /**

@@ -119,9 +119,9 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
             );
         }
 
-        $files = $this->moveImages();
+        list($is_upload, $files) = $this->moveImages();
 
-        if (! is_array($files)) {
+        if (! $is_upload) {
             \Response::redirect(
                 'admin/fleamarket/?fleamarket_id=' . Input::post('fleamarket_id','')
             );
@@ -148,19 +148,16 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
             \Response::redirect('errors/doubletransmission');
         }
 
-        $view = View::forge('admin/fleamarket/thanks');
-
-        $this->removeFleamarketImages();
-        $files = $this->moveUploadedImages();
-
         try {
             $db = \Database_Connection::instance('master');
             $db->start_transaction();
 
             $fleamarket = $this->registerFleamarket();
+            $files = $this->storeImages($fleamarket->fleamarket_id);
             if ($files) {
                 $this->registerFleamarketImage($fleamarket, $files);
             }
+            $this->removeFleamarketImages();
             $this->registerFleamarketAbout($fleamarket);
             $this->registerFleamarketEntryStyle($fleamarket);
 
@@ -170,9 +167,20 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
             throw $e;
         }
 
+        $view = View::forge('admin/fleamarket/thanks');
         $this->template->content = $view;
     }
 
+    /**
+     * 会場検索
+     *
+     * ダイアログ表示のHTMLを返答する
+     *
+     * @access public
+     * @param
+     * @return string
+     * @author ida
+     */
     public function action_searchlocation()
     {
         $this->template = '';
@@ -194,6 +202,7 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
 
         $view_model = \ViewModel::forge('admin/fleamarket/searchlocation');
         $view_model->set('location_list', $locations, false);
+
         return $view_model;
     }
 
@@ -226,76 +235,40 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
     private function moveImages()
     {
         $options = array(
-            'path' => DOCROOT . \Config::get('master.image_path.'),
+            'path' => DOCROOT . \Config::get('master.image_path.temporary_admin'),
+            'max_size' => 2048000,
+            'create_path' => true,
         );
-        $result = \Model_Fleamarket_Image::move($options);
+        list($is_upload, $upload_files) = \Model_Fleamarket_Image::moveUploadedFile($options);
+        \Session::set_flash('admin.fleamarket.files', $upload_files);
 
-        return $result;
+        return array($is_upload, $upload_files);
     }
 
     /**
      * アップロードファイルを指定のフォルダに移動する
      *
      * @access private
-     * @param
+     * @param mixed $fleamarket_id フリマID
      * @return void
      * @author kobayashi
      */
-    private function storeUploadedImages()
+    private function storeImages($fleamarket_id)
     {
         $files = \Session::get_flash('admin.fleamarket.files');
+
         if (! $files) {
             return false;
         }
 
-        if (! file_exists(DOCROOT . 'files/fleamarket/img/')) {
-            mkdir(DOCROOT . 'files/fleamarket/img/', 0777, true);
-        }
+        $tmp_path = \Config::get('master.image_path.temporary_admin');
+        $src_path = DOCROOT . $tmp_path;
+        $store_path = \Config::get('master.image_path.store');
+        $dest_path = DOCROOT . $store_path . $fleamarket_id . '/';
 
-        foreach ($files as $file) {
-            \File::rename(
-                DOCROOT . 'files/admin/fleamarket/img/' . $file['saved_as'],
-                DOCROOT . 'files/fleamarket/img/'       . $file['saved_as']
-            );
-            $this->makeThumbnail($file['saved_as']);
-        }
+        \Model_Fleamarket_Image::storeUploadFile($files, $src_path, $dest_path);
 
         return $files;
-    }
-
-    /**
-     * アップロードされた画像のサムネイルを生成する
-     *
-     * @access private
-     * @param string $image_filename 画像ファイル名
-     * @return void
-     * @author kobayashi
-     */
-    private function makeThumbnail($image_filename)
-    {
-        $sizes = array(
-            array('width' => 100, 'height' =>  65, 'prefix' => 'ss_'),
-            array('width' => 180, 'height' => 135, 'prefix' => 's_'),
-            array('width' => 200, 'height' => 150, 'prefix' => 'm_'),
-            array('width' => 460, 'height' => 300, 'prefix' => 'l_'),
-        );
-
-        foreach ($sizes as $size) {
-            $image = imagecreatefromjpeg(DOCROOT . 'files/fleamarket/img/' . $image_filename);
-            $x = imagesx($image);
-            $y = imagesy($image);
-
-            $resize = imagecreatetruecolor($size['width'], $size['height']);
-            imagecopyresampled($resize, $image, 0, 0, 0, 0, $size['width'], $size['height'], $x, $y);
-
-            $matches = array();
-            if (preg_match('/^(\w+)\.jpg$/',$image_filename,$matches)) {
-                $filename = DOCROOT . 'files/fleamarket/img/' . $size['prefix'] . $matches[1] . '.jpg';
-                imagejpeg($resize, $filename);
-            }
-            imagedestroy($image);
-            imagedestroy($resize);
-        }
     }
 
     /**
@@ -741,9 +714,15 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
 
         $fieldset = $fieldsets['fleamarket'];
         $input = $fieldset->validation()->validated();
-        $input['link_from_list'] = implode(",", $input['link_from_list']);
+        $input['link_from_list'] = implode(',', $input['link_from_list']);
         $input['group_code'] = '';
 
+        if (empty($input['reservation_start'])) {
+            unset($input['reservation_start']);
+        }
+        if (empty($input['reservation_end'])) {
+            unset($input['reservation_end']);
+        }
         unset($input['reservation_serial']);
         unset($input['event_number']);
         unset($input['created_user']);

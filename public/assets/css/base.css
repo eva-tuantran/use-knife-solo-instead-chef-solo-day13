@@ -33,6 +33,9 @@ a:active {
 	padding: 20px;
 	text-align: left;
 }
+.container {
+	max-width: 970px;
+}
 .container h3 {
 	font-size: 116%;
 	color: #78bd36;
@@ -1503,9 +1506,15 @@ li.inquiry i {
   float: left;
 }
 .afDialog {
-    display: none;
+  display: none;
 }
 .afDialog .message {
-    text-align: left;
-    margin: 1em 0.5em;
+  text-align: left;
+  margin: 1em 0.5em;
+}
+.uploadImageBox {
+  margin-bottom: 0.5em;
+}
+.uploadImageBox .uploadImage {
+  width: 200px;
 }
