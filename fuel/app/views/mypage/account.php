@@ -1,11 +1,6 @@
 <?php $input  = $fieldset->input(); ?>
 <?php $errors = $fieldset->validation()->error_message(); ?>
 <?php $fields = $fieldset->field(); ?>
-<script>
-function popup() {
-    noty({text: '変更を保存しました。'});
-}
-</script>
 
 <!-- content -->
 <div id="contentWrap" class="container">
@@ -53,7 +48,7 @@ function popup() {
             <label class="col-sm-2 control-label" for="inputAddress">ご住所</label>
             <div class="col-sm-10">
 
-              <input type="text" class="form-control" id="inputZip" placeholder="例）123-4567" name="zip" value="<?php echo e($fields['zip']->value); ?>" required>
+              <input type="text" class="form-control" id="inputZip" pattern="\d{3}-\d{4}" title="郵便番号は3桁の数字、ハイフン(-)、4桁の数字の順で記入してください。" placeholder="例）123-4567" name="zip" value="<?php echo e($fields['zip']->value); ?>" required>
               <?php
               if (isset($errors['zip'])) {
                 echo '<span class="errorMessage">' .$errors['zip']. '</span>';
@@ -79,7 +74,7 @@ function popup() {
           <div class="form-group">
             <label class="col-sm-2 control-label" for="inputTel">電話番号</label>
             <div class="col-sm-10">
-              <input type="text" class="form-control" id="inputTel" name="tel" value="<?php echo e($fields['tel']->value); ?>" required>
+              <input type="tel" class="form-control" id="inputTel" name="tel" value="<?php echo e($fields['tel']->value); ?>" required>
               <?php
               if (isset($errors['tel'])) {
                 echo '<span class="errorMessage">' .$errors['tel']. '</span>';
@@ -101,7 +96,7 @@ function popup() {
             <div class="form-group">
               <label class="col-sm-2 control-label" for="inputNickname">ニックネーム</label>
               <div class="col-sm-10">
-                <input type="text" name="nick_name" class="form-control" id="inputNickname" value="<?php echo e($fields['nick_name']->value); ?>" required>
+                <input name="nick_name" class="form-control" id="inputNickname" pattern="[^!-/:-@[-`{-~]" title="ニックネームでは記号は利用できません。" value="<?php echo e($fields['nick_name']->value); ?>" required>
                 <?php
                 if (isset($errors['nick_name'])) {
                   echo '<span class="errorMessage">' .$errors['nick_name']. '</span>';
@@ -120,7 +115,7 @@ function popup() {
             </div>
 
             <div id="submitButton" class="form-group">
-              <button type="submit" onclick="popup();" class="btn btn-default">変更内容登録</button>
+              <button type="submit" class="btn btn-default">変更内容登録</button>
             </div>
           </form>
         </div>
@@ -130,3 +125,10 @@ function popup() {
     </form>
   </div>
 </div>
+
+<script>
+
+$("form").submit(function() {
+    noty({text: '変更を保存しました。'});
+});
+</script>

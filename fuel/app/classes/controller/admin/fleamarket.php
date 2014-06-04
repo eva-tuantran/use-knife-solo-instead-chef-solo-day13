@@ -344,7 +344,6 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
         $administrator_id = $this->administrator->administrator_id;
         if ($fleamarket) {
             $data['updated_user'] = $administrator_id;
-            unset($data['reservation_serial']);
         }else{
             $fleamarket = \Model_Fleamarket::forge();
             $data['reservation_serial'] = 1;
@@ -744,6 +743,15 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
         $input = $fieldset->validation()->validated();
         $input['link_from_list'] = implode(",", $input['link_from_list']);
         $input['group_code'] = '';
+
+        unset($input['reservation_serial']);
+        unset($input['event_number']);
+        unset($input['created_user']);
+        unset($input['updated_user']);
+        unset($input['created_at']);
+        unset($input['updated_at']);
+        unset($input['deleted_at']);
+
         return $input;
     }
 

@@ -246,9 +246,11 @@ Map.prototype = {
         <dd><?php
             if (isset($fleamarket['abouts'][\Model_Fleamarket_About::ACCESS])):
                 $about_access = $fleamarket['abouts'][\Model_Fleamarket_About::ACCESS];
-                echo nl2br(e($about_access['description']));
-            else:
-                echo '-';
+                if (! empty($about_access['description'])):
+                    echo nl2br(e($about_access['description']));
+                else:
+                    echo '-';
+                endif;
             endif;
         ?></dd>
 <?php
@@ -287,7 +289,13 @@ Map.prototype = {
                     endif;
         ?>
         <dt><?php echo e($about['title']);?></dt>
-        <dd><?php echo nl2br(e($about['description']));?></dd>
+        <dd><?php
+            if (! empty($about['description'])):
+                echo nl2br(e($about['description']));
+            else:
+                echo '-';
+            endif;
+        ?></dd>
         <?php
                     $about_count++;
                 endforeach;

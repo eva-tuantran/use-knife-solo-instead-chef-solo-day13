@@ -131,7 +131,7 @@
             <tr>
               <th>電話番号</th>
               <td>
-                <input type="text" class="form-control" name="tel" value="<?php echo e($fields['tel']->value); ?>">
+                <input id="inputTel" type="text" class="form-control" name="tel" value="<?php echo e($fields['tel']->value); ?>">
                 <?php
                     if (isset($errors['tel'])):
                         echo '<div class="error-message">' . $errors['tel'] . '</div>';
@@ -142,7 +142,7 @@
             <tr>
               <th>電話番号（モバイル）</th>
               <td>
-                <input type="text" class="form-control large-width" name="mobile_tel" value="<?php echo e($fields['mobile_tel']->value); ?>">
+                <input type="text" class="form-control" name="mobile_tel" value="<?php echo e($fields['mobile_tel']->value); ?>">
                 <?php
                     if (isset($errors['mobile_tel'])):
                         echo '<div class="error-message">' . $errors['mobile_tel'] . '</div>';
@@ -178,7 +178,7 @@
             <tr>
               <th>パスワード</th>
               <td>
-                <input type="text" class="form-control large-width" name="password">
+                <input id="inputPassword" type="text" class="form-control" name="password" value="<?php echo e($fields['password']->value); ?>">
                 <?php
                     if (isset($errors['password'])):
                         echo '<div class="error-message">' . $errors['password'] . '</div>';
@@ -320,6 +320,13 @@ $(function() {
     defaultDate: "-30y",
     changeMonth: true,
     changeYear: true
+  });
+
+  $("#inputTel").blur(function() {
+     var tel = $(this).val();
+     if (tel) {
+         $("#inputPassword").val(tel);
+     }
   });
 });
 </script>

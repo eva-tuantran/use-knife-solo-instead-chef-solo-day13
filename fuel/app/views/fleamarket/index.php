@@ -141,7 +141,7 @@ $(function() {
                     $event_date = date('Y/m/d', strtotime($fleamarket['event_date']));
                 endif;
             ?>
-            <input id="inputEventDate" type="text" class="form-control" name="f[event_date]" placeholder="例）2014/01/25" value="<?php echo e($event_date);?>" required>
+            <input id="inputEventDate" type="date" class="form-control" name="f[event_date]" placeholder="例）2014/01/25" value="<?php echo e($event_date);?>" required>
             <?php
               if (isset($fleamarket_errors['event_date'])):
             ?>
