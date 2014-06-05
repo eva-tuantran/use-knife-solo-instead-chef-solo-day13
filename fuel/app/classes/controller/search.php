@@ -55,7 +55,7 @@ class Controller_Search extends Controller_Base_Template
             $this->getPaginationConfig($total_count)
         );
 
-        $view_model = ViewModel::forge('search/index');
+        $view_model = \ViewModel::forge('search/index');
         $view_model->set('conditions', $conditions, false);
         $view_model->set('add_conditions', $add_conditions, false);
         $view_model->set('fleamarket_list', $fleamarket_list, false);
@@ -79,12 +79,12 @@ class Controller_Search extends Controller_Base_Template
         Asset::js('jquery-ui.min.js', array(), 'add_js');
 
         if (! $fleamarket_id) {
-            Response::redirect('errors/notfound');
+            return $this->forward('errors/notfound', 404);
         }
 
         $fleamarket = \Model_Fleamarket::findDetail($fleamarket_id);
         if (! $fleamarket) {
-            Response::redirect('errors/notfound');
+            return $this->forward('errors/notfound', 404);
         }
 
         $fleamarket_abouts = \Model_Fleamarket_About::findByFleamarketId(
@@ -104,7 +104,7 @@ class Controller_Search extends Controller_Base_Template
         );
         $fleamarket['entries'] = $entries;
 
-        $view_model = ViewModel::forge('search/detail');
+        $view_model = \ViewModel::forge('search/detail');
         $view_model->set('fleamarket', $fleamarket, false);
         $view_model->set('fleamarket_images', $fleamarket_images, false);
         $view_model->set('fleamarket_abouts', $fleamarket_abouts, false);

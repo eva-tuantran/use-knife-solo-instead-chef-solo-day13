@@ -155,7 +155,7 @@ class Controller_Fleamarket extends Controller_Base_Template
         \Asset::js('jquery.ui.datepicker-ja.js', array(), 'add_js');
         \Asset::js('jquery-ui-timepicker.js', array(), 'add_js');
         \Asset::js('jquery-ui-timepicker-ja.js', array(), 'add_js');
-        \Asset::js('https://ajaxzip3.googlecode.com/svn/trunk/ajaxzip3/ajaxzip3.js', array(), 'add_js');
+        \Asset::js('https://ajaxzip3.googlecode.com/svn/trunk/ajaxzip3/ajaxzip3-https.js', array(), 'add_js');
     }
 
     /**
