@@ -8,6 +8,12 @@
 
 class Controller_Inquiry extends Controller_Base_Template
 {
+    protected $_secure_actions = array(
+        'index',
+        'confirm',
+        'thanks'
+    );
+
     /**
      * 初期画面
      *

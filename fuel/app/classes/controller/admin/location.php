@@ -8,7 +8,6 @@
  */
 class Controller_Admin_Location extends Controller_Admin_Base_Template
 {
-
     /**
      * 検索結果1ページあたりの行数
      *

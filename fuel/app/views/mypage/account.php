@@ -109,7 +109,7 @@
               </div>
             </div>
             <div id="submitButton" class="form-group">
-              <button type="submit" class="btn btn-default">変更内容登録</button>
+              <button type="submit" class="btn btn-default" onclick="popup(); return false;">変更内容登録</button>
             </div>
           </form>
         </div>
