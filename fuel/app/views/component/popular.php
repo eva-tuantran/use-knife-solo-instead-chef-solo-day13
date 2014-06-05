@@ -1,6 +1,7 @@
 <?php
     if ($fleamarket_list):
         foreach ($fleamarket_list as $key => $fleamarket):
+            $fleamarket_id = $fleamarket['fleamarket_id'];
             $rank = $key + 1;
             $entry_style_string = '';
             $shop_fee_string = '';
@@ -25,17 +26,17 @@
 <div class="rank<?php echo $rank;?> clearfix"><i class="rankicon"></i>
   <div class="rankPhoto">
     <?php
-        $image_path = '/assets/img/noimage.jpg';
+        $full_path = '/assets/img/noimage_s.jpg';
         if (isset($fleamarket['file_name']) && $fleamarket['file_name'] != ''):
-            $image_path = '/files/fleamarket/img/m_' . $fleamarket['file_name'];
+            $full_path = $image_path . '/' . $fleamarket_id . '/m_' . $fleamarket['file_name'];
 
-            if (! file_exists('.' . $image_path)):
-                $image_path ='/assets/img/noimage.jpg';
+            if (! file_exists('.' . $full_path)):
+                $full_path ='/assets/img/noimage_s.jpg';
             endif;
         endif;
     ?>
     <a href="/detail/<?php echo e($fleamarket['fleamarket_id']);?>">
-      <img src="<?php echo $image_path;?>" class="img-rounded" style="width: 200px; height: 150px;">
+      <img src="<?php echo $full_path;?>" class="img-rounded" style="width: 200px; height: 150px;">
     </a>
   </div>
   <h3><a href="/detail/<?php echo e($fleamarket['fleamarket_id']);?>"><?php echo e($fleamarket['name']);?></a></h3>

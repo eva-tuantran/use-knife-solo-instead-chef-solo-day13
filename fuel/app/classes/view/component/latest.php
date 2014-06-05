@@ -37,5 +37,6 @@ class View_Component_Latest extends ViewModel
         $this->event_statuses = \Model_Fleamarket::getEventStatuses();
         $this->week_list = \Config::get('master.week');
         $this->prefectures = \Config::get('master.prefectures');
+        $this->image_path = '/' . \Config::get('master.image_path.store');
     }
 }

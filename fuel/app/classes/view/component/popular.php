@@ -38,6 +38,7 @@ class View_Component_Popular extends ViewModel
         $this->fleamarket_list = $fleamarket_list;
         $this->week_list = \Config::get('master.week');
         $this->entry_styles = \Config::get('master.entry_styles');
+        $this->image_path = '/' . \Config::get('master.image_path.store');
     }
 
     /**
