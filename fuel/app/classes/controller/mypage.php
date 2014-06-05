@@ -202,9 +202,11 @@ class Controller_Mypage extends Controller_Base_Template
         $data['info_message'] = $this->getStatusMessage($status_code);
         $fieldset = $this->createFieldsetAccount();
 
-        $this->template->content = \View::forge('mypage/account', $data);
-        $this->template->content->set('fieldset', $fieldset, false);
-        $this->template->content->set('prefectures', Config::get('master.prefectures'), false);
+        $view = \View::forge('mypage/account', $data);
+        $view->set('fieldset', $fieldset, false);
+        $view->set('prefectures', Config::get('master.prefectures'), false);
+        $view->set('status_code', $status_code, false);
+        $this->template->content = $view;
     }
 
     /**

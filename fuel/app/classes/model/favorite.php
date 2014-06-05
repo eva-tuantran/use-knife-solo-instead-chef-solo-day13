@@ -59,7 +59,6 @@ class Model_Favorite extends Model_Base
         ),
     );
 
-
     /**
      * 特定のユーザのお気に入りリストを取得します
      *
@@ -131,12 +130,24 @@ LEFT JOIN
     AND fa.about_id = :about_access_id
     AND fa.deleted_at IS NULL
 LEFT JOIN
-    fleamarket_images AS fi
-    ON f.fleamarket_id = fi.fleamarket_id AND priority = 1
-    AND fi.deleted_at IS NULL
+    (
+        SELECT
+            fi.fleamarket_image_id,
+            fi.fleamarket_id,
+            fi.file_name,
+            MIN(fi.priority)
+        FROM
+            fleamarket_images AS fi
+        WHERE
+            deleted_at IS NULL
+        GROUP BY
+            fi.fleamarket_id
+        ORDER BY
+            priority
+    ) AS fi ON f.fleamarket_id = fi.fleamarket_id
 WHERE
-    fav.user_id = :user_id AND
-    fav.deleted_at IS NULL
+    fav.user_id = :user_id
+    AND fav.deleted_at IS NULL
 ORDER BY
     f.event_date DESC,
     f.event_time_start
@@ -151,7 +162,6 @@ QUERY;
 
         return array();
     }
-
 
     /**
      * 特定のユーザのお気に入り個数を取得します
@@ -175,14 +185,12 @@ SELECT
 FROM
     favorites AS f
 WHERE
-    f.user_id = :user_id AND
-    f.deleted_at IS NULL
+    f.user_id = :user_id
+    AND f.deleted_at IS NULL
 QUERY;
 
         $favorite_count = \DB::query($query)->parameters($placeholders)->execute()->get('count');
 
         return $favorite_count;
     }
-
-
 }

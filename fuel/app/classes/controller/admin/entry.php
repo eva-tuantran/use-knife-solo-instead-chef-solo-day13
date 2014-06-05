@@ -100,7 +100,7 @@ class Controller_Admin_Entry extends Controller_Admin_Base_Template
             }
         }
 
-        return $this->response_json(array('status' => $status));
+        return $this->responseJson(array('status' => $status));
     }
 
     /**
@@ -139,7 +139,7 @@ class Controller_Admin_Entry extends Controller_Admin_Base_Template
             }
         }
 
-        return $this->response_json(array('status' => $status));
+        return $this->responseJson(array('status' => $status));
     }
 
     /**

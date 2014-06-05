@@ -63,6 +63,11 @@ class Controller_Admin_Base_Template extends \Controller_Template
 
     }
 
+    public function after($response)
+    {
+        return parent::after($response);
+    }
+
     /**
      * http/httpsの引数で現状のURIを引き継いでリダイレクトします
      *
@@ -85,21 +90,19 @@ class Controller_Admin_Base_Template extends \Controller_Template
         return \Response::redirect($url, 'location', 301);
     }
 
-    public function after($response)
-    {
-        return parent::after($response);
-    }
-
-
     /**
-     * JSON で返却 $send が true だと send して exit します
+     * JSONで返答する
      *
-     * @param $data 返却する値 $send
+     * $sendがtrueの時、返答して終わる
+     * $sendがfalseの時、レスポンスオブジェクを返す
+     *
      * @access protected
+     * @param mixed $data 返答する値
+     * @param bool $send 送信フラグ
      * @return Response
      * @author kobayasi
      */
-    protected function response_json($data = false, $send = false)
+    protected function responseJson($data = false, $send = false)
     {
         $response = new \Response(json_encode($data), 200);
         $response->set_header('Content-Type', 'application/json');
@@ -107,6 +110,7 @@ class Controller_Admin_Base_Template extends \Controller_Template
             $response->send(true);
             exit;
         }
+
         return $response;
     }
 }

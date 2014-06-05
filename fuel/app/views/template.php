@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>フリマ・フリーマーケットの全国開催情報 - フリーマーケット楽市楽座 - <?php echo $title; ?></title>
+<title>フリマ・フリーマーケットの全国開催情報 - フリーマーケット楽市楽座 - <?php echo $title;?></title>
 <meta name="keywords" content="フリーマーケット,フリマ,楽市楽座,オークファン">
 <meta name="author" content="フリーマーケット楽市楽座">
 <meta property="og:title" content="フリーマーケット楽市楽座">
@@ -42,8 +42,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <p>フリーマーケット楽市楽座の情報サイト</p>
       </div>
       <ul>
-        <?php if(Auth::check()): ?>
-            <li class="user">ようこそ、<?php echo Auth::get_screen_name(); ?> さん</li>
+        <?php if (Auth::check()): ?>
+            <li class="user">ようこそ、<?php echo e(Auth::get_screen_name());?> さん</li>
             <li class="login"><a href="/login/out"><i></i>ログアウト</a></li>
         <?php else: ?>
             <li class="user">ようこそ、ゲストさん</li>

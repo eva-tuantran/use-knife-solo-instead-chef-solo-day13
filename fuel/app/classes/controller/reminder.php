@@ -67,13 +67,14 @@ class Controller_Reminder extends Controller_Base_Template
                 ),
             ));
 
-            $new_token = Model_Token::generate($reset_user->user_id);
-            $email_template_params = array(
-                'nick_name'          => $reset_user->nick_name,
-                'reset_password_url' => $new_token->getVelificationUrl('reset_password'),
-            );
-            $reset_user->sendmail('reminder/submit', $email_template_params);
-
+            if ($reset_user) {
+                $new_token = Model_Token::generate($reset_user->user_id);
+                $email_template_params = array(
+                    'nick_name'          => $reset_user->nick_name,
+                    'reset_password_url' => $new_token->getVelificationUrl('reset_password'),
+                );
+                $reset_user->sendmail('reminder/submit', $email_template_params);
+            }
         } catch (Orm\ValidationFailed $e) {
             return \Response::redirect('errors/timeout');
         }

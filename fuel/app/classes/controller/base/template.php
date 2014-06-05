@@ -198,22 +198,41 @@ class Controller_Base_Template extends Controller_Template
     }
 
     /**
-     * JSON で返却 $send が true だと send して exit します
+     * アプリケーション内で転送する
      *
-     * @param $data 返却する値 $send
      * @access protected
+     * @param string $url 転送先URL
+     * @param int $status ステータスコード
+     * @return object
+     * @author ida
+     */
+    protected function forward($url, $status = 200)
+    {
+        $this->response_status = $status;
+        return \Request::forge($url)->execute();
+    }
+
+    /**
+     * JSONで返答する
+     *
+     * $sendがtrueの時、返答して終わる
+     * $sendがfalseの時、レスポンスオブジェクを返す
+     *
+     * @access protected
+     * @param mixed $data 返答する値
+     * @param bool $send 送信フラグ
      * @return Response
      * @author kobayasi
      */
-    protected function response_json($data = false, $send = false)
+    protected function responseJson($data = false, $send = false)
     {
-        $response = new Response(json_encode($data), 200);
+        $response = new \Response(json_encode($data), 200);
         $response->set_header('Content-Type', 'application/json');
         if ($send) {
             $response->send(true);
             exit;
         }
+
         return $response;
     }
-
 }

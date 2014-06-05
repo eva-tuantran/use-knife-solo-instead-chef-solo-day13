@@ -180,7 +180,7 @@ class Controller_Admin_User extends Controller_Admin_Base_Template
             $status = 400;
         }
 
-        return $this->response_json(array('status' => $status));
+        return $this->responseJson(array('status' => $status));
     }
 
     /**

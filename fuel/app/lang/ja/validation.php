@@ -15,4 +15,5 @@ return array(
     'unique_email'   => ':label は既に登録されています',
     'valid_zip'      => ':label は正しくありません',
     'valid_kana'     => ':label にカタカナ以外の文字列が含まれています',
+    'match_pattern'  => ':label に記号は利用できません',
 );

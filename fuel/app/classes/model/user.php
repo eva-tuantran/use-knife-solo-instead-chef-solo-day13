@@ -460,7 +460,6 @@ QUERY;
             }
             $placeholder_string = implode(',', $placeholder_list);
             $where .= ' AND prefecture_id IN (' . $placeholder_string . ')';
-
         }
         if (isset($organization_flag) && $organization_flag !== '') {
             $placeholder = ':organization_flag';
@@ -622,7 +621,7 @@ QUERY;
     }
 
     /**
-     * エントリーした全てのフリーマーケットの情報を取得します
+     * 出店予約した全てのフリーマーケットの情報を取得します
      *
      * @access public
      * @param int $page ページ

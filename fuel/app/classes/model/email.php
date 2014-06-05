@@ -53,6 +53,7 @@ class Model_Email extends \Model
                 }
             }
         }
+
         return $email->send();
     }
 

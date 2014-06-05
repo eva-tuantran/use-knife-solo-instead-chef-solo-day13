@@ -144,17 +144,17 @@ googletag.enableServices();
       </h3>
       <div class="resultPhoto">
         <?php
-            $image_path = '/assets/img/noimage.jpg';
-            if (isset($fleamarket['file_name']) && $fleamarket['file_name'] != ''):
-                $image_path = '/files/fleamarket/img/m_' . $fleamarket['file_name'];
+            $full_path = '/assets/img/noimage.jpg';
+            if (! empty($fleamarket['file_name'])):
+                $full_path = $image_path . '/' . $fleamarket_id .'/m_' . $fleamarket['file_name'];
 
-                if (! file_exists('.' . $image_path)):
-                    $image_path ='/assets/img/noimage.jpg';
+                if (! file_exists('.' . $full_path)):
+                    $full_path ='/assets/img/noimage.jpg';
                 endif;
             endif;
         ?>
         <a href="/detail/<?php echo e($fleamarket_id);?>">
-          <img src="<?php echo $image_path;?>" class="img-rounded" style="width: 200px; height: 150px;">
+          <img src="<?php echo $full_path;?>" class="img-rounded" style="width: 200px; height: 150px;">
         </a>
       </div>
       <div class="resultDetail">
@@ -203,7 +203,7 @@ googletag.enableServices();
           <dt>交通</dt>
           <dd><?php
             if (isset($fleamarket['about_access']) && $fleamarket['about_access'] != ''):
-                echo e($fleamarket['about_access']);
+                echo nl2br(e($fleamarket['about_access']));
             else:
                 echo '-';
             endif;
