@@ -24,7 +24,7 @@ class Controller_Location extends Controller_Base_Template
     public function action_detail($location_id = null, $fleamarket_id = null)
     {
         if (! $location_id) {
-            \Response::redirect('/errors/notfound');
+            return $this->forward('errors/notfound', 404);
         }
 
         \Asset::css('jquery-ui.min.css', array(), 'add_css');

@@ -180,7 +180,7 @@ class Controller_Admin_User extends Controller_Admin_Base_Template
             $status = 400;
         }
 
-        return $this->response_json(array('status' => $status));
+        return $this->responseJson(array('status' => $status));
     }
 
     /**
@@ -296,18 +296,15 @@ class Controller_Admin_User extends Controller_Admin_Base_Template
             unset($data['created_user']);
         } else {
             $data['created_user'] = $administrator_id;
-            $data['password'] = $user->setPassword($data['password']);
+            $data['password'] = \Auth::hash_password($data['password']);
         }
-        unset($data['mm_flag']);
         unset($data['mm_device']);
         unset($data['mm_error_flag']);
         unset($data['mobile_carrier']);
         unset($data['mobile_uid']);
         unset($data['last_login']);
 
-        if ($user) {
-            $user->set($data)->save();
-        }
+        $user->set($data)->save();
 
         return $user;
     }

@@ -93,7 +93,7 @@ class Model_Contact extends Model_Base
         3 => '楽市楽座のウェブサイトについて',
         4 => 'そのほかのお問い合わせについて',
     );
-        
+
     /*
      * お問い合わせの種類の番号から名前に変換する
      *
@@ -135,4 +135,3 @@ class Model_Contact extends Model_Base
         return $fieldset;
     }
 }
-

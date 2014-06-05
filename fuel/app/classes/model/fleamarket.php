@@ -105,7 +105,13 @@ class Model_Fleamarket extends Model_Base
     );
 
     protected static $_properties = array(
-        'fleamarket_id',
+        'fleamarket_id' => array(
+            'label' => 'フリマID',
+            'validation' => array(
+                'required',
+            )
+        ),
+
         'location_id',
         'group_code',
         'name' => array(
@@ -463,12 +469,27 @@ FROM
     fleamarkets AS f
 LEFT JOIN
     locations AS l ON f.location_id = l.location_id
+    AND l.deleted_at IS NULL
 LEFT JOIN
     fleamarket_abouts AS fa ON f.fleamarket_id = fa.fleamarket_id
     AND fa.about_id = :about_access_id
+    AND fa.deleted_at IS NULL
 LEFT JOIN
-    fleamarket_images AS fi ON
-    f.fleamarket_id = fi.fleamarket_id AND priority = 1
+    (
+        SELECT
+            fi.fleamarket_image_id,
+            fi.fleamarket_id,
+            fi.file_name,
+            MIN(fi.priority)
+        FROM
+            fleamarket_images AS fi
+        WHERE
+            deleted_at IS NULL
+        GROUP BY
+            fi.fleamarket_id
+        ORDER BY
+            priority
+    ) AS fi ON f.fleamarket_id = fi.fleamarket_id
 WHERE
 QUERY;
 
@@ -537,9 +558,11 @@ FROM
     fleamarkets AS f
 LEFT JOIN
     locations AS l ON f.location_id = l.location_id
+    AND l.deleted_at IS NULL
 LEFT JOIN
     fleamarket_abouts AS fa ON f.fleamarket_id = fa.fleamarket_id
     AND fa.about_id = :about_access_id
+    AND fa.deleted_at IS NULL
 WHERE
 QUERY;
 
@@ -573,9 +596,7 @@ WHERE_QUERY;
     }
 
     /**
-     * 指定された条件でフリーマーケット情報を取得する
-     *
-     * 開催地情報、フリーマーケットエントリスタイル情報、フリーマーケット説明情報
+     * 指定された条件でフリマ情報を取得する
      *
      * @access public
      * @param mixed $fleamarket_id フリーマーケットID
@@ -621,6 +642,7 @@ FROM
     fleamarkets AS f
 LEFT JOIN
     locations AS l ON f.location_id = l.location_id
+    AND l.deleted_at IS NULL
 WHERE
     f.display_flag = :display_flag
     AND f.deleted_at IS NULL
@@ -639,7 +661,7 @@ QUERY;
     }
 
     /**
-     * 最新のフリーマーケット情報を取得する
+     * 最新のフリマ情報を取得する
      *
      * @access public
      * @param array $condition_list 検索条件
@@ -674,9 +696,23 @@ FROM
     fleamarkets AS f
 LEFT JOIN
     locations AS l ON f.location_id = l.location_id
+    AND l.deleted_at IS NULL
 LEFT JOIN
-    fleamarket_images AS fi ON
-    f.fleamarket_id = fi.fleamarket_id AND priority = 1
+    (
+        SELECT
+            fi.fleamarket_image_id,
+            fi.fleamarket_id,
+            fi.file_name,
+            MIN(fi.priority)
+        FROM
+            fleamarket_images AS fi
+        WHERE
+            deleted_at IS NULL
+        GROUP BY
+            fi.fleamarket_id
+        ORDER BY
+            priority
+    ) AS fi ON f.fleamarket_id = fi.fleamarket_id
 WHERE
     f.display_flag = :display_flag
     AND f.register_type = :register_status
@@ -744,6 +780,7 @@ FROM
     fleamarkets AS f
 LEFT JOIN
     locations AS l ON f.location_id = l.location_id
+    AND l.deleted_at IS NULL
 WHERE
     f.display_flag = :display_flag
     AND f.register_type = :register_status
@@ -808,12 +845,27 @@ FROM
     fleamarkets AS f
 LEFT JOIN
     locations AS l ON f.location_id = l.location_id
+    AND l.deleted_at IS NULL
 LEFT JOIN
     fleamarket_abouts AS fa ON f.fleamarket_id = fa.fleamarket_id
     AND fa.about_id = :about_access_id
+    AND fa.deleted_at IS NULL
 LEFT JOIN
-    fleamarket_images AS fi ON
-    f.fleamarket_id = fi.fleamarket_id AND priority = 1
+    (
+        SELECT
+            fi.fleamarket_image_id,
+            fi.fleamarket_id,
+            fi.file_name,
+            MIN(fi.priority)
+        FROM
+            fleamarket_images AS fi
+        WHERE
+            deleted_at IS NULL
+        GROUP BY
+            fi.fleamarket_id
+        ORDER BY
+            priority
+    ) AS fi ON f.fleamarket_id = fi.fleamarket_id
 WHERE
     f.display_flag = :display_flag
     AND f.register_type = :register_status
@@ -837,7 +889,7 @@ QUERY;
     }
 
     /**
-     * 特定のユーザの投稿したフリマ情報を取得します
+     * 特定のユーザが投稿したフリマ情報を取得します
      *
      * @access public
      * @param int $user_id
@@ -894,12 +946,27 @@ FROM
     fleamarkets AS f
 LEFT JOIN
     locations AS l ON f.location_id = l.location_id
+    AND l.deleted_at IS NULL
 LEFT JOIN
     fleamarket_abouts AS fa ON f.fleamarket_id = fa.fleamarket_id
     AND fa.about_id = :about_access_id
+    AND fa.deleted_at IS NULL
 LEFT JOIN
-    fleamarket_images AS fi ON
-    f.fleamarket_id = fi.fleamarket_id AND priority = 1
+    (
+        SELECT
+            fi.fleamarket_image_id,
+            fi.fleamarket_id,
+            fi.file_name,
+            MIN(fi.priority)
+        FROM
+            fleamarket_images AS fi
+        WHERE
+            deleted_at IS NULL
+        GROUP BY
+            fi.fleamarket_id
+        ORDER BY
+            priority
+    ) AS fi ON f.fleamarket_id = fi.fleamarket_id
 WHERE
     f.created_user = :user_id AND
     f.display_flag = :display_flag AND
@@ -920,7 +987,7 @@ QUERY;
     }
 
     /**
-     * 特定のユーザの投稿したフリマ情報をカウントを取得します
+     * 特定のユーザが投稿したフリマ情報をカウントを取得します
      *
      * @access public
      * @param int $user_id
@@ -1301,6 +1368,7 @@ QUERY;
     {
         $fieldset = \Fieldset::forge('fleamarket');
         $fieldset->add_model('Model_Fleamarket');
+        $fieldset->validation()->add_callable('Custom_Validation');
 
         if (! $is_admin) {
             $fieldset->add('reservation_email_confirm')
@@ -1352,13 +1420,12 @@ QUERY;
      */
     public function makeReservationNumber($save = true)
     {
-        $this->reservation_serial++;
-
         $reservation_number = sprintf(
             '%05d-%05d',
             $this->fleamarket_id,
             $this->reservation_serial
         );
+        $this->reservation_serial =  DB::expr('reservation_serial + 1');
 
         return $reservation_number;
     }

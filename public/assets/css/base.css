@@ -1,6 +1,5 @@
 @charset "UTF-8";
 /* body */
-
 body {
 	color: #4b4b4b;
 	font-family: Helvetica, Arial, Verdana, "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro", Osaka, "メイリオ", Meiryo, "ＭＳ Ｐゴシック", "MS PGothic", sans-serif;
@@ -8,7 +7,7 @@ body {
 	font-size: 13px;
 	background: #b2e366 url(../img/bg.gif) center top repeat-x!important;
 	zoom: 1;
-position: relative;
+	position: relative;
 }
 /* anchor */
 a:link {
@@ -36,7 +35,6 @@ a:active {
 }
 .container {
 	max-width: 970px;
-	min-width: 320px;
 }
 .container h3 {
 	font-size: 116%;
@@ -1058,6 +1056,9 @@ li.inquiry i {
 #contentForm .form-group .col-sm-10 {
 	margin-top: 7px;
 }
+#contentForm .form-group .col-sm-6 {
+	margin-top: 7px;
+}
 #contentForm #flow {
 	margin: 0;
 	padding: 0 0 20px 0;
@@ -1508,9 +1509,15 @@ li.inquiry i {
   float: left;
 }
 .afDialog {
-    display: none;
+  display: none;
 }
 .afDialog .message {
-    text-align: left;
-    margin: 1em 0.5em;
+  text-align: left;
+  margin: 1em 0.5em;
+}
+.uploadImageBox {
+  margin-bottom: 0.5em;
+}
+.uploadImageBox .uploadImage {
+  width: 200px;
 }

@@ -8,6 +8,10 @@
  */
 class Controller_Admin_Entry extends Controller_Admin_Base_Template
 {
+    protected $_secure_actions = array(
+        'list', 'csv',
+    );
+
     /**
      * 検索結果1ページあたりの行数
      *
@@ -96,7 +100,7 @@ class Controller_Admin_Entry extends Controller_Admin_Base_Template
             }
         }
 
-        return $this->response_json(array('status' => $status));
+        return $this->responseJson(array('status' => $status));
     }
 
     /**
@@ -135,7 +139,7 @@ class Controller_Admin_Entry extends Controller_Admin_Base_Template
             }
         }
 
-        return $this->response_json(array('status' => $status));
+        return $this->responseJson(array('status' => $status));
     }
 
     /**
@@ -168,7 +172,7 @@ class Controller_Admin_Entry extends Controller_Admin_Base_Template
                     $prefecture_name = $prefectures[$prefecture_id];
                 }
                 $data[] = array(
-                    $fleamarket->created_at,
+                    $entry->created_at,
                     $fleamarket->event_date,
                     $fleamarket->name,
                     $entry->user->user_id,

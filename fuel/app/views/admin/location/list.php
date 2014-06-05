@@ -96,7 +96,7 @@
         <tr>
           <td><a href="/admin/location/?location_id=<?php echo $location_id;?>"><?php echo $location_id;?></a></td>
           <td><a href="/admin/location/?location_id=<?php echo $location_id;?>"><?php echo e($location['name']);?></a></td>
-          <td><?php echo $prefectures[$location['prefecture_id']];?></td>
+          <td><?php echo @$prefectures[$location['prefecture_id']];?></td>
           <td><?php echo e($location['address']);?></td>
           <td><a class="btn btn-default btn-sm" href="/admin/fleamarket/?location_id=<?php echo $location_id; ?>">フリマ登録</a></td>
       </tr>
