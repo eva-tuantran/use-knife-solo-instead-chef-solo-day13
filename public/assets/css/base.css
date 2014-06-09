@@ -1186,7 +1186,6 @@ li.inquiry i {
   margin: 10px 0 0 1em;
 }
 
-
 /* --------------------contentError-------------------- */
 #contentError #error {
 	margin-bottom: 20px;
@@ -1200,6 +1199,14 @@ li.inquiry i {
 .errorMessage {
 	color: red;
 	font-weight: bold;
+}
+
+/* --------------------contentThanks-------------------- */
+#contentThanks #message {
+	margin-bottom: 20px;
+}
+#contentThanks #message .main {
+	margin-bottom: 1em;
 }
 /* --------------------loginForm-------------------- */
 #loginForm form {

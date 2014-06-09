@@ -166,6 +166,11 @@ return array(
         'description' => 'フリマ予約',
         'keyword'     => 'フリマ予約',
     ),
+    'reservation/waiting' => array(
+        'title'       => 'キャンセル待ち予約',
+        'description' => 'キャンセル待ち予約',
+        'keyword'     => 'キャンセル待ち予約',
+    ),
 );
 
 
