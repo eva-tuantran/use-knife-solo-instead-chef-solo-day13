@@ -301,15 +301,16 @@ class Model_Entry extends Model_Base
      * @return array
      * @author ida
      */
-    public static function getEntriesByFleamarketId($fleamarket_id)
-    {
+    public static function getEntriesByFleamarketId(
+        $fleamarket_id, $entry_status = self::ENTRY_STATUS_RESERVED
+    ) {
         if (! $fleamarket_id) {
             return null;
         }
 
         $placeholders = array(
             ':flearmarket_id' => $fleamarket_id,
-            ':entry_status' => \Model_Entry::ENTRY_STATUS_RESERVED,
+            ':entry_status' => $entry_status,
         );
 
         $query = <<<"QUERY"
@@ -322,6 +323,7 @@ FROM
     entries AS e
 INNER JOIN
     users AS u ON e.user_id = u.user_id
+    AND u.deleted_at IS NULL
 WHERE
     e.fleamarket_id = :flearmarket_id
     AND e.entry_status = :entry_status

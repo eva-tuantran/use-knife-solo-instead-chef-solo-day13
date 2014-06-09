@@ -16,9 +16,9 @@
                 <th>送信対象</th>
                 <td>
                   <p><?php
-                    $type = $input_data['mail_magazine_type'];
-                    $target = $mail_magazine_types[$type];
-                    switch ($type):
+                    $mail_magazine_type = $input_data['mail_magazine_type'];
+                    $target = $mail_magazine_types[$mail_magazine_type];
+                    switch ($mail_magazine_type):
                         case \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_ALL:
                             echo $target;
                             break;
@@ -46,6 +46,10 @@
                             endif;
                             break;
                         case \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_RESEVED_ENTRY:
+                            echo $target . '<br>';
+                            echo '－' . $fleamarket['name'];
+                            break;
+                        case \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_WAITING_ENTRY:
                             echo $target . '<br>';
                             echo '－' . $fleamarket['name'];
                             break;
@@ -93,7 +97,7 @@
                   <td colspan="2">対象ユーザはいません</td>
                 </tr>
                 <?php
-                    elseif ($type == \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_ALL):
+                    elseif ($mail_magazine_type == \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_ALL):
                 ?>
                 <tr>
                   <td colspan="2">全員が対象です</td>
