@@ -763,8 +763,6 @@ QUERY;
             $row_count = 10;
         }
         $limit = ' LIMIT ' . $row_count;
-echo '<hr>';
-var_dump($limit);
 
         $table_name = self::$_table_name;
         $query = <<<"QUERY"
@@ -794,11 +792,8 @@ ORDER BY
 {$limit}
 QUERY;
 
-$db = \Database_Connection::instance('master');
         $statement = \DB::query($query)->parameters($placeholders);
         $result = $statement->execute();
-echo '<hr>';
-var_dump(\DB::last_query());
 
         $rows = null;
         if (! empty($result)) {
