@@ -213,10 +213,10 @@ class Controller_Search extends Controller_Base_Template
         }
 
         if (empty($add_conditions['event_status'])) {
-            $add_conditions['event_status'] = array(
-                \Model_Fleamarket::EVENT_STATUS_SCHEDULE,
-                \Model_Fleamarket::EVENT_STATUS_RESERVATION_RECEIPT,
-            );
+//            $add_conditions['event_status'] = array(
+//                \Model_Fleamarket::EVENT_STATUS_SCHEDULE,
+//                \Model_Fleamarket::EVENT_STATUS_RESERVATION_RECEIPT,
+//            );
         }
 
         return array($conditions, $add_conditions);

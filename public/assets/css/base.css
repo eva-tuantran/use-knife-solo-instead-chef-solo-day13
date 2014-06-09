@@ -972,6 +972,10 @@ li.inquiry i {
 .status4 {
   background-image: url(../img/status_4.png);
 }
+.status5 {
+  background-image: url(../img/status_5.png);
+  background-color: #eee;
+}
 /* --------------------result-------------------- */
 .result h3 {
 	line-height: 1.6;
@@ -1409,7 +1413,6 @@ li.inquiry i {
 	padding-bottom: 10px;
 }
 /* --------------------contentDetail-------------------- */
-
 #contentDetail .mylist,
 #contentDetail .rightbutton,
 #contentDetail #table .noneReservation {
