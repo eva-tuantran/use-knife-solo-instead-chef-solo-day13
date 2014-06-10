@@ -29,7 +29,7 @@
     <?php
         $full_path = '/assets/img/noimage.jpg';
         if (! empty($fleamarket['file_name'])):
-            $full_path = $image_path . '/' . $fleamarket_id .'/m_' . $fleamarket['file_name'];
+            $full_path = $image_path . $fleamarket_id .'/m_' . $fleamarket['file_name'];
 
             if (! file_exists('.' . $full_path)):
                 $full_path ='/assets/img/noimage.jpg';
