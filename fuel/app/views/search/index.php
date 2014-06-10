@@ -106,6 +106,8 @@ googletag.enableServices();
             $resultPush = '';
             if ($is_official):
                 $status_class = 'status' . $fleamarket['event_status'];
+            endif;
+            if ($fleamarket['event_status'] != \Model_Fleamarket::EVENT_STATUS_CANCEL):
                 $resultPush = 'resultPush';
             endif;
 

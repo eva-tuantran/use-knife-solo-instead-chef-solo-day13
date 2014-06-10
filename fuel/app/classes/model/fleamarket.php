@@ -339,7 +339,7 @@ class Model_Fleamarket extends Model_Base
     }
 
     /**
-     * 指定されたユーザのフリーマーケット情報を取得する
+     * 指定されたユーザのフリマ情報を取得する
      *
      * @access public
      * @param mixed $user_id ユーザID
@@ -364,12 +364,12 @@ class Model_Fleamarket extends Model_Base
     }
 
     /**
-     * 指定された年月に開催されるフリーマーケット情報リストを取得する
+     * 指定された年月に開催されるフリマ情報リストを取得する
      *
      * @access public
      * @param mixed $year 対象年
      * @param mixed $month 対象月
-     * @return array フリーマーケット情報
+     * @return array
      * @author ida
      */
     public static function findByEventDate($year, $month)
@@ -402,13 +402,13 @@ QUERY;
     }
 
     /**
-     * 指定された条件でフリーマーケット情報リストを取得する
+     * 指定された条件でフリマ情報リストを取得する
      *
      * @access public
      * @param array $condition_list 検索条件
      * @param mixed $page ページ
      * @param mixed $row_count ページあたりの行数
-     * @return array フリーマーケット情報
+     * @return array
      * @author ida
      */
     public static function findBySearch(
@@ -527,7 +527,7 @@ WHERE_QUERY;
     }
 
     /**
-     * 指定された条件でフリーマーケット情報の件数を取得する
+     * 指定された条件でフリマ情報の件数を取得する
      *
      * @access public
      * @param array $condition_list 検索条件
@@ -599,8 +599,8 @@ WHERE_QUERY;
      * 指定された条件でフリマ情報を取得する
      *
      * @access public
-     * @param mixed $fleamarket_id フリーマーケットID
-     * @return array フリーマーケット情報
+     * @param mixed $fleamarket_id フリマID
+     * @return array
      * @author ida
      */
     public static function findDetail($fleamarket_id)
@@ -666,7 +666,7 @@ QUERY;
      * @access public
      * @param array $condition_list 検索条件
      * @param mixed $row_count 取得行数
-     * @return array フリーマーケット情報
+     * @return array
      * @author ida
      */
     public static function findLatest($row_count = 10)
@@ -742,12 +742,12 @@ QUERY;
     }
 
     /**
-     * 近日開催予定のフリーマーケット情報を取得する
+     * 近日開催予定のフリマ情報を取得する
      *
      * @access public
      * @param array $condition_list 検索条件
      * @param mixed $row_count 取得行数
-     * @return array フリーマーケット情報
+     * @return array
      * @author ida
      */
     public static function findUpcoming($row_count = 10)
@@ -755,7 +755,7 @@ QUERY;
         $placeholders = array(
             ':event_status' => self::EVENT_STATUS_RECEIPT_END,
             ':display_flag' => self::DISPLAY_FLAG_ON,
-            ':register_status' => self::REGISTER_TYPE_ADMIN,
+            ':register_type' => self::REGISTER_TYPE_ADMIN,
         );
 
         $limit = '';
@@ -783,10 +783,10 @@ LEFT JOIN
     AND l.deleted_at IS NULL
 WHERE
     f.display_flag = :display_flag
-    AND f.register_type = :register_status
+    AND f.register_type = :register_type
     AND f.event_status <= :event_status
     AND f.deleted_at IS NULL
-    AND DATE_FORMAT(f.event_date, '%Y-%m-%d') >= CURDATE()
+    AND f.event_date >= CURDATE()
 ORDER BY
     f.event_date
 {$limit}
@@ -804,12 +804,12 @@ QUERY;
     }
 
     /**
-     * 人気のフリーマーケット情報を取得する
+     * 人気のフリマ情報を取得する
      *
      * @access public
      * @param array $condition_list 検索条件
      * @param mixed $row_count 取得行数
-     * @return array フリーマーケット情報
+     * @return array
      * @author ida
      */
     public static function findPopular($row_count = 3)
@@ -870,7 +870,7 @@ WHERE
     f.display_flag = :display_flag
     AND f.register_type = :register_status
     AND f.event_status <= :event_status
-    AND DATE_FORMAT(f.event_date, '%Y-%m-%d') >= CURDATE()
+    AND f.event_date >= CURDATE()
     AND f.pickup_flag = :pickup_flag
     AND f.deleted_at IS NULL
 ORDER BY
@@ -1097,7 +1097,7 @@ QUERY;
     }
 
     /**
-     * 指定された条件でフリーマーケット情報の件数を取得する
+     * 指定された条件でフリマ情報の件数を取得する
      *
      * @access public
      * @param array $condition_list 検索条件
@@ -1134,6 +1134,128 @@ QUERY;
         }
 
         return $rows[0]['cnt'];
+    }
+
+    /**
+     * キャンセル待ちされているフリマ情報を取得する
+     *
+     * $termが未指定の場合、１ヵ月間で取得する
+     *
+     * @access public
+     * @param array $term 取得する期間
+     * @return object
+     * @author ida
+     */
+    public static function getWaitingFleamarket($term = null)
+    {
+        if (! $term) {
+            $term = array(
+                \DB::expr('CURDATE()'),
+                \DB::expr('CURDATE() + INTERVAL 1 MONTH')
+            );
+        }
+
+        $query = \DB::select(
+            'f.fleamarket_id', 'f.name', 'f.event_date',
+            array(\DB::expr('COUNT(e.entry_id)'), 'waiting_count')
+        );
+        $query->from(array('fleamarkets', 'f'))
+            ->join(array('entries', 'e'), 'inner')
+            ->on('e.fleamarket_id', '=', 'f.fleamarket_id')
+            ->on('e.entry_status', '=', \DB::expr(\Model_Entry::ENTRY_STATUS_WAITING))
+            ->where(array(
+                array('f.event_status', '<=', \Model_Fleamarket::EVENT_STATUS_RECEIPT_END),
+                array('f.display_flag', '=', \Model_Fleamarket::DISPLAY_FLAG_ON),
+                array('f.register_type', '=', \Model_Fleamarket::REGISTER_TYPE_ADMIN),
+                array('f.event_date', 'BETWEEN', $term),
+                array('f.deleted_at', 'IS', \DB::expr('NULL')),
+            ))
+            ->group_by(array('f.fleamarket_id', 'f.name', 'f.event_date',))
+            ->having(\DB::expr('COUNT(e.entry_id)'), '>', 0)
+            ->order_by('f.event_date', 'asc');
+
+        return $query->as_object()->execute();
+
+    }
+
+    /**
+     * 出店予約されているフリマ情報を取得する
+     *
+     * $termが未指定の場合、１ヵ月間で取得する
+     *
+     * @access public
+     * @param array $term 取得する期間
+     * @return object
+     * @author ida
+     */
+    public static function getReservedFleamarket($term = null)
+    {
+        if (! $term) {
+            $term = array(
+                \DB::expr('CURDATE()'),
+                \DB::expr('CURDATE() + INTERVAL 1 MONTH')
+            );
+        }
+
+        $query = \DB::select(
+            'f.fleamarket_id', 'f.event_date',
+            array(\DB::expr('COUNT(e.entry_id)'), 'reserved_count')
+        );
+        $query->from(array('fleamarkets', 'f'))
+            ->join(array('entries', 'e'), 'inner')
+            ->on('e.fleamarket_id', '=', 'f.fleamarket_id')
+            ->on('e.entry_status', '=', \DB::expr(\Model_Entry::ENTRY_STATUS_RESERVED))
+            ->where(array(
+                array('f.event_status', '<=', \Model_Fleamarket::EVENT_STATUS_RECEIPT_END),
+                array('f.display_flag', '=', \Model_Fleamarket::DISPLAY_FLAG_ON),
+                array('f.register_type', '=', \Model_Fleamarket::REGISTER_TYPE_ADMIN),
+                array('f.event_date', 'BETWEEN', $term),
+                array('f.deleted_at', 'IS', \DB::expr('NULL')),
+            ))
+            ->group_by(array('f.fleamarket_id', 'f.name', 'f.event_date',))
+            ->having(\DB::expr('COUNT(e.entry_id)'), '>', 0)
+            ->order_by('f.event_date', 'asc');
+
+        return $query->as_object()->execute();
+    }
+
+    /**
+     * フリマ情報の最大ブースを取得する
+     *
+     * $termが未指定の場合、１ヵ月間で取得する
+     *
+     * @access public
+     * @param array $term 取得する期間
+     * @return object
+     * @author ida
+     */
+    public static function getFleamarketMaxBooth($term = null)
+    {
+        if (! $term) {
+            $term = array(
+                \DB::expr('CURDATE()'),
+                \DB::expr('CURDATE() + INTERVAL 1 MONTH')
+            );
+        }
+
+        $query = \DB::select(
+            'f.fleamarket_id', array(\DB::expr('SUM(fes.max_booth)'), 'max_booth')
+        );
+        $query->from(array('fleamarkets', 'f'))
+            ->join(array('fleamarket_entry_styles', 'fes'), 'inner')
+            ->on('f.fleamarket_id', '=', 'fes.fleamarket_id')
+            ->on('fes.deleted_at', 'IS', \DB::expr('NULL'))
+            ->where(array(
+                array('f.event_status', '<=', \Model_Fleamarket::EVENT_STATUS_RECEIPT_END),
+                array('f.display_flag', '=', \Model_Fleamarket::DISPLAY_FLAG_ON),
+                array('f.register_type', '=', \Model_Fleamarket::REGISTER_TYPE_ADMIN),
+                array('f.event_date', 'BETWEEN', $term),
+                array('f.deleted_at', 'IS', \DB::expr('NULL')),
+            ))
+            ->group_by(array('f.fleamarket_id', 'f.name', 'f.event_date',))
+            ->order_by('f.event_date', 'asc');
+
+        return $query->as_object()->execute();
     }
 
     /**
