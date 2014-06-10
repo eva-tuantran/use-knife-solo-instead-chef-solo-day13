@@ -8,7 +8,7 @@ namespace Fuel\Tasks;
  *
  * @author kobayasi
  */
-class Mail_Magazine
+class Move_Image
 {
     /**
      * 移動
@@ -26,20 +26,28 @@ class Mail_Magazine
             return;
         }
 
-        $old_dir = DOCROOT . 'files/fleamarket/img/';
-        $new_dir = DOCROOT . 'files/fleamarket/';
+        echo "START";
+        $prefix_list = array('ss', 's', 'm', 'l');
+        $old_dir = DOCROOT . 'public/files/fleamarket/img/';
+        $new_dir = DOCROOT . 'public/files/fleamarket/';
         foreach ($fleamarket_images as $fleamarket_image_id => $fleamarket_image) {
             echo $fleamarket_image_id . '=:' . $fleamarket_image->file_name;
             echo "\n-----\n";
 
             self::checkPath($new_dir . $fleamarket_image->fleamarket_id , true);
             $old_path = $old_dir . $fleamarket_image->file_name;
-            $new_path = $new_dir . $fleamarket_image->fleamarket_id . '/' . $fleamarket_image->file_name;
-            if (! copy ($old_path, $new_dir)) {
+            $new_path = $new_dir . $fleamarket_image->fleamarket_id . '/';
+            if (! copy ($old_path, $new_path . $fleamarket_image->file_name)) {
                 echo 'Error =: ' . $fleamarket_image_id;
-                return false;
+            }
+            foreach ($prefix_list as $prefix) {
+                $file_name = $prefix . '_' . $fleamarket_image->file_name;
+                if (! copy ($old_path, $new_path . $file_name)) {
+                    echo 'Error =: ' . $fleamarket_image_id;
+                }
             }
         }
+        echo "END";
     }
 
     /**
