@@ -203,7 +203,15 @@ Map.prototype = {
     if (! $is_official):
 ?>
         <dt>主催者ホームページ</dt>
-        <dd><a href="<?php echo e($fleamarket['website']);?>" target="_blank"><?php echo e($fleamarket['website']);?></a></dd>
+        <dd>
+        <?php
+            if (! empty($fleamarket['website'])):
+                echo '<a href="' . e($fleamarket['website']) . '" target="_blank">' . e($fleamarket['website']) . '</a>';
+            else:
+                echo '-';
+            endif;
+        ?>
+        </dd>
 <?php
     endif;
 ?>
