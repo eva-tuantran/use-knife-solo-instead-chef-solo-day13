@@ -148,7 +148,7 @@ googletag.enableServices();
         <?php
             $full_path = '/assets/img/noimage.jpg';
             if (! empty($fleamarket['file_name'])):
-                $full_path = $image_path . '/' . $fleamarket_id .'/m_' . $fleamarket['file_name'];
+                $full_path = $image_path . $fleamarket_id .'/m_' . $fleamarket['file_name'];
 
                 if (! file_exists('.' . $full_path)):
                     $full_path ='/assets/img/noimage.jpg';
@@ -223,8 +223,12 @@ googletag.enableServices();
         <ul class="rightbutton">
     <?php if ($user && $user->hasReserved($fleamarket_id)):?>
           <li class="button reserved">出店予約中</li>
-    <?php elseif ($user && $user->hasWaiting($fleamarket_id)):?>
+    <?php elseif ($user && $user->hasWaiting($fleamarket_id, true)):?>
+        <?php if (\Model_Fleamarket::isBoothEmpty($fleamarket_id)):?>
+          <li class="button makeReservation"><a href="/reservation?fleamarket_id=<?php echo $fleamarket_id;?>">出店予約をする</a></li>
+        <?php else:?>
           <li class="button reserved">キャンセル待ち中</li>
+        <?php endif;?>
     <?php elseif ($is_official):?>
         <?php if ($fleamarket['event_status'] == \Model_Fleamarket::EVENT_STATUS_RESERVATION_RECEIPT):?>
             <?php if ($fleamarket['event_reservation_status'] == \Model_Fleamarket::EVENT_RESERVATION_STATUS_FULL):?>

@@ -1261,7 +1261,7 @@ QUERY;
     /**
      * 検索条件を取得する
      *
-     * @access private
+     * @access public
      * @param array $condition_list 検索条件
      * @return array 検索条件
      * @author ida
@@ -1313,9 +1313,118 @@ QUERY;
     }
 
     /**
-     * 検索条件を取得する
+     * Fieldsetオブジェクトの生成
+     *
+     * @access public
+     * @param bool $is_admin 管理画面かどうか
+     * @return array
+     * @author ida
+     * @author kobayasi
+     */
+    public static function createFieldset($is_admin = false)
+    {
+        $fieldset = \Fieldset::forge('fleamarket');
+        $fieldset->add_model('Model_Fleamarket');
+        $fieldset->validation()->add_callable('Custom_Validation');
+
+        if (! $is_admin) {
+            $fieldset->add('reservation_email_confirm')
+                ->add_rule('match_field', 'reservation_email');
+        }
+
+        return $fieldset;
+    }
+
+    /**
+     * 予約状況の更新
+     *
+     * @access public
+     * @param bool $save
+     * @return void
+     * @author kobayasi
+     */
+    public function updateEventReservationStatus($save = true)
+    {
+        $max_booth = 0;
+        $remain_booth = 0;
+        foreach ($this->fleamarket_entry_styles as $fleamarket_entry_style) {
+            $max_booth += $fleamarket_entry_style->max_booth;
+            $remain_booth += $fleamarket_entry_style->remainBooth('master');
+        }
+
+        $is_save = false;
+        if ($remain_booth == 0) {
+            $is_save = true;
+            $this->event_reservation_status = self::EVENT_RESERVATION_STATUS_FULL;
+        } elseif (($max_booth * 0.2) >= $remain_booth) {
+            $is_save = true;
+            $this->event_reservation_status = self::EVENT_RESERVATION_STATUS_FEW;
+        }
+
+        if ($save && $is_save) {
+            $this->save();
+        }
+    }
+
+    /**
+     * 予約番号を採番する
      *
      * @access private
+     * @param bool $save 保存フラグ
+     * @return string
+     * @author kobayashi
+     * @author ida
+     */
+    public function makeReservationNumber($save = true)
+    {
+        $reservation_number = sprintf(
+            '%05d-%05d',
+            $this->fleamarket_id,
+            $this->reservation_serial
+        );
+        $this->reservation_serial =  DB::expr('reservation_serial + 1');
+
+        return $reservation_number;
+    }
+
+    /**
+     * イメージを取得する
+     *
+     * @access public
+     * @param int $priority 取得するイメージの番号
+     * @return vobject
+     * @author kobayasi
+     */
+    public function fleamarket_image($priority)
+    {
+        foreach ($this->fleamarket_images as $fleamarket_image) {
+            if ($fleamarket_image->priority == $priority) {
+                return $fleamarket_image;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * 出店予約判定
+     *
+     * @access public
+     * @param
+     * @return bool
+     * @author kobayasi
+     */
+    public function canReserve()
+    {
+        return
+            $this->event_status == \Model_Fleamarket::EVENT_STATUS_RESERVATION_RECEIPT
+            && $this->event_reservation_status != \Model_Fleamarket::EVENT_RESERVATION_STATUS_FULL;
+    }
+
+    /**
+     * 検索条件を取得する
+     *
+     * @access public
      * @param array $condition_list 検索条件
      * @return array 検索条件
      * @author void
@@ -1428,6 +1537,57 @@ QUERY;
     }
 
     /**
+     * 反響項目を文字列により連結する
+     *
+     * @access public
+     * @param array $link_from_list 反響項目リスト
+     * @return string
+     * @author ida
+     */
+    public static function implodeLinkFromList(Array $link_from_list = array())
+    {
+        $result = '';
+        if (empty($link_from_list)) {
+            return $result;
+        }
+
+        foreach ($link_from_list as $link_from) {
+            if (! empty($link_from)) {
+                $result .= $result === '' ? '' : ',';
+                $result .= trim($link_from);
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * 反響項目を文字列により分割する
+     *
+     * @access public
+     * @param array $link_from_list 反響項目リスト
+     * @return array
+     * @author ida
+     */
+    public static function explodeLinkFromList($link_from_list = null)
+    {
+        $result = array();
+        if (empty($link_from_list)) {
+            return $result;
+        }
+
+        $list = explode(',', $link_from_list);
+        foreach ($list as $link_from) {
+            $link_from = trim($link_from);
+            if (! empty($link_from)) {
+                $result[] = $link_from;
+            }
+        }
+
+        return $result;
+    }
+
+    /**
      * 指定された検索条件よりWHERE句とプレースホルダ―を生成する
      *
      * @access private
@@ -1478,111 +1638,31 @@ QUERY;
     }
 
     /**
-     * Fieldsetオブジェクトの生成
+     * 空きブース判定
      *
      * @access public
-     * @param bool $is_admin 管理画面かどうか
-     * @return array
-     * @author ida
-     * @author kobayasi
-     */
-    public static function createFieldset($is_admin = false)
-    {
-        $fieldset = \Fieldset::forge('fleamarket');
-        $fieldset->add_model('Model_Fleamarket');
-        $fieldset->validation()->add_callable('Custom_Validation');
-
-        if (! $is_admin) {
-            $fieldset->add('reservation_email_confirm')
-                ->add_rule('match_field', 'reservation_email');
-        }
-
-        return $fieldset;
-    }
-
-    /**
-     * 予約状況の更新
-     *
-     * @access public
-     * @param bool $save
-     * @return void
-     * @author kobayasi
-     */
-    public function updateEventReservationStatus($save = true)
-    {
-        $max_booth = 0;
-        $remain_booth = 0;
-        foreach ($this->fleamarket_entry_styles as $fleamarket_entry_style) {
-            $max_booth += $fleamarket_entry_style->max_booth;
-            $remain_booth += $fleamarket_entry_style->remainBooth('master');
-        }
-
-        $is_save = false;
-        if ($remain_booth == 0) {
-            $is_save = true;
-            $this->event_reservation_status = self::EVENT_RESERVATION_STATUS_FULL;
-        } elseif (($max_booth * 0.2) >= $remain_booth) {
-            $is_save = true;
-            $this->event_reservation_status = self::EVENT_RESERVATION_STATUS_FEW;
-        }
-
-        if ($save && $is_save) {
-            $this->save();
-        }
-    }
-
-    /**
-     * 予約番号を採番する
-     *
-     * @access private
-     * @param bool $save 保存フラグ
-     * @return string
-     * @author kobayashi
-     * @author ida
-     */
-    public function makeReservationNumber($save = true)
-    {
-        $reservation_number = sprintf(
-            '%05d-%05d',
-            $this->fleamarket_id,
-            $this->reservation_serial
-        );
-        $this->reservation_serial =  DB::expr('reservation_serial + 1');
-
-        return $reservation_number;
-    }
-
-    /**
-     * イメージを取得する
-     *
-     * @access public
-     * @param int $priority 取得するイメージの番号
-     * @return vobject
-     * @author kobayasi
-     */
-    public function fleamarket_image($priority)
-    {
-        foreach ($this->fleamarket_images as $fleamarket_image) {
-            if ($fleamarket_image->priority == $priority) {
-                return $fleamarket_image;
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * 出店予約判定
-     *
-     * @access public
-     * @param
+     * @param mixed $fleamarket_id
      * @return bool
      * @author kobayasi
      */
-    public function canReserve()
+    public static function isBoothEmpty($fleamarket_id)
     {
-        return
-            $this->event_status == \Model_Fleamarket::EVENT_STATUS_RESERVATION_RECEIPT
-            && $this->event_reservation_status != \Model_Fleamarket::EVENT_RESERVATION_STATUS_FULL;
+        $max_booth = 0;
+        $max_booth_result = \Model_Fleamarket_Entry_Style::getMaxBoothByFleamarketId(
+            $fleamarket_id, false
+        );
+        if (isset($max_booth_result[0]['max_booth'])) {
+            $max_booth = $max_booth_result[0]['max_booth'];
+        }
+
+        $total_entry = 0;
+        $total_entry_result = \Model_Entry::getTotalEntryByFleamarketId(
+            $fleamarket_id, false
+        );
+        if (isset($total_entry_result[0]['reserved_booth'])) {
+            $total_entry = $total_entry_result[0]['reserved_booth'];
+        }
+
+        return ($max_booth - $total_entry) > 0;
     }
 }

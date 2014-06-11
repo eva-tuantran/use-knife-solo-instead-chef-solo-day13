@@ -1,15 +1,16 @@
-<?php $input  = $fieldset->input(); ?>
-<?php $errors = $fieldset->validation()->error_message(); ?>
-<?php $entry_styles = Config::get('master.entry_styles'); ?>
-<?php $nomail = Session::get('admin.user.nomail'); ?>
 <?php
-   $input_genres = array();
-   if ($input['item_genres']) {
-       foreach ($input['item_genres'] as $item_genre) {
-           $input_genres[$item_genre] = 1;
-       }
-   }
+    $input  = $fieldset->input();
+    $errors = $fieldset->validation()->error_message();
+    $entry_styles = Config::get('master.entry_styles');
+    $nomail = Session::get('admin.user.nomail');
 
+    $input_genres = array();
+    if ($input['item_genres']) {
+        foreach ($input['item_genres'] as $item_genre) {
+            $input_genres[$item_genre] = 1;
+        }
+    }
+    $fleamarket_id = $fleamarket->fleamarket_id;
 ?>
 
 <div id="contentForm" class="row">
@@ -32,9 +33,9 @@
       <h3>フリマ予約情報入力欄</h3>
       <?php if (count($fleamarket->fleamarket_entry_styles) == 0):?>
       <div class="errorMessage">現在予約することが出来ません</div>
-      <?php elseif ($user->hasReserved($fleamarket->fleamarket_id)):?>
+      <?php elseif ($user->hasReserved($fleamarket_id)):?>
       <div class="errorMessage">既に予約済みです。解除を希望の場合、<a href="/mypage">マイページにてキャンセル</a>を行って下さい。</div>
-      <?php elseif ($user->hasWaiting($fleamarket->fleamarket_id)):?>
+      <?php elseif ($user->hasWaiting($fleamarket_id) && ! \Model_Fleamarket::isBoothEmpty($fleamarket_id)):?>
       <div class="errorMessage">既にキャンセル待ちをしています。解除を希望の場合、<a href="/mypage">マイページにてキャンセル</a>を行って下さい。</div>
       <?php else:?>
       <form action="/reservation/confirm" method="post" class="form-horizontal">
@@ -121,7 +122,7 @@
             <div class="col-sm-10">
               <select name="link_from" class="form-control">
               <?php
-                  foreach (\Model_Entry::getLinkFromList() as $key => $link_from):
+                  foreach (\Model_Fleamarket::explodeLinkFromList($fleamarket->link_from_list) as $key => $link_from):
                       $selected = '';
                       if ($input['link_from'] == $link_from):
                           $selected = 'selected';
@@ -173,9 +174,9 @@
     endforeach;;
 ?>
 <script type="text/javascript">
-var reservation_booth_limit = <?php echo json_encode($reservation_booth_limit); ?>;
-var remain_booth = <?php echo json_encode($remain_booth); ?>;
-var can_reserve = <?php echo json_encode($fleamarket->canReserve()); ?>;
+var reservation_booth_limit = <?php echo json_encode($reservation_booth_limit);?>;
+var remain_booth = <?php echo json_encode($remain_booth);?>;
+var can_reserve = <?php echo json_encode($fleamarket->canReserve());?>;
 
 $('input[name="fleamarket_entry_style_id"]').change(function(){
   var id = $('input[name="fleamarket_entry_style_id"]:checked').val();

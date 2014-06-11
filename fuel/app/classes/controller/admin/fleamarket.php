@@ -714,7 +714,9 @@ class Controller_Admin_Fleamarket extends Controller_Admin_Base_Template
 
         $fieldset = $fieldsets['fleamarket'];
         $input = $fieldset->validation()->validated();
-        $input['link_from_list'] = implode(',', $input['link_from_list']);
+        $input['link_from_list'] = \Model_Fleamarket::implodeLinkFromList(
+            $input['link_from_list']
+        );
         $input['group_code'] = '';
 
         if (empty($input['reservation_start'])) {
