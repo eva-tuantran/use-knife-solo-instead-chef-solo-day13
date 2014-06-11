@@ -1514,4 +1514,33 @@ QUERY;
 
         return array($conditions, $placeholders);
     }
+
+    /**
+     * 空きブース判定
+     *
+     * @access public
+     * @param mixed $fleamarket_id
+     * @return bool
+     * @author kobayasi
+     */
+    public static function isBoothEmpty($fleamarket_id)
+    {
+        $max_booth = 0;
+        $max_booth_result = \Model_Fleamarket_Entry_Style::getMaxBoothByFleamarketId(
+            $fleamarket_id, false
+        );
+        if (isset($max_booth_result[0]['max_booth'])) {
+            $max_booth = $max_booth_result[0]['max_booth'];
+        }
+
+        $total_entry = 0;
+        $total_entry_result = \Model_Entry::getTotalEntryByFleamarketId(
+            $fleamarket_id, false
+        );
+        if (isset($total_entry_result[0]['reserved_booth'])) {
+            $total_entry = $total_entry_result[0]['reserved_booth'];
+        }
+
+        return ($max_booth - $total_entry) > 0;
+    }
 }
