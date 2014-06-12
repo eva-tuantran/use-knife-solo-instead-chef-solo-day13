@@ -132,7 +132,7 @@ Map.prototype = {
         </ul>
       </div>
       <ul class="rightbutton">
-    <?php if ($user && $user->hasEntry($fleamarket_id)):?>
+    <?php if ($user && $user->hasReserved($fleamarket_id)):?>
         <li class="button reserved">出店予約中</li>
     <?php elseif ($user && $user->hasWaiting($fleamarket_id)):?>
         <li class="button reserved">キャンセル待ち中</li>
@@ -332,7 +332,7 @@ Map.prototype = {
         <li class="button gotoMylist"><a href="/mypage/list?type=mylist"><i></i>マイリストを見る</a></li>
       </ul>
       <ul class="rightbutton">
-    <?php if ($user && $user->hasEntry($fleamarket_id)):?>
+    <?php if ($user && $user->hasReserved($fleamarket_id)):?>
         <li class="button reserved">出店予約中</li>
     <?php elseif ($user && $user->hasWaiting($fleamarket_id)):?>
         <li class="button reserved">キャンセル待ち中</li>

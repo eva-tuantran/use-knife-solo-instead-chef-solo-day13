@@ -92,7 +92,6 @@ var remove_form = function(o) {
 };
 </script>
 <?php
-    $input  = $fieldsets['fleamarket']->input();
     $fields = $fieldsets['fleamarket']->field();
     $errors = $fieldsets['fleamarket']->validation()->error_message();
 ?>
@@ -103,7 +102,7 @@ var remove_form = function(o) {
   </div>
   <div class="panel-body">
     <form action="/admin/fleamarket/confirm" method="post" class="form-inline" enctype="multipart/form-data">
-      <input type="hidden" name="fleamarket_id" value="<?php echo e(\Input::param('fleamarket_id'));?>">
+      <input type="hidden" name="fleamarket_id" value="<?php echo e($fleamarket_id);?>">
       <div class="row">
         <div class="col-md-6">
           <table class="table-fixed table">
@@ -324,12 +323,16 @@ var remove_form = function(o) {
             <tr>
               <th>反響項目リスト</th>
               <td>
-                <?php foreach(\Model_Entry::getLinkFromList() as $key => $link_from): ?>
+                <?php
+                    foreach($link_from_list as $key => $link_from):
+                ?>
                   <div>
                     <input type="text" class="form-control" name="link_from_list[]" value="<?php echo $link_from;?>">
                     <input type="button" class="form-control" value="削除" onclick="remove_form(this)"><br>
                   </div>
-                <?php endforeach; ?>
+                <?php
+                    endforeach;
+                ?>
                 <?php
                     if (isset($errors['link_from_list'])):
                        echo '<div class="error-message">' . $errors['link_from_list'] . '</div>';

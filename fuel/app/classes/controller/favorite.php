@@ -18,12 +18,12 @@ class Controller_Favorite  extends Controller_Base_Template
         parent::before();
 
         if (! Auth::check()) {
-            return $this->response_json('nologin', true);
+            return $this->responseJson('nologin', true);
         }
         $this->fleamarket = Model_Fleamarket::find(Input::param('fleamarket_id'));
         
         if (! $this->fleamarket) {
-            return $this->response_json('nodata', true);
+            return $this->responseJson('nodata', true);
         }            
         
         $this->input = array(
@@ -44,11 +44,11 @@ class Controller_Favorite  extends Controller_Base_Template
                 $this->favorite->save();
             } catch (\Exception $e) {
                 throw $e;
-                return $this->response_json(false);
+                return $this->responseJson(false);
             }
         }
 
-        return $this->response_json(true);
+        return $this->responseJson(true);
     }
 
     public function post_delete()
@@ -58,11 +58,11 @@ class Controller_Favorite  extends Controller_Base_Template
                 $this->favorite->delete();
             } catch (\Exception $e) {
                 throw $e;
-                return $this->response_json(false);
+                return $this->responseJson(false);
             }
         }
 
-        return $this->response_json(true);
+        return $this->responseJson(true);
     }
 
 }

@@ -105,7 +105,13 @@ class Model_Fleamarket extends Model_Base
     );
 
     protected static $_properties = array(
-        'fleamarket_id',
+        'fleamarket_id' => array(
+            'label' => 'フリマID',
+            'validation' => array(
+                'required',
+            )
+        ),
+
         'location_id',
         'group_code',
         'name' => array(
@@ -333,7 +339,7 @@ class Model_Fleamarket extends Model_Base
     }
 
     /**
-     * 指定されたユーザのフリーマーケット情報を取得する
+     * 指定されたユーザのフリマ情報を取得する
      *
      * @access public
      * @param mixed $user_id ユーザID
@@ -358,12 +364,12 @@ class Model_Fleamarket extends Model_Base
     }
 
     /**
-     * 指定された年月に開催されるフリーマーケット情報リストを取得する
+     * 指定された年月に開催されるフリマ情報リストを取得する
      *
      * @access public
      * @param mixed $year 対象年
      * @param mixed $month 対象月
-     * @return array フリーマーケット情報
+     * @return array
      * @author ida
      */
     public static function findByEventDate($year, $month)
@@ -396,13 +402,13 @@ QUERY;
     }
 
     /**
-     * 指定された条件でフリーマーケット情報リストを取得する
+     * 指定された条件でフリマ情報リストを取得する
      *
      * @access public
      * @param array $condition_list 検索条件
      * @param mixed $page ページ
      * @param mixed $row_count ページあたりの行数
-     * @return array フリーマーケット情報
+     * @return array
      * @author ida
      */
     public static function findBySearch(
@@ -463,12 +469,27 @@ FROM
     fleamarkets AS f
 LEFT JOIN
     locations AS l ON f.location_id = l.location_id
+    AND l.deleted_at IS NULL
 LEFT JOIN
     fleamarket_abouts AS fa ON f.fleamarket_id = fa.fleamarket_id
     AND fa.about_id = :about_access_id
+    AND fa.deleted_at IS NULL
 LEFT JOIN
-    fleamarket_images AS fi ON
-    f.fleamarket_id = fi.fleamarket_id AND priority = 1
+    (
+        SELECT
+            fi.fleamarket_image_id,
+            fi.fleamarket_id,
+            fi.file_name,
+            MIN(fi.priority)
+        FROM
+            fleamarket_images AS fi
+        WHERE
+            deleted_at IS NULL
+        GROUP BY
+            fi.fleamarket_id
+        ORDER BY
+            priority
+    ) AS fi ON f.fleamarket_id = fi.fleamarket_id
 WHERE
 QUERY;
 
@@ -506,7 +527,7 @@ WHERE_QUERY;
     }
 
     /**
-     * 指定された条件でフリーマーケット情報の件数を取得する
+     * 指定された条件でフリマ情報の件数を取得する
      *
      * @access public
      * @param array $condition_list 検索条件
@@ -537,9 +558,11 @@ FROM
     fleamarkets AS f
 LEFT JOIN
     locations AS l ON f.location_id = l.location_id
+    AND l.deleted_at IS NULL
 LEFT JOIN
     fleamarket_abouts AS fa ON f.fleamarket_id = fa.fleamarket_id
     AND fa.about_id = :about_access_id
+    AND fa.deleted_at IS NULL
 WHERE
 QUERY;
 
@@ -573,13 +596,11 @@ WHERE_QUERY;
     }
 
     /**
-     * 指定された条件でフリーマーケット情報を取得する
-     *
-     * 開催地情報、フリーマーケットエントリスタイル情報、フリーマーケット説明情報
+     * 指定された条件でフリマ情報を取得する
      *
      * @access public
-     * @param mixed $fleamarket_id フリーマーケットID
-     * @return array フリーマーケット情報
+     * @param mixed $fleamarket_id フリマID
+     * @return array
      * @author ida
      */
     public static function findDetail($fleamarket_id)
@@ -621,6 +642,7 @@ FROM
     fleamarkets AS f
 LEFT JOIN
     locations AS l ON f.location_id = l.location_id
+    AND l.deleted_at IS NULL
 WHERE
     f.display_flag = :display_flag
     AND f.deleted_at IS NULL
@@ -639,12 +661,12 @@ QUERY;
     }
 
     /**
-     * 最新のフリーマーケット情報を取得する
+     * 最新のフリマ情報を取得する
      *
      * @access public
      * @param array $condition_list 検索条件
      * @param mixed $row_count 取得行数
-     * @return array フリーマーケット情報
+     * @return array
      * @author ida
      */
     public static function findLatest($row_count = 10)
@@ -674,9 +696,23 @@ FROM
     fleamarkets AS f
 LEFT JOIN
     locations AS l ON f.location_id = l.location_id
+    AND l.deleted_at IS NULL
 LEFT JOIN
-    fleamarket_images AS fi ON
-    f.fleamarket_id = fi.fleamarket_id AND priority = 1
+    (
+        SELECT
+            fi.fleamarket_image_id,
+            fi.fleamarket_id,
+            fi.file_name,
+            MIN(fi.priority)
+        FROM
+            fleamarket_images AS fi
+        WHERE
+            deleted_at IS NULL
+        GROUP BY
+            fi.fleamarket_id
+        ORDER BY
+            priority
+    ) AS fi ON f.fleamarket_id = fi.fleamarket_id
 WHERE
     f.display_flag = :display_flag
     AND f.register_type = :register_status
@@ -706,12 +742,12 @@ QUERY;
     }
 
     /**
-     * 近日開催予定のフリーマーケット情報を取得する
+     * 近日開催予定のフリマ情報を取得する
      *
      * @access public
      * @param array $condition_list 検索条件
      * @param mixed $row_count 取得行数
-     * @return array フリーマーケット情報
+     * @return array
      * @author ida
      */
     public static function findUpcoming($row_count = 10)
@@ -719,7 +755,7 @@ QUERY;
         $placeholders = array(
             ':event_status' => self::EVENT_STATUS_RECEIPT_END,
             ':display_flag' => self::DISPLAY_FLAG_ON,
-            ':register_status' => self::REGISTER_TYPE_ADMIN,
+            ':register_type' => self::REGISTER_TYPE_ADMIN,
         );
 
         $limit = '';
@@ -744,12 +780,13 @@ FROM
     fleamarkets AS f
 LEFT JOIN
     locations AS l ON f.location_id = l.location_id
+    AND l.deleted_at IS NULL
 WHERE
     f.display_flag = :display_flag
-    AND f.register_type = :register_status
+    AND f.register_type = :register_type
     AND f.event_status <= :event_status
     AND f.deleted_at IS NULL
-    AND DATE_FORMAT(f.event_date, '%Y-%m-%d') >= CURDATE()
+    AND f.event_date >= CURDATE()
 ORDER BY
     f.event_date
 {$limit}
@@ -767,12 +804,12 @@ QUERY;
     }
 
     /**
-     * 人気のフリーマーケット情報を取得する
+     * 人気のフリマ情報を取得する
      *
      * @access public
      * @param array $condition_list 検索条件
      * @param mixed $row_count 取得行数
-     * @return array フリーマーケット情報
+     * @return array
      * @author ida
      */
     public static function findPopular($row_count = 3)
@@ -808,17 +845,32 @@ FROM
     fleamarkets AS f
 LEFT JOIN
     locations AS l ON f.location_id = l.location_id
+    AND l.deleted_at IS NULL
 LEFT JOIN
     fleamarket_abouts AS fa ON f.fleamarket_id = fa.fleamarket_id
     AND fa.about_id = :about_access_id
+    AND fa.deleted_at IS NULL
 LEFT JOIN
-    fleamarket_images AS fi ON
-    f.fleamarket_id = fi.fleamarket_id AND priority = 1
+    (
+        SELECT
+            fi.fleamarket_image_id,
+            fi.fleamarket_id,
+            fi.file_name,
+            MIN(fi.priority)
+        FROM
+            fleamarket_images AS fi
+        WHERE
+            deleted_at IS NULL
+        GROUP BY
+            fi.fleamarket_id
+        ORDER BY
+            priority
+    ) AS fi ON f.fleamarket_id = fi.fleamarket_id
 WHERE
     f.display_flag = :display_flag
     AND f.register_type = :register_status
     AND f.event_status <= :event_status
-    AND DATE_FORMAT(f.event_date, '%Y-%m-%d') >= CURDATE()
+    AND f.event_date >= CURDATE()
     AND f.pickup_flag = :pickup_flag
     AND f.deleted_at IS NULL
 ORDER BY
@@ -837,7 +889,7 @@ QUERY;
     }
 
     /**
-     * 特定のユーザの投稿したフリマ情報を取得します
+     * 特定のユーザが投稿したフリマ情報を取得します
      *
      * @access public
      * @param int $user_id
@@ -894,12 +946,27 @@ FROM
     fleamarkets AS f
 LEFT JOIN
     locations AS l ON f.location_id = l.location_id
+    AND l.deleted_at IS NULL
 LEFT JOIN
     fleamarket_abouts AS fa ON f.fleamarket_id = fa.fleamarket_id
     AND fa.about_id = :about_access_id
+    AND fa.deleted_at IS NULL
 LEFT JOIN
-    fleamarket_images AS fi ON
-    f.fleamarket_id = fi.fleamarket_id AND priority = 1
+    (
+        SELECT
+            fi.fleamarket_image_id,
+            fi.fleamarket_id,
+            fi.file_name,
+            MIN(fi.priority)
+        FROM
+            fleamarket_images AS fi
+        WHERE
+            deleted_at IS NULL
+        GROUP BY
+            fi.fleamarket_id
+        ORDER BY
+            priority
+    ) AS fi ON f.fleamarket_id = fi.fleamarket_id
 WHERE
     f.created_user = :user_id AND
     f.display_flag = :display_flag AND
@@ -920,7 +987,7 @@ QUERY;
     }
 
     /**
-     * 特定のユーザの投稿したフリマ情報をカウントを取得します
+     * 特定のユーザが投稿したフリマ情報をカウントを取得します
      *
      * @access public
      * @param int $user_id
@@ -1030,7 +1097,7 @@ QUERY;
     }
 
     /**
-     * 指定された条件でフリーマーケット情報の件数を取得する
+     * 指定された条件でフリマ情報の件数を取得する
      *
      * @access public
      * @param array $condition_list 検索条件
@@ -1070,9 +1137,131 @@ QUERY;
     }
 
     /**
+     * キャンセル待ちされているフリマ情報を取得する
+     *
+     * $termが未指定の場合、１ヵ月間で取得する
+     *
+     * @access public
+     * @param array $term 取得する期間
+     * @return object
+     * @author ida
+     */
+    public static function getWaitingFleamarket($term = null)
+    {
+        if (! $term) {
+            $term = array(
+                \DB::expr('CURDATE()'),
+                \DB::expr('CURDATE() + INTERVAL 1 MONTH')
+            );
+        }
+
+        $query = \DB::select(
+            'f.fleamarket_id', 'f.name', 'f.event_date',
+            array(\DB::expr('COUNT(e.entry_id)'), 'waiting_count')
+        );
+        $query->from(array('fleamarkets', 'f'))
+            ->join(array('entries', 'e'), 'inner')
+            ->on('e.fleamarket_id', '=', 'f.fleamarket_id')
+            ->on('e.entry_status', '=', \DB::expr(\Model_Entry::ENTRY_STATUS_WAITING))
+            ->where(array(
+                array('f.event_status', '<=', \Model_Fleamarket::EVENT_STATUS_RECEIPT_END),
+                array('f.display_flag', '=', \Model_Fleamarket::DISPLAY_FLAG_ON),
+                array('f.register_type', '=', \Model_Fleamarket::REGISTER_TYPE_ADMIN),
+                array('f.event_date', 'BETWEEN', $term),
+                array('f.deleted_at', 'IS', \DB::expr('NULL')),
+            ))
+            ->group_by(array('f.fleamarket_id', 'f.name', 'f.event_date',))
+            ->having(\DB::expr('COUNT(e.entry_id)'), '>', 0)
+            ->order_by('f.event_date', 'asc');
+
+        return $query->as_object()->execute();
+
+    }
+
+    /**
+     * 出店予約されているフリマ情報を取得する
+     *
+     * $termが未指定の場合、１ヵ月間で取得する
+     *
+     * @access public
+     * @param array $term 取得する期間
+     * @return object
+     * @author ida
+     */
+    public static function getReservedFleamarket($term = null)
+    {
+        if (! $term) {
+            $term = array(
+                \DB::expr('CURDATE()'),
+                \DB::expr('CURDATE() + INTERVAL 1 MONTH')
+            );
+        }
+
+        $query = \DB::select(
+            'f.fleamarket_id', 'f.event_date',
+            array(\DB::expr('COUNT(e.entry_id)'), 'reserved_count')
+        );
+        $query->from(array('fleamarkets', 'f'))
+            ->join(array('entries', 'e'), 'inner')
+            ->on('e.fleamarket_id', '=', 'f.fleamarket_id')
+            ->on('e.entry_status', '=', \DB::expr(\Model_Entry::ENTRY_STATUS_RESERVED))
+            ->where(array(
+                array('f.event_status', '<=', \Model_Fleamarket::EVENT_STATUS_RECEIPT_END),
+                array('f.display_flag', '=', \Model_Fleamarket::DISPLAY_FLAG_ON),
+                array('f.register_type', '=', \Model_Fleamarket::REGISTER_TYPE_ADMIN),
+                array('f.event_date', 'BETWEEN', $term),
+                array('f.deleted_at', 'IS', \DB::expr('NULL')),
+            ))
+            ->group_by(array('f.fleamarket_id', 'f.name', 'f.event_date',))
+            ->having(\DB::expr('COUNT(e.entry_id)'), '>', 0)
+            ->order_by('f.event_date', 'asc');
+
+        return $query->as_object()->execute();
+    }
+
+    /**
+     * フリマ情報の最大ブースを取得する
+     *
+     * $termが未指定の場合、１ヵ月間で取得する
+     *
+     * @access public
+     * @param array $term 取得する期間
+     * @return object
+     * @author ida
+     */
+    public static function getFleamarketMaxBooth($term = null)
+    {
+        if (! $term) {
+            $term = array(
+                \DB::expr('CURDATE()'),
+                \DB::expr('CURDATE() + INTERVAL 1 MONTH')
+            );
+        }
+
+        $query = \DB::select(
+            'f.fleamarket_id', array(\DB::expr('SUM(fes.max_booth)'), 'max_booth')
+        );
+        $query->from(array('fleamarkets', 'f'))
+            ->join(array('fleamarket_entry_styles', 'fes'), 'inner')
+            ->on('f.fleamarket_id', '=', 'fes.fleamarket_id')
+            ->on('fes.deleted_at', 'IS', \DB::expr('NULL'))
+            ->where(array(
+                array('f.event_status', '<=', \Model_Fleamarket::EVENT_STATUS_RECEIPT_END),
+                array('f.display_flag', '=', \Model_Fleamarket::DISPLAY_FLAG_ON),
+                array('f.register_type', '=', \Model_Fleamarket::REGISTER_TYPE_ADMIN),
+                array('f.event_date', 'BETWEEN', $term),
+                array('f.deleted_at', 'IS', \DB::expr('NULL')),
+            ))
+            ->group_by(array('f.fleamarket_id', 'f.name', 'f.event_date',))
+            ->order_by('f.event_date', 'asc');
+
+        return $query->as_object()->execute();
+    }
+
+    /**
      * 検索条件を取得する
      *
-     * @access private
+     * @access public
      * @param array $condition_list 検索条件
      * @return array 検索条件
      * @author ida
@@ -1124,9 +1313,118 @@ QUERY;
     }
 
     /**
-     * 検索条件を取得する
+     * Fieldsetオブジェクトの生成
+     *
+     * @access public
+     * @param bool $is_admin 管理画面かどうか
+     * @return array
+     * @author ida
+     * @author kobayasi
+     */
+    public static function createFieldset($is_admin = false)
+    {
+        $fieldset = \Fieldset::forge('fleamarket');
+        $fieldset->add_model('Model_Fleamarket');
+        $fieldset->validation()->add_callable('Custom_Validation');
+
+        if (! $is_admin) {
+            $fieldset->add('reservation_email_confirm')
+                ->add_rule('match_field', 'reservation_email');
+        }
+
+        return $fieldset;
+    }
+
+    /**
+     * 予約状況の更新
+     *
+     * @access public
+     * @param bool $save
+     * @return void
+     * @author kobayasi
+     */
+    public function updateEventReservationStatus($save = true)
+    {
+        $max_booth = 0;
+        $remain_booth = 0;
+        foreach ($this->fleamarket_entry_styles as $fleamarket_entry_style) {
+            $max_booth += $fleamarket_entry_style->max_booth;
+            $remain_booth += $fleamarket_entry_style->remainBooth('master');
+        }
+
+        $is_save = false;
+        if ($remain_booth == 0) {
+            $is_save = true;
+            $this->event_reservation_status = self::EVENT_RESERVATION_STATUS_FULL;
+        } elseif (($max_booth * 0.2) >= $remain_booth) {
+            $is_save = true;
+            $this->event_reservation_status = self::EVENT_RESERVATION_STATUS_FEW;
+        }
+
+        if ($save && $is_save) {
+            $this->save();
+        }
+    }
+
+    /**
+     * 予約番号を採番する
      *
      * @access private
+     * @param bool $save 保存フラグ
+     * @return string
+     * @author kobayashi
+     * @author ida
+     */
+    public function makeReservationNumber($save = true)
+    {
+        $reservation_number = sprintf(
+            '%05d-%05d',
+            $this->fleamarket_id,
+            $this->reservation_serial
+        );
+        $this->reservation_serial =  DB::expr('reservation_serial + 1');
+
+        return $reservation_number;
+    }
+
+    /**
+     * イメージを取得する
+     *
+     * @access public
+     * @param int $priority 取得するイメージの番号
+     * @return vobject
+     * @author kobayasi
+     */
+    public function fleamarket_image($priority)
+    {
+        foreach ($this->fleamarket_images as $fleamarket_image) {
+            if ($fleamarket_image->priority == $priority) {
+                return $fleamarket_image;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * 出店予約判定
+     *
+     * @access public
+     * @param
+     * @return bool
+     * @author kobayasi
+     */
+    public function canReserve()
+    {
+        return
+            $this->event_status == \Model_Fleamarket::EVENT_STATUS_RESERVATION_RECEIPT
+            && $this->event_reservation_status != \Model_Fleamarket::EVENT_RESERVATION_STATUS_FULL;
+    }
+
+    /**
+     * 検索条件を取得する
+     *
+     * @access public
      * @param array $condition_list 検索条件
      * @return array 検索条件
      * @author void
@@ -1239,6 +1537,57 @@ QUERY;
     }
 
     /**
+     * 反響項目を文字列により連結する
+     *
+     * @access public
+     * @param array $link_from_list 反響項目リスト
+     * @return string
+     * @author ida
+     */
+    public static function implodeLinkFromList(Array $link_from_list = array())
+    {
+        $result = '';
+        if (empty($link_from_list)) {
+            return $result;
+        }
+
+        foreach ($link_from_list as $link_from) {
+            if (! empty($link_from)) {
+                $result .= $result === '' ? '' : ',';
+                $result .= trim($link_from);
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * 反響項目を文字列により分割する
+     *
+     * @access public
+     * @param array $link_from_list 反響項目リスト
+     * @return array
+     * @author ida
+     */
+    public static function explodeLinkFromList($link_from_list = null)
+    {
+        $result = array();
+        if (empty($link_from_list)) {
+            return $result;
+        }
+
+        $list = explode(',', $link_from_list);
+        foreach ($list as $link_from) {
+            $link_from = trim($link_from);
+            if (! empty($link_from)) {
+                $result[] = $link_from;
+            }
+        }
+
+        return $result;
+    }
+
+    /**
      * 指定された検索条件よりWHERE句とプレースホルダ―を生成する
      *
      * @access private
@@ -1286,77 +1635,5 @@ QUERY;
         }
 
         return array($conditions, $placeholders);
-    }
-
-    /**
-     * Fieldsetオブジェクトの生成
-     *
-     * @access public
-     * @param bool $is_admin 管理画面かどうか
-     * @return array
-     * @author ida
-     * @author kobayasi
-     */
-    public static function createFieldset($is_admin = false)
-    {
-        $fieldset = \Fieldset::forge('fleamarket');
-        $fieldset->add_model('Model_Fleamarket');
-
-        if (! $is_admin) {
-            $fieldset->add('reservation_email_confirm')
-                ->add_rule('match_field', 'reservation_email');
-        }
-
-        return $fieldset;
-    }
-
-    /**
-     * event_reservation_status の更新
-     *
-     * @access public
-     * @param bool $save
-     * @return void
-     * @author kobayasi
-     */
-    public function updateEventReservationStatus($save = true)
-    {
-        $is_full = true;
-        foreach ($this->fleamarket_entry_styles as $fleamarket_entry_style) {
-            if (! $fleamarket_entry_style->isFullBooth()){
-                $is_full = false;
-                break;
-            }
-        }
-        if ($is_full) {
-            $this->event_reservation_status = self::EVENT_RESERVATION_STATUS_FULL;
-            if ($save) {
-                $this->save();
-            }
-        }
-    }
-
-    public function incrementReservationSerial($save = true)
-    {
-        $this->reservation_serial = DB::expr('reservation_serial + 1');
-        if ($save) {
-            $this->save();
-        }
-    }
-
-    public function fleamarket_image($n)
-    {
-        foreach ($this->fleamarket_images as $fleamarket_image) {
-            if ($fleamarket_image->priority == $n) {
-                return $fleamarket_image;
-            }
-        }
-        return null;
-    }
-
-    public function canReserve()
-    {
-        return
-            $this->event_status             == Model_Fleamarket::EVENT_STATUS_RESERVATION_RECEIPT &&
-            $this->event_reservation_status != Model_Fleamarket::EVENT_RESERVATION_STATUS_FULL;
     }
 }

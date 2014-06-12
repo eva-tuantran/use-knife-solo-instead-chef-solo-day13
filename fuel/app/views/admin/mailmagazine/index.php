@@ -13,8 +13,8 @@
             ?>
             <div class="col-md-3">
               <div class="radio">
-                <label for="inputType<?php echo $mail_magazine_type_id;?>" class="control-label">
-                  <input id="inputType<?php echo $mail_magazine_type_id;?>" type="radio" name="mail_magazine_type" value="<?php echo $mail_magazine_type_id;?>"><?php echo $mail_magazine_type_name;?>
+                <label for="inputMailMagazineType_<?php echo $mail_magazine_type_id;?>" class="control-label">
+                  <input id="inputMailMagazineType_<?php echo $mail_magazine_type_id;?>" class="mailMagazineType" type="radio" name="mail_magazine_type" value="<?php echo $mail_magazine_type_id;?>"><?php echo $mail_magazine_type_name;?>
                 </label>
               </div>
             </div>
@@ -29,26 +29,25 @@
                 endif;
             ?>
           </div>
-          <div class="form-group type type3">
-            <label for="selectFleamarket" class="col-md-2 control-label">フリマ</label>
+          <div id="condition_4" class="form-group condition">
+            <label class="col-md-2 control-label">フリマ</label>
             <div class="col-md-5">
-              <select id="selectFleamarket" class="form-control col-md-2" name="fleamarket_id">
+              <select class="form-control col-md-2" name="waiting_fleamarket_id">
                 <option value="">選択してください</option>
                 <?php
-                    foreach ($fleamarket_list as $fleamarket):
-                        $event_date = date('Y年m月d日', strtotime($fleamarket['event_date']));
+                    foreach ($waiting_fleamarket_list as $fleamarket):
+                        $event_date = date('Y年m月d日', strtotime($fleamarket->event_date));
                         $selected = '';
-                        if (isset($input_data['fleamarket_id'])):
-                            $selected = $fleamarket['fleamarket_id'] == $input_data['fleamarket_id'] ? 'selected' : '';
-                        endif;
+                        $selected = $fleamarket->fleamarket_id == @$data['waiting_fleamarket_id'] ? 'selected' : '';
                 ?>
-                <option value="<?php echo $fleamarket['fleamarket_id'];?>" <?php echo $selected;?>>【<?php echo $event_date;?>】<?php echo e($fleamarket['name']);?></option>
+                <option value="<?php echo $fleamarket->fleamarket_id;?>" <?php echo $selected;?>>【<?php echo $event_date;?>】<?php echo e($fleamarket->name);?></option>
                 <?php
                     endforeach;
                 ?>
               </select>
+              <div>※１カ月以内でキャンセル待ちが発生しているフリマです</div>
               <?php
-                  if (isset($errors['fleamarket_id'])):
+                  if (isset($errors['waiting_fleamarket_id'])):
               ?>
               <div class="error-message">フリマを選択してください</div>
               <?php
@@ -56,18 +55,43 @@
               ?>
             </div>
           </div>
-          <div class="form-group type type2">
+          <div id="condition_3" class="form-group condition">
+            <label class="col-md-2 control-label">フリマ</label>
+            <div class="col-md-5">
+              <select class="form-control col-md-2" name="reserved_fleamarket_id">
+                <option value="">選択してください</option>
+                <?php
+                    foreach ($reservation_fleamarket_list as $fleamarket):
+                        $event_date = date('Y年m月d日', strtotime($fleamarket->event_date));
+                        $selected = '';
+                        $selected = $fleamarket->fleamarket_id == @$data->reserved_fleamarket_id ? 'selected' : '';
+                ?>
+                <option value="<?php echo $fleamarket->fleamarket_id;?>" <?php echo $selected;?>>【<?php echo $event_date;?>】<?php echo e($fleamarket->name);?></option>
+                <?php
+                    endforeach;
+                ?>
+              </select>
+              <?php
+                  if (isset($errors['reserved_fleamarket_id'])):
+              ?>
+              <div class="error-message">フリマを選択してください</div>
+              <?php
+                  endif;
+              ?>
+            </div>
+          </div>
+          <div id="condition_2" class="form-group condition">
             <label for="organization_flag" class="col-md-2">ユーザ種別</label>
             <div class="col-md-12">
               <div class="col-md-12 col-md-offset-1 radio clearfix">
                 <?php
                     $oraganization_flag_off = 'checked';
                     $oraganization_flag_on = '';
-                    if (! empty($input_data['organization_flag'])):
-                        if ($input_data['organization_flag'] == \Model_User::ORGANIZATION_FLAG_OFF):
+                    if (! empty($data['organization_flag'])):
+                        if ($data['organization_flag'] == \Model_User::ORGANIZATION_FLAG_OFF):
                             $oraganization_flag_off = 'checked';
                             $oraganization_flag_on = '';
-                        elseif ($input_data['organization_flag'] == \Model_User::ORGANIZATION_FLAG_ON):
+                        elseif ($data['organization_flag'] == \Model_User::ORGANIZATION_FLAG_ON):
                             $oraganization_flag_off = '';
                             $oraganization_flag_on = 'checked';
                         endif;
@@ -95,8 +119,8 @@
               <?php
                   foreach ($prefectures as $prefecture_id => $prefecture):
                       $checked = '';
-                      if (isset($input_data['prefecture_id'])):
-                          $checked = in_array($prefecture_id, $input_data['prefecture_id']) ? 'checked' : '';
+                      if (isset($data['prefecture_id'])):
+                          $checked = in_array($prefecture_id, $data['prefecture_id']) ? 'checked' : '';
                       endif;
               ?>
                 <label for="prefecture<?php echo $prefecture_id;?>" class="col-md-2 control-label">
@@ -120,8 +144,8 @@
               <label for="inputFromMail">差出人メールアドレス</label>
               <?php
                   $from_email = 'info@rakuichi-rakuza.jp';
-                  if (isset($input_data['from_email'])):
-                      $from_email = $input_data['from_email'];
+                  if (isset($data['from_email'])):
+                      $from_email = $data['from_email'];
                   endif;
               ?>
               <input id="inputFromMail" class="form-control" type="text" name="from_email" value="<?php echo e($from_email);?>">
@@ -139,8 +163,8 @@
               <label for="inputFromName">差出人</label>
               <?php
                   $from_name = '楽市楽座 運営事務局';
-                  if (isset($input_data['from_name'])):
-                      $from_name = $input_data['from_name'];
+                  if (isset($data['from_name'])):
+                      $from_name = $data['from_name'];
                   endif;
               ?>
               <input id="inputFromName" class="form-control" type="text" name="from_name" value="<?php echo e($from_name);?>">
@@ -156,7 +180,7 @@
           <div class="form-group">
             <div class="col-md-8">
               <label for="inputSubject">件名</label>
-              <input id="inputSubject" class="form-control" type="text" name="subject" value="<?php echo e($input_data['subject']);?>">
+              <input id="inputSubject" class="form-control" type="text" name="subject" value="<?php echo e($data['subject']);?>">
               <?php
                   if (isset($errors['subject'])):
               ?>
@@ -169,7 +193,7 @@
           <div class="form-group">
             <div class="col-md-10">
               <label for="file">本文</label>
-              <textarea class="form-control" cols="70" rows="20" name="body"><?php echo e($input_data['body']);?></textarea>
+              <textarea class="form-control" cols="70" rows="20" name="body"><?php echo e($data['body']);?></textarea>
               <?php
                   if (isset($errors['body'])):
               ?>
@@ -181,13 +205,20 @@
           </div>
           <div class="form-group">
             <div class="col-md-8">
-              <ul class="list-group type type1">
+              <ul id="replace_1" class="list-group replace">
                 <li class="list-group-item">ユーザ名を記載する箇所に「##user_name##」を記述してください</li>
               </ul>
-              <ul class="list-group type type2">
+              <ul id="replace_2" class="list-group replace">
                 <li class="list-group-item">ユーザ名を記載する箇所に「##user_name##」を記述してください</li>
               </ul>
-              <ul class="list-group type type3">
+              <ul id="replace_3" class="list-group replace">
+                <li class="list-group-item">ユーザ名を挿入する箇所に「##user_name##」を記述してください</li>
+                <li class="list-group-item">フリマ名を挿入する箇所に「##fleamarket_name##」を記述してください</li>
+                <li class="list-group-item">開催日を挿入する箇所に「##event_date##」を記述してください</li>
+                <li class="list-group-item">開始時間を挿入する箇所に「##start_time##」を記述してください</li>
+                <li class="list-group-item">終了時間を挿入する箇所に「##end_time##」を記述してください</li>
+              </ul>
+              <ul id="replace_4" class="list-group replace">
                 <li class="list-group-item">ユーザ名を挿入する箇所に「##user_name##」を記述してください</li>
                 <li class="list-group-item">フリマ名を挿入する箇所に「##fleamarket_name##」を記述してください</li>
                 <li class="list-group-item">開催日を挿入する箇所に「##event_date##」を記述してください</li>
@@ -206,23 +237,19 @@
 </div>
 <script type="text/javascript">
 $(function() {
-  $("#inputType1").on("click", function(evt) {
-    $(".type").css("display", "none");
-    $(".type1").css("display", "block");
-  });
+  $("input.mailMagazineType").on("click", function(evt) {
+    var mail_magazine_type = $(this).attr('id').replace('inputMailMagazineType_', '');
 
-  $("#inputType2").on("click", function(evt) {
-    $(".type").css("display", "none");
-    $(".type2").css("display", "block");
-  });
-
-  $("#inputType3").on("click", function(evt) {
-    $(".type").css("display", "none");
-    $(".type3").css("display", "block");
+    $(".condition").css("display", "none");
+    $("#condition_" + mail_magazine_type).css("display", "block");
+    $(".replace").css("display", "none");
+    $("#replace_" + mail_magazine_type).css("display", "block");
   });
 
   $("#doSubmit").on("click", function(evt) {
-    if (! $("#inputType1").prop("checked")) {
+    if (! ($(this).attr('id') == 'inputMailMagazineType_1'
+        && $(this).prop("checked"))
+    ) {
       return;
     }
 
@@ -241,6 +268,6 @@ $(function() {
     });
   });
 
-  $("#inputType<?php echo isset($input_data['mail_magazine_type']) ? $input_data['mail_magazine_type'] : \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_RESEVED_ENTRY;?>").click();
+  $("#inputMailMagazineType_<?php echo isset($data['mail_magazine_type']) ? $data['mail_magazine_type'] : \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_RESEVED_ENTRY;?>").click();
 });
 </script>

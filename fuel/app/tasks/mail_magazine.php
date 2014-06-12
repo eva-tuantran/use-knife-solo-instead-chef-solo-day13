@@ -2,7 +2,7 @@
 namespace Fuel\Tasks;
 
 /**
- * キャンセル待ちユーザーメール送信task
+ * メールマガジン送信
  *
  * @author kobayasi
  */
@@ -25,6 +25,8 @@ class Mail_Magazine
      */
     public function run($mail_magazine_id, $administrator_id)
     {
+        ini_set('memory_limit', '512M');
+
         $this->openLog($mail_magazine_id);
         $this->log('メルマガID: '. $mail_magazine_id . ' の送信を開始します' . "\n");
 
@@ -39,21 +41,23 @@ class Mail_Magazine
         $mail_magazine->save();
 
         $mail_magazine_users = \Model_Mail_Magazine_User::findByMailMagazineId($mail_magazine_id);
-
         $is_stop = false;
         $total_count = 0;
         $success_count = 0;
         $error_count = 0;
+        $replace_data = $this->makeReplaceData($mail_magazine);
 
         foreach ($mail_magazine_users as $mail_magazine_user) {
             try {
-                usleep(250000);
+                usleep(300000);
                 if (! \Model_Mail_Magazine::isProcess($mail_magazine_id)) {
                     $is_stop = true;
                     $this->log($mail_magazine_user->user_id . ": cancel.\n");
                     break;
                 }
-                $send_result = $this->send($mail_magazine_user, $mail_magazine);
+                $send_result = $this->send(
+                    $mail_magazine_user, $mail_magazine, $replace_data
+                );
 
                 $this->log($mail_magazine_user->user_id . ": success\n");
                 $send_status = $send_result
@@ -92,20 +96,52 @@ class Mail_Magazine
     }
 
     /**
+     * 本文のリプレイス情報を生成する
+     *
+     * @access private
+     * @param array $mail_magazine メルマガ情報
+     * @return array
+     * @author ida
+     */
+    private function makeReplaceData($mail_magazine)
+    {
+        $replace_data= array();
+        $add_data = unserialize($mail_magazine['additional_serialize_data']);
+
+        $mail_magazine_type = $mail_magazine['mail_magazine_type'];
+        switch ($mail_magazine_type) {
+            case \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_ALL:
+                break;
+            case \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_REQUEST:
+                break;
+            case \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_RESEVED_ENTRY:
+            case \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_WAITING_ENTRY:
+                $fleamarket_id = $add_data['fleamarket_id'];
+                $fleamarket = \Model_Fleamarket::find($fleamarket_id);
+                $replace_data['fleamarket'] = $fleamarket;
+                break;
+        }
+
+        return $replace_data;
+    }
+
+    /**
      * メール送信処理
      *
      * @access public
      * @param array $mail_magazine_user 送信先ユーザ情報
-     * @param array $mail_magazine メールマガジン情報
+     * @param array $mail_magazine メルマガ情報
+     * @param array $replace_data 本文リプレイス情報
      * @return bool
      * @author ida
      */
-    private function send($mail_magazine_user, $mail_magazine)
+    private function send($mail_magazine_user, $mail_magazine, $replace_data)
     {
         if (empty($mail_magazine_user->user->email)) {
             return false;
         }
 
+        $mail_magazine_type = $mail_magazine['mail_magazine_type'];
         $from_name = $mail_magazine['from_name'];
         $from_email = $mail_magazine['from_email'];
         $to = $mail_magazine_user->user->email;
@@ -114,20 +150,8 @@ class Mail_Magazine
         );
         $body = $mail_magazine['body'];
 
-        $replace_data= array();
         $replace_data['user'] = $mail_magazine_user->user;
-        $add_data = unserialize($mail_magazine['additional_serialize_data']);
-
-        $type = $mail_magazine['mail_magazine_type'];
-        if ($type == \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_ALL) {
-        } elseif ($type == \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_REQUEST) {
-        } elseif ($type == \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_RESEVED_ENTRY) {
-            $fleamarket_id = $add_data['fleamarket_id'];
-            $fleamarket = \Model_Fleamarket::find($fleamarket_id);
-            $replace_data['fleamarket'] = $fleamarket;
-        }
-
-        $pattern = \Model_Mail_Magazine::getPatternParameter($type);
+        $pattern = \Model_Mail_Magazine::getPatternParameter($mail_magazine_type);
         list($pattern, $replacement) = \Model_Mail_Magazine::createReplaceParameter(
             $body, $pattern, $replace_data
         );

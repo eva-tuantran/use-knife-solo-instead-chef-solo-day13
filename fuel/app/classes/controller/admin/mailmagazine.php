@@ -101,11 +101,11 @@ class Controller_Admin_Mailmagazine extends Controller_Admin_Base_Template
         Asset::css('jquery-ui.min.css', array(), 'add_css');
         Asset::js('jquery-ui.min.js', array(), 'add_js');
 
-        $input_data = $this->getInputData(true);
+        $data = $this->getInputData(true);
         $errors = $this->getErrorMessage();
 
         $view_model = \ViewModel::forge('admin/mailmagazine/index');
-        $view_model->set('input_data', $input_data, false);
+        $view_model->set('data', $data, false);
         $view_model->set('errors', $errors);
         $this->template->content = $view_model;
     }
@@ -123,30 +123,28 @@ class Controller_Admin_Mailmagazine extends Controller_Admin_Base_Template
         Asset::css('jquery-ui.min.css', array(), 'add_css');
         Asset::js('jquery-ui.min.js', array(), 'add_js');
 
-        $input_data = \Input::post();
-        $fieldset = $this->getFieldset($input_data['mail_magazine_type']);
+        $data = \Input::post();
+        $fieldset = $this->getFieldset($data['mail_magazine_type']);
 
         $validation = $fieldset->validation();
-        $validation_result = $validation->run($input_data);
+        // @todo メルマガタイプごとに フリマIDをセットしないと！
+        $validation_result = $validation->run($data);
 
         if (! $validation_result) {
-            $input_data = $validation->input();
-            $input_data['fleamarket_id'] = \Input::post('fleamarket_id');
-            $input_data['prefecture_id'] = \Input::post('prefecture_id');
-
-            $this->setInputData($input_data);
+            $this->setInputData($validation->input());
             $this->setErrorMessage($validation->error_message());
 
             \Response::redirect('admin/mailmagazine/index');
         }
 
-        $input_data = $validation->validated();
-
         $view_model = \ViewModel::forge('admin/mailmagazine/confirm');
-        list($view, $replace_data) = $this->setupData($view_model, $input_data);
-        $input_data['query'] = \DB::last_query();
+        $valid_data = $validation->validated();
+        list($view_model, $replace_data) = $this->setupData(
+            $view_model, $valid_data
+        );
+        $valid_data['query'] = \DB::last_query();
 
-        $this->setInputData($input_data);
+        $this->setInputData($valid_data);
         $this->template->content = $view_model;
     }
 
@@ -207,7 +205,7 @@ class Controller_Admin_Mailmagazine extends Controller_Admin_Base_Template
             $response = array('status' => 400, 'message' => $message);
         }
 
-        return $this->response_json($response);
+        return $this->responseJson($response);
     }
 
     /**
@@ -262,7 +260,7 @@ class Controller_Admin_Mailmagazine extends Controller_Admin_Base_Template
         }
 
         $view_model = \ViewModel::forge('admin/mailmagazine/thanks');
-        list($view, $replace_data) = $this->setupData($view_model, $input_data);
+        list($view_model, $replace_data) = $this->setupData($view_model, $input_data);
 
         // タスク実行
         $oil_path = realpath(APPPATH . '/../../') . DS;
@@ -307,7 +305,7 @@ class Controller_Admin_Mailmagazine extends Controller_Admin_Base_Template
             $response = array('status' => 400, 'message' => $message);
         }
 
-        return $this->response_json($response);
+        return $this->responseJson($response);
     }
 
     /**
@@ -348,7 +346,7 @@ class Controller_Admin_Mailmagazine extends Controller_Admin_Base_Template
             $response = array('status' => 400, 'message' => $message);
         }
 
-        return $this->response_json($response);
+        return $this->responseJson($response);
     }
 
     /**
@@ -377,48 +375,61 @@ class Controller_Admin_Mailmagazine extends Controller_Admin_Base_Template
      * 表示に必要なデータを取得し設定する
      *
      * @access private
-     * @param object $view_model　ビューモデル
+     * @param object $view_model ビューモデル
      * @param array $input_data 入力データ
      * @return array
      * @author ida
      */
-    private function setupData($view_model, $input_data)
+    private function setupData($view_model, $data)
     {
         $replace_data = array();
         $replace_data['user'] = $this->administrator;
 
-        $type = $input_data['mail_magazine_type'];
+        $mail_magazine_type = $data['mail_magazine_type'];
+        switch ($mail_magazine_type) {
+            case \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_ALL:
+                $users = \Model_User::getActiveUsers();
+                break;
+            case \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_REQUEST:
+                $users = \Model_User::getMailMagazineUserBy(
+                    $data['prefecture_id'], $data['organization_flag']
+                );
 
-        if ($type == \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_ALL) {
-            $users = \Model_User::getActiveUsers();
-        } elseif ($type == \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_REQUEST) {
-            $users = \Model_User::getMailMagazineUserBy(
-                $input_data['prefecture_id'], $input_data['organization_flag']
-            );
+                $view_model->set(
+                    'prefectures', \Config::get('master.prefectures'), false
+                );
+                break;
+            case \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_RESEVED_ENTRY:
+                $fleamarket_id = $data['reserved_fleamarket_id'];
+                $users = \Model_Entry::getEntriesByFleamarketId(
+                    $fleamarket_id, \Model_Entry::ENTRY_STATUS_RESERVED
+                );
+                $fleamarket = \Model_Fleamarket::find($fleamarket_id);
+                $replace_data['fleamarket'] = $fleamarket;
 
-            $view_model->set(
-                'prefectures', \Config::get('master.prefectures'), false
-            );
-        } elseif ($type == \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_RESEVED_ENTRY) {
-            $users = \Model_Entry::getEntriesByFleamarketId(
-                $input_data['fleamarket_id']
-            );
+                $view_model->set('fleamarket', $fleamarket, false);
+                break;
+            case \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_WAITING_ENTRY:
+                $fleamarket_id = $data['waiting_fleamarket_id'];
+                $users = \Model_Entry::getEntriesByFleamarketId(
+                    $fleamarket_id, \Model_Entry::ENTRY_STATUS_WAITING
+                );
+                $fleamarket = \Model_Fleamarket::find($fleamarket_id);
+                $replace_data['fleamarket'] = $fleamarket;
 
-            $fleamarket = \Model_Fleamarket::find($input_data['fleamarket_id']);
-            $replace_data['fleamarket'] = $fleamarket;
-
-            $view_model->set('fleamarket', $fleamarket, false);
+                $view_model->set('fleamarket', $fleamarket, false);
+                break;
         }
         $view_model->set('users', $users, false);
 
-        $body = $input_data['body'];
-        $pattern = \Model_Mail_Magazine::getPatternParameter($type);
+        $body = $data['body'];
+        $pattern = \Model_Mail_Magazine::getPatternParameter($mail_magazine_type);
         list($pattern, $replacement) = \Model_Mail_Magazine::createReplaceParameter(
             $body, $pattern, $replace_data
         );
         $body = \Model_Mail_Magazine::replaceByParam($body, $pattern, $replacement);
         $view_model->set('body', $body, false);
-        $view_model->set('input_data', $input_data, false);
+        $view_model->set('input_data', $data, false);
 
         return array($view_model, $replace_data);
     }
@@ -434,18 +445,27 @@ class Controller_Admin_Mailmagazine extends Controller_Admin_Base_Template
     private function getAdditionalData($input_data)
     {
         $additional_data = array();
-        $type = $input_data['mail_magazine_type'];
+        $mail_magazine_type = $input_data['mail_magazine_type'];
 
-        if ($type == \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_ALL) {
-        } elseif ($type == \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_REQUEST) {
-            $additional_data = array(
-                'prefecture_id' => $input_data['prefecture_id'],
-                'organization_flag' => $input_data['organization_flag'],
-            );
-        } elseif ($type == \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_RESEVED_ENTRY) {
-            $additional_data = array(
-                'fleamarket_id' => $input_data['fleamarket_id']
-            );
+        switch ($mail_magazine_type) {
+            case \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_ALL:
+                break;
+            case \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_REQUEST:
+                $additional_data = array(
+                    'prefecture_id' => $input_data['prefecture_id'],
+                    'organization_flag' => $input_data['organization_flag'],
+                );
+                break;
+            case \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_RESEVED_ENTRY:
+                $additional_data = array(
+                    'fleamarket_id' => $input_data['reserved_fleamarket_id']
+                );
+                break;
+            case \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_WAITING_ENTRY:
+                $additional_data = array(
+                    'fleamarket_id' => $input_data['waiting_fleamarket_id']
+                );
+                break;
         }
 
         return $additional_data;
@@ -463,18 +483,26 @@ class Controller_Admin_Mailmagazine extends Controller_Admin_Base_Template
     {
         $fieldset = \Model_Mail_Magazine::createFieldset();
 
-        if ($mail_magazine_type == \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_REQUEST) {
-            $fieldset->add('prefecture_id')
-                ->add_rule('checkbox_require', 1)
-                ->add_rule('checkbox_values', \Config::get('master.prefectures'));
-            $fieldset->add('organization_flag')
-                ->add_rule('required')
-                ->add_rule('valid_string', array('numeric'));
-            $fieldset->validation()->add_callable('Custom_Validation');
-        } else if ($mail_magazine_type == \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_RESEVED_ENTRY) {
-            $fieldset->add('fleamarket_id')
-                ->add_rule('required')
-                ->add_rule('valid_string', array('numeric'));
+        switch ($mail_magazine_type) {
+            case \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_REQUEST:
+                $fieldset->add('prefecture_id')
+                    ->add_rule('checkbox_require', 1)
+                    ->add_rule('checkbox_values', \Config::get('master.prefectures'));
+                $fieldset->add('organization_flag')
+                    ->add_rule('required')
+                    ->add_rule('valid_string', array('numeric'));
+                $fieldset->validation()->add_callable('Custom_Validation');
+                break;
+            case \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_RESEVED_ENTRY:
+                $fieldset->add('reserved_fleamarket_id')
+                    ->add_rule('required')
+                    ->add_rule('valid_string', array('numeric'));
+                break;
+            case \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_WAITING_ENTRY:
+                $fieldset->add('waiting_fleamarket_id')
+                    ->add_rule('required')
+                    ->add_rule('valid_string', array('numeric'));
+                break;
         }
 
         return $fieldset;

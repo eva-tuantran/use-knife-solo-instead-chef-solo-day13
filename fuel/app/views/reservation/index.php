@@ -32,10 +32,10 @@
       <h3>フリマ予約情報入力欄</h3>
       <?php if (count($fleamarket->fleamarket_entry_styles) == 0):?>
       <div class="errorMessage">現在予約することが出来ません</div>
-      <?php elseif ($user->hasEntry($fleamarket->fleamarket_id)):?>
-      <div class="errorMessage">既に予約済みです。キャンセルの場合、<a href="/mypage">マイページにてキャンセル</a>を行って下さい。</div>
+      <?php elseif ($user->hasReserved($fleamarket->fleamarket_id)):?>
+      <div class="errorMessage">既に予約済みです。解除を希望の場合、<a href="/mypage">マイページにてキャンセル</a>を行って下さい。</div>
       <?php elseif ($user->hasWaiting($fleamarket->fleamarket_id)):?>
-      <div class="errorMessage">既にキャンセル待ちをしています。</div>
+      <div class="errorMessage">既にキャンセル待ちをしています。解除を希望の場合、<a href="/mypage">マイページにてキャンセル</a>を行って下さい。</div>
       <?php else:?>
       <form action="/reservation/confirm" method="post" class="form-horizontal">
         <input type="hidden" name="fleamarket_id" value="<?php echo e($input['fleamarket_id']); ?>">
@@ -121,7 +121,7 @@
             <div class="col-sm-10">
               <select name="link_from" class="form-control">
               <?php
-                  foreach (\Model_Entry::getLinkFromList() as $key => $link_from):
+                  foreach (\Model_Fleamarket::explodeLinkFromList($fleamarket->link_from_list) as $key => $link_from):
                       $selected = '';
                       if ($input['link_from'] == $link_from):
                           $selected = 'selected';

@@ -301,15 +301,16 @@ class Model_Entry extends Model_Base
      * @return array
      * @author ida
      */
-    public static function getEntriesByFleamarketId($fleamarket_id)
-    {
+    public static function getEntriesByFleamarketId(
+        $fleamarket_id, $entry_status = self::ENTRY_STATUS_RESERVED
+    ) {
         if (! $fleamarket_id) {
             return null;
         }
 
         $placeholders = array(
             ':flearmarket_id' => $fleamarket_id,
-            ':entry_status' => \Model_Entry::ENTRY_STATUS_RESERVED,
+            ':entry_status' => $entry_status,
         );
 
         $query = <<<"QUERY"
@@ -322,6 +323,7 @@ FROM
     entries AS e
 INNER JOIN
     users AS u ON e.user_id = u.user_id
+    AND u.deleted_at IS NULL
 WHERE
     e.fleamarket_id = :flearmarket_id
     AND e.entry_status = :entry_status
@@ -340,7 +342,7 @@ QUERY;
     }
 
     /**
-     * エントリスタイルごとの予約数を取得する
+     * 出店形態ごとの予約数を取得する
      *
      * @access public
      * @param int $fleamarket_id フリーマーケットID
@@ -373,7 +375,7 @@ SELECT
     COUNT(user_id) AS entry_count,
     SUM(reserved_booth) AS reserved_booth
 FROM
-    {$table_name}
+    entries
 WHERE
     fleamarket_id = :flearmarket_id
     AND entry_status = :entry_status
@@ -392,7 +394,34 @@ QUERY;
     }
 
     /**
-     * 特定のユーザの出店（予約）したフリマ情報の件数を取得します
+     * 特定のユーザ、開催状況の一覧を取得する
+     *
+     * @access public
+     * @param mixed $user_id ユーザID
+     * @param int $entry_status 出店予約状況
+     * @return array
+     * @author ida
+     */
+    public static function getUserEntriesByEntryStatus($user_id, $entry_status)
+    {
+        $query = \DB::select(
+            'e.fleamarket_id', 'e.entry_status',
+            array('f.event_date', 'event_date')
+        );
+        $query->from(array('entries', 'e'))
+            ->join(array('fleamarkets', 'f'), 'inner')
+            ->on('e.fleamarket_id', '=', 'f.fleamarket_id')
+            ->where(array(
+                array('e.user_id', '=', $user_id),
+                array('e.entry_status', '=', $entry_status),
+                array('f.event_date', '>=', \DB::expr('CURDATE()')),
+            ));
+
+        return $query->execute()->as_array();
+    }
+
+    /**
+     * 特定のユーザが出店（予約）したフリマ情報の件数を取得します
      *
      * @param mixed $user_id
      * @access public
@@ -444,21 +473,36 @@ SELECT
 FROM
     entries AS e
 LEFT JOIN
-    fleamarkets AS f ON
-    e.fleamarket_id = f.fleamarket_id
+    fleamarkets AS f ON e.fleamarket_id = f.fleamarket_id
+    AND f.deleted_at IS NULL
 LEFT JOIN
     locations AS l ON f.location_id = l.location_id
+    AND l.deleted_at IS NULL
 LEFT JOIN
     fleamarket_abouts AS fa ON f.fleamarket_id = fa.fleamarket_id
     AND fa.about_id = :about_access_id
+    AND fa.deleted_at IS NULL
 LEFT JOIN
-    fleamarket_images AS fi ON
-    e.fleamarket_id = fi.fleamarket_id AND priority = 1
+    (
+        SELECT
+            fi.fleamarket_image_id,
+            fi.fleamarket_id,
+            fi.file_name,
+            MIN(fi.priority)
+        FROM
+            fleamarket_images AS fi
+        WHERE
+            deleted_at IS NULL
+        GROUP BY
+            fi.fleamarket_id
+        ORDER BY
+            priority
+    ) AS fi ON f.fleamarket_id = fi.fleamarket_id
 WHERE
-    e.user_id = :user_id AND
-    e.entry_status = :entry_status AND
-    f.display_flag = :display_flag AND
-    e.deleted_at IS NULL
+    e.user_id = :user_id
+    AND e.entry_status = :entry_status
+    AND f.display_flag = :display_flag
+    AND e.deleted_at IS NULL
 ORDER BY
     f.register_type = :register_status,
     f.event_date DESC,
@@ -493,17 +537,17 @@ QUERY;
 
         $query = <<<QUERY
 SELECT
-    COUNT(*) as count
+    COUNT(*) AS count
 FROM
     entries AS e
 LEFT JOIN
-    fleamarkets AS f ON
-    e.fleamarket_id = f.fleamarket_id
+    fleamarkets AS f ON e.fleamarket_id = f.fleamarket_id
+    AND f.deleted_at IS NULL
 WHERE
-    e.user_id = :user_id AND
-    e.entry_status = :entry_status AND
-    f.display_flag = :display_flag AND
-    e.deleted_at IS NULL
+    e.user_id = :user_id
+    AND e.entry_status = :entry_status
+    AND f.display_flag = :display_flag
+    AND e.deleted_at IS NULL
 QUERY;
 
         $entry_count = \DB::query($query)->parameters($placeholders)->execute()->get('count');
@@ -570,22 +614,37 @@ SELECT
 FROM
     entries AS e
 LEFT JOIN
-    fleamarkets AS f ON
-    e.fleamarket_id = f.fleamarket_id
+    fleamarkets AS f ON e.fleamarket_id = f.fleamarket_id
+    AND f.deleted_at IS NULL
 LEFT JOIN
     locations AS l ON f.location_id = l.location_id
+    AND l.deleted_at IS NULL
 LEFT JOIN
     fleamarket_abouts AS fa ON f.fleamarket_id = fa.fleamarket_id
     AND fa.about_id = :about_access_id
+    AND fa.deleted_at IS NULL
 LEFT JOIN
-    fleamarket_images AS fi ON
-    e.fleamarket_id = fi.fleamarket_id AND priority = 1
+    (
+        SELECT
+            fi.fleamarket_image_id,
+            fi.fleamarket_id,
+            fi.file_name,
+            MIN(fi.priority)
+        FROM
+            fleamarket_images AS fi
+        WHERE
+            deleted_at IS NULL
+        GROUP BY
+            fi.fleamarket_id
+        ORDER BY
+            priority
+    ) AS fi ON f.fleamarket_id = fi.fleamarket_id
 WHERE
-    e.user_id = :user_id AND
-    e.entry_status = :entry_status AND
-    f.display_flag = :display_flag AND
-    f.event_date >= CURDATE() AND
-    e.deleted_at IS NULL
+    e.user_id = :user_id
+    AND e.entry_status = :entry_status
+    AND f.display_flag = :display_flag
+    AND f.event_date >= CURDATE()
+    AND e.deleted_at IS NULL
 ORDER BY
     f.register_type = :register_status,
     f.event_date DESC,
@@ -622,18 +681,18 @@ QUERY;
 
         $query = <<<QUERY
 SELECT
-    COUNT(*) as count
+    COUNT(*) AS count
 FROM
     entries AS e
 LEFT JOIN
-    fleamarkets AS f ON
-    e.fleamarket_id = f.fleamarket_id
+    fleamarkets AS f ON e.fleamarket_id = f.fleamarket_id
+    AND f.deleted_at IS NULL
 WHERE
-    e.user_id = :user_id AND
-    e.entry_status = :entry_status AND
-    f.display_flag = :display_flag AND
-    f.event_date >= CURDATE() AND
-    e.deleted_at IS NULL
+    e.user_id = :user_id
+    AND e.entry_status = :entry_status
+    AND f.display_flag = :display_flag
+    AND f.event_date >= CURDATE()
+    AND e.deleted_at IS NULL
 QUERY;
 
         $reserved_entry_count = \DB::query($query)->parameters($placeholders)->execute()->get('count');
@@ -667,6 +726,7 @@ QUERY;
 
         $query = <<<QUERY
 SELECT
+    e.entry_id,
     f.fleamarket_id,
     f.name,
     f.promoter_name,
@@ -694,22 +754,37 @@ SELECT
 FROM
     entries AS e
 LEFT JOIN
-    fleamarkets AS f ON
-    e.fleamarket_id = f.fleamarket_id
+    fleamarkets AS f ON e.fleamarket_id = f.fleamarket_id
+    AND f.deleted_at IS NULL
 LEFT JOIN
     locations AS l ON f.location_id = l.location_id
+    AND l.deleted_at IS NULL
 LEFT JOIN
     fleamarket_abouts AS fa ON f.fleamarket_id = fa.fleamarket_id
     AND fa.about_id = :about_access_id
+    AND fa.deleted_at IS NULL
 LEFT JOIN
-    fleamarket_images AS fi ON
-    e.fleamarket_id = fi.fleamarket_id AND priority = 1
+    (
+        SELECT
+            fi.fleamarket_image_id,
+            fi.fleamarket_id,
+            fi.file_name,
+            MIN(fi.priority)
+        FROM
+            fleamarket_images AS fi
+        WHERE
+            deleted_at IS NULL
+        GROUP BY
+            fi.fleamarket_id
+        ORDER BY
+            priority
+    ) AS fi ON f.fleamarket_id = fi.fleamarket_id
 WHERE
-    e.user_id = :user_id AND
-    e.entry_status = :entry_status AND
-    f.display_flag = :display_flag AND
-    f.event_date >= CURDATE() AND
-    e.deleted_at IS NULL
+    e.user_id = :user_id
+    AND e.entry_status = :entry_status
+    AND f.display_flag = :display_flag
+    AND f.event_date >= CURDATE()
+    AND e.deleted_at IS NULL
 ORDER BY
     f.register_type = :register_status,
     f.event_date DESC,
@@ -748,14 +823,14 @@ SELECT
 FROM
     entries AS e
 LEFT JOIN
-    fleamarkets AS f ON
-    e.fleamarket_id = f.fleamarket_id
+    fleamarkets AS f ON e.fleamarket_id = f.fleamarket_id
+    AND f.deleted_at IS NULL
 WHERE
-    e.user_id = :user_id AND
-    e.entry_status = :entry_status AND
-    f.display_flag = :display_flag AND
-    f.event_date >= CURDATE() AND
-    e.deleted_at IS NULL
+    e.user_id = :user_id
+    AND e.entry_status = :entry_status
+    AND f.display_flag = :display_flag
+    AND f.event_date >= CURDATE()
+    AND e.deleted_at IS NULL
 QUERY;
 
         $reserved_entry_count = \DB::query($query)->parameters($placeholders)->execute()->get('count');
@@ -817,22 +892,37 @@ SELECT
 FROM
     entries AS e
 LEFT JOIN
-    fleamarkets AS f ON
-    e.fleamarket_id = f.fleamarket_id
+    fleamarkets AS f ON e.fleamarket_id = f.fleamarket_id
+    AND f.deleted_at IS NULL
 LEFT JOIN
     locations AS l ON f.location_id = l.location_id
+    AND l.deleted_at IS NULL
 LEFT JOIN
     fleamarket_abouts AS fa ON f.fleamarket_id = fa.fleamarket_id
     AND fa.about_id = :about_access_id
+    AND fa.deleted_at IS NULL
 LEFT JOIN
-    fleamarket_images AS fi ON
-    e.fleamarket_id = fi.fleamarket_id AND priority = 1
+    (
+        SELECT
+            fi.fleamarket_image_id,
+            fi.fleamarket_id,
+            fi.file_name,
+            MIN(fi.priority)
+        FROM
+            fleamarket_images AS fi
+        WHERE
+            deleted_at IS NULL
+        GROUP BY
+            fi.fleamarket_id
+        ORDER BY
+            priority
+    ) AS fi ON f.fleamarket_id = fi.fleamarket_id
 WHERE
-    e.user_id = :user_id AND
-    e.entry_status = :entry_status AND
-    f.display_flag = :display_flag AND
-    f.event_date < CURDATE() AND
-    e.deleted_at IS NULL
+    e.user_id = :user_id
+    AND e.entry_status = :entry_status
+    AND f.display_flag = :display_flag
+    AND f.event_date < CURDATE()
+    AND e.deleted_at IS NULL
 ORDER BY
     f.register_type = :register_status,
     f.event_date DESC,
@@ -870,13 +960,13 @@ SELECT
 FROM
     entries AS e
 LEFT JOIN
-    fleamarkets AS f ON
-    e.fleamarket_id = f.fleamarket_id
+    fleamarkets AS f ON e.fleamarket_id = f.fleamarket_id
+    AND f.deleted_at IS NULL
 WHERE
-    e.user_id = :user_id AND
-    f.event_date < CURDATE() AND
-    e.entry_status = :entry_status AND
-    e.deleted_at IS NULL
+    e.user_id = :user_id
+    AND f.event_date < CURDATE()
+    AND e.entry_status = :entry_status
+    AND e.deleted_at IS NULL
 QUERY;
 
         $finished_entry_count = \DB::query($query)->parameters($placeholders)->execute()->get('count');

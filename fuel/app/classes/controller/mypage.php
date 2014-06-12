@@ -1,13 +1,12 @@
 <?php
 
 /**
- * 会員ページ
+ * マイページ
  *
  * @author shimma
  */
 class Controller_Mypage extends Controller_Base_Template
 {
-
     protected $_login_actions = array(
         'index',
         'password',
@@ -26,18 +25,12 @@ class Controller_Mypage extends Controller_Base_Template
         'passwordchange',
     );
 
-    /**
-     * before
-     *
-     * @todo エラーを移動
-     */
     public function before()
     {
         parent::before();
-        // throw new SystemException(\Model_Error::ER00101);
 
         if (! $this->login_user) {
-            throw new SystemException(\Model_Error::ER00702);
+            throw new \SystemException(\Model_Error::ER00701);
         }
     }
 
@@ -92,8 +85,8 @@ class Controller_Mypage extends Controller_Base_Template
      */
     public function action_list()
     {
-        Asset::css('jquery-ui.min.css', array(), 'add_css');
-        Asset::js('jquery-ui.min.js', array(), 'add_js');
+        \Asset::css('jquery-ui.min.css', array(), 'add_css');
+        \Asset::js('jquery-ui.min.js', array(), 'add_js');
 
         $pagination_param = 'p';
         $item_per_page = 10;
@@ -126,7 +119,7 @@ class Controller_Mypage extends Controller_Base_Template
         }
 
         $num_links = 5;
-        $pagination = Pagination::forge('mypage/list',
+        $pagination = \Pagination::forge('mypage/list',
             array(
                 'uri_segment' => $pagination_param,
                 'num_links'   => $num_links,
@@ -136,23 +129,22 @@ class Controller_Mypage extends Controller_Base_Template
 
         $fleamarkets_view = array();
         foreach ($fleamarkets as $fleamarket) {
-            $fleamarkets_view[] = ViewModel::forge('component/fleamarket')
+            $fleamarkets_view[] = \ViewModel::forge('component/fleamarket')
                 ->set('type', $type)
                 ->set('fleamarket', $fleamarket)
                 ->set('user', $this->login_user);
         };
 
-        $view_model = View::forge('mypage/list');
+        $view_model = \View::forge('mypage/list');
         $view_model->set('type', $type, false);
         $view_model->set('pagination', $pagination, false);
         $view_model->set('user', $this->login_user, false);
         $view_model->set('fleamarkets_view', $fleamarkets_view, false);
-        $view_model->set('calendar', ViewModel::forge('component/calendar'), false);
-        $view_model->set('prefectures', Config::get('master.prefectures'), false);
-        $view_model->set('regions', Config::get('master.regions'), false);
+        $view_model->set('calendar', \ViewModel::forge('component/calendar'), false);
+        $view_model->set('prefectures', \Config::get('master.prefectures'), false);
+        $view_model->set('regions', \Config::get('master.regions'), false);
         $this->template->content = $view_model;
     }
-
 
     /**
      * 出店予約のキャンセル
@@ -166,8 +158,9 @@ class Controller_Mypage extends Controller_Base_Template
     public function get_cancel()
     {
         $entry_id = \Input::get('entry_id');
+        $cancel = \Input::get('cancel');
 
-        if (! $entry_id) {
+        if (! $entry_id || ! $cancel) {
             \Session::set_flash('notice', \STATUS_FLEAMARKET_CANCEL_FAILED);
             \Response::redirect('/mypage', 'refresh');
         }
@@ -187,8 +180,11 @@ class Controller_Mypage extends Controller_Base_Template
 
         //処理ページを見せ1秒後にマイページにリダイレクトさせる
         $this->setLazyRedirect('/mypage');
-        $this->template->content = View::forge('mypage/cancel');
+        $view = \View::forge('mypage/cancel');
+        $view->set('cancel', $cancel);
+        $this->template->content = $view;
     }
+
     /**
      * ユーザのアカウント情報の変更ページ
      *
@@ -198,17 +194,19 @@ class Controller_Mypage extends Controller_Base_Template
      */
     public function action_account()
     {
-        $data = array();
-        $status_code = Session::get_flash('status_code');
-        $data['info_message'] = $this->getStatusMessage($status_code);
-
-        $fieldset = $this->createFieldsetAccount();
         Asset::js('jquery.noty.packaged.min.js', array(), 'add_js');
         Asset::js('https://ajaxzip3.googlecode.com/svn/trunk/ajaxzip3/ajaxzip3-https.js', array(), 'add_js');
 
-        $this->template->content = View::forge('mypage/account', $data);
-        $this->template->content->set('fieldset', $fieldset, false);
-        $this->template->content->set('prefectures', Config::get('master.prefectures'), false);
+        $data = array();
+        $status_code = \Session::get_flash('status_code');
+        $data['info_message'] = $this->getStatusMessage($status_code);
+        $fieldset = $this->createFieldsetAccount();
+
+        $view = \View::forge('mypage/account', $data);
+        $view->set('fieldset', $fieldset, false);
+        $view->set('prefectures', Config::get('master.prefectures'), false);
+        $view->set('status_code', $status_code, false);
+        $this->template->content = $view;
     }
 
     /**
@@ -227,14 +225,14 @@ class Controller_Mypage extends Controller_Base_Template
         $validation = $fieldset->validation();
 
         if (! $validation->run()) {
-            Session::set_flash('mypage.fieldset', $fieldset);
-            Session::set_flash('status_code', \STATUS_PROFILE_CHANGE_FAILED);
+            \Session::set_flash('mypage.fieldset', $fieldset);
+            \Session::set_flash('status_code', \STATUS_PROFILE_CHANGE_FAILED);
         } else {
             $update_data = array_filter($validation->validated(), 'strlen');
             $update_data['updated_user'] = $this->login_user->user_id;
             $this->login_user->set($update_data);
             $this->login_user->save();
-            Session::set_flash('status_code', \STATUS_PROFILE_CHANGE_SUCCESS);
+            \Session::set_flash('status_code', \STATUS_PROFILE_CHANGE_SUCCESS);
         }
 
         return \Response::redirect('/mypage/account');
@@ -251,7 +249,7 @@ class Controller_Mypage extends Controller_Base_Template
     {
         $fieldset = $this->createFieldsetPassword();
 
-        $this->template->content = View::forge('mypage/password');
+        $this->template->content = \View::forge('mypage/password');
         $this->template->content->set('input', $fieldset->input());
         $this->template->content->set('error', $fieldset->validation()->error_message());
     }
@@ -267,37 +265,31 @@ class Controller_Mypage extends Controller_Base_Template
     {
         $fieldset = $this->createFieldsetPassword();
 
-        if (! Security::check_token()) {
-            Session::set_flash('status_code', \STATUS_PASSWORD_CHANGE_TIMEOUT);
-
-            return \Response::redirect('/mypage/password');
+        if (! \Security::check_token()) {
+            \Session::set_flash('status_code', \STATUS_PASSWORD_CHANGE_TIMEOUT);
+            \Response::redirect('/mypage/password');
         }
 
         $validation = $fieldset->validation();
-        Session::set_flash('mypage.password.fieldset', $fieldset);
+        \Session::set_flash('mypage.password.fieldset', $fieldset);
 
         if (! $validation->run()) {
-            Session::set_flash('status_code', \STATUS_PASSWORD_CHANGE_FAILED);
-
-            return \Response::redirect('/mypage/password');
+            \Session::set_flash('status_code', \STATUS_PASSWORD_CHANGE_FAILED);
+            \Response::redirect('/mypage/password');
         }
 
         try {
-            if (! Auth::change_password($fieldset->input('password'), $fieldset->input('new_password'))) {
-                Session::set_flash('status_code', \STATUS_PASSWORD_CHANGE_FAILED);
-
-                return \Response::redirect('/mypage/password');
+            if (! \Auth::change_password($fieldset->input('password'), $fieldset->input('new_password'))) {
+                \Session::set_flash('status_code', \STATUS_PASSWORD_CHANGE_FAILED);
+                \Response::redirect('/mypage/password');
             } else {
-                Session::set_flash('status_code', \STATUS_PASSWORD_CHANGE_SUCCESS);
-
-                return \Response::redirect('/mypage');
+                \Session::set_flash('status_code', \STATUS_PASSWORD_CHANGE_SUCCESS);
+                \Response::redirect('/mypage');
             }
         } catch (Exception $e) {
-            throw new SystemException(\Model_Error::ER00701);
+            throw new \SystemException(\Model_Error::ER00702);
         }
     }
-
-
 
     /**
      * アカウント変更用のFieldset
@@ -308,7 +300,7 @@ class Controller_Mypage extends Controller_Base_Template
      */
     public function createFieldsetAccount()
     {
-        $fieldset = Session::get_flash('mypage.fieldset');
+        $fieldset = \Session::get_flash('mypage.fieldset');
 
         if (! $fieldset) {
             $fieldset = \Model_User::createFieldset()->populate($this->login_user);
@@ -320,7 +312,6 @@ class Controller_Mypage extends Controller_Base_Template
         return $fieldset;
     }
 
-
     /**
      * パスワード変更用のFieldset
      *
@@ -330,22 +321,22 @@ class Controller_Mypage extends Controller_Base_Template
      */
     public function createFieldsetPassword()
     {
-        $fieldset = Session::get_flash('mypage.password.fieldset');
+        $fieldset = \Session::get_flash('mypage.password.fieldset');
 
         if (! $fieldset) {
             $fieldset = \Fieldset::forge('mypage.password');
 
             $fieldset->add('password', 'Passowrd')
-            ->add_rule('required')
-            ->add_rule('min_length', '6')
-            ->add_rule('max_length', '50');
+                ->add_rule('required')
+                ->add_rule('min_length', '6')
+                ->add_rule('max_length', '50');
             $fieldset->add('new_password', 'New Passowrd')
-            ->add_rule('required')
-            ->add_rule('min_length', '6')
-            ->add_rule('max_length', '50');
+                ->add_rule('required')
+                ->add_rule('min_length', '6')
+                ->add_rule('max_length', '50');
             $fieldset->add('new_password2', 'New Passowrd2')
-            ->add_rule('required')
-            ->add_rule('match_field', 'new_password');
+                ->add_rule('required')
+                ->add_rule('match_field', 'new_password');
         }
 
         $fieldset->repopulate();

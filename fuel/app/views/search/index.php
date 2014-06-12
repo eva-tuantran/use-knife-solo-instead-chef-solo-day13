@@ -1,19 +1,3 @@
-<style type="text/css">
-.reserved {
-  margin: 0 5px 0 5px;
-  padding: 10px 0;
-  width: 130px;
-  font-size: 100%;
-  background-color: #f59000;
-  color: #fff;
-  border: none;
-  border-radius: 3px;
-  -webkit-border-radius: 3px;
-  -moz-border-radius: 3px;
-  text-align: center;
-  cursor: default;
-}
-</style>
 <script type='text/javascript'>
 var googletag = googletag || {};
 googletag.cmd = googletag.cmd || [];
@@ -122,6 +106,8 @@ googletag.enableServices();
             $resultPush = '';
             if ($is_official):
                 $status_class = 'status' . $fleamarket['event_status'];
+            endif;
+            if ($fleamarket['event_status'] != \Model_Fleamarket::EVENT_STATUS_CANCEL):
                 $resultPush = 'resultPush';
             endif;
 
@@ -160,17 +146,17 @@ googletag.enableServices();
       </h3>
       <div class="resultPhoto">
         <?php
-            $image_path = '/assets/img/noimage.jpg';
-            if (isset($fleamarket['file_name']) && $fleamarket['file_name'] != ''):
-                $image_path = '/files/fleamarket/img/m_' . $fleamarket['file_name'];
+            $full_path = '/assets/img/noimage.jpg';
+            if (! empty($fleamarket['file_name'])):
+                $full_path = $image_path . $fleamarket_id .'/m_' . $fleamarket['file_name'];
 
-                if (! file_exists('.' . $image_path)):
-                    $image_path ='/assets/img/noimage.jpg';
+                if (! file_exists('.' . $full_path)):
+                    $full_path ='/assets/img/noimage.jpg';
                 endif;
             endif;
         ?>
         <a href="/detail/<?php echo e($fleamarket_id);?>">
-          <img src="<?php echo $image_path;?>" class="img-rounded" style="width: 200px; height: 150px;">
+          <img src="<?php echo $full_path;?>" class="img-rounded" style="width: 200px; height: 150px;">
         </a>
       </div>
       <div class="resultDetail">
@@ -187,9 +173,11 @@ googletag.enableServices();
         <dl class="col-md-6">
           <dt>開催時間</dt>
           <dd><?php
-            echo e(date('G:i', strtotime($fleamarket['event_time_start'])));
-            if ($fleamarket['event_time_end'] != ''):
-                echo '～' . e(date('G:i', strtotime($fleamarket['event_time_end'])));
+            if ($fleamarket['event_time_start'] && $fleamarket['event_time_start'] != '00:00:00'
+                && $fleamarket['event_time_end'] && $fleamarket['event_time_end'] != '00:00:00'):
+                echo e(substr($fleamarket['event_time_start'], 0, 5)) . '～' . e(substr($fleamarket['event_time_end'], 0, 5));
+            else:
+                echo '-';
             endif;
           ?></dd>
         </dl>
@@ -217,7 +205,7 @@ googletag.enableServices();
           <dt>交通</dt>
           <dd><?php
             if (isset($fleamarket['about_access']) && $fleamarket['about_access'] != ''):
-                echo e($fleamarket['about_access']);
+                echo nl2br(e($fleamarket['about_access']));
             else:
                 echo '-';
             endif;
@@ -233,7 +221,7 @@ googletag.enableServices();
           <li><a href="/detail/<?php echo $fleamarket_id;?>">詳細情報を見る<i></i></a></li>
         </ul>
         <ul class="rightbutton">
-    <?php if ($user && $user->hasEntry($fleamarket_id)):?>
+    <?php if ($user && $user->hasReserved($fleamarket_id)):?>
           <li class="button reserved">出店予約中</li>
     <?php elseif ($user && $user->hasWaiting($fleamarket_id)):?>
           <li class="button reserved">キャンセル待ち中</li>

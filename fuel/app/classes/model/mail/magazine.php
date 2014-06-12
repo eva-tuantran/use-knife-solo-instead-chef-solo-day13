@@ -15,6 +15,7 @@ class Model_Mail_Magazine extends Model_Base
     const MAIL_MAGAZINE_TYPE_ALL = 1;
     const MAIL_MAGAZINE_TYPE_REQUEST = 2;
     const MAIL_MAGAZINE_TYPE_RESEVED_ENTRY = 3;
+    const MAIL_MAGAZINE_TYPE_WAITING_ENTRY = 4;
 
     /**
      * 送信ステータス 0:保存,1:送信待ち,2:送信中,3:正常終了,4:異常終了,9:キャンセル
@@ -115,6 +116,7 @@ class Model_Mail_Magazine extends Model_Base
         self::MAIL_MAGAZINE_TYPE_ALL => '全員',
         self::MAIL_MAGAZINE_TYPE_REQUEST => 'メルマガ希望者',
         self::MAIL_MAGAZINE_TYPE_RESEVED_ENTRY => '出店予約者',
+        self::MAIL_MAGAZINE_TYPE_WAITING_ENTRY => 'キャンセル待ち'
     );
 
     /**
@@ -312,18 +314,23 @@ QUERY;
      */
     public static function getPatternParameter($mail_magazine_type)
     {
-        if ($mail_magazine_type == \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_ALL) {
-            $param = array('user_name');
-        } elseif ($mail_magazine_type == \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_REQUEST) {
-            $param = array('user_name');
-        } elseif ($mail_magazine_type == \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_RESEVED_ENTRY) {
-            $param = array(
-                'user_name',
-                'fleamarket_name',
-                'event_date',
-                'start_time',
-                'end_time',
-            );
+        switch ($mail_magazine_type) {
+            case \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_ALL:
+                $param = array('user_name');
+                break;
+            case \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_REQUEST:
+                $param = array('user_name');
+                break;
+            case \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_RESEVED_ENTRY:
+            case \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_WAITING_ENTRY:
+                $param = array(
+                    'user_name',
+                    'fleamarket_name',
+                    'event_date',
+                    'start_time',
+                    'end_time',
+                );
+                break;
         }
 
         return $param;

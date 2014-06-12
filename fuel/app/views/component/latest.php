@@ -13,17 +13,17 @@
   <p class="case"><?php echo e($event_statuses[$fleamarket['event_status']])?></p>
   <div class="marketPhoto">
     <?php
-        $image_path = '/assets/img/noimage_s.jpg';
+        $full_path = '/assets/img/noimage_s.jpg';
         if (isset($fleamarket['file_name']) && $fleamarket['file_name'] != ''):
-            $image_path = '/files/fleamarket/img/s_' . $fleamarket['file_name'];
+            $full_path = $image_path . $fleamarket_id . '/m_' . $fleamarket['file_name'];
 
-            if (! file_exists('.' . $image_path)):
-                $image_path ='/assets/img/noimage_s.jpg';
+            if (! file_exists('.' . $full_path)):
+                $full_path ='/assets/img/noimage_s.jpg';
             endif;
         endif;
     ?>
     <a href="/detail/<?php echo e($fleamarket_id);?>">
-      <img src="<?php echo $image_path;?>" class="img-rounded" style="width: 180px; height: 135px;">
+      <img src="<?php echo $full_path;?>" class="img-rounded" style="width: 180px; height: 135px;">
     </a>
   </div>
   <p class="date"><?php echo e(date('n月j日', strtotime($fleamarket['event_date'])));?>(<?php echo $week_list[date('w', strtotime($fleamarket['event_date']))];?>)</p>

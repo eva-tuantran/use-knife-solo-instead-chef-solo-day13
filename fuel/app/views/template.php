@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>フリマ・フリーマーケットの全国開催情報 - フリーマーケット楽市楽座 - <?php echo $title; ?></title>
+<title>フリマ・フリーマーケットの全国開催情報 - フリーマーケット楽市楽座 - <?php echo $title;?></title>
 <meta name="keywords" content="フリーマーケット,フリマ,楽市楽座,オークファン">
 <meta name="author" content="フリーマーケット楽市楽座">
 <meta property="og:title" content="フリーマーケット楽市楽座">
@@ -13,7 +13,7 @@
 <meta property="og:image" content="http://www.rakuichi-rakuza.jp/assets/img/ogimage.png">
 <link rel="apple-touch-icon" href="http://www.rakuichi-rakuza.jp/assets/img/ogimage.png">
 <meta property="og:site_name" content="フリーマーケット楽市楽座">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0 user-scalable=yes">
 <?php if (! empty($meta)) { echo Html::meta($meta); }; ?>
 <link href="/assets/css/bootstrap.min.css" rel="stylesheet">
 <link href="/assets/css/reset.css" rel="stylesheet">
@@ -42,8 +42,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <p>フリーマーケット楽市楽座の情報サイト</p>
       </div>
       <ul>
-        <?php if(Auth::check()): ?>
-            <li class="user">ようこそ、<?php echo Auth::get_screen_name(); ?> さん</li>
+        <?php if (Auth::check()): ?>
+            <li class="user">ようこそ、<?php echo e(Auth::get_screen_name());?> さん</li>
             <li class="login"><a href="/login/out"><i></i>ログアウト</a></li>
         <?php else: ?>
             <li class="user">ようこそ、ゲストさん</li>

@@ -59,7 +59,6 @@ class Model_Favorite extends Model_Base
         ),
     );
 
-
     /**
      * 特定のユーザのお気に入りリストを取得します
      *
@@ -73,9 +72,10 @@ class Model_Favorite extends Model_Base
         $user_id, $page = 0, $row_count = 0
     ) {
         $placeholders = array(
-            'user_id' => $user_id,
-            'about_access_id' => \Model_Fleamarket_About::ACCESS,
-            'display_flag'    => \Model_Fleamarket::DISPLAY_FLAG_ON,
+            ':user_id' => $user_id,
+            ':entry_status' => \Model_Entry::ENTRY_STATUS_CANCELED,
+            ':about_access_id' => \Model_Fleamarket_About::ACCESS,
+            ':display_flag'    => \Model_Fleamarket::DISPLAY_FLAG_ON,
         );
 
         $limit = '';
@@ -86,6 +86,7 @@ class Model_Favorite extends Model_Base
 
         $query = <<<QUERY
 SELECT
+    e.entry_id,
     f.fleamarket_id,
     f.name,
     f.promoter_name,
@@ -112,20 +113,41 @@ SELECT
 FROM
     favorites AS fav
 LEFT JOIN
-    fleamarkets AS f ON
-    fav.fleamarket_id = f.fleamarket_id
+    entries AS e
+    ON fav.fleamarket_id = e.fleamarket_id
+    AND e.user_id = :user_id
+    AND e.entry_status != :entry_status
+    AND e.deleted_at IS NULL
+LEFT JOIN
+    fleamarkets AS f
+    ON fav.fleamarket_id = f.fleamarket_id
+    AND f.display_flag = :display_flag
+    AND f.deleted_at IS NULL
 LEFT JOIN
     locations AS l ON f.location_id = l.location_id
 LEFT JOIN
     fleamarket_abouts AS fa ON f.fleamarket_id = fa.fleamarket_id
     AND fa.about_id = :about_access_id
+    AND fa.deleted_at IS NULL
 LEFT JOIN
-    fleamarket_images AS fi ON
-    f.fleamarket_id = fi.fleamarket_id AND priority = 1
+    (
+        SELECT
+            fi.fleamarket_image_id,
+            fi.fleamarket_id,
+            fi.file_name,
+            MIN(fi.priority)
+        FROM
+            fleamarket_images AS fi
+        WHERE
+            deleted_at IS NULL
+        GROUP BY
+            fi.fleamarket_id
+        ORDER BY
+            priority
+    ) AS fi ON f.fleamarket_id = fi.fleamarket_id
 WHERE
-    fav.user_id = :user_id AND
-    f.display_flag = :display_flag AND
-    fav.deleted_at IS NULL
+    fav.user_id = :user_id
+    AND fav.deleted_at IS NULL
 ORDER BY
     f.event_date DESC,
     f.event_time_start
@@ -140,7 +162,6 @@ QUERY;
 
         return array();
     }
-
 
     /**
      * 特定のユーザのお気に入り個数を取得します
@@ -164,14 +185,12 @@ SELECT
 FROM
     favorites AS f
 WHERE
-    f.user_id = :user_id AND
-    f.deleted_at IS NULL
+    f.user_id = :user_id
+    AND f.deleted_at IS NULL
 QUERY;
 
         $favorite_count = \DB::query($query)->parameters($placeholders)->execute()->get('count');
 
         return $favorite_count;
     }
-
-
 }
