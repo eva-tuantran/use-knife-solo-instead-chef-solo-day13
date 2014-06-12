@@ -172,7 +172,7 @@ QUERY;
     }
 
     /**
-     * キャンセル待ちかどうか
+     * 特定の出店形態の満員判定
      *
      * @access public
      * @param  int

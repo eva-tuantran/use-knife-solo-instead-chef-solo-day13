@@ -224,7 +224,7 @@ googletag.enableServices();
     <?php if ($user && $user->hasReserved($fleamarket_id)):?>
           <li class="button reserved">出店予約中</li>
     <?php elseif ($user && $user->hasWaiting($fleamarket_id, true)):?>
-        <?php if (\Model_Fleamarket::isBoothEmpty($fleamarket_id)):?>
+        <?php if (\Model_Fleamarket::hasEmptyBooth($fleamarket_id)):?>
           <li class="button makeReservation"><a href="/reservation?fleamarket_id=<?php echo $fleamarket_id;?>">出店予約をする</a></li>
         <?php else:?>
           <li class="button reserved">キャンセル待ち中</li>

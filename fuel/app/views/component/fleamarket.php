@@ -116,7 +116,7 @@
     elseif ($type == 'waiting'):
 ?>
     <?php if ($is_official):?>
-        <?php if (\Model_Fleamarket::isBoothEmpty($fleamarket_id)):?>
+        <?php if (\Model_Fleamarket::hasEmptyBooth($fleamarket_id)):?>
       <li class="button makeReservation"><a href="/reservation?fleamarket_id=<?php echo $fleamarket_id;?>">出店予約をする</a></li>
         <?php else:?>
       <li class="button cancel"><a href="/mypage/cancel?entry_id=<?php echo $fleamarket['entry_id'];?>" class="cancel_waiting"><i></i>キャンセル待ち解除</a></li>
@@ -128,7 +128,7 @@
     <?php if ($user && $user->hasReserved($fleamarket_id)):?>
       <li class="button cancel"><a href="/mypage/cancel?entry_id=<?php echo $fleamarket['entry_id'];?>" class="fleamarket_cancel"><i></i>予約解除</a></li>
     <?php elseif ($user && $user->hasWaiting($fleamarket_id)):?>
-        <?php if (\Model_Fleamarket::isBoothEmpty($fleamarket_id)):?>
+        <?php if (\Model_Fleamarket::hasEmptyBooth($fleamarket_id)):?>
       <li class="button makeReservation"><a href="/reservation?fleamarket_id=<?php echo $fleamarket_id;?>">出店予約をする</a></li>
         <?php else:?>
       <li class="button cancel"><a href="/mypage/cancel?entry_id=<?php echo $fleamarket['entry_id'];?>" class="fleamarket_cancel"><i></i>キャンセル待ち解除</a></li>

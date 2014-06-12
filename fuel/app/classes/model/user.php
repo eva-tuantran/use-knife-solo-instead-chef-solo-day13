@@ -1090,11 +1090,10 @@ SQL;
      * @param mixed $fleamarket_id
      * @return bool
      * @author kobayasi
+     * @author ida
      */
-    public function canReserve($fleamarket)
+    public function isReserve($fleamarket_id)
     {
-        return
-            (! $this->hasReserved($fleamarket->fleamarket_id)) &&
-            (! $this->hasWaiting($fleamarket->fleamarket_id));
+        return $this->hasReserved($fleamarket_id) || $this->hasWaiting($fleamarket_id);
     }
 }
