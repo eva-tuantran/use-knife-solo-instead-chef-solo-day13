@@ -121,7 +121,12 @@
             <div class="col-sm-10">
               <select name="link_from" class="form-control">
               <?php
-                  foreach (\Model_Fleamarket::explodeLinkFromList($fleamarket->link_from_list) as $key => $link_from):
+                  if (empty($fleamarket->link_from_list) || trim($fleamarket->link_from_list) == ''):
+                      $link_from_list = \Model_Entry::getLinkFromList();
+                  else:
+                      $link_from_list = \Model_Fleamarket::explodeLinkFromList($fleamarket->link_from_list);
+                  endif;
+                  foreach ($link_from_list as $key => $link_from):
                       $selected = '';
                       if ($input['link_from'] == $link_from):
                           $selected = 'selected';
