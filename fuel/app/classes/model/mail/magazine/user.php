@@ -77,18 +77,22 @@ class Model_Mail_Magazine_User extends Model_Base
      *
      * @access public
      * @param mixed $mail_magazine_id メルマガID
-     * @param mixed $page ページ
-     * @param mixed $row_count ページあたりの行数
+     * @param int $page ページ
+     * @param int $row_count ページあたりの行数
      * @return array
      * @author ida
      */
-    public static function findByMailMagazineId($mail_magazine_id)
-    {
+    public static function findByMailMagazineId(
+        $mail_magazine_id, $offset = 0, $limit = 0
+    ) {
         $result = self::find('all', array(
             'related' => array('user'),
             'where' => array(
                 array('mail_magazine_id' => $mail_magazine_id),
+                array('send_status' => self::SEND_STATUS_WAITING)
             ),
+            'limit' => $limit,
+            'offset' => $offset,
         ));
 
         return $result;
