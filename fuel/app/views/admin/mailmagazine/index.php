@@ -64,7 +64,7 @@
                     foreach ($reservation_fleamarket_list as $fleamarket):
                         $event_date = date('Y年m月d日', strtotime($fleamarket->event_date));
                         $selected = '';
-                        $selected = $fleamarket->fleamarket_id == @$data->reserved_fleamarket_id ? 'selected' : '';
+                        $selected = $fleamarket->fleamarket_id == @$data['reserved_fleamarket_id'] ? 'selected' : '';
                 ?>
                 <option value="<?php echo $fleamarket->fleamarket_id;?>" <?php echo $selected;?>>【<?php echo $event_date;?>】<?php echo e($fleamarket->name);?></option>
                 <?php

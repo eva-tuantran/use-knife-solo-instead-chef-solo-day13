@@ -167,17 +167,27 @@ class Controller_Admin_Mailmagazine extends Controller_Admin_Base_Template
         $replace_data = array();
         $replace_data['user'] = $this->administrator;
 
-        $type = $input_data['mail_magazine_type'];
-        if ($type == \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_RESEVED_ENTRY) {
-            $fleamarket = \Model_Fleamarket::find($input_data['fleamarket_id']);
-            $replace_data['fleamarket'] = $fleamarket;
+        $mail_magazine_type = $input_data['mail_magazine_type'];
+        switch ($mail_magazine_type) {
+            case \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_ALL:
+                break;
+            case \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_REQUEST:
+                break;
+            case \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_RESEVED_ENTRY:
+                $fleamarket = \Model_Fleamarket::find($input_data['reserved_fleamarket_id']);
+                $replace_data['fleamarket'] = $fleamarket;
+                break;
+            case \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_WAITING_ENTRY:
+                $fleamarket = \Model_Fleamarket::find($input_data['waiting_fleamarket_id']);
+                $replace_data['fleamarket'] = $fleamarket;
+                break;
         }
 
         $from_email = $input_data['from_email'];
         $from_name = $input_data['from_name'];
         $subject = trim($input_data['subject']);
         $body = $input_data['body'];
-        $pattern = \Model_Mail_Magazine::getPatternParameter($type);
+        $pattern = \Model_Mail_Magazine::getPatternParameter($mail_magazine_type);
         list($pattern, $replacement) = \Model_Mail_Magazine::createReplaceParameter(
             $body, $pattern, $replace_data
         );
