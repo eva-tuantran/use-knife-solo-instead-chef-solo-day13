@@ -70,7 +70,7 @@ class Model_Email extends \Model
         foreach ( $params as $key => $value ) {
             $body = str_replace("##{$key}##",$value,$body);
         }
-        return mb_convert_encoding($body, 'iso-2022-jp');
+        return mb_convert_encoding($body, 'iso-2022-jp', 'utf-8');
     }
 }
 
