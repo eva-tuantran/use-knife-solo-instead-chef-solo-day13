@@ -216,6 +216,7 @@ class Controller_Search extends Controller_Base_Template
             $add_conditions['event_status'] = array(
                 \Model_Fleamarket::EVENT_STATUS_SCHEDULE,
                 \Model_Fleamarket::EVENT_STATUS_RESERVATION_RECEIPT,
+                \Model_Fleamarket::EVENT_STATUS_CANCEL,
             );
         }
 
