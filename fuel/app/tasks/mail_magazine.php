@@ -21,75 +21,84 @@ class Mail_Magazine
      * @access public
      * @param int $mail_magazine_id メルマガID
      * @param int $administrator_id 管理者ID
-     * @param int $number 1回で処理する件数
+     * @param int $limit 1回で処理する件数
      * @return void
      * @author ida
      */
-    public function run($mail_magazine_id, $administrator_id, $number = 1000)
+    public function run($mail_magazine_id, $administrator_id = 0, $limit = 1000)
     {
         $this->openLog($mail_magazine_id);
         $this->log('メルマガID: '. $mail_magazine_id . ' の送信を開始します' . "\n");
 
         if (\Model_Mail_Magazine::isProcess()) {
-            $this->log('他メルマガの送信中のため送信できませんでした' . "\n");
+            $this->log('メルマガ送信中のため送信できません' . "\n");
+            exit;
         }
 
-        \Model_Mail_Magazine::startProcess($mail_magazine_id);
+        $mail_magazine = \Model_Mail_Magazine::startProcess($mail_magazine_id);
 
         $offset = 0;
-        $limit = $number;
-        while ($number > 0) {
+        if (! is_numeric($limit) || $limit <= 0) {
+            $limit = 1000;
+        }
+
+        $total_count = 0;
+        $success_count = 0;
+        $fail_count = 0;
+
+        while ($limit > 0) {
             $mail_magazine_users = \Model_Mail_Magazine_User::findByMailMagazineId(
                 $mail_magazine_id, $offset, $limit
             );
-var_dump(count($mail_magazine_users));
-            if (! $mail_magazine_users) {
-var_dump('break');
+            if (count($mail_magazine_users) == 0) {
                 break;
             }
-//            $is_stop = false;
-//            $total_count = 0;
-//            $success_count = 0;
-//            $error_count = 0;
-//            $replace_data = $this->makeReplaceData($mail_magazine);
-//
-//            foreach ($mail_magazine_users as $mail_magazine_user) {
-//                try {
-//                    usleep(300000);
-//                    if (! \Model_Mail_Magazine::isProcess($mail_magazine_id)) {
-//                        $is_stop = true;
-//                        $this->log($mail_magazine_user->user_id . ": cancel.\n");
-//                        break;
-//                    }
-//                    $send_result = $this->send(
-//                        $mail_magazine_user, $mail_magazine, $replace_data
-//                    );
-//
-//                    $this->log($mail_magazine_user->user_id . ": success\n");
-//                    $send_status = $send_result
-//                                 ? \Model_Mail_Magazine_User::SEND_STATUS_NORMAL_END
-//                                 : \Model_Mail_Magazine_User::SEND_STATUS_UNSENT;
-//                    $mail_magazine_user->set(array(
-//                        'send_status' => $send_status,
-//                        'error' => null,
-//                        'updated_user' => $administrator_id,
-//                    ))->save();
-//                    $success_count++;
-//                } catch (\Exception $e) {
-//                    $message = $e->getMessage();
-//                    $this->log($mail_magazine_user->user_id . ": error " . $message . "\n");
-//                    $mail_magazine_user->set(array(
-//                        'send_status' => \Model_Mail_Magazine_User::SEND_STATUS_ERROR_END,
-//                        'error' => $message,
-//                        'updated_user' => $administrator_id,
-//                    ))->save();
-//                    $error_count++;
-//                }
-//                $total_count++;
-//            }
+
+            $is_stop = false;
+            $replace_data = $this->makeReplaceData($mail_magazine);
+
+            foreach ($mail_magazine_users as $mail_magazine_user) {
+                try {
+                    usleep(300000);
+                    if (! \Model_Mail_Magazine::isProcess($mail_magazine_id)) {
+                        $is_stop = true;
+                        $this->log($mail_magazine_user->user_id . ": cancel.\n");
+                        break;
+                    }
+
+                    $send_result = $this->send(
+                        $mail_magazine_user, $mail_magazine, $replace_data
+                    );
+                    \Model_Mail_Magazine_User::updateStatus(
+                        array(
+                            'send_status' => $send_result,
+                            'error' => null,
+                            'updated_user' => $administrator_id
+                        ),
+                        array('mail_magazine_user_id' => $mail_magazine_user->mail_magazine_user_id)
+                    );
+
+                    $this->log($mail_magazine_user->user_id . " : success\n");
+                    $success_count++;
+                } catch (\Exception $e) {
+                    $message = $e->getMessage();
+                    $this->log($mail_magazine_user->user_id . ' : fail ' . $message . "\n");
+                    \Model_Mail_Magazine_User::updateStatus(
+                        array(
+                            'send_status' => \Model_Mail_Magazine_User::SEND_STATUS_ERROR_END,
+                            'error' => $message,
+                            'updated_user' => $administrator_id
+                        ),
+                        array('mail_magazine_user_id' => $mail_magazine_user->mail_magazine_user_id)
+                    );
+                    $fail_count++;
+                }
+                $total_count++;
+            }
+            $offset += $limit;
         }
 
-        $this->log('[total] ' . $total_count . ' [success] ' . $success_count . ' [fail] ' . $error_count . "\n");
+        $this->log('[total] ' . $total_count . ' [success] ' . $success_count . ' [fail] ' . $fail_count . "\n");
         $this->log('送信を終了しました');
         $this->closeLog();
 
@@ -139,25 +148,28 @@ var_dump('break');
      * @param array $mail_magazine_user 送信先ユーザ情報
      * @param array $mail_magazine メルマガ情報
      * @param array $replace_data 本文リプレイス情報
-     * @return bool
+     * @return bool/string
      * @author ida
      */
     private function send($mail_magazine_user, $mail_magazine, $replace_data)
     {
-        if (empty($mail_magazine_user->user->email)) {
-            return false;
+        if (empty($mail_magazine_user->email)) {
+            throw new \Exception('email is not registered');
+        }
+        if ($mail_magazine_user->email === 'anonymous@rakuichi-rakuza.jp') {
+            throw new \Exception('email is anonymous@');
         }
 
         $mail_magazine_type = $mail_magazine['mail_magazine_type'];
         $from_name = $mail_magazine['from_name'];
         $from_email = $mail_magazine['from_email'];
-        $to = $mail_magazine_user->user->email;
+        $to = $mail_magazine_user->email;
         $subject = \Model_Mail_Magazine::convertEncoding(
             $mail_magazine['subject']
         );
         $body = $mail_magazine['body'];
 
-        $replace_data['user'] = $mail_magazine_user->user;
+        $replace_data['user'] = $mail_magazine_user;
         $pattern = \Model_Mail_Magazine::getPatternParameter($mail_magazine_type);
         list($pattern, $replacement) = \Model_Mail_Magazine::createReplaceParameter(
             $body, $pattern, $replace_data
@@ -167,6 +179,12 @@ var_dump('break');
         $result = \Model_Mail_Magazine::sendMail(
             $from_name, $from_email, $to, $subject, $body
         );
+
+        if (true === $result) {
+            $result = \Model_Mail_Magazine_User::SEND_STATUS_NORMAL_END;
+        } elseif (false === $send_result) {
+            $result = \Model_Mail_Magazine_User::SEND_STATUS_UNSENT;
+        }
 
         return $result;
     }
@@ -183,7 +201,7 @@ var_dump('break');
     {
 //        $dir = realpath(APPPATH . '/../../') . DS . 'public' . DS . 'files' . DS . 'mailmagazine' . DS;
         $dir = '/tmp/';
-        $file_name = 'log' . '_' . $mail_magazine_id . '_' . date('YmdHis');
+        $file_name = 'log_mail_magazine_' . str_pad($mail_magazine_id, 5, '0', STR_PAD_LEFT) . '_' . date('YmdHis');
         \File::create($dir, $file_name);
 
         $this->log_handler = \File::open_file($dir . $file_name);
