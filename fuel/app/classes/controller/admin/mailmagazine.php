@@ -169,6 +169,10 @@ class Controller_Admin_Mailmagazine extends Controller_Admin_Base_Template
 
         $mail_magazine_type = $input_data['mail_magazine_type'];
         switch ($mail_magazine_type) {
+            case \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_ALL:
+                break;
+            case \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_REQUEST:
+                break;
             case \Model_Mail_Magazine::MAIL_MAGAZINE_TYPE_RESEVED_ENTRY:
                 $fleamarket = \Model_Fleamarket::find($input_data['reserved_fleamarket_id']);
                 $replace_data['fleamarket'] = $fleamarket;
