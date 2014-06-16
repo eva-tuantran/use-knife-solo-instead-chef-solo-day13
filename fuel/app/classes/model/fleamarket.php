@@ -1415,7 +1415,8 @@ QUERY;
      */
     public function canReserve()
     {
-        return $this->event_status == self::EVENT_STATUS_RESERVATION_RECEIPT;
+        return $this->event_status == self::EVENT_STATUS_RESERVATION_RECEIPT
+            && $this->event_reservation_status != \Model_Fleamarket::EVENT_RESERVATION_STATUS_FULL;
     }
 
     /**

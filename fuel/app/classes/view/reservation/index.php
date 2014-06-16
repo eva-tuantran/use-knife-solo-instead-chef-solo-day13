@@ -16,7 +16,7 @@ class View_Reservation_Index extends ViewModel
         foreach ($fleamarket->fleamarket_entry_styles as $fleamarket_entry_style) {
             $fleamarket_entry_style_id = $fleamarket_entry_style->fleamarket_entry_style_id;
             $reservation_booth_limit[$fleamarket_entry_style_id] = $fleamarket_entry_style->reservation_booth_limit;
-            $remain_booth[$fleamarket_entry_style_id] = $fleamarket_entry_style->remainBooth();
+            $remain_booth_list[$fleamarket_entry_style_id] = $fleamarket_entry_style->remainBooth();
         }
 
         $input  = $this->fieldset->input();

@@ -208,22 +208,15 @@ class Controller_Reservation extends Controller_Base_Template
      */
     private function canReserve($fleamarket_id, $has_empty_booth)
     {
-        $can_reserve = false;
-        if ($this->fleamarket->canReserve()) {
-            $result = true;
-        }
+        $result = $this->fleamarket->canReserve();
 
-        if ($can_reserve) {
-            if ($this->login_user->hasReserved($fleamarket_id)) {
-                $result = false;
-            } elseif ($this->login_user->hasWaiting($fleamarket_id)) {
-                if ($has_empty_booth) {
-                    $result = true;
-                } else {
-                    $result = false;
-                }
-            } else {
+        if ($this->login_user->hasReserved($fleamarket_id)) {
+            $result = false;
+        } elseif ($this->login_user->hasWaiting($fleamarket_id)) {
+            if ($has_empty_booth) {
                 $result = true;
+            } else {
+                $result = false;
             }
         }
 
