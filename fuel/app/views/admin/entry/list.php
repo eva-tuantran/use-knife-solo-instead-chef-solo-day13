@@ -257,7 +257,6 @@ $(function() {
   });
 
   var doCancel = function(url) {
-    var url = location.protocol + "//" + location.host + url;
     if ($("#sendmail").prop('checked')) {
       url += "&sendmail=1";
     }

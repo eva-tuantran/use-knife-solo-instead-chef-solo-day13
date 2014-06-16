@@ -124,12 +124,14 @@ Map.prototype = {
         <li class="button eventStatusWaiting">キャンセル待ち中</li>
         <?php endif;?>
     <?php elseif ($is_official):?>
-        <?php if ($fleamarket['event_status'] == \Model_Fleamarket::EVENT_STATUS_CLOSE):?>
+        <?php if ($fleamarket['event_status'] == \Model_Fleamarket::EVENT_STATUS_RESERVATION_RECEIPT):?>
+            <?php if ($fleamarket['event_status'] == \Model_Fleamarket::EVENT_STATUS_CLOSE):?>
         <li class="eventStatusClose"><?php echo @$event_statuses[$fleamarket['event_status']];?></li>
-        <?php elseif ($fleamarket['event_reservation_status'] == \Model_Fleamarket::EVENT_RESERVATION_STATUS_FULL):?>
+            <?php elseif ($fleamarket['event_reservation_status'] == \Model_Fleamarket::EVENT_RESERVATION_STATUS_FULL):?>
         <li class="button makeReservation"><a href="/reservation?fleamarket_id=<?php echo $fleamarket_id;?>">キャンセル待ちをする</a></li>
-        <?php elseif($fleamarket['event_status'] == \Model_Fleamarket::EVENT_STATUS_RESERVATION_RECEIPT):?>
+            <?php elseif($fleamarket['event_status'] == \Model_Fleamarket::EVENT_STATUS_RESERVATION_RECEIPT):?>
         <li class="button makeReservation"><a href="/reservation?fleamarket_id=<?php echo $fleamarket_id;?>">出店予約をする</a></li>
+            <?php endif;?>
         <?php endif;?>
     <?php endif;?>
         <li id="do_print" class="button print hidden-xs"><a href="#"><i></i>ページの印刷をする</a></li>
@@ -331,12 +333,14 @@ Map.prototype = {
         <li class="button reserved">キャンセル待ち中</li>
         <?php endif;?>
     <?php elseif ($is_official):?>
-        <?php if ($fleamarket['event_status'] == \Model_Fleamarket::EVENT_STATUS_CLOSE):?>
+        <?php if ($fleamarket['event_status'] == \Model_Fleamarket::EVENT_STATUS_RESERVATION_RECEIPT):?>
+            <?php if ($fleamarket['event_status'] == \Model_Fleamarket::EVENT_STATUS_CLOSE):?>
         <li class="eventStatusClose"><?php echo @$event_statuses[$fleamarket['event_status']];?></li>
-        <?php elseif ($fleamarket['event_reservation_status'] == \Model_Fleamarket::EVENT_RESERVATION_STATUS_FULL):?>
+            <?php elseif ($fleamarket['event_reservation_status'] == \Model_Fleamarket::EVENT_RESERVATION_STATUS_FULL):?>
         <li class="button makeReservation"><a href="/reservation?fleamarket_id=<?php echo $fleamarket_id;?>">キャンセル待ちをする</a></li>
-        <?php elseif($fleamarket['event_status'] == \Model_Fleamarket::EVENT_STATUS_RESERVATION_RECEIPT):?>
+            <?php elseif($fleamarket['event_status'] == \Model_Fleamarket::EVENT_STATUS_RESERVATION_RECEIPT):?>
         <li class="button makeReservation"><a href="/reservation?fleamarket_id=<?php echo $fleamarket_id;?>">出店予約をする</a></li>
+            <?php endif;?>
         <?php endif;?>
     <?php endif;?>
       </ul>

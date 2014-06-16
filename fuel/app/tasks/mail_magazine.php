@@ -25,6 +25,8 @@ class Mail_Magazine
      */
     public function run($mail_magazine_id, $administrator_id)
     {
+        ini_set('memory_limit', '512M');
+
         $this->openLog($mail_magazine_id);
         $this->log('メルマガID: '. $mail_magazine_id . ' の送信を開始します' . "\n");
 
@@ -47,7 +49,7 @@ class Mail_Magazine
 
         foreach ($mail_magazine_users as $mail_magazine_user) {
             try {
-                usleep(250000);
+                usleep(300000);
                 if (! \Model_Mail_Magazine::isProcess($mail_magazine_id)) {
                     $is_stop = true;
                     $this->log($mail_magazine_user->user_id . ": cancel.\n");

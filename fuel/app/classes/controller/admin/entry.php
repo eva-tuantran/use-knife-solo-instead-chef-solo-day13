@@ -9,7 +9,7 @@
 class Controller_Admin_Entry extends Controller_Admin_Base_Template
 {
     protected $_secure_actions = array(
-        'list', 'csv',
+        'list', 'csv', 'sendmail', 'cancel'
     );
 
     /**
