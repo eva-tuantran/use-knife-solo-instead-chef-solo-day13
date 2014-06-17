@@ -23,7 +23,7 @@ class Model_Email extends \Model
 
         $email = Email::forge();
         $email->from(Lang::get('from'), Lang::get('from_name'));
-        $email->subject($this->renderTemplate(Lang::get('subject'), $params));
+        $email->subject($this->renderTemplate(Lang::get('subject'), $params, false));
         $email->body($this->renderTemplate(Lang::get('body'), $params));
 
         if (! $to) {
@@ -65,12 +65,17 @@ class Model_Email extends \Model
      * @return string
      * @author kobayasi
      */
-    private function renderTemplate($body, $params)
+    private function renderTemplate($body, $params, $with_convert = true)
     {
         foreach ( $params as $key => $value ) {
             $body = str_replace("##{$key}##",$value,$body);
         }
-        return mb_convert_encoding($body, 'iso-2022-jp');
+
+        if ($with_convert) {
+            $body = mb_convert_encoding($body, 'iso-2022-jp', 'utf-8');
+        }
+
+        return $body;
     }
 }
 

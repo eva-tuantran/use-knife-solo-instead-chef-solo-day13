@@ -1084,17 +1084,16 @@ SQL;
     }
 
     /**
-     * 予約判定
+     * 予約判定(予約済みまたはキャンセル待ちか判定)
      *
      * @access public
      * @param mixed $fleamarket_id
      * @return bool
      * @author kobayasi
+     * @author ida
      */
-    public function canReserve($fleamarket)
+    public function hasEntry($fleamarket_id)
     {
-        return
-            (! $this->hasReserved($fleamarket->fleamarket_id)) &&
-            (! $this->hasWaiting($fleamarket->fleamarket_id));
+        return $this->hasReserved($fleamarket_id) || $this->hasWaiting($fleamarket_id);
     }
 }

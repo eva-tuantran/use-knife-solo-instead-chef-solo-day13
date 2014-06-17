@@ -69,7 +69,7 @@
           <div class="form-group">
             <label class="col-sm-2 control-label" for="inputTel">電話番号</label>
             <div class="col-sm-10">
-              <input type="tel" class="form-control" id="inputTel" name="tel" value="<?php echo e($fields['tel']->value); ?>" required>
+              <input type="text" class="form-control" id="inputTel" name="tel" value="<?php echo e($fields['tel']->value); ?>" required>
               <?php
                   if (isset($errors['tel'])):
                       echo '<div class="errorMessage">' . $errors['tel'] . '</div>';
