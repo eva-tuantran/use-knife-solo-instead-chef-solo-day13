@@ -136,8 +136,10 @@
       <form action="/reservation/waiting" method="post" id="waiting-form">
         <?php echo \Form::csrf(); ?>
         <div id="form-waiting" style="display:none;">
-          <div class="col-sm-offset-2 col-sm-10">
-            <p>出店ブースが予定数に達しました。キャンセル待ちをしますか？</p>
+          <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+              <p>出店ブースが予定数に達しました。キャンセル待ちをしますか？</p>
+            </div>
           </div>
           <div id="submitButton" class="form-group">
             <input type="hidden" name="fleamarket_id" value="<?php echo e($input['fleamarket_id']);?>">
