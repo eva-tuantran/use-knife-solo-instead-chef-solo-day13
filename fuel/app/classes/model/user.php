@@ -973,7 +973,7 @@ SQL;
                     );
                     break;
                 case 'tel':
-                    $field = \DB::expr("REPLACE(u.tel, '-', '')");
+                    $field = \DB::expr("CONCAT(REPLACE(u.tel, '-', ''), ' ', REPLACE(u.mobile_tel, '-', ''))");
                     $condition = str_replace('-', '', $condition);
 
                     $condition_list[$field->value()] = array(
