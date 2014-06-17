@@ -23,9 +23,9 @@
           <?php if (count($fleamarket->fleamarket_entry_styles) == 0):?>
           <div class="errorMessage">現在予約することが出来ません</div>
           <?php elseif ($user->hasReserved($fleamarket->fleamarket_id)):?>
-          <div class="errorMessage">既に予約済みです。解除を希望の場合、<a href="/mypage">マイページにてキャンセル</a>を行って下さい。</div>
+          <div class="errorMessage">既に予約済みです。</div>
           <?php elseif ($user->hasWaiting($fleamarket->fleamarket_id)):?>
-          <div class="errorMessage">既にキャンセル待ちをしています。解除を希望の場合、<a href="/mypage">マイページにてキャンセル</a>を行って下さい。</div>
+          <div class="errorMessage">既にキャンセル待ちをしています。</div>
           <?php else:?>
           <form action="/admin/reservation/confirm" method="post" class="form-horizontal">
             <input type="hidden" name="fleamarket_id" value="<?php echo e($input['fleamarket_id']); ?>">
@@ -146,11 +146,8 @@
             <div id="form-waiting" style="display:none;">
               <div class="form-group">
                 <div class="col-sm-offset-2 col-sm-10">
-                  <p>出店ブースが予定数に達しました。キャンセル待ちをしますか？</p>
+                  <p>出店ブースが予定数に達しました。</p>
                 </div>
-              </div>
-              <div id="submitButton" class="form-group">
-                <button type="submit" class="btn btn-default" name="waiting">キャンセル待ちをする</button>
               </div>
             </div>
           </form>
