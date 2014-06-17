@@ -95,7 +95,6 @@
           <th>メールアドレス</th>
           <th>電話番号</th>
           <th>強制ログイン</th>
-          <th>ユーザ種別</th>
           <th>登録元</th>
           <th>状態</th>
           <th><a class="btn btn-primary btn-sm" href="/admin/user/">新規登録</a></th>
@@ -141,10 +140,6 @@
           <td><?php echo e($user['address']);?></td>
           <td><?php echo e($user['email']);?></td>
           <td><?php echo e($user['tel']);?></td>
-          <td>
-            <p><a href="/admin/user/force_login?user_id=<?php echo $user_id;?>">予約確認メールあり</a></p>
-            <p><a href="/admin/user/force_login?user_id=<?php echo $user_id;?>&nomail=1">予約確認メールなし</a></p>
-          </td>
           <td><?php
               if ($user['organization_flag'] == \Model_User::ORGANIZATION_FLAG_ON):
                   echo '団体・企業';
@@ -155,6 +150,7 @@
           <td><?php echo e(@$devices[$user['device']]);?></td>
           <td><?php echo $register_statuses[$user['register_status']];?></td>
           <td>
+            <a class="btn btn-default btn-sm doReservation" href="/admin/reservation/index?user_id=<?php echo $user_id;?>">出店予約</a>
             <a class="btn btn-default btn-sm" href="/admin/entry/list?user_id=<?php echo $user_id;?>">予約一覧</a>
             <a class="btn btn-danger btn-sm doDelete" href="/admin/user/delete?user_id=<?php echo $user_id;?>">削除</a>
           </td>
@@ -181,6 +177,25 @@
     ?>
   </div>
 </div>
+<div id="chooseFleamarketDialog" class="afDialog" title="フリマ選択">
+  <p class="message">出店予約するフリマを選択してください</p>
+  <div class="contents">
+    <select id="selectedFleamarket" name="fleamarket_id" style="width: 200px;">
+      <option value="">選択してください</option>
+      <?php
+          if ($fleamarket_lsit):
+              foreach ($fleamarket_lsit as $fleamarket):
+                  $event_date = date('Y年m月d日', strtotime($fleamarket->event_date));
+      ?>
+      <option value="<?php echo $fleamarket->fleamarket_id;?>">【<?php echo $event_date;?>】<?php echo e($fleamarket->name);?></option>
+      <?php
+              endforeach;
+          endif;
+      ?>
+    </select>
+    <div id="chooseError" class="error-message" style="display: none;">フリマを選択してください</div>
+  </div>
+</div>
 <script type="text/javascript">
 $(function() {
   var $dialog = $("#dialog");
@@ -189,6 +204,30 @@ $(function() {
     evt.preventDefault();
     var action = $("a", this).attr("href");
     $("#searchForm").attr("action", action).submit();
+  });
+
+  $(".doReservation").on("click", function(evt) {
+    evt.preventDefault();
+    var href = $(this).attr("href");
+
+    $("#chooseFleamarketDialog").dialog({
+      modal: true,
+      buttons: {
+        "キャンセル": function() {
+          $(this).dialog( "close" );
+        },
+        "実行": function() {
+          var fleamarket_id = $("#selectedFleamarket").val();
+          if (fleamarket_id == '') {
+              console.log("ABC");
+            $("#chooseError").css("display", "block");
+            return false;
+          }
+          location.href = href + "&fleamarket_id=" + fleamarket_id;
+          $(this).dialog( "close" );
+        }
+      }
+    });
   });
 
   $(".doDelete").on("click", function(evt) {

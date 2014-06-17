@@ -1,17 +1,16 @@
-<?php $input  = $fieldset->input(); ?>
-<?php $errors = $fieldset->validation()->error_message(); ?>
-<?php $entry_styles = Config::get('master.entry_styles'); ?>
-<?php $nomail = Session::get('admin.user.nomail'); ?>
 <?php
+    $input  = $fieldset->input();
+    $errors = $fieldset->validation()->error_message();
+    $entry_styles = Config::get('master.entry_styles');
+    $nomail = Session::get('admin.user.nomail');
+
    $input_genres = array();
    if ($input['item_genres']) {
        foreach ($input['item_genres'] as $item_genre) {
            $input_genres[$item_genre] = 1;
        }
    }
-
 ?>
-
 <div id="contentForm" class="row">
   <!-- flow -->
   <div id="flow" class="row hidden-xs">
@@ -29,7 +28,7 @@
   <!-- form -->
   <div id="form" class="container">
     <div class="box clearfix">
-      <h3>フリマ予約情報入力欄</h3>
+      <h3>フリマ予約の入力</h3>
       <?php if (count($fleamarket->fleamarket_entry_styles) == 0):?>
       <div class="errorMessage">現在予約することが出来ません</div>
       <?php elseif ($user->hasReserved($fleamarket->fleamarket_id)):?>

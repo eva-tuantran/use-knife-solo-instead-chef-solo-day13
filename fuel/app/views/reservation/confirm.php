@@ -21,7 +21,7 @@
     <form action="/reservation/thanks" method="post" class="form-horizontal">
       <?php echo \Form::csrf(); ?>
       <div class="box clearfix">
-        <h3>フリマ予約情報入力欄</h3>
+        <h3>フリマ予約の内容確認</h3>
         <div class="form-group">
   	    <label class="col-sm-2 control-label">出店方法</label>
           <div class="col-sm-10"><?php echo e($entry_styles[$fleamarket_entry_style->entry_style_id]); ?></div>
