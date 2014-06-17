@@ -54,7 +54,7 @@
           <label class="col-sm-2 control-label" for="inputBirthday">誕生日<br>
          （任意）</label>
           <div class="col-sm-10">
-            <input type="date" class="form-control" id="inputBirthday" name="birthday" min="1900-01-01" max="<?php echo date('Y-m-d'); ?>" style="width: 12em;" value="<?php echo $input['birthday']; ?>" />
+            <input type="text" class="form-control" id="inputBirthday" name="birthday" min="1900-01-01" max="<?php echo date('Y-m-d'); ?>" style="width: 12em;" value="<?php echo $input['birthday']; ?>" />
           </div>
         </div>
         <div class="form-group form-address">
