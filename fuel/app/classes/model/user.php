@@ -1084,7 +1084,7 @@ SQL;
     }
 
     /**
-     * 予約判定
+     * 予約判定(予約済みまたはキャンセル待ちか判定)
      *
      * @access public
      * @param mixed $fleamarket_id
@@ -1092,7 +1092,7 @@ SQL;
      * @author kobayasi
      * @author ida
      */
-    public function isReserve($fleamarket_id)
+    public function hasEntry($fleamarket_id)
     {
         return $this->hasReserved($fleamarket_id) || $this->hasWaiting($fleamarket_id);
     }
