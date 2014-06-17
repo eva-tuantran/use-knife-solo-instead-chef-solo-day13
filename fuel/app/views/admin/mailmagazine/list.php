@@ -93,7 +93,7 @@
               endif;
           ?></td>
           <td>
-            <a class="btn btn-default btn-sm dropdown-toggle" href="/admin/mailmagazine/userlist/<?php echo $mail_magazine_id;?>">送信一覧</a>
+            <a class="btn btn-default btn-sm dropdown-toggle" href="/admin/mailmagazine/userlist/<?php echo $mail_magazine_id;?>/">送信一覧</a>
             <?php
                 if ($mail_magazine['send_status'] == \Model_Mail_Magazine::SEND_STATUS_SAVED):
             ?>
