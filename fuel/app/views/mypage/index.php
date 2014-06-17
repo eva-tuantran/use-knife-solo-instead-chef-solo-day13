@@ -138,7 +138,7 @@
     </div>
     <!-- /tabGroup -->
     <!-- nav-tabs -->
-    <ul class="nav nav-tabs">
+    <ul id="list" class="nav nav-tabs">
       <li class="active"><a href="#reservation" data-toggle="tab">出店予約中のフリマ</a></li>
       <li><a href="#waiting" data-toggle="tab">キャンセル待ちのフリマ</a></li>
       <li><a href="#mylist" data-toggle="tab">マイリスト</a></li>

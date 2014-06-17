@@ -55,9 +55,9 @@ class Mail_Magazine
                     $this->log($mail_magazine_user->user_id . ": cancel.\n");
                     break;
                 }
-                $send_result = $this->send(
-                    $mail_magazine_user, $mail_magazine, $replace_data
-                );
+//                $send_result = $this->send(
+//                    $mail_magazine_user, $mail_magazine, $replace_data
+//                );
 
                 $this->log($mail_magazine_user->user_id . ": success\n");
                 $send_status = $send_result

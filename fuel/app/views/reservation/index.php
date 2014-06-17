@@ -1,17 +1,3 @@
-<?php $input  = $fieldset->input(); ?>
-<?php $errors = $fieldset->validation()->error_message(); ?>
-<?php $entry_styles = Config::get('master.entry_styles'); ?>
-<?php $nomail = Session::get('admin.user.nomail'); ?>
-<?php
-   $input_genres = array();
-   if ($input['item_genres']) {
-       foreach ($input['item_genres'] as $item_genre) {
-           $input_genres[$item_genre] = 1;
-       }
-   }
-
-?>
-
 <div id="contentForm" class="row">
   <!-- flow -->
   <div id="flow" class="row hidden-xs">
@@ -32,10 +18,10 @@
       <h3>フリマ予約情報入力欄</h3>
       <?php if (count($fleamarket->fleamarket_entry_styles) == 0):?>
       <div class="errorMessage">現在予約することが出来ません</div>
-      <?php elseif ($user->hasReserved($fleamarket->fleamarket_id)):?>
-      <div class="errorMessage">既に予約済みです。解除を希望の場合、<a href="/mypage">マイページにてキャンセル</a>を行って下さい。</div>
-      <?php elseif ($user->hasWaiting($fleamarket->fleamarket_id)):?>
-      <div class="errorMessage">既にキャンセル待ちをしています。解除を希望の場合、<a href="/mypage">マイページにてキャンセル</a>を行って下さい。</div>
+      <?php elseif ($user->hasReserved($fleamarket_id)):?>
+      <div class="errorMessage">既に予約済みです。予約の解除をご希望の場合、<a href="/mypage#list">マイページにてキャンセル</a>を行って下さい。</div>
+      <?php elseif ($user->hasWaiting($fleamarket_id) && ! $has_empty_booth):?>
+      <div class="errorMessage">既にキャンセル待ちをしています。キャンセル待ちの解除をご希望の場合、<a href="/mypage#list">マイページにてキャンセル</a>を行って下さい。</div>
       <?php else:?>
       <form action="/reservation/confirm" method="post" class="form-horizontal">
         <input type="hidden" name="fleamarket_id" value="<?php echo e($input['fleamarket_id']); ?>">
@@ -56,7 +42,7 @@
                     endif;
             ?>
             <label class="checkbox-inline fleamarket_content">
-              <input type="radio" name="fleamarket_entry_style_id" value="<?php echo $fleamarket_entry_style->fleamarket_entry_style_id; ?>" <?php echo $checked;?>>
+              <input type="radio" class="entry_style" name="fleamarket_entry_style_id" value="<?php echo $fleamarket_entry_style->fleamarket_entry_style_id; ?>" <?php echo $checked;?>>
                <?php echo e($entry_styles[$fleamarket_entry_style->entry_style_id]); ?>
             </label>
             <?php
@@ -67,7 +53,7 @@
             <?php endif;?>
 	      </div>
         </div>
-        <div id="form-no-waiting">
+        <div id="form-no-waiting" style="display: none;">
           <div class="form-group">
             <label class="col-sm-2 control-label">ブース数</label>
             <div class="col-sm-10">
@@ -137,26 +123,24 @@
                   endforeach;
               ?>
               </select>
-              <?php if(isset($errors['link_from'])): ?>
+              <?php if (isset($errors['link_from'])):?>
               <span class="errorMessage"><?php echo $errors['link_from'];?></span>
               <?php endif;?>
             </div>
           </div>
           <div id="submitButton" class="form-group">
-            <button type="submit" class="btn btn-default">内容を確認する<?php if(isset($nomail) && $nomail) {echo '(メール送信なし)';} ?></button>
+            <button type="submit" class="btn btn-default">内容を確認する<?php echo (isset($nomail) && $nomail) ? '(メール送信なし)': '';?></button>
           </div>
         </div>
       </form>
       <form action="/reservation/waiting" method="post" id="waiting-form">
         <?php echo \Form::csrf(); ?>
         <div id="form-waiting" style="display:none;">
-          <div class="form-group">
-            <div class="col-sm-offset-2 col-sm-10">
-              <p>ブースが予定数に達しました。キャンセル待ちをしますか？</p>
-            </div>
+          <div class="col-sm-offset-2 col-sm-10">
+            <p>出店ブースが予定数に達しました。キャンセル待ちをしますか？</p>
           </div>
           <div id="submitButton" class="form-group">
-            <input type="hidden" name="fleamarket_id" value="<?php echo e($input['fleamarket_id']); ?>">
+            <input type="hidden" name="fleamarket_id" value="<?php echo e($input['fleamarket_id']);?>">
             <input type="hidden" name="fleamarket_entry_style_id" id="waiting_fleamarket_entry_style_id">
             <button type="submit" class="btn btn-default" name="waiting">キャンセル待ちをする</button>
           </div>
@@ -166,45 +150,40 @@
     </div>
   </div>
 </div>
-<?php
-    $reservation_booth_limit = array();
-    $remain_booth = array();
-
-    foreach ($fleamarket->fleamarket_entry_styles as $fleamarket_entry_style):
-        $reservation_booth_limit[$fleamarket_entry_style->fleamarket_entry_style_id] =
-            $fleamarket_entry_style->reservation_booth_limit;
-        $remain_booth[$fleamarket_entry_style->fleamarket_entry_style_id] =
-            $fleamarket_entry_style->remainBooth();
-    endforeach;;
-?>
 <script type="text/javascript">
-var reservation_booth_limit = <?php echo json_encode($reservation_booth_limit); ?>;
-var remain_booth = <?php echo json_encode($remain_booth); ?>;
-var can_reserve = <?php echo json_encode($fleamarket->canReserve()); ?>;
+$(function () {
+  var reservation_booth_limit = <?php echo json_encode($reservation_booth_limit);?>;
+  var remain_booth = <?php echo json_encode($remain_booth_list);?>;
+  var can_reserve = <?php echo (int) ($can_reserve);?>;
 
-$('input[name="fleamarket_entry_style_id"]').change(function(){
-  var id = $('input[name="fleamarket_entry_style_id"]:checked').val();
-
-  if (! id) {
-    $('#form-waiting').hide();
-    $('#form-no-waiting').hide();
-  } else if (! can_reserve || remain_booth[id] <= 0) {
-    $('#form-waiting').show();
-    $('#form-no-waiting').hide();
-    $('#waiting_fleamarket_entry_style_id').val(id);
-  } else if (id) {
-    $('#form-no-waiting').show();
-    $('#form-waiting').hide();
-
-    $('#reserved_booth > option').remove();
-
-    var max = remain_booth[id] < reservation_booth_limit[id] ? remain_booth[id] : reservation_booth_limit[id];
-    for (var i = 1; i <= max ; i++) {
-      $('#reserved_booth').append($('<option>').html(i).val(i));
+  $("input.entry_style").on("change", function() {
+    if ($(this).prop("checked")) {
+      changeEntry($(this).val());
     }
-  }
-});
+  });
 
-$('input[name="fleamarket_entry_style_id"]').trigger('change');
-$('#reserved_booth').val(<?php echo e($input['reserved_booth']);?>);
+  var changeEntry = function(id) {
+    if (! id) {
+      $("#form-waiting").hide();
+      $("#form-no-waiting").hide();
+    } else if (! can_reserve || remain_booth[id] <= 0) {
+      $("#form-waiting").show();
+      $("#form-no-waiting").hide();
+      $("#waiting_fleamarket_entry_style_id").val(id);
+    } else if (id) {
+      $("#form-no-waiting").show();
+      $("#form-waiting").hide();
+
+      $("#reserved_booth > option").remove();
+
+      var max = remain_booth[id] < reservation_booth_limit[id] ? remain_booth[id] : reservation_booth_limit[id];
+      for (var i = 1; i <= max ; i++) {
+        $("#reserved_booth").append($("<option>").html(i).val(i));
+      }
+    }
+  };
+
+  $("input.entry_style").trigger("change");
+  $("#reserved_booth").val(<?php echo e($input["reserved_booth"]);?>);
+});
 </script>

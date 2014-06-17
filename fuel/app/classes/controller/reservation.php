@@ -57,13 +57,20 @@ class Controller_Reservation extends Controller_Base_Template
      */
     public function action_index()
     {
-        $view = \View::forge('reservation/index');
-        $view->set('fieldset', $this->fieldset, false);
-        $view->set('fleamarket', $this->fleamarket, false);
-        $view->set('user', $this->login_user, false);
-        $view->set('item_categories', \Model_Entry::getItemCategories(), false);
-        $view->set('item_genres', \Model_Entry::getItemGenres(), false);
-        $this->template->content = $view;
+        $fleamarket_id = $this->fleamarket->fleamarket_id;
+        $has_empty_booth = \Model_Fleamarket::hasEmptyBooth($fleamarket_id);
+        $can_reserve = $this->canReserve($fleamarket_id, $has_empty_booth);
+
+        $view_model = \ViewModel::forge('reservation/index');
+        $view_model->set('fieldset', $this->fieldset, false);
+        $view_model->set('fleamarket', $this->fleamarket, false);
+        $view_model->set('user', $this->login_user, false);
+        $view_model->set('item_categories', \Model_Entry::getItemCategories(), false);
+        $view_model->set('item_genres', \Model_Entry::getItemGenres(), false);
+
+        $view_model->set('has_empty_booth', $has_empty_booth, false);
+        $view_model->set('can_reserve', $can_reserve, false);
+        $this->template->content = $view_model;
     }
 
     /**
@@ -78,7 +85,12 @@ class Controller_Reservation extends Controller_Base_Template
     {
         \Session::set_flash('reservation.fieldset', $this->fieldset);
 
-        if (! $this->fieldset->validation()->run() || ! $this->canReserve()) {
+        $fleamarket_id = $this->fleamarket->fleamarket_id;
+        $has_empty_booth = \Model_Fleamarket::hasEmptyBooth($fleamarket_id);
+        $can_reserve = $this->canReserve($fleamarket_id, $has_empty_booth);
+
+        if (! $can_reserve || ! $this->fieldset->validation()->run()) {
+            \Session::set_flash('cannot_reserve', true);
             \Session::set_flash('reservation.error', true);
             \Response::redirect('reservation');
         }
@@ -90,7 +102,6 @@ class Controller_Reservation extends Controller_Base_Template
         $view = \View::forge('reservation/confirm');
         $view->set('fieldset', $this->fieldset, false);
         $view->set('fleamarket_entry_style',$this->fleamarket_entry_style);
-
         $this->template->content = $view;
     }
 
@@ -109,7 +120,11 @@ class Controller_Reservation extends Controller_Base_Template
             \Response::redirect('errors/doubletransmission');
         }
 
-        if (! $this->canReserve()){
+        $fleamarket_id = $this->fleamarket->fleamarket_id;
+        $has_empty_booth = \Model_Fleamarket::hasEmptyBooth($fleamarket_id);
+        $can_reserve = $this->canReserve($fleamarket_id, $has_empty_booth);
+
+        if (! $can_reserve) {
             \Response::redirect('reservation');
         }
 
@@ -186,16 +201,26 @@ class Controller_Reservation extends Controller_Base_Template
      * 出店予約判定
      *
      * @access private
-     * @param
+     * @param mixed $fleamarket_id フリマID
+     * @param bool $is_booth_empty 空きブース
      * @return bool
-     * @author kobayashi
+     * @author ida
      */
-    public function canReserve()
+    private function canReserve($fleamarket_id, $has_empty_booth)
     {
-        return
-            $this->login_user->canReserve($this->fleamarket)
-            && $this->fleamarket->canReserve()
-            && (! $this->fleamarket_entry_style->isFullBooth('master'));
+        $result = $this->fleamarket->canReserve();
+
+        if ($this->login_user->hasReserved($fleamarket_id)) {
+            $result = false;
+        } elseif ($this->login_user->hasWaiting($fleamarket_id)) {
+            if ($has_empty_booth) {
+                $result = true;
+            } else {
+                $result = false;
+            }
+        }
+
+        return $result;
     }
 
     /**
