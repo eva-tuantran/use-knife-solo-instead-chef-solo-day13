@@ -5,7 +5,7 @@
  *
  * @author ida
  */
-class View_Reservation_Index extends ViewModel
+class View_Admin_Reservation_Index extends ViewModel
 {
     public function view()
     {

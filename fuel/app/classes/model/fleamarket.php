@@ -1136,7 +1136,39 @@ QUERY;
     }
 
     /**
-     * キャンセル待ちされているフリマ情報を取得する
+     * 出店予約可能のフリマ情報一覧を取得する
+     *
+     * $termが未指定の場合、１ヵ月間で取得する
+     *
+     * @access public
+     * @param array $term 取得する期間
+     * @return object
+     * @author ida
+     */
+    public static function getReservationFleamarket($term = null)
+    {
+        if (! $term) {
+            $term = array(
+                \DB::expr('CURDATE()'),
+                \DB::expr('CURDATE() + INTERVAL 2 MONTH')
+            );
+        }
+
+        $result = \Model_Fleamarket::find('all', array(
+            'select' => array('fleamarket_id', 'name', 'event_date'),
+            'where' => array(
+                array('event_status', '<=', \Model_Fleamarket::EVENT_STATUS_RECEIPT_END),
+                array('display_flag', '=', \Model_Fleamarket::DISPLAY_FLAG_ON),
+                array('register_type', '=', \Model_Fleamarket::REGISTER_TYPE_ADMIN),
+                array('event_date', 'BETWEEN', $term),
+            ),
+        ));
+
+        return $result;
+    }
+
+    /**
+     * キャンセル待ちされているフリマ情報のキャンセル待ち数一覧を取得する
      *
      * $termが未指定の場合、１ヵ月間で取得する
      *
@@ -1178,7 +1210,7 @@ QUERY;
     }
 
     /**
-     * 出店予約されているフリマ情報を取得する
+     * 出店予約されているフリマ情報の出店予約数一覧を取得する
      *
      * $termが未指定の場合、１ヵ月間で取得する
      *

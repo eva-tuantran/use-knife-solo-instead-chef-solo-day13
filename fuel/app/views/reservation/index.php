@@ -15,7 +15,7 @@
   <!-- form -->
   <div id="form" class="container">
     <div class="box clearfix">
-      <h3>フリマ予約情報入力欄</h3>
+      <h3>フリマ予約の入力</h3>
       <?php if (count($fleamarket->fleamarket_entry_styles) == 0):?>
       <div class="errorMessage">現在予約することが出来ません</div>
       <?php elseif ($user->hasReserved($fleamarket_id)):?>
@@ -129,15 +129,17 @@
             </div>
           </div>
           <div id="submitButton" class="form-group">
-            <button type="submit" class="btn btn-default">内容を確認する<?php echo (isset($nomail) && $nomail) ? '(メール送信なし)': '';?></button>
+            <button type="submit" class="btn btn-default">内容を確認する</button>
           </div>
         </div>
       </form>
       <form action="/reservation/waiting" method="post" id="waiting-form">
         <?php echo \Form::csrf(); ?>
         <div id="form-waiting" style="display:none;">
-          <div class="col-sm-offset-2 col-sm-10">
-            <p>出店ブースが予定数に達しました。キャンセル待ちをしますか？</p>
+          <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+              <p>出店ブースが予定数に達しました。キャンセル待ちをしますか？</p>
+            </div>
           </div>
           <div id="submitButton" class="form-group">
             <input type="hidden" name="fleamarket_id" value="<?php echo e($input['fleamarket_id']);?>">

@@ -20,5 +20,6 @@ class View_Admin_User_List extends \ViewModel
         $this->gender_list = \Model_User::getGenderList();
         $this->devices = \Model_User::getDevices();
         $this->register_statuses = \Model_User::getRegisterStatuses();
+        $this->set('fleamarket_lsit', \Model_Fleamarket::getReservationFleamarket(), false);
     }
 }
