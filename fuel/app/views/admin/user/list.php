@@ -94,7 +94,7 @@
           <th>住所</th>
           <th>メールアドレス</th>
           <th>電話番号</th>
-          <th>強制ログイン</th>
+          <th>ユーザ種別</th>
           <th>登録元</th>
           <th>状態</th>
           <th><a class="btn btn-primary btn-sm" href="/admin/user/">新規登録</a></th>
@@ -105,7 +105,7 @@
             if (! $user_list):
         ?>
         <tr>
-          <td colspan="12">該当するユーザ情報はありません</td>
+          <td colspan="11">該当するユーザ情報はありません</td>
         </tr>
         <?php
             endif;

@@ -3,15 +3,11 @@
 /**
  * 出店予約
  *
- * @extends  Controller_Base_Template
+ * @extends Controller_Admin_Base_Template
  * @author ida
  */
 class Controller_Admin_Reservation extends Controller_Admin_Base_Template
 {
-    protected $_secure_actions = array(
-        'index', 'confirm', 'thanks', 'waiting',
-    );
-
     private $fleamarket = null;
     private $fleamarket_entry_style = null;
     private $fieldset = null;
@@ -51,17 +47,24 @@ class Controller_Admin_Reservation extends Controller_Admin_Base_Template
      * @access public
      * @param
      * @return void
-     * @author ida
+     * @author kobayashi
      */
     public function action_index()
     {
-        $view = \View::forge('admin/reservation/index');
-        $view->set('fieldset', $this->fieldset, false);
-        $view->set('fleamarket', $this->fleamarket, false);
-        $view->set('user', $this->user, false);
-        $view->set('item_categories', \Model_Entry::getItemCategories(), false);
-        $view->set('item_genres', \Model_Entry::getItemGenres(), false);
-        $this->template->content = $view;
+        $fleamarket_id = $this->fleamarket->fleamarket_id;
+        $has_empty_booth = \Model_Fleamarket::hasEmptyBooth($fleamarket_id);
+        $can_reserve = $this->canReserve($fleamarket_id, $has_empty_booth);
+
+        $view_model = \ViewModel::forge('admin/reservation/index');
+        $view_model->set('fieldset', $this->fieldset, false);
+        $view_model->set('fleamarket', $this->fleamarket, false);
+        $view_model->set('user', $this->user, false);
+        $view_model->set('item_categories', \Model_Entry::getItemCategories(), false);
+        $view_model->set('item_genres', \Model_Entry::getItemGenres(), false);
+
+        $view_model->set('has_empty_booth', $has_empty_booth, false);
+        $view_model->set('can_reserve', $can_reserve, false);
+        $this->template->content = $view_model;
     }
 
     /**
@@ -76,9 +79,14 @@ class Controller_Admin_Reservation extends Controller_Admin_Base_Template
     {
         \Session::set_flash('reservation.fieldset', $this->fieldset);
 
-        if (! $this->fieldset->validation()->run() || ! $this->canReserve()) {
+        $fleamarket_id = $this->fleamarket->fleamarket_id;
+        $has_empty_booth = \Model_Fleamarket::hasEmptyBooth($fleamarket_id);
+        $can_reserve = $this->canReserve($fleamarket_id, $has_empty_booth);
+
+        if (! $can_reserve || ! $this->fieldset->validation()->run()) {
+            \Session::set_flash('cannot_reserve', true);
             \Session::set_flash('reservation.error', true);
-            \Response::redirect('reservation');
+            \Response::redirect('admin/reservation');
         }
 
         if (! $this->fleamarket_entry_style) {
@@ -88,7 +96,6 @@ class Controller_Admin_Reservation extends Controller_Admin_Base_Template
         $view = \View::forge('admin/reservation/confirm');
         $view->set('fieldset', $this->fieldset, false);
         $view->set('fleamarket_entry_style',$this->fleamarket_entry_style);
-
         $this->template->content = $view;
     }
 
@@ -107,8 +114,12 @@ class Controller_Admin_Reservation extends Controller_Admin_Base_Template
             \Response::redirect('errors/doubletransmission');
         }
 
-        if (! $this->canReserve()){
-            \Response::redirect('reservation');
+        $fleamarket_id = $this->fleamarket->fleamarket_id;
+        $has_empty_booth = \Model_Fleamarket::hasEmptyBooth($fleamarket_id);
+        $can_reserve = $this->canReserve($fleamarket_id, $has_empty_booth);
+
+        if (! $can_reserve) {
+            \Response::redirect('admin/reservation');
         }
 
         $data = $this->getEntryData();
@@ -127,7 +138,6 @@ class Controller_Admin_Reservation extends Controller_Admin_Base_Template
 
             $db->commit_transaction();
         } catch (\Exception $e) {
-var_dump($e->getMessage());exit;
             $db->rollback_transaction();
             throw new \SystemException(\Model_Error::ER00504);
         }
@@ -163,7 +173,6 @@ var_dump($e->getMessage());exit;
         try {
             $entry = $this->registerWaitingEntry();
         } catch (\Exception $e) {
-var_dump($e->getMessage());exit;
             throw new \SystemException(\Model_Error::ER00505);
         }
 
@@ -186,16 +195,26 @@ var_dump($e->getMessage());exit;
      * 出店予約判定
      *
      * @access private
-     * @param
+     * @param mixed $fleamarket_id フリマID
+     * @param bool $is_booth_empty 空きブース
      * @return bool
-     * @author kobayashi
+     * @author ida
      */
-    public function canReserve()
+    private function canReserve($fleamarket_id, $has_empty_booth)
     {
-        return
-            $this->user->canReserve($this->fleamarket)
-            && $this->fleamarket->canReserve()
-            && (! $this->fleamarket_entry_style->isFullBooth('master'));
+        $result = $this->fleamarket->canReserve();
+
+        if ($this->user->hasReserved($fleamarket_id)) {
+            $result = false;
+        } elseif ($this->user->hasWaiting($fleamarket_id)) {
+            if ($has_empty_booth) {
+                $result = true;
+            } else {
+                $result = false;
+            }
+        }
+
+        return $result;
     }
 
     /**
@@ -209,10 +228,14 @@ var_dump($e->getMessage());exit;
      */
     private function registerEntry($data)
     {
+        $user_id = $data['user_id'];
+        $fleamarket_id = $data['fleamarket_id'];
+        $fleamarket_entry_style_id = $data['fleamarket_entry_style_id'];
+
         $fleamarket_entry_style = \Model_Fleamarket_Entry_Style::find('first', array(
             'where' => array(
-                'fleamarket_id' => $data['fleamarket_id'],
-                'fleamarket_entry_style_id' => $data['fleamarket_entry_style_id'],
+                'fleamarket_id' => $fleamarket_id,
+                'fleamarket_entry_style_id' => $fleamarket_entry_style_id,
             )
         ));
         if (! $fleamarket_entry_style) {
@@ -224,7 +247,7 @@ var_dump($e->getMessage());exit;
 
         $condition = array(
             'user_id'                   => $data['user_id'],
-            'fleamarket_id'             => $data['fleamarket_id'],
+            'fleamarket_id'             => $fleamarket_id,
         );
         $entry = \Model_Entry::findBy($condition);
         if (! $entry) {
@@ -275,12 +298,12 @@ var_dump($e->getMessage());exit;
         if ($entry) {
             $entry->set(array(
                 'entry_status' => Model_Entry::ENTRY_STATUS_WAITING,
-                'updated_user' => $this->user->user_id,
+                'updated_user' => $this->administrator->administrator_id,
             ));
         } else {
             $entry = \Model_Entry::forge();
             $entry->set(array(
-                'user_id' => $this->user->user_id,
+                'user_id'            => $this->user->user_id,
                 'fleamarket_id'      => $fleamarket_id,
                 'fleamarket_entry_style_id' => $fleamarket_entry_style_id,
                 'reservation_number' => '',
@@ -290,7 +313,7 @@ var_dump($e->getMessage());exit;
                 'reserved_booth'     => 0,
                 'link_from'          => '',
                 'remarks'            => '',
-                'created_user'       => $this->user->user_id,
+                'created_user'       => $this->administrator->administrator_id,
             ));
         }
         $entry->save();
@@ -329,9 +352,9 @@ var_dump($e->getMessage());exit;
                 'user_id'            => $this->user->user_id,
                 'reservation_number' => '',
                 'link_from'          => $link_from,
-                'entry_status'       => $entry_status,
-                'created_user'       => $this->user->user_id,
                 'item_genres'        => $item_genre_names,
+                'entry_status'       => $entry_status,
+                'created_user'       => $this->administrator->administrator_id,
             );
             $input = array_merge($input, $input_other);
         }
@@ -376,10 +399,9 @@ var_dump($e->getMessage());exit;
      */
     private function createFieldset()
     {
-        $fieldset = \Model_Entry::createFieldset(\Input::post());
+        $fieldset = \Model_Entry::createFieldset(\Input::all());
         $fieldset->repopulate();
 
         return $fieldset;
     }
-
 }

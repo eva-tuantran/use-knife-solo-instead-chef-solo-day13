@@ -1,3 +1,7 @@
+ol, ul {
+  list-style: none;
+}
+
 #container-wrap {
   margin-top: 70px;
 }
@@ -49,4 +53,35 @@
 .afDialog .contents {
     text-align: left;
     margin: 1em 0.5em;
+}
+
+#submitButton button {
+	background-color: #78bd36;
+	color: #fff;
+	border: none;
+}
+
+#submitButton button:hover {
+  background-color: #b7d316;
+}
+
+#contentForm .form-group {
+	padding-bottom: 15px;
+}
+
+#contentForm .form-group .col-sm-10 {
+	margin-top: 7px;
+}
+
+#contentForm .form-group .col-sm-6 {
+	margin-top: 7px;
+}
+
+#contentForm #submitButton {
+  text-align: center;
+  padding: 15px 0;
+}
+
+.fleamarket_content {
+  margin-top: -12px !important;
 }

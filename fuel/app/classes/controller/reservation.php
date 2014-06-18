@@ -148,7 +148,7 @@ class Controller_Reservation extends Controller_Base_Template
             throw new \SystemException(\Model_Error::ER00504);
         }
 
-        if ($entry && ! \Session::get('admin.user.nomail')){
+        if ($entry){
             try {
                 $entry->sendmail($this->login_user);
             } catch (\Exception $e) {
@@ -182,7 +182,7 @@ class Controller_Reservation extends Controller_Base_Template
             throw new \SystemException(\Model_Error::ER00505);
         }
 
-        if ($entry && ! \Session::get('admin.user.nomail')){
+        if ($entry){
             try {
                 $entry->sendmail($this->login_user);
             } catch (\Exception $e) {
