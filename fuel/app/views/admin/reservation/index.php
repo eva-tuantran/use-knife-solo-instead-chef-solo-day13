@@ -121,7 +121,7 @@
                 </div>
               </div>
               <div id="submitButton" class="form-group">
-                <button type="submit" class="btn btn-default">内容を確認する<?php echo (isset($nomail) && $nomail) ? '(メール送信なし)': '';?></button>
+                <button type="submit" class="btn btn-default">内容を確認する</button>
               </div>
             </div>
           </form>

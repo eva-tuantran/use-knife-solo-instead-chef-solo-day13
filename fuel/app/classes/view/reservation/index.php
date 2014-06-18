@@ -33,7 +33,6 @@ class View_Reservation_Index extends ViewModel
         $this->set('input', $input, false);
         $this->set('errors', $errors, false);
         $this->set('fleamarket_id', $fleamarket_id, false);
-        $this->set('nomail', \Session::get('admin.user.nomail'), false);
 
         $this->set('input_genres', $input_genres, false);
         $this->set('reservation_booth_limit', $reservation_booth_limit, false);
