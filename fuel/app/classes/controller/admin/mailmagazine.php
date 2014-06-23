@@ -127,7 +127,6 @@ class Controller_Admin_Mailmagazine extends Controller_Admin_Base_Template
         $fieldset = $this->getFieldset($data['mail_magazine_type']);
 
         $validation = $fieldset->validation();
-        // @todo メルマガタイプごとに フリマIDをセットしないと！
         $validation_result = $validation->run($data);
 
         if (! $validation_result) {
@@ -278,6 +277,24 @@ class Controller_Admin_Mailmagazine extends Controller_Admin_Base_Template
         exec('php ' . $oil_path . 'oil refine mail_magazine ' . $param . ' > /dev/null &');
 
         $view_model->set('mail_magazine', $mail_magazine, true);
+        $this->template->content = $view_model;
+    }
+
+    /**
+     * 送信結果確認画面
+     *
+     * @access public
+     * @param
+     * @return void
+     * @author ida
+     */
+    public function action_result()
+    {
+        $mail_magazine_id = \Input::get('mail_magazine_id');
+
+        $view_model = \ViewModel::forge('admin/mailmagazine/result');
+        $view_model->set('mail_magazine_id', $mail_magazine_id, false);
+        $view_model->set('user', $this->administrator, false);
         $this->template->content = $view_model;
     }
 
