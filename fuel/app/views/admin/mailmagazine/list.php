@@ -76,16 +76,14 @@
                   $mail_magazine_id = $mail_magazine['mail_magazine_id'];
       ?>
         <tr>
-          <!-- <td><a href="/admin/mailmagazine/index?mail_magazine_id=<?php echo $mail_magazine_id;?>"><?php echo e($mail_magazine_id);?></a></td>-->
-          <td><?php echo e($mail_magazine_id);?></td>
+          <td><a href="/admin/mailmagazine/result?mail_magazine_id=<?php echo $mail_magazine_id;?>"><?php echo e($mail_magazine_id);?></a></td>
           <td><?php
               if (! empty($mail_magazine['send_datetime'])):
                   echo e(date('Y年m月d日 H:i', strtotime($mail_magazine['send_datetime'])));
               endif;
           ?></td>
           <td><?php echo e(@$mail_magazine_types[$mail_magazine['mail_magazine_type']]);?></td>
-          <!-- <td><a href="/admin/mailmagazine/index?mail_magazine_id=<?php echo $mail_magazine_id;?>"><?php echo e($mail_magazine['subject']);?></a></td>-->
-          <td><?php echo e($mail_magazine['subject']);?></td>
+          <td><a href="/admin/mailmagazine/result?mail_magazine_id=<?php echo $mail_magazine_id;?>"><?php echo e($mail_magazine['subject']);?></a></td>
           <td><?php echo e(@$send_statuses[$mail_magazine['send_status']]);?></td>
           <td><?php
               if (! empty($mail_magazine['created_at'])):
