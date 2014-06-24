@@ -152,7 +152,7 @@ Map.prototype = {
             endif;
     ?>
     <div class="mainPhoto">
-      <img src="<?php echo $first_image_path;?>" style="width: 460px; height: 300px;" class="img-responsive">
+      <img src="<?php echo $first_image_path;?>" width="460" height="300" class="img-responsive">
     </div>
     <ul class="thumbnailPhoto">
     <?php
@@ -163,7 +163,7 @@ Map.prototype = {
                     $full_path ='/assets/img/noimage.jpg';
                 endif;
     ?>
-      <li><img src="<?php echo $full_path;?>" style="width: 100px; height: 65px;"></li>
+      <li><img src="<?php echo $full_path;?>" width="100"></li>
     <?php
             endforeach;
     ?>
