@@ -90,7 +90,7 @@ googletag.enableServices();
     if (! $fleamarket_list):
 ?>
     <div class="box result clearfix">
-      <h3><strong>条件に一致するフリーマーケットはありませんでした</strong></h3>
+      <h3>条件に一致するフリーマーケットはありませんでした</h3>
     </div>
 <?php
     else:
