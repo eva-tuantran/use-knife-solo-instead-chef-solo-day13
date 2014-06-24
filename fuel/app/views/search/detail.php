@@ -154,7 +154,7 @@ Map.prototype = {
     <div class="mainPhoto">
       <img src="<?php echo $first_image_path;?>" width="460" height="300" class="img-responsive">
     </div>
-    <ul class="thumbnailPhoto">
+    <ul class="thumbnailPhoto clearfix">
     <?php
             foreach ($image_files as $image_file_name):
                 $full_path = $image_path . $fleamarket_id .'/l_' . $image_file_name;
