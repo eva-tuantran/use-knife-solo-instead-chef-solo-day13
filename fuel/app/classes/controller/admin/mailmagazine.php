@@ -70,7 +70,7 @@ class Controller_Admin_Mailmagazine extends Controller_Admin_Base_Template
         // ページネーション設定
         $pagination = \Pagination::forge(
             'mail_magazine_user_pagination',
-            $this->getPaginationConfig($total_count)
+            $this->getUserListPaginationConfig($total_count)
         );
 
         $mail_magazine_user_list = \Model_Mail_Magazine_User::findListByMailMagazineId(
@@ -127,7 +127,6 @@ class Controller_Admin_Mailmagazine extends Controller_Admin_Base_Template
         $fieldset = $this->getFieldset($data['mail_magazine_type']);
 
         $validation = $fieldset->validation();
-        // @todo メルマガタイプごとに フリマIDをセットしないと！
         $validation_result = $validation->run($data);
 
         if (! $validation_result) {
@@ -278,6 +277,24 @@ class Controller_Admin_Mailmagazine extends Controller_Admin_Base_Template
         exec('php ' . $oil_path . 'oil refine mail_magazine ' . $param . ' > /dev/null &');
 
         $view_model->set('mail_magazine', $mail_magazine, true);
+        $this->template->content = $view_model;
+    }
+
+    /**
+     * 送信結果確認画面
+     *
+     * @access public
+     * @param
+     * @return void
+     * @author ida
+     */
+    public function action_result()
+    {
+        $mail_magazine_id = \Input::get('mail_magazine_id');
+
+        $view_model = \ViewModel::forge('admin/mailmagazine/result');
+        $view_model->set('mail_magazine_id', $mail_magazine_id, false);
+        $view_model->set('user', $this->administrator, false);
         $this->template->content = $view_model;
     }
 
@@ -603,4 +620,29 @@ class Controller_Admin_Mailmagazine extends Controller_Admin_Base_Template
             'total_items'    => $count,
         );
     }
+
+    /**
+     * ページネーション設定を取得する
+     *
+     * @access private
+     * @param int $count 総行数
+     * @return array
+     * @author ida
+     */
+    private function getUserListPaginationConfig($count)
+    {
+        $result_per_page = \Input::post('result_per_page');
+        if ($result_per_page) {
+            $this->result_per_page = $result_per_page;
+        }
+
+        return array(
+//            'pagination_url' => 'admin/mailmagazine/userlist',
+            'uri_segment'    => 5,
+            'num_links'      => 10,
+            'per_page'       => $this->result_per_page,
+            'total_items'    => $count,
+        );
+    }
+
 }

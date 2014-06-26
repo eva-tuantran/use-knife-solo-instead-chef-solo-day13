@@ -9,25 +9,10 @@
  */
 class Model_Fleamarket_Entry_Style extends Model_Base
 {
-    /**
-     * テーブル名
-     *
-     * @var string $table_name
-     */
     protected static $_table_name = 'fleamarket_entry_styles';
 
-    /**
-     * プライマリーキー
-     *
-     * @var string $_primariy
-     */
     protected static $_primary_key  = array('fleamarket_entry_style_id');
 
-    /**
-     * フィールド設定
-     *
-     * @var array
-     */
     protected static $_properties = array(
         'fleamarket_entry_style_id',
         'fleamarket_id',
@@ -42,11 +27,6 @@ class Model_Fleamarket_Entry_Style extends Model_Base
         'deleted_at',
     );
 
-    /**
-     * オブサーバ設定
-     *
-     * @var array
-     */
     protected static $_observers = array(
         'Orm\Observer_CreatedAt' => array(
             'events' => array('before_insert'),
@@ -59,7 +39,7 @@ class Model_Fleamarket_Entry_Style extends Model_Base
     );
 
     /**
-     * 指定されたフリーマーケットIDでフリーマーケット出店形態情報を取得する
+     * 指定されたフリマIDでフリマ出店形態情報を取得する
      *
      * @access public
      * @param mixed $fleamarket_id フリーマーケットID
@@ -80,9 +60,9 @@ class Model_Fleamarket_Entry_Style extends Model_Base
         $fielsds = implode(',', $options['field']);
 
         $placeholders = array('flearmarket_id' => $fleamarket_id);
-        $table_name = self::$_table_name;
+
         $query = <<<"QUERY"
-SELECT {$fielsds} FROM {$table_name} WHERE fleamarket_id = :flearmarket_id AND deleted_at IS NULL
+SELECT {$fielsds} FROM fleamarket_entry_styles WHERE fleamarket_id = :flearmarket_id AND deleted_at IS NULL
 QUERY;
 
         $statement = \DB::query($query)->parameters($placeholders);
@@ -97,10 +77,10 @@ QUERY;
     }
 
     /**
-     * エントリスタイルごとの予約数を取得する
+     * 出店形態ごとの予約数を取得する
      *
      * @access public
-     * @param int $fleamarket_id フリーマーケットID
+     * @param int $fleamarket_id フリマID
      * @return array
      * @author ida
      */
@@ -121,13 +101,13 @@ QUERY;
             $field = "entry_style_id,";
             $groupby = " GROUP BY entry_style_id";
         }
-        $table_name = self::$_table_name;
+
         $query = <<<"QUERY"
 SELECT
     {$field}
     SUM(max_booth) AS max_booth
 FROM
-    {$table_name}
+    fleamarket_entry_styles
 WHERE
     fleamarket_id = :flearmarket_id
 {$groupby}
@@ -192,7 +172,7 @@ QUERY;
     }
 
     /**
-     * キャンセル待ちかどうか
+     * 特定の出店形態の満員判定
      *
      * @access public
      * @param  int

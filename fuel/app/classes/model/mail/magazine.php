@@ -368,21 +368,21 @@ QUERY;
             $pattern[] = '##' . $p . '##';
             switch ($p) {
                 case 'user_name':
-                    $replacement[] = $user['last_name'] . ' ' . $user['first_name'];
+                    $replacement[] = $user->last_name . ' ' . $user->first_name;
                     break;
                 case 'fleamarket_name':
-                    $replacement[] = $fleamarket['name'];
+                    $replacement[] = $fleamarket->name;
                     break;
                 case 'event_date':
-                    $event_date = strtotime($fleamarket['event_date']);
+                    $event_date = strtotime($fleamarket->event_date);
                     $replacement[] = date('Y年m月d日', $event_date);
                     break;
                 case 'start_time':
-                    $event_time_start = strtotime($fleamarket['event_time_start']);
+                    $event_time_start = strtotime($fleamarket->event_time_start);
                     $replacement[] = date('H:i', $event_time_start);
                     break;
                 case 'end_time':
-                    $event_time_end = strtotime($fleamarket['event_time_end']);
+                    $event_time_end = strtotime($fleamarket->event_time_end);
                     $replacement[] = date('H:i', $event_time_end);
                     break;
                 default:
@@ -494,7 +494,7 @@ QUERY;
      *
      * @access private
      * @param mixed $mail_magazine_id メルマガID
-     * @return void
+     * @return object
      * @author ida
      */
     public static function startProcess($mail_magazine_id = null)
@@ -511,6 +511,8 @@ QUERY;
 
         $mail_magazine->send_status = self::SEND_STATUS_PROGRESS;
         $mail_magazine->save();
+
+        return $mail_magazine;
     }
 
     /**

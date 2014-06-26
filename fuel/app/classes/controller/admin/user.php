@@ -144,21 +144,6 @@ class Controller_Admin_User extends Controller_Admin_Base_Template
     }
 
     /**
-     * 指定したユーザで強制ログイン
-     *
-     * @access public
-     * @param
-     * @return void
-     * @author kobayashi
-     */
-    public function action_force_login()
-    {
-        \Auth::force_login(\Input::param('user_id'));
-        \Session::set('admin.user.nomail', (bool) Input::param('nomail'));
-        \Response::redirect('/');
-    }
-
-    /**
      * 指定したユーザを削除する
      *
      * @access public
@@ -173,7 +158,7 @@ class Controller_Admin_User extends Controller_Admin_Base_Template
         $user_id = \Input::get('user_id');
         try {
             $user = \Model_User::find($user_id);
-            $user->deleted_at = \DB::expr('CURRENT_DATE()');
+            $user->deleted_at = \DB::expr('NOW()');
             $user->save();
             $status = 200;
         } catch (\Exception $e) {

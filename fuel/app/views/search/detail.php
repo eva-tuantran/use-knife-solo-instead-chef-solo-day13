@@ -118,7 +118,11 @@ Map.prototype = {
     <?php if ($user && $user->hasReserved($fleamarket_id)):?>
         <li class="button eventStatusReserved">出店予約中</li>
     <?php elseif ($user && $user->hasWaiting($fleamarket_id)):?>
+        <?php if (\Model_Fleamarket::hasEmptyBooth($fleamarket_id)):?>
+        <li class="button makeReservation"><a href="/reservation?fleamarket_id=<?php echo $fleamarket_id;?>">出店予約をする</a></li>
+        <?php else:?>
         <li class="button eventStatusWaiting">キャンセル待ち中</li>
+        <?php endif;?>
     <?php elseif ($is_official):?>
         <?php if ($fleamarket['event_status'] == \Model_Fleamarket::EVENT_STATUS_RESERVATION_RECEIPT):?>
             <?php if ($fleamarket['event_status'] == \Model_Fleamarket::EVENT_STATUS_CLOSE):?>
@@ -148,9 +152,9 @@ Map.prototype = {
             endif;
     ?>
     <div class="mainPhoto">
-      <img src="<?php echo $first_image_path;?>" style="width: 460px; height: 300px;" class="img-responsive">
+      <img src="<?php echo $first_image_path;?>" width="460" height="300" class="img-responsive">
     </div>
-    <ul class="thumbnailPhoto">
+    <ul class="thumbnailPhoto clearfix">
     <?php
             foreach ($image_files as $image_file_name):
                 $full_path = $image_path . $fleamarket_id .'/l_' . $image_file_name;
@@ -159,7 +163,7 @@ Map.prototype = {
                     $full_path ='/assets/img/noimage.jpg';
                 endif;
     ?>
-      <li><img src="<?php echo $full_path;?>" style="width: 100px; height: 65px;"></li>
+      <li><img src="<?php echo $full_path;?>" width="100"></li>
     <?php
             endforeach;
     ?>
@@ -323,7 +327,11 @@ Map.prototype = {
     <?php if ($user && $user->hasReserved($fleamarket_id)):?>
         <li class="button reserved">出店予約中</li>
     <?php elseif ($user && $user->hasWaiting($fleamarket_id)):?>
+        <?php if (\Model_Fleamarket::hasEmptyBooth($fleamarket_id)):?>
+        <li class="button makeReservation"><a href="/reservation?fleamarket_id=<?php echo $fleamarket_id;?>">出店予約をする</a></li>
+        <?php else:?>
         <li class="button reserved">キャンセル待ち中</li>
+        <?php endif;?>
     <?php elseif ($is_official):?>
         <?php if ($fleamarket['event_status'] == \Model_Fleamarket::EVENT_STATUS_RESERVATION_RECEIPT):?>
             <?php if ($fleamarket['event_status'] == \Model_Fleamarket::EVENT_STATUS_CLOSE):?>

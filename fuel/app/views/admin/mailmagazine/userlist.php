@@ -33,7 +33,7 @@
               <td>
                   <?php echo e($mail_magazine_user['last_name']);?>&nbsp;<?php echo e($mail_magazine_user['first_name']);?>
               </td>
-              <td><?php echo e($mail_magazine['created_at']);?></td>
+              <td><?php echo e($mail_magazine_user['updated_at']);?></td>
               <td><?php echo e(@$send_status[$mail_magazine_user['send_status']]);?></td>
             </tr>
           <?php

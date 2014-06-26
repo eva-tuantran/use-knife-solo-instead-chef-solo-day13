@@ -111,7 +111,6 @@ class Model_Fleamarket extends Model_Base
                 'required',
             )
         ),
-
         'location_id',
         'group_code',
         'name' => array(
@@ -1137,7 +1136,39 @@ QUERY;
     }
 
     /**
-     * キャンセル待ちされているフリマ情報を取得する
+     * 出店予約可能のフリマ情報一覧を取得する
+     *
+     * $termが未指定の場合、１ヵ月間で取得する
+     *
+     * @access public
+     * @param array $term 取得する期間
+     * @return object
+     * @author ida
+     */
+    public static function getReservationFleamarket($term = null)
+    {
+        if (! $term) {
+            $term = array(
+                \DB::expr('CURDATE()'),
+                \DB::expr('CURDATE() + INTERVAL 2 MONTH')
+            );
+        }
+
+        $result = \Model_Fleamarket::find('all', array(
+            'select' => array('fleamarket_id', 'name', 'event_date'),
+            'where' => array(
+                array('event_status', '<=', \Model_Fleamarket::EVENT_STATUS_RECEIPT_END),
+                array('display_flag', '=', \Model_Fleamarket::DISPLAY_FLAG_ON),
+                array('register_type', '=', \Model_Fleamarket::REGISTER_TYPE_ADMIN),
+                array('event_date', 'BETWEEN', $term),
+            ),
+        ));
+
+        return $result;
+    }
+
+    /**
+     * キャンセル待ちされているフリマ情報のキャンセル待ち数一覧を取得する
      *
      * $termが未指定の場合、１ヵ月間で取得する
      *
@@ -1179,7 +1210,7 @@ QUERY;
     }
 
     /**
-     * 出店予約されているフリマ情報を取得する
+     * 出店予約されているフリマ情報の出店予約数一覧を取得する
      *
      * $termが未指定の場合、１ヵ月間で取得する
      *
@@ -1416,9 +1447,92 @@ QUERY;
      */
     public function canReserve()
     {
-        return
-            $this->event_status == \Model_Fleamarket::EVENT_STATUS_RESERVATION_RECEIPT
+        return $this->event_status == self::EVENT_STATUS_RESERVATION_RECEIPT
             && $this->event_reservation_status != \Model_Fleamarket::EVENT_RESERVATION_STATUS_FULL;
+    }
+
+    /**
+     * 空きブース判定
+     *
+     * @access public
+     * @param mixed $fleamarket_id
+     * @return bool
+     * @author kobayasi
+     */
+    public static function hasEmptyBooth($fleamarket_id = null)
+    {
+        if (! $fleamarket_id) {
+            $fleamarket_id = $this->fleamarket_id;
+        }
+
+        $max_booth = 0;
+        $max_booth_result = \Model_Fleamarket_Entry_Style::getMaxBoothByFleamarketId(
+            $fleamarket_id, false
+        );
+        if (isset($max_booth_result[0]['max_booth'])) {
+            $max_booth = $max_booth_result[0]['max_booth'];
+        }
+
+        $total_entry = 0;
+        $total_entry_result = \Model_Entry::getTotalEntryByFleamarketId(
+            $fleamarket_id, false
+        );
+        if (isset($total_entry_result[0]['reserved_booth'])) {
+            $total_entry = $total_entry_result[0]['reserved_booth'];
+        }
+
+        return ($max_booth - $total_entry) > 0;
+    }
+
+    /**
+     * 反響項目を文字列により連結する
+     *
+     * @access public
+     * @param array $link_from_list 反響項目リスト
+     * @return string
+     * @author ida
+     */
+    public static function implodeLinkFromList(Array $link_from_list = array())
+    {
+        $result = '';
+        if (empty($link_from_list)) {
+            return $result;
+        }
+
+        foreach ($link_from_list as $link_from) {
+            if (! empty($link_from)) {
+                $result .= $result === '' ? '' : ',';
+                $result .= trim($link_from);
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * 反響項目を文字列により分割する
+     *
+     * @access public
+     * @param array $link_from_list 反響項目リスト
+     * @return array
+     * @author ida
+     */
+    public static function explodeLinkFromList($link_from_list = null)
+    {
+        $result = array();
+        if (empty($link_from_list)) {
+            return $result;
+        }
+
+        $list = explode(',', $link_from_list);
+        foreach ($list as $link_from) {
+            $link_from = trim($link_from);
+            if (! empty($link_from)) {
+                $result[] = $link_from;
+            }
+        }
+
+        return $result;
     }
 
     /**
@@ -1534,57 +1648,6 @@ QUERY;
         }
 
         return $conditions;
-    }
-
-    /**
-     * 反響項目を文字列により連結する
-     *
-     * @access public
-     * @param array $link_from_list 反響項目リスト
-     * @return string
-     * @author ida
-     */
-    public static function implodeLinkFromList(Array $link_from_list = array())
-    {
-        $result = '';
-        if (empty($link_from_list)) {
-            return $result;
-        }
-
-        foreach ($link_from_list as $link_from) {
-            if (! empty($link_from)) {
-                $result .= $result === '' ? '' : ',';
-                $result .= trim($link_from);
-            }
-        }
-
-        return $result;
-    }
-
-    /**
-     * 反響項目を文字列により分割する
-     *
-     * @access public
-     * @param array $link_from_list 反響項目リスト
-     * @return array
-     * @author ida
-     */
-    public static function explodeLinkFromList($link_from_list = null)
-    {
-        $result = array();
-        if (empty($link_from_list)) {
-            return $result;
-        }
-
-        $list = explode(',', $link_from_list);
-        foreach ($list as $link_from) {
-            $link_from = trim($link_from);
-            if (! empty($link_from)) {
-                $result[] = $link_from;
-            }
-        }
-
-        return $result;
     }
 
     /**

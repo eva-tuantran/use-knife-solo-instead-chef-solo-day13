@@ -23,7 +23,7 @@ class View_Admin_Mailmagazine_Index extends \ViewModel
     }
 
     /**
-     * 出店予約フリマ一覧を取得する
+     * 出店予約可能のフリマ一覧を取得する
      *
      * @access private
      * @param
@@ -36,17 +36,8 @@ class View_Admin_Mailmagazine_Index extends \ViewModel
             \DB::expr('CURDATE()'),
             \DB::expr('CURDATE() + INTERVAL 1 MONTH')
         );
-        $result = \Model_Fleamarket::find('all', array(
-            'select' => array('fleamarket_id', 'name', 'event_date'),
-            'where' => array(
-                array('event_status', '<=', \Model_Fleamarket::EVENT_STATUS_RECEIPT_END),
-                array('display_flag', '=', \Model_Fleamarket::DISPLAY_FLAG_ON),
-                array('register_type', '=', \Model_Fleamarket::REGISTER_TYPE_ADMIN),
-                array('event_date', 'BETWEEN', $term),
-            ),
-        ));
 
-        return $result;
+        return \Model_Fleamarket::getReservationFleamarket($term);
     }
 
     /**
