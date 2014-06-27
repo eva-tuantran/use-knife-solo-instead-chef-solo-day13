@@ -1150,7 +1150,7 @@ QUERY;
         if (! $term) {
             $term = array(
                 \DB::expr('CURDATE()'),
-                \DB::expr('CURDATE() + INTERVAL 2 MONTH')
+                \DB::expr('CURDATE() + INTERVAL 6 MONTH')
             );
         }
 
