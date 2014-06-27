@@ -24,35 +24,41 @@ class Controller_Search extends Controller_Base_Template
      * フリーマーケット検索結果画面
      *
      * @access public
-     * @param int $page ページ番号
+     * @param
      * @return void
      * @author ida
      */
-    public function get_index($page = null)
+    public function action_index($area = null)
     {
+        if (empty($area)) {
+            $area = 'all';
+        }
+
+        $this->setHtmlReplace(array(
+            'AREA' => $area,
+            'AREA_NAME' => $this->getAreaName($area),
+        ));
+
         Asset::css('jquery-ui.min.css', array(), 'add_css');
         Asset::js('jquery-ui.min.js', array(), 'add_js');
 
-        if (! $page) {
-            $page = 1;
-        }
-
-        list($conditions, $add_conditions) = $this->getCondition();
+        list($conditions, $add_conditions) = $this->getCondition($area);
 
         // 検索条件から表示するフリーマーケット情報の取得
         $condition_list = \Model_Fleamarket::createSearchCondition(
             array_merge($conditions, $add_conditions)
         );
 
-        $total_count = \Model_Fleamarket::getCountBySearch($condition_list);
-        $fleamarket_list = \Model_Fleamarket::findBySearch(
-            $condition_list, $page, $this->search_result_per_page
-        );
 
         // ページネーション設定
+        $total_count = \Model_Fleamarket::getCountBySearch($condition_list);
         $pagination = \Pagination::forge(
             'fleamarket_pagination',
-            $this->getPaginationConfig($total_count)
+            $this->getPaginationConfig($total_count, $area)
+        );
+
+        $fleamarket_list = \Model_Fleamarket::findBySearch(
+            $condition_list, $pagination->current_page, $this->search_result_per_page
         );
 
         $view_model = \ViewModel::forge('search/index');
@@ -61,7 +67,6 @@ class Controller_Search extends Controller_Base_Template
         $view_model->set('fleamarket_list', $fleamarket_list, false);
         $view_model->set('pagination', $pagination, false);
         $view_model->set('user', $this->login_user, false);
-
         $this->template->content = $view_model;
     }
 
@@ -86,6 +91,12 @@ class Controller_Search extends Controller_Base_Template
         if (! $fleamarket) {
             return $this->forward('errors/notfound', 404);
         }
+        $this->setHtmlReplace(array(
+            'AREA_NAME' => $this->getAreaName($fleamarket['prefecture_id']),
+            'FLEAMARKET_NAME' => $fleamarket['name'],
+            'LOCATION_ID' => $fleamarket['location_id'],
+            'LOCATION_NAME' => $fleamarket['location_name'],
+        ));
 
         $fleamarket_abouts = \Model_Fleamarket_About::findByFleamarketId(
             $fleamarket_id
@@ -121,87 +132,21 @@ class Controller_Search extends Controller_Base_Template
     }
 
     /**
-     * 都道府県一覧を取得する
-     *
-     * jsonで返す
-     *
-     * @access public
-     * @param
-     * @return void
-     * author ida
-     */
-    public function get_prefecture()
-    {
-        $region_id = Input::get('region_id');
-
-        $region_prefectures = \Config::get('master.region_prefectures');
-        $prefectures = \Config::get('master.prefectures');
-
-        $result = array();
-        if ($region_id) {
-            $region_prefecture = $region_prefectures[$region_id];
-            foreach ($region_prefecture as $prefecture_id) {
-                $result[$prefecture_id] = $prefectures[$prefecture_id];
-            }
-        }
-
-        if (! $result) {
-            $result = $prefectures;
-        }
-
-        $this->responseJson($result, true);
-    }
-
-    /**
      * 検索条件を取得する
      *
      * @access private
-     * @param
+     * @param string $area 指定エリア
      * @return array
      * @author ida
      */
-    private function getCondition()
+    private function getCondition($area)
     {
         $conditions = Input::get('c', array());
 
-        if (isset($conditions['keyword'])
-            && $conditions['keyword'] == ''
-        ) {
+        $conditions['area'] = $area;
+
+        if (empty($conditions['keyword'])) {
             unset($conditions['keyword']);
-        }
-
-        if (isset($conditions['prefecture'])
-            && $conditions['prefecture'] == ''
-        ) {
-            unset($conditions['prefecture']);
-        }
-
-        if (isset($conditions['region'])
-            && $conditions['region'] == ''
-        ) {
-            unset($conditions['region']);
-        }
-
-        $prefecure = Input::get('prefecture');
-        if ($prefecure != '') {
-            $alphabet_prefectures = \Config::get('master.alphabet_prefectures');
-            $prefecture_id = array_search($prefecure, $alphabet_prefectures);
-            $conditions = array('prefecture' => $prefecture_id);
-        }
-
-        $calendar = Input::get('calendar');
-        if ($calendar) {
-            $conditions = array('calendar' => $calendar);
-        }
-
-        $upcomming = Input::get('upcomming');
-        if ($upcomming) {
-            $conditions = array('upcomming' => $upcomming);
-        }
-
-        $reservation = Input::get('reservation');
-        if ($reservation) {
-            $conditions = array('reservation' => $reservation);
         }
 
         $add_conditions = Input::get('ac', array());
@@ -212,14 +157,6 @@ class Controller_Search extends Controller_Base_Template
             unset($conditions['shop_fee']);
         }
 
-        if (empty($add_conditions['event_status'])) {
-            $add_conditions['event_status'] = array(
-                \Model_Fleamarket::EVENT_STATUS_SCHEDULE,
-                \Model_Fleamarket::EVENT_STATUS_RESERVATION_RECEIPT,
-                \Model_Fleamarket::EVENT_STATUS_CANCEL,
-            );
-        }
-
         return array($conditions, $add_conditions);
     }
 
@@ -228,10 +165,11 @@ class Controller_Search extends Controller_Base_Template
      *
      * @access private
      * @param int $count 総行数
+     * @param string $area 指定エリア
      * @return array
      * @author ida
      */
-    private function getPaginationConfig($count)
+    private function getPaginationConfig($count, $area)
     {
         $search_result_per_page = Input::post('search_result_per_page');
         if ($search_result_per_page) {
@@ -239,8 +177,8 @@ class Controller_Search extends Controller_Base_Template
         }
 
         return array(
-            'pagination_url' => 'search',
-            'uri_segment' => 2,
+//            'pagination_url' => '/' . $area . '/',
+            'uri_segment' => 'p',
             'num_links' => 5,
             'per_page' => $this->search_result_per_page,
             'total_items' => $count,

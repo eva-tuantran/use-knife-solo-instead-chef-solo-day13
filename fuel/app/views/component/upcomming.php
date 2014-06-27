@@ -39,5 +39,5 @@
     endif;
 ?>
 <ul>
-  <li><a href="/search/1?upcomming=1">一覧</a></li>
+  <li><a href="/all?ac%5Bevent_status%5D%5B%5D=1&ac%5Bevent_status%5D%5B%5D=2&ac%5Bevent_status%5D%5B%5D=3">一覧</a></li>
 </ul>

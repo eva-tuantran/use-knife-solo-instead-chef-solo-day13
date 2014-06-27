@@ -54,6 +54,13 @@ class Controller_Location extends Controller_Base_Template
         if (! $fleamarket) {
             \Response::redirect('errors/notfound');
         }
+        $this->setHtmlReplace(array(
+            'AREA' => $this->getAreaName($fleamarket['prefecture_id']),
+            'AREA_NAME' => $this->getAreaName($fleamarket['prefecture_id']),
+            'LOCATION_ID' => $fleamarket['location_id'],
+            'LOCATION_NAME' => $fleamarket['location_name'],
+            'FLEAMARKET_NAME' => $fleamarket['name'],
+        ));
 
         $fleamarket_abouts = \Model_Fleamarket_About::findByFleamarketId(
             $fleamarket_id

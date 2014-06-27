@@ -4,7 +4,6 @@ $(function() {
   Carousel.start();
 
   Map.init();
-  Search.init();
 
   var $mapimage = $("#map img");
   $('#map area').hover(function(){
@@ -35,7 +34,10 @@ var Map = {
     $('div.region').hide();
     if (Map.isShow()) {
       var tipDiv = '#region_0' + Map.current_region;
-      $(tipDiv).show();
+      var parent_width = $("#map").width();
+      var tip_width = $(tipDiv).width();
+      var padding = (parent_width - tip_width + 20) / 2;
+      $(tipDiv).css("left", padding).show();
     }
   },
   isShow: function() {
@@ -96,32 +98,5 @@ var Carousel = {
       });
     });
     $(window).resize();
-  }
-};
-
-var Search = {
-  init: function() {
-    $("#select_region").on("change", function(evt) {
-      Search.changeRegion();
-    });
-  },
-  changeRegion: function() {
-    $("#select_prefecture").prop("selectedIndex", 0);
-    var region_id = $("#select_region").val();
-    $.ajax({
-      type: "get",
-      url: '/search/prefecture',
-      dataType: "json",
-      data: {region_id: region_id}
-    }).done(function(json, textStatus, jqXHR) {
-      if (json) {
-        $("#select_prefecture").empty();
-        $("#select_prefecture").append('<option value="">都道府県</option>');
-        $.each(json, function(key, value) {
-          $("#select_prefecture").append('<option value="' + key + '">' + value + '</option>');
-        });
-      }
-    }).fail(function(jqXHR, textStatus, errorThrown) {
-    });
   }
 };

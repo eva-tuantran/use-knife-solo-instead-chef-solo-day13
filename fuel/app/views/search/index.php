@@ -12,7 +12,6 @@ var node = document.getElementsByTagName('script')[0];
 node.parentNode.insertBefore(gads, node);
 })();
 </script>
-
 <script type='text/javascript'>
 googletag.cmd.push(function() {
 googletag.defineSlot('/64745063/(楽市楽座)検索結果_フッターバナー_728x90', [auto, 90], 'div-gpt-ad-1397113960029-0').addService(googletag.pubads());
@@ -84,7 +83,7 @@ googletag.enableServices();
             $title .= 'の';
         endif;
     ?>
-    <div id="resultTitle"><?php echo $title;?>フリマ会場一覧</div>
+    <h2 id="resultTitle"><?php echo $title;?>フリマ会場一覧</h2>
     <!-- result -->
 <?php
     if (! $fleamarket_list):
@@ -250,12 +249,15 @@ googletag.enableServices();
   </div>
   <!-- /searchResult -->
   <!-- searchSelecter -->
-  <form id="form_search" action="/search/1" method="get">
+  <form id="form_search" action="" method="get">
     <div id="searchSelecter" class="col-sm-3 col-sm-pull-9">
       <div class="box clearfix">
       <?php
           if ($conditions):
               foreach ($conditions as $field => $value):
+                  if ($field === 'area') {
+                      continue;
+                  }
                   echo '<input type="hidden" name="c[' . $field . ']" value="' . $value . '">';
               endforeach;
           endif;
@@ -390,7 +392,23 @@ $(function() {
   $(".pagination li").on("click", function(evt) {
     evt.preventDefault();
     var href = $(this).find("a").attr("href");
-    $("#form_search").attr("action", href).submit();
+    var $form = $("#form_search");
+
+	// URLを取得して「?]で分割「&」でも分割
+    params    = href.split("?");
+    paramms   = params[1].split("&");
+    // パラメータ用の配列を用意
+    var paramArray = [];
+    // 配列にパラメータを格納
+    for (i = 0; i < paramms.length; i++ ) {
+      param = paramms[i].split("=");
+      if (param[0] == 'p') {
+        $form.append('<input type="hidden" name="p" value="' + param[1] + '">');
+        break;
+      }
+    }
+
+    $form.attr("action", href).submit();
   });
 
   $("#do_search").on("click", function(evt) {

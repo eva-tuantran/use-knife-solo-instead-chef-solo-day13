@@ -48,15 +48,34 @@ class Controller_Base_Template extends Controller_Template
 
 
     /**
-     * メタタグの指定
+     * metaタグの指定
+     *
      * FuelPHPのmetaに準拠したarrayを設定します
      * http://fuelphp.com/docs/classes/html.html#/method_meta
      *
-     * @var mixed
+     * @var array
      * @access protected
      * @author shimma
      */
     protected $meta = array();
+
+    /**
+     * パンくずリスト
+     *
+     * @var array
+     * @access protected
+     * @author ida
+     */
+    protected $crumbs = array();
+
+    /**
+     * metaタグ・パンくずリストの置換文字
+     *
+     * @var array
+     * @access protected
+     * @author ida
+     */
+    protected $html_replacement = array();
 
     /**
      * ログインしているユーザインスタンスです
@@ -66,7 +85,6 @@ class Controller_Base_Template extends Controller_Template
      * @author shimma
      */
     protected $login_user;
-
 
     public function before()
     {
@@ -97,7 +115,6 @@ class Controller_Base_Template extends Controller_Template
             return \Response::redirect('/mypage');
         }
 
-        Lang::load('meta');
         $this->login_user = Auth::get_user_instance();
 
         $segments = $this->request->route->segments;
@@ -106,20 +123,22 @@ class Controller_Base_Template extends Controller_Template
             $this->template->is_top = true;
         }
 
+        $page = 'default';
         if ($segments) {
-            if (count($segments) == 1 ){
+            if (count($segments) == 1){
                 $segments[] = 'index';
             }
-            $this->setMetaTag("$segments[0]/$segments[1]");
-        } else {
-            $this->setMetaTag('default');
+            $page = $segments[0] . '/' . $segments[1];
         }
+
+        $this->setMetaTag($page);
+        $this->setBreadcrumb($page);
     }
 
     public function after($response)
     {
-        $this->template->meta = $this->meta;
-
+        $this->createMeta();
+        $this->createBreadcrumb();
         return parent::after($response);
     }
 
@@ -146,6 +165,58 @@ class Controller_Base_Template extends Controller_Template
     }
 
     /**
+     * エリア・都道府県変換
+     *
+     * @access public
+     * @apram array $replacement
+     * @return string
+     * @author ida
+     */
+    protected function getAreaName($area = null)
+    {
+        if (empty($area)) {
+            return '';
+        }
+
+        if (false !== ($key = array_search($area, \Config::get('master.alphabet_regions')))) {
+            $list = \Config::get('master.regions');
+        } elseif (false !== ($key = array_search($area, \Config::get('master.alphabet_prefectures')))) {
+            $list = \Config::get('master.prefectures');
+        } elseif (false !== array_key_exists($area, \Config::get('master.prefectures'))) {
+            $key = $area;
+            $list = \Config::get('master.prefectures');
+        }
+
+        return isset($list[$key]) ? $list[$key] : '';
+    }
+
+    /**
+     * エリア・都道府県変換
+     *
+     * @access public
+     * @apram array $replacement
+     * @return string
+     * @author ida
+     */
+    protected function changeAreaNameToId($area = null)
+    {
+        if (empty($area)) {
+            return '';
+        }
+
+        if (false !== ($key = array_search($area, \Config::get('master.alphabet_regions')))) {
+            $list = \Config::get('master.regions');
+        } elseif (false !== ($key = array_search($area, \Config::get('master.alphabet_prefectures')))) {
+            $list = \Config::get('master.prefectures');
+        } elseif (false !== array_key_exists($area, \Config::get('master.prefectures'))) {
+            $key = $area;
+            $list = \Config::get('master.prefectures');
+        }
+
+        return isset($list[$key]) ? $list[$key] : '';
+    }
+
+    /**
      * meta tag 関連を lang より設定
      *
      * @access protected
@@ -153,14 +224,40 @@ class Controller_Base_Template extends Controller_Template
      * @author kobayasi
      * @author shimma
      */
-    protected function setMetaTag($path)
+    protected function setMetaTag($page)
     {
-        $meta = Lang::get($path);
-        $this->meta[] = array('name' => 'keyword',     'content' => $meta['keyword']);
-        $this->meta[] = array('name' => 'description', 'content' => $meta['description']);
-        $this->template->title = $meta['title'];
+        $meta = \Lang::get('meta.' . $page);
+        $this->meta = $meta;
     }
 
+    /**
+     * パンくずリスト設定する
+     *
+     * @access protected
+     * @apram array $replacement
+     * @return string
+     * @author ida
+     */
+    protected function setBreadcrumb($page)
+    {
+        $crumbs = \Lang::get('crumb.crumbs.'. $page);
+        $this->crumbs = $crumbs;
+    }
+
+    /**
+     * meta文字・パンくずのリプレイス文字を設定する
+     *
+     * @access public
+     * @apram array $replacement
+     * @return void
+     * @author ida
+     */
+    protected function setHtmlReplace($replacement)
+    {
+        foreach ($replacement as $key => $value) {
+            $this->html_replacement[] = array($key => $value);
+        }
+    }
 
     /**
      * 遅延リダイレクトを行います。
@@ -178,7 +275,6 @@ class Controller_Base_Template extends Controller_Template
         $this->meta[] = array('http-equiv' => 'refresh', 'content' => "${timer}; URL=${url}");
     }
 
-
     /**
      * ステータス変更文字列を取得します。
      *
@@ -193,7 +289,7 @@ class Controller_Base_Template extends Controller_Template
             return '';
         }
 
-        Lang::load('status');
+        \Lang::load('status');
         return Lang::get($i);
     }
 
@@ -235,4 +331,53 @@ class Controller_Base_Template extends Controller_Template
 
         return $response;
     }
+
+    /**
+     * metaタグの文言を生成する
+     *
+     * @access private
+     * @param
+     * @return void
+     * @author ida
+     */
+    private function createMeta()
+    {
+        if (! empty($this->html_replacement)) {
+            foreach ($this->html_replacement as $replcae) {
+                list($key, $value) = each($replcae);
+                foreach ($this->meta as $name => $word) {
+                    $this->meta[$name] = str_replace('##' . $key . '##', $value, $word);
+                }
+            }
+        }
+
+        $meta[] = array('name' => 'keyword', 'content' => $this->meta['keyword']);
+        $meta[] = array('name' => 'description','content' => $this->meta['description']);
+        $this->template->title = $this->meta['title'];
+        $this->template->description = $this->meta['description'];
+        $this->template->meta = $meta;
+    }
+
+    /**
+     * metaタグの文言を生成する
+     *
+     * @access private
+     * @param
+     * @return void
+     * @author ida
+     */
+    private function createBreadcrumb()
+    {
+        if (! empty($this->html_replacement)) {
+            foreach ($this->html_replacement as $replcae) {
+                list($key, $value) = each($replcae);
+                foreach ($this->crumbs as $name => $word) {
+                    $this->crumbs[$name] = str_replace('##' . $key . '##', $value, $word);
+                }
+            }
+        }
+
+        $this->template->set('crumbs', $this->crumbs, false);
+    }
+
 }

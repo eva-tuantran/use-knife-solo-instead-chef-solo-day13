@@ -10,10 +10,9 @@ class Controller_Info extends Controller_Base_Template
 
     public function before()
     {
-        Asset::css('info.css', array(), 'add_css');
         parent::before();
+        Asset::css('info.css', array(), 'add_css');
     }
-
 
     public function action_index()
     {
