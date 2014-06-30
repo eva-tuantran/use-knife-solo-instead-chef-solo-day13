@@ -92,6 +92,7 @@ class Controller_Search extends Controller_Base_Template
             return $this->forward('errors/notfound', 404);
         }
         $this->setHtmlReplace(array(
+            'AREA' => $this->getArea($fleamarket['prefecture_id']),
             'AREA_NAME' => $this->getAreaName($fleamarket['prefecture_id']),
             'FLEAMARKET_NAME' => $fleamarket['name'],
             'LOCATION_ID' => $fleamarket['location_id'],

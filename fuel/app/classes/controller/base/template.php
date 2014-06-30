@@ -165,16 +165,31 @@ class Controller_Base_Template extends Controller_Template
     }
 
     /**
-     * エリア・都道府県変換
+     * エリア・都道府県を取得
      *
      * @access public
-     * @apram array $replacement
+     * @apram mixed $area アルファベット、都道府県ID
+     * @return string
+     * @author ida
+     */
+    protected function getArea($prefecture_id = null)
+    {
+        $list = \Config::get('master.alphabet_prefectures');
+
+        return isset($list[$prefecture_id]) ? $list[$prefecture_id] : 'all';
+    }
+
+    /**
+     * エリア・都道府県の名称を取得
+     *
+     * @access public
+     * @apram mixed $area アルファベット、都道府県ID
      * @return string
      * @author ida
      */
     protected function getAreaName($area = null)
     {
-        if (empty($area)) {
+        if (empty($area) && $area === '') {
             return '';
         }
 
@@ -194,13 +209,14 @@ class Controller_Base_Template extends Controller_Template
      * エリア・都道府県変換
      *
      * @access public
-     * @apram array $replacement
+     * @apram array $area エリアのキー
      * @return string
      * @author ida
      */
     protected function changeAreaNameToId($area = null)
     {
-        if (empty($area)) {
+var_dump($area);
+        if (empty($area) && $area === '') {
             return '';
         }
 
@@ -226,8 +242,7 @@ class Controller_Base_Template extends Controller_Template
      */
     protected function setMetaTag($page)
     {
-        $meta = \Lang::get('meta.' . $page);
-        $this->meta = $meta;
+        $this->meta = \Lang::get('meta.' . $page);
     }
 
     /**
@@ -240,8 +255,7 @@ class Controller_Base_Template extends Controller_Template
      */
     protected function setBreadcrumb($page)
     {
-        $crumbs = \Lang::get('crumb.crumbs.'. $page);
-        $this->crumbs = $crumbs;
+        $this->crumbs = \Lang::get('crumb.crumbs.'. $page);
     }
 
     /**

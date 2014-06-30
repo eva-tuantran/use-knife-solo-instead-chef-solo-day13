@@ -10,13 +10,13 @@ return array(
         ),
         'search/detail' => array(
             '<a href="/">ホーム</a>',
-            '<a href="/list/##AREA##">##AREA_NAME##</a>',
+            '<a href="/##AREA##">##AREA_NAME##</a>',
             '<a href="/location/##LOCATION_ID##">##LOCATION_NAME##</a>',
             '##FLEAMARKET_NAME##',
         ),
         'location/detail' => array(
             '<a href="/">ホーム</a>',
-            '<a href="/list/##AREA##">##AREA_NAME##</a>',
+            '<a href="/##AREA##">##AREA_NAME##</a>',
             '##LOCATION_NAME##',
         ),
         'fleamarket/index' => array(

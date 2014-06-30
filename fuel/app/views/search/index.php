@@ -33,43 +33,33 @@ googletag.enableServices();
                 }
 
                 switch ($field):
-                    case 'prefecture':
-                        $titles[0] = $prefectures[$condition];
+                    case 'area':
+                        $area_name = $getAreaName($condition);
+                        $titles[0] = $area_name;
                         break;
-                    case 'region':
-                        if (! isset($conditions['prefecture'])):
-                            $titles[1] = $regions[$condition];
-                        endif;
-                        break;
-                    case 'calendar':
-                        $titles[2] = date('Y年m月d日', strtotime($condition));
-                        break;
-                    case 'upcomming':
-                        $titles[3] = '近日開催';
-                        break;
-                    case 'reservation':
-                        $titles[4] = '出店予約可能';
+                    case 'event_date':
+                        $titles[1] = date('Y年m月d日', strtotime($condition));
                         break;
                     case 'keyword':
-                        $titles[5] = e($condition);
+                        $titles[2] = e($condition);
                         break;
                     case 'shop_fee':
-                        $titles[6] = '出店無料';
+                        $titles[3] = '出店無料';
                         break;
                     case 'car_shop':
-                        $titles[7] = '車出店可';
+                        $titles[4] = '車出店可';
                         break;
                     case 'rainy_location':
-                        $titles[8] = '雨天開催会場';
+                        $titles[5] = '雨天開催会場';
                         break;
                     case 'pro_shop':
-                        $titles[9] = 'プロ出店可';
+                        $titles[6] = 'プロ出店可';
                         break;
                     case 'charge_parking':
-                        $titles[10] = '有料駐車場あり';
+                        $titles[7] = '有料駐車場あり';
                         break;
                     case 'free_parking':
-                        $titles[11] = '無料駐車場あり';
+                        $titles[8] = '無料駐車場あり';
                         break;
                     default:
                         break;
@@ -77,9 +67,15 @@ googletag.enableServices();
             endforeach;
         endif;
 
+        if (isset($add_conditions['event_status'])
+            && false !== ($key = array_search(\Model_Fleamarket::EVENT_STATUS_RESERVATION_RECEIPT, $add_conditions['event_status']))
+        ):
+            $titles[20] = '出店予約可能';
+        endif;
+
         if ($titles):
             ksort($titles);
-            $title = implode('/', $titles);
+            $title = implode('／', $titles);
             $title .= 'の';
         endif;
     ?>
@@ -93,6 +89,16 @@ googletag.enableServices();
     </div>
 <?php
     else:
+?>
+    <div class="box">
+      <?php echo $area_name;?>のフリマ会場一覧です。
+      <?php
+        if ($locations = $getExplain()):
+          echo implode($getExplain(), '、');
+        endif;
+      ?>などで開催しております。
+    </div>
+<?php
         foreach ($fleamarket_list as $fleamarket):
             $fleamarket_id = $fleamarket['fleamarket_id'];
 
