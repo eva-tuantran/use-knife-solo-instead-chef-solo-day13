@@ -178,7 +178,6 @@ class Controller_Search extends Controller_Base_Template
         }
 
         return array(
-//            'pagination_url' => '/' . $area . '/',
             'uri_segment' => 'p',
             'num_links' => 5,
             'per_page' => $this->search_result_per_page,
