@@ -23,8 +23,33 @@ class View_Search_Index extends ViewModel
         $this->week_list = \Config::get('master.week');
         $this->entry_styles = \Config::get('master.entry_styles');
         $this->regions = \Config::get('master.regions');
-        $this->prefectures = \Config::get('master.prefectures');
         $this->image_path = '/' . \Config::get('master.image_path.store');
+        $this->prefectures = \Config::get('master.prefectures');
+        $this->getAreaName = function ($area) {
+            $result = null;
+
+            if (false !== ($key = array_search($area, \Config::get('master.alphabet_regions')))) {
+                $regions = \Config::get('master.regions');
+                $result = $regions[$key];
+            } elseif (false !== ($key = array_search($area, \Config::get('master.alphabet_prefectures')))) {
+                $prefectures = \Config::get('master.prefectures');
+                $result = $prefectures[$key];
+            }
+
+            return $result;
+        };
+        $this->getExplain  = function () use ($fleamarket_list) {
+            $result = array();
+            foreach ($fleamarket_list as $fleamarket) {
+                $result[] = $fleamarket['location_name'];
+            }
+
+            if (! empty($result)) {
+                $result = array_slice(array_unique($result, SORT_STRING), 0, 5);
+            }
+
+            return $result;
+        };
     }
 
     /**

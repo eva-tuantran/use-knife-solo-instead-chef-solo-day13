@@ -296,11 +296,9 @@ return array(
                      * add it like 'session' => 'auth'.
                      * If you don't want the config in a group use null as groupname.
                      */
-
                     'config' => array(
-            'master' => 'master',
-            'constants' => 'constants',
-                        // 'app', //@TODO: 常に読み込む必要ないかもしれない
+                        'master' => 'master',
+                        'constants' => 'constants',
                     ),
 
                     /**
@@ -311,7 +309,9 @@ return array(
                      * add it like 'validation' => 'forms'.
                      * If you don't want the lang in a group use null as groupname.
                      */
-                    //'language'  => array('meta'),
-                    // ),
+                    'language' => array(
+                        'meta' => 'meta',
+                        'breadcrumb' => 'crumb',
+                    ),
                 )
             );

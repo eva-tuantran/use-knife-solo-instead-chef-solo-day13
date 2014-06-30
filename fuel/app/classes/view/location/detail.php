@@ -25,6 +25,14 @@ class View_Location_Detail extends ViewModel
         $this->image_files = $this->createFileNames($this->fleamarket_images);
     }
 
+    /**
+     * イメージ画像名のリストを生成する
+     *
+     * @access private
+     * @param array $images イメージ画像
+     * @return array
+     * @author ida
+     */
     private function createFileNames($images)
     {
         $result = array();
@@ -43,7 +51,7 @@ class View_Location_Detail extends ViewModel
      * フリーマーケット情報に紐づくフリーマーケット出店形態情報を取得する
      *
      * @access private
-     * @param array $fleamarket フリーマーケット情報
+     * @param array $fleamarket フリマ情報
      * @return array
      * @author ida
      */

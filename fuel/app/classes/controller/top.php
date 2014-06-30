@@ -22,7 +22,7 @@ class Controller_Top extends Controller_Base_Template
      */
     public function action_index()
     {
-        $view_model = ViewModel::forge('top/index');
+        $view_model = \ViewModel::forge('top/index');
 
         $view_model->set('news_headlines', \Model_News::getHeadlines());
         $view_model->set(
@@ -30,6 +30,11 @@ class Controller_Top extends Controller_Base_Template
         );
         $view_model->set(
             'calendar', \ViewModel::forge('component/calendar'), false
+        );
+        $view_model->set(
+            'search',
+            \ViewModel::forge('component/search')->set('is_top', true),
+            false
         );
         $view_model->set(
             'popular_ranking', \ViewModel::forge('component/popular'), false
@@ -42,7 +47,6 @@ class Controller_Top extends Controller_Base_Template
         Asset::js('jquery.rwdImageMaps.min.js', array(), 'add_js');
         Asset::js('top.js', array(), 'add_js');
         Asset::css('top.css', array(), 'add_css');
-
         $this->template->content = $view_model;
     }
 }
