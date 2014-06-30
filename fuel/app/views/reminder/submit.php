@@ -11,9 +11,8 @@
       <p style="margin-bottom: 20px;">パスワードリセットメールをしました。メールボックスをご確認下さい。<br />
       <p>メールが届かない場合は以下をご確認下さい。</p>
       <ul style="padding-left: 20px; padding-top: 0px; list-style: disc;">
-        <li>迷惑メールフォルダに入っている</li>
-        <li>rakuichi-rakuza.jpがメールのドメイン許可設定されていない</li>
-        <li>迷惑メールフォルダに入っている</li>
+        <li>迷惑メールフォルダに入っているか</li>
+        <li>rakuichi-rakuza.jpがメールのドメイン許可設定されているか</li>
       </ul>
     </div>
   </div>
