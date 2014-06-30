@@ -7,8 +7,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="author" content="フリーマーケット楽市楽座">
 <?php echo empty($meta) ? : Html::meta($meta);?>
-<meta property="og:title" content="<?php echo $title;?>">
-<meta property="og:description" content="<?php echo $description;?>">
+<meta property="og:title" content="<?php echo @$title;?>">
+<meta property="og:description" content="<?php echo @$description;?>">
 <meta property="og:url" content="http://www.rakuichi-rakuza.jp/">
 <meta property="og:image" content="http://www.rakuichi-rakuza.jp/assets/img/ogimage.png">
 <link rel="apple-touch-icon" href="http://www.rakuichi-rakuza.jp/assets/img/ogimage.png">

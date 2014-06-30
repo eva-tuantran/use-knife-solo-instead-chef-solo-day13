@@ -14,6 +14,7 @@ return array(
     'detail/(:num)'     => 'search/detail/$1',
     'calendar/:year/:month' => 'calendar/index',
     'mypage'    => 'mypage',
+    'reminder'  => 'reminder',
     'info'      => 'info',
     'errors'    => 'errors',
     '([a-z]+|[a-z]+-[a-z]+)' =>  function ($request) {

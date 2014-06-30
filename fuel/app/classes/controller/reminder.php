@@ -179,8 +179,8 @@ class Controller_Reminder extends Controller_Base_Template
                 ->add_rule('required')
                 ->add_rule('valid_email');
         }
-
         $fieldset->repopulate();
+
         return $fieldset;
     }
 
@@ -200,11 +200,11 @@ class Controller_Reminder extends Controller_Base_Template
 
         if (! $fieldset) {
             $fieldset = \Fieldset::forge('reminder.password');
-            $fieldset->add('password', 'Passowrd')
+            $fieldset->add('password', 'パスワード')
                 ->add_rule('required')
                 ->add_rule('min_length', '6')
                 ->add_rule('max_length', '50');
-            $fieldset->add('password2', 'Passowrd2')
+            $fieldset->add('password2', 'パスワード(確認用)')
                 ->add_rule('required')
                 ->add_rule('match_field', 'password');
         }
