@@ -241,7 +241,12 @@ class Controller_Base_Template extends Controller_Template
      */
     protected function setMetaTag($page)
     {
-        $this->meta = \Lang::get('meta.' . $page);
+        $meta = \Lang::get('meta.' . $page);
+        if (empty($meta)) {
+            $meta = \Lang::get('meta.default');
+        }
+
+        $this->meta = $meta;
     }
 
     /**
@@ -285,7 +290,7 @@ class Controller_Base_Template extends Controller_Template
         if (! is_numeric($timer)) {
             return false;
         }
-        $this->meta[] = array('http-equiv' => 'refresh', 'content' => "${timer}; URL=${url}");
+        $this->meta['refresh'] = "${timer}; URL=${url}";
     }
 
     /**
@@ -366,6 +371,9 @@ class Controller_Base_Template extends Controller_Template
 
         $meta[] = array('name' => 'keyword', 'content' => $this->meta['keyword']);
         $meta[] = array('name' => 'description','content' => $this->meta['description']);
+        if (isset($this->meta['refresh'])) {
+            $meta[] = array('http-equiv' => 'refresh', 'content' => $this->meta['refresh']);;
+        }
         $this->template->title = $this->meta['title'];
         $this->template->description = $this->meta['description'];
         $this->template->meta = $meta;
