@@ -215,7 +215,6 @@ class Controller_Base_Template extends Controller_Template
      */
     protected function changeAreaNameToId($area = null)
     {
-var_dump($area);
         if (empty($area) && $area === '') {
             return '';
         }
