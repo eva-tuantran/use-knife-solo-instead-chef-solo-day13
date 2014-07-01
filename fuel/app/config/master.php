@@ -8,12 +8,22 @@ return array(
     ),
     'week' => array('日', '月', '火', '水', '木', '金', '土'),
     'regions' => array(
+        0 => '全国',
         1 => '北海道・東北',
         2 => '関東',
         3 => '中部',
         4 => '近畿',
         5 => '中国・四国',
         6 => '九州・沖縄',
+    ),
+    'alphabet_regions' => array(
+        0 => 'all',
+        1 => 'hokkaido-tohoku',
+        2 => 'kanto',
+        3 => 'chubu',
+        4 => 'kinki',
+        5 => 'chugoku-shikoku',
+        6 => 'kyushu-okinawa',
     ),
     'region_prefectures' => array(
         1 => array(1, 2, 3, 4, 5, 6, 7),

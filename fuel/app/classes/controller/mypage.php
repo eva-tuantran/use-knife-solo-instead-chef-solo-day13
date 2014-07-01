@@ -67,12 +67,15 @@ class Controller_Mypage extends Controller_Base_Template
 
         $view_model = View::forge('mypage/index');
         $view_model->set('fleamarkets_view', $fleamarkets_view, false);
-        $view_model->set('prefectures', Config::get('master.prefectures'), false);
-        $view_model->set('regions', Config::get('master.regions'), false);
-        $view_model->set('news_headlines', Model_News::getHeadlines());
-        $view_model->set('calendar', ViewModel::forge('component/calendar'), false);
-        $view_model->set('popular_ranking', ViewModel::forge('component/popular'), false);
-        $view_model->set('fleamarket_latest', ViewModel::forge('component/latest'), false);
+        $view_model->set('news_headlines', \Model_News::getHeadlines());
+        $view_model->set('calendar', \ViewModel::forge('component/calendar'), false);
+        $view_model->set(
+            'search',
+            \ViewModel::forge('component/search')->set('is_top', false),
+            false
+        );
+        $view_model->set('popular_ranking', \ViewModel::forge('component/popular'), false);
+        $view_model->set('fleamarket_latest', \ViewModel::forge('component/latest'), false);
         $this->template->content = $view_model;
     }
 

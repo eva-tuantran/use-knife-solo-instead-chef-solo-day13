@@ -3,18 +3,17 @@
 <head>
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title><?php echo $title;?></title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>フリマ・フリーマーケットの全国開催情報 - フリーマーケット楽市楽座 - <?php echo $title;?></title>
-<meta name="keywords" content="フリーマーケット,フリマ,楽市楽座,オークファン">
 <meta name="author" content="フリーマーケット楽市楽座">
-<meta property="og:title" content="フリーマーケット楽市楽座">
-<meta property="og:description" content="フリーマーケット・フリマの全国開催情報、出店参加者受付中!週末や休日は楽市フリーマーケットへ行こう!開催エリア日本一!出店無料イベントや大型イベントも多数実施中。">
+<?php echo empty($meta) ? : Html::meta($meta);?>
+<meta property="og:title" content="<?php echo @$title;?>">
+<meta property="og:description" content="<?php echo @$description;?>">
 <meta property="og:url" content="http://www.rakuichi-rakuza.jp/">
 <meta property="og:image" content="http://www.rakuichi-rakuza.jp/assets/img/ogimage.png">
 <link rel="apple-touch-icon" href="http://www.rakuichi-rakuza.jp/assets/img/ogimage.png">
 <meta property="og:site_name" content="フリーマーケット楽市楽座">
 <meta name="viewport" content="width=device-width, initial-scale=1.0 user-scalable=yes">
-<?php if (! empty($meta)) { echo Html::meta($meta); }; ?>
 <link href="/assets/css/bootstrap.min.css" rel="stylesheet">
 <link href="/assets/css/reset.css" rel="stylesheet">
 <link href="/assets/css/base.css?20140526" rel="stylesheet">
@@ -63,8 +62,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <button class="navbar-toggle" data-toggle="collapse" data-target=".target"> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span> </button>
       <div class="collapse navbar-collapse target">
         <ul id="globalNav">
-          <li class="market"><a href="/search/1"><i></i>フリマ会場一覧</a></li>
-          <li class="reservation"><a href="/search?reservation=1"><i></i>出店予約</a></li>
+          <li class="market"><a href="/all"><i></i>フリマ会場一覧</a></li>
+          <li class="reservation"><a href="/all?<?php echo urlencode('ac[event_status][]');?>=2"><i></i>出店予約</a></li>
           <li class="post"><a href="/fleamarket"><i></i>フリマ投稿</a></li>
           <li class="blog"><a href="/blog"><i></i>新着ブログ</a></li>
           <li class="mypage"><a href="/mypage"><i></i>マイページ</a></li>
@@ -72,15 +71,33 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <li class="inquiry visible-xs"><a href="/inquiry">お問い合せ</a></li>
         </ul>
         <?php
-	   if (! isset($is_top) || ! $is_top):
+            if (! isset($is_top) || ! $is_top):
         ?>
         <!-- globalNavBottom -->
         <div id="globalNavBottom">
+          <?php
+              if (! empty($crumbs)):
+          ?>
           <ul class="breadcrumb hidden-xs">
-            <li><a href="/">ホーム</a></li>
-            <li class="active"><?php echo $title; ?></li>
+            <?php
+                $crumb_count = count($crumbs);
+                for ($i = 0; $i < $crumb_count; $i++):
+                    if ($i === $crumb_count - 1):
+            ?>
+            <li class="active"><?php echo $crumbs[$i];?></li>
+            <?php
+                    else:
+            ?>
+            <li><?php echo $crumbs[$i];?></li>
+            <?php
+                    endif;
+                endfor;
+            ?>
           </ul>
-          <form id="form_search_calendar" action="/search/1" method="get">
+          <?php
+              endif;
+          ?>
+          <form id="form_search_keyword" action="/all" method="get">
             <input type="text" class="form-control" id="keywordInput" placeholder="キーワードを入力" name="c[keyword]">
           </form>
         </div>
@@ -113,68 +130,68 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <div id="footer" class="container">
     <dl class="col-sm-4">
       <dt>北海道・東北</dt>
-      <dd><a href="/search/1?prefecture=hokkaido">北海道</a></dd>
-      <dd><a href="/search/1?prefecture=aomori">青森</a></dd>
-      <dd><a href="/search/1?prefecture=iwate">岩手</a></dd>
-      <dd><a href="/search/1?prefecture=miyagi">宮城</a></dd>
-      <dd><a href="/search/1?prefecture=akita">秋田</a></dd>
-      <dd><a href="/search/1?prefecture=yamagata">山形</a></dd>
-      <dd><a href="/search/1?prefecture=fukushima">福島</a></dd>
+      <dd><a href="/hokkaido">北海道</a></dd>
+      <dd><a href="/aomori">青森</a></dd>
+      <dd><a href="/iwate">岩手</a></dd>
+      <dd><a href="/miyagi">宮城</a></dd>
+      <dd><a href="/akita">秋田</a></dd>
+      <dd><a href="/yamagata">山形</a></dd>
+      <dd><a href="/fukushima">福島</a></dd>
     </dl>
     <dl class="col-sm-4">
       <dt>関東</dt>
-      <dd><a href="/search/1?prefecture=ibaraki">茨城</a></dd>
-      <dd><a href="/search/1?prefecture=tochigi">栃木</a></dd>
-      <dd><a href="/search/1?prefecture=gunma">群馬</a></dd>
-      <dd><a href="/search/1?prefecture=saitama">埼玉</a></dd>
-      <dd><a href="/search/1?prefecture=chiba">千葉</a></dd>
-      <dd><a href="/search/1?prefecture=tokyo">東京</a></dd>
-      <dd><a href="/search/1?prefecture=kanagawa">神奈川</a></dd>
+      <dd><a href="/ibaraki">茨城</a></dd>
+      <dd><a href="/tochigi">栃木</a></dd>
+      <dd><a href="/gunma">群馬</a></dd>
+      <dd><a href="/saitama">埼玉</a></dd>
+      <dd><a href="/chiba">千葉</a></dd>
+      <dd><a href="/tokyo">東京</a></dd>
+      <dd><a href="/kanagawa">神奈川</a></dd>
     </dl>
     <dl class="col-sm-4">
       <dt>中部</dt>
-      <dd><a href="/search/1?prefecture=niigata">新潟</a></dd>
-      <dd><a href="/search/1?prefecture=toyama">富山</a></dd>
-      <dd><a href="/search/1?prefecture=ishikawa">石川</a></dd>
-      <dd><a href="/search/1?prefecture=fukui">福井</a></dd>
-      <dd><a href="/search/1?prefecture=yamanashi">山梨</a></dd>
-      <dd><a href="/search/1?prefecture=nagano">長野</a></dd>
-      <dd><a href="/search/1?prefecture=gifu">岐阜</a></dd>
-      <dd><a href="/search/1?prefecture=shizuoka">静岡</a></dd>
-      <dd><a href="/search/1?prefecture=aichi">愛知</a></dd>
+      <dd><a href="/niigata">新潟</a></dd>
+      <dd><a href="/toyama">富山</a></dd>
+      <dd><a href="/ishikawa">石川</a></dd>
+      <dd><a href="/fukui">福井</a></dd>
+      <dd><a href="/yamanashi">山梨</a></dd>
+      <dd><a href="/nagano">長野</a></dd>
+      <dd><a href="/gifu">岐阜</a></dd>
+      <dd><a href="/shizuoka">静岡</a></dd>
+      <dd><a href="/aichi">愛知</a></dd>
     </dl>
     <dl class="col-sm-4">
       <dt>近畿</dt>
-      <dd><a href="/search/1?prefecture=mie">三重</a></dd>
-      <dd><a href="/search/1?prefecture=shiga">滋賀</a></dd>
-      <dd><a href="/search/1?prefecture=kyoto">京都</a></dd>
-      <dd><a href="/search/1?prefecture=osaka">大阪</a></dd>
-      <dd><a href="/search/1?prefecture=hyogo">兵庫</a></dd>
-      <dd><a href="/search/1?prefecture=nara">奈良</a></dd>
-      <dd><a href="/search/1?prefecture=wakayama">和歌山</a></dd>
+      <dd><a href="/mie">三重</a></dd>
+      <dd><a href="/shiga">滋賀</a></dd>
+      <dd><a href="/kyoto">京都</a></dd>
+      <dd><a href="/osaka">大阪</a></dd>
+      <dd><a href="/hyogo">兵庫</a></dd>
+      <dd><a href="/nara">奈良</a></dd>
+      <dd><a href="/wakayama">和歌山</a></dd>
     </dl>
     <dl class="col-sm-4">
       <dt>中国・四国</dt>
-      <dd><a href="/search/1?prefecture=tottori">鳥取</a></dd>
-      <dd><a href="/search/1?prefecture=shimane">島根</a></dd>
-      <dd><a href="/search/1?prefecture=okayama">岡山</a></dd>
-      <dd><a href="/search/1?prefecture=hiroshima">広島</a></dd>
-      <dd><a href="/search/1?prefecture=yamaguchi">山口</a></dd>
-      <dd><a href="/search/1?prefecture=tokushima">徳島</a></dd>
-      <dd><a href="/search/1?prefecture=kagawa">香川</a></dd>
-      <dd><a href="/search/1?prefecture=ehime">愛媛</a></dd>
-      <dd><a href="/search/1?prefecture=kochi">高知</a></dd>
+      <dd><a href="/tottori">鳥取</a></dd>
+      <dd><a href="/shimane">島根</a></dd>
+      <dd><a href="/okayama">岡山</a></dd>
+      <dd><a href="/hiroshima">広島</a></dd>
+      <dd><a href="/yamaguchi">山口</a></dd>
+      <dd><a href="/tokushima">徳島</a></dd>
+      <dd><a href="/kagawa">香川</a></dd>
+      <dd><a href="/ehime">愛媛</a></dd>
+      <dd><a href="/kochi">高知</a></dd>
     </dl>
     <dl class="col-sm-4">
       <dt>九州・沖縄</dt>
-      <dd><a href="/search/1?prefecture=fukuoka">福岡</a></dd>
-      <dd><a href="/search/1?prefecture=saga">佐賀</a></dd>
-      <dd><a href="/search/1?prefecture=nagasaki">長崎</a></dd>
-      <dd><a href="/search/1?prefecture=kumamoto">熊本</a></dd>
-      <dd><a href="/search/1?prefecture=oita">大分</a></dd>
-      <dd><a href="/search/1?prefecture=miyazaki">宮崎</a></dd>
-      <dd><a href="/search/1?prefecture=kagoshima">鹿児島</a></dd>
-      <dd><a href="/search/1?prefecture=okinawa">沖縄</a></dd>
+      <dd><a href="/fukuoka">福岡</a></dd>
+      <dd><a href="/saga">佐賀</a></dd>
+      <dd><a href="/nagasaki">長崎</a></dd>
+      <dd><a href="/kumamoto">熊本</a></dd>
+      <dd><a href="/oita">大分</a></dd>
+      <dd><a href="/miyazaki">宮崎</a></dd>
+      <dd><a href="/kagoshima">鹿児島</a></dd>
+      <dd><a href="/okinawa">沖縄</a></dd>
     </dl>
     <ul id="footerNav" class="list-inline">
       <li><a href="/info/visitor">初めての方へ</a></li>

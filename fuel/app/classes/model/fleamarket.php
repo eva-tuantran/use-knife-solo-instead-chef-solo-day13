@@ -413,6 +413,14 @@ QUERY;
     public static function findBySearch(
         $condition_list, $page = 0, $row_count = 0
     ) {
+        $order_by = '';
+        if (isset($condition_list['order_by'])) {
+            $order_by = ',';
+            $order_by .= implode(',', $condition_list['order_by']);
+        } else {
+            $order_by .= ',f.event_date DESC';
+        }
+
         $search_where = self::buildSearchWhere($condition_list);
         list($conditions, $placeholders) = $search_where;
 
@@ -509,8 +517,8 @@ ENTRY_STYLE_QUERY;
     AND f.deleted_at IS NULL
     {$where}
     ORDER BY
-        f.register_type,
-        f.event_date
+        f.register_type ASC
+        {$order_by}
     {$limit}
 WHERE_QUERY;
 
@@ -583,7 +591,7 @@ ENTRY_STYLE_QUERY;
     {$where}
 WHERE_QUERY;
 
-      $statement = \DB::query($query)->parameters($placeholders);
+        $statement = \DB::query($query)->parameters($placeholders);
         $result = $statement->execute();
 
         $rows = null;
@@ -632,6 +640,7 @@ SELECT
     f.free_parking_flag,
     f.rainy_location_flag,
     f.register_type,
+    l.location_id AS location_id,
     l.name AS location_name,
     l.zip AS zip,
     l.prefecture_id AS prefecture_id,
@@ -1150,7 +1159,7 @@ QUERY;
         if (! $term) {
             $term = array(
                 \DB::expr('CURDATE()'),
-                \DB::expr('CURDATE() + INTERVAL 2 MONTH')
+                \DB::expr('CURDATE() + INTERVAL 6 MONTH')
             );
         }
 
@@ -1253,7 +1262,7 @@ QUERY;
     /**
      * フリマ情報の最大ブースを取得する
      *
-     * $termが未指定の場合、１ヵ月間で取得する
+     * $termが未指定の場合、1ヵ月間で取得する
      *
      * @access public
      * @param array $term 取得する期間
@@ -1400,7 +1409,7 @@ QUERY;
     /**
      * 予約番号を採番する
      *
-     * @access private
+     * @access public
      * @param bool $save 保存フラグ
      * @return string
      * @author kobayashi
@@ -1568,15 +1577,14 @@ QUERY;
                         ' like ', '%' . $condition . '%'
                     );
                     break;
-                case 'prefecture':
-                    $conditions['prefecture_id'] = array($operator, $condition);
-                    break;
-                case 'region':
-                    if (! isset($condition_list['prefecture'])) {
-                        $region_prefectures =
-                            \Config::get('master.region_prefectures');
-                        $prefecture = $region_prefectures[$condition];
-                        $conditions['prefecture_id'] = array('IN', $prefecture);
+                case 'area':
+                    if (false !== ($key = array_search($condition, \Config::get('master.alphabet_prefectures')))) {
+                        $conditions['prefecture_id'] = array($operator, $key);
+                    } elseif (false !== ($key = array_search($condition, \Config::get('master.alphabet_regions')))) {
+                        $region_prefectures = \Config::get('master.region_prefectures');
+                        if (isset($region_prefectures[$key])) {
+                            $conditions['prefecture_id'] = array('IN', $region_prefectures[$key]);
+                        }
                     }
                     break;
                 case 'shop_fee':
@@ -1604,47 +1612,29 @@ QUERY;
                     );
                     break;
                 case 'event_status':
-                    if (in_array(\Model_Fleamarket::EVENT_STATUS_CLOSE, $condition)) {
-                        $is_event_date = true;
-                    }
                     $conditions['event_status'] = array($operator, $condition);
+                    if (in_array(\Model_Fleamarket::EVENT_STATUS_CLOSE, $condition)) {
+                        $conditions['order_by'][] = 'event_date ASC';
+                    }
                     break;
                 case 'entry_style':
                     $conditions['fes.entry_style_id'] = array(
                         $operator, $condition
                     );
                     break;
-                case 'calendar':
-                    $is_event_date = true;
+                case 'event_date':
                     $conditions['event_date'] = array($operator, $condition);
                     break;
                 case 'upcomming':
-                    $is_event_date = true;
                     $conditions['event_date'] = array('>= CURDATE()');
                     $conditions['event_status'] = array(
                         '<=',
                         self::EVENT_STATUS_RECEIPT_END
                     );
                     break;
-                case 'reservation':
-                    $is_event_date = true;
-                    $conditions['event_date'] = array('>= CURDATE()');
-                    $conditions['event_status'] = array(
-                        $operator,
-                        self::EVENT_STATUS_RESERVATION_RECEIPT,
-                    );
-                    $conditions['f.register_type'] = array(
-                        $operator,
-                        self::REGISTER_TYPE_ADMIN,
-                    );
-                    break;
                 default:
                     break;
             }
-        }
-
-        if (! $is_event_date) {
-            $conditions['event_date'] = array('>= CURDATE()');
         }
 
         return $conditions;
@@ -1670,8 +1660,10 @@ QUERY;
             return array($conditions, $placeholders);
         }
 
-        $conditions = array();
         foreach ($condition_list as $field => $condition) {
+            if ($field == 'order_by') {
+                continue;
+            }
             $operator = $condition[0];
             if (count($condition) == 1) {
                 $conditions[$field] = $field . $condition[0];

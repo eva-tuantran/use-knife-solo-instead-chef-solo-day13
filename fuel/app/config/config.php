@@ -49,7 +49,7 @@ return array(
     /**
      * Default location for the file cache
      */
-    // 'cache_dir'       => APPPATH.'cache/',
+    'cache_dir'       => TMPPATH.'cache/',
 
     /**
      * Settings for the file finder cache (the Cache class has it's own config!)
@@ -59,6 +59,21 @@ return array(
     //
     //
 
+    /*
+	 * Logging Threshold.  Can be set to any of the following:
+	 *
+	 * Fuel::L_NONE
+	 * Fuel::L_ERROR
+	 * Fuel::L_WARNING
+	 * Fuel::L_DEBUG
+	 * Fuel::L_INFO
+	 * Fuel::L_ALL
+	 */
+	'log_threshold'    => Fuel::L_WARNING,
+	'log_path'         => TMPPATH.'log/',
+	'log_date_format'  => 'Y-m-d H:i:s',
+
+	/**
     /**
      * Settings for ssl
      * @author shimma
@@ -296,11 +311,9 @@ return array(
                      * add it like 'session' => 'auth'.
                      * If you don't want the config in a group use null as groupname.
                      */
-
                     'config' => array(
-            'master' => 'master',
-            'constants' => 'constants',
-                        // 'app', //@TODO: 常に読み込む必要ないかもしれない
+                        'master' => 'master',
+                        'constants' => 'constants',
                     ),
 
                     /**
@@ -311,7 +324,9 @@ return array(
                      * add it like 'validation' => 'forms'.
                      * If you don't want the lang in a group use null as groupname.
                      */
-                    //'language'  => array('meta'),
-                    // ),
+                    'language' => array(
+                        'meta' => 'meta',
+                        'breadcrumb' => 'crumb',
+                    ),
                 )
             );

@@ -12,7 +12,6 @@ var node = document.getElementsByTagName('script')[0];
 node.parentNode.insertBefore(gads, node);
 })();
 </script>
-
 <script type='text/javascript'>
 googletag.cmd.push(function() {
 googletag.defineSlot('/64745063/(楽市楽座)検索結果_フッターバナー_728x90', [auto, 90], 'div-gpt-ad-1397113960029-0').addService(googletag.pubads());
@@ -34,43 +33,33 @@ googletag.enableServices();
                 }
 
                 switch ($field):
-                    case 'prefecture':
-                        $titles[0] = $prefectures[$condition];
+                    case 'area':
+                        $area_name = $getAreaName($condition);
+                        $titles[0] = $area_name;
                         break;
-                    case 'region':
-                        if (! isset($conditions['prefecture'])):
-                            $titles[1] = $regions[$condition];
-                        endif;
-                        break;
-                    case 'calendar':
-                        $titles[2] = date('Y年m月d日', strtotime($condition));
-                        break;
-                    case 'upcomming':
-                        $titles[3] = '近日開催';
-                        break;
-                    case 'reservation':
-                        $titles[4] = '出店予約可能';
+                    case 'event_date':
+                        $titles[1] = date('Y年m月d日', strtotime($condition));
                         break;
                     case 'keyword':
-                        $titles[5] = e($condition);
+                        $titles[2] = e($condition);
                         break;
                     case 'shop_fee':
-                        $titles[6] = '出店無料';
+                        $titles[3] = '出店無料';
                         break;
                     case 'car_shop':
-                        $titles[7] = '車出店可';
+                        $titles[4] = '車出店可';
                         break;
                     case 'rainy_location':
-                        $titles[8] = '雨天開催会場';
+                        $titles[5] = '雨天開催会場';
                         break;
                     case 'pro_shop':
-                        $titles[9] = 'プロ出店可';
+                        $titles[6] = 'プロ出店可';
                         break;
                     case 'charge_parking':
-                        $titles[10] = '有料駐車場あり';
+                        $titles[7] = '有料駐車場あり';
                         break;
                     case 'free_parking':
-                        $titles[11] = '無料駐車場あり';
+                        $titles[8] = '無料駐車場あり';
                         break;
                     default:
                         break;
@@ -78,13 +67,19 @@ googletag.enableServices();
             endforeach;
         endif;
 
+        if (isset($add_conditions['event_status'])
+            && false !== ($key = array_search(\Model_Fleamarket::EVENT_STATUS_RESERVATION_RECEIPT, $add_conditions['event_status']))
+        ):
+            $titles[20] = '出店予約可能';
+        endif;
+
         if ($titles):
             ksort($titles);
-            $title = implode('/', $titles);
+            $title = implode('／', $titles);
             $title .= 'の';
         endif;
     ?>
-    <div id="resultTitle"><?php echo $title;?>フリマ会場一覧</div>
+    <h2 id="resultTitle"><?php echo $title;?>フリマ会場一覧</h2>
     <!-- result -->
 <?php
     if (! $fleamarket_list):
@@ -94,6 +89,16 @@ googletag.enableServices();
     </div>
 <?php
     else:
+?>
+    <div class="box">
+      <?php echo $area_name;?>のフリマ会場一覧です。
+      <?php
+        if ($locations = $getExplain()):
+          echo implode($getExplain(), '、');
+        endif;
+      ?>などで開催しております。
+    </div>
+<?php
         foreach ($fleamarket_list as $fleamarket):
             $fleamarket_id = $fleamarket['fleamarket_id'];
 
@@ -250,12 +255,15 @@ googletag.enableServices();
   </div>
   <!-- /searchResult -->
   <!-- searchSelecter -->
-  <form id="form_search" action="/search/1" method="get">
+  <form id="form_search" action="" method="get">
     <div id="searchSelecter" class="col-sm-3 col-sm-pull-9">
       <div class="box clearfix">
       <?php
           if ($conditions):
               foreach ($conditions as $field => $value):
+                  if ($field === 'area') {
+                      continue;
+                  }
                   echo '<input type="hidden" name="c[' . $field . ']" value="' . $value . '">';
               endforeach;
           endif;
@@ -390,7 +398,23 @@ $(function() {
   $(".pagination li").on("click", function(evt) {
     evt.preventDefault();
     var href = $(this).find("a").attr("href");
-    $("#form_search").attr("action", href).submit();
+    var $form = $("#form_search");
+
+	// URLを取得して「?]で分割「&」でも分割
+    params    = href.split("?");
+    paramms   = params[1].split("&");
+    // パラメータ用の配列を用意
+    var paramArray = [];
+    // 配列にパラメータを格納
+    for (i = 0; i < paramms.length; i++ ) {
+      param = paramms[i].split("=");
+      if (param[0] == 'p') {
+        $form.append('<input type="hidden" name="p" value="' + param[1] + '">');
+        break;
+      }
+    }
+
+    $form.attr("action", href).submit();
   });
 
   $("#do_search").on("click", function(evt) {
