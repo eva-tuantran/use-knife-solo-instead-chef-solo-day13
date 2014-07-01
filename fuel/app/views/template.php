@@ -63,7 +63,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <div class="collapse navbar-collapse target">
         <ul id="globalNav">
           <li class="market"><a href="/all"><i></i>フリマ会場一覧</a></li>
-          <li id="reservation" class="reservation"><a href="/all?<?php echo urlencode('ac[event_status][]');?>=2"><i></i>出店予約</a></li>
+          <li class="reservation"><a href="/all?<?php echo urlencode('ac[event_status][]');?>=2"><i></i>出店予約</a></li>
           <li class="post"><a href="/fleamarket"><i></i>フリマ投稿</a></li>
           <li class="blog"><a href="/blog"><i></i>新着ブログ</a></li>
           <li class="mypage"><a href="/mypage"><i></i>マイページ</a></li>
