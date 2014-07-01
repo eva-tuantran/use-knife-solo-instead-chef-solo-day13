@@ -49,7 +49,7 @@ return array(
     /**
      * Default location for the file cache
      */
-    // 'cache_dir'       => APPPATH.'cache/',
+    'cache_dir'       => TMPPATH.'cache/',
 
     /**
      * Settings for the file finder cache (the Cache class has it's own config!)
@@ -59,6 +59,21 @@ return array(
     //
     //
 
+    /*
+	 * Logging Threshold.  Can be set to any of the following:
+	 *
+	 * Fuel::L_NONE
+	 * Fuel::L_ERROR
+	 * Fuel::L_WARNING
+	 * Fuel::L_DEBUG
+	 * Fuel::L_INFO
+	 * Fuel::L_ALL
+	 */
+	'log_threshold'    => Fuel::L_WARNING,
+	'log_path'         => TMPPATH.'log/',
+	'log_date_format'  => 'Y-m-d H:i:s',
+
+	/**
     /**
      * Settings for ssl
      * @author shimma
