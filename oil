@@ -35,6 +35,11 @@ define('DOCROOT', __DIR__.DIRECTORY_SEPARATOR);
 define('APPPATH', realpath(__DIR__.'/fuel/app/').DIRECTORY_SEPARATOR);
 
 /**
+ * Path to the temporary directory
+ */
+define('TMPPATH', realpath(__DIR__.'/../var/').DIRECTORY_SEPARATOR);
+
+/**
  * Path to the default packages directory.
  */
 define('PKGPATH', realpath(__DIR__.'/fuel/packages/').DIRECTORY_SEPARATOR);
