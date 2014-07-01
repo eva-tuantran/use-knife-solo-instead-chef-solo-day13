@@ -17,4 +17,6 @@ build
 /nbproject
 /public/files/fleamarket/img/*
 /public/files/admin/fleamarket/img/*
-
+/var/log/*
+/var/cache/*
+/var/tmp/*
