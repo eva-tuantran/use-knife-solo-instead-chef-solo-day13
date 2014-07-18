@@ -1613,6 +1613,10 @@ QUERY;
                     break;
                 case 'event_status':
                     $conditions['event_status'] = array($operator, $condition);
+                    if (in_array(\Model_Fleamarket::EVENT_STATUS_RESERVATION_RECEIPT, $condition)) {
+                        $conditions['order_by'][] = 'event_date DESC';
+                        $conditions['event_date'] = array('>=', \DB::expr('CURDATE()'));
+                    }
                     if (in_array(\Model_Fleamarket::EVENT_STATUS_CLOSE, $condition)) {
                         $conditions['order_by'][] = 'event_date ASC';
                     }
