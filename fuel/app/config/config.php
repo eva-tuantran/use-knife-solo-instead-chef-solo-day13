@@ -10,6 +10,10 @@
  * @link       http://fuelphp.com
  */
 
+// php oil testだとTMPPATHがロードされていないぽい
+if (! defined('TMPPATH')) {
+    define('TMPPATH', realpath(__DIR__.'/../var/').DIRECTORY_SEPARATOR);
+}
 
 return array(
 
