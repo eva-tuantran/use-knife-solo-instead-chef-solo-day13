@@ -1,9 +1,10 @@
 include_recipe 'database::mysql'
 
-mysql_connection_info = {:host => "localhost",
-                         :username => 'root',
-                         :password => '' }
-                         #:password => node['mysql']['server_root_password']}
+mysql_connection_info = {
+  host:     'localhost',
+  username: 'root',
+  password: '',
+}
 
 # 楽市楽座メイン用
 mysql_database "rakuichi_rakuza" do
