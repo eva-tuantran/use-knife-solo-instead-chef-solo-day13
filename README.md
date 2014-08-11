@@ -317,4 +317,4 @@
   今までの社内の実績からKeeplivedを利用しようと思ったが、このようなただのWeb用途の場合はHAProxyが事実上の
   デファクトスタンダードらしいので、次回LVSを設定する際にはL7LBであるHAProxyの稼働を行う。
 
-
+[ ![Codeship Status for iro-dori/rakuichi-rakuza](https://www.codeship.io/projects/33d576d0-034f-0132-a472-36c68e7f0ae3/status)](https://www.codeship.io/projects/30407)
