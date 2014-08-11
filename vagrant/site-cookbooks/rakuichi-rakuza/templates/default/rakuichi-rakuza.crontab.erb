@@ -8,3 +8,6 @@ FUEL_ENV=<%= @mode %>
 
 # 開催日を過ぎたフリマの開催状況(event_status)を開催終了に更新する
 5 0 * * * apache php /deploy/rakuichi-rakuza/oil refine fleamarket_event_close
+
+# メルマガ会員数のレポートの送信
+0 0 * * * apache /deploy/rakuichi-rakuza/bin/mail-magazine-subscriber-report.sh
