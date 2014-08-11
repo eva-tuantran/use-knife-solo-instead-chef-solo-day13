@@ -11,4 +11,9 @@ class Test_Model_User extends TestCase
     {
         $this->assertTrue(true);
     }
+
+    public function test_getActiveUsers() {
+
+        var_dump(Model_User::getActiveUsers());
+    }
 }
