@@ -15,10 +15,10 @@ class seed
         if (null == $model || $model == 'all') {
             $model = array(
                 'user',
-                'entry',
                 'fleamarket',
                 'favorite',
                 'administrator',
+                'entry',
             );
         }
 
