@@ -19,7 +19,7 @@ Vagrant.configure("2") do |config|
 #  end
 #
 
-  config.vm.define :web1 do |web|
+  config.vm.define :"rakuichi-rakuza.vagrant" do |web|
     web.vm.network :private_network, ip: "192.168.33.101"
     web.vm.network :private_network, ip: "192.168.133.101"
     web.vm.hostname = 'rakuichi-rakuza-test'
