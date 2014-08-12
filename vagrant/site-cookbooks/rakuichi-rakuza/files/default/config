@@ -1,0 +1,8 @@
+Host gitlab.aucfan.com
+  IdentityFile /home/vagrant/.ssh/id_rsa_gitlab
+
+Host *
+  Protocol 2
+  PasswordAuthentication yes
+  PubkeyAuthentication yes 
+  PreferredAuthentications publickey

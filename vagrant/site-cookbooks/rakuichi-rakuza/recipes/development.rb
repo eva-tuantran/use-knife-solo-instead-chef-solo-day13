@@ -64,3 +64,16 @@ template "/etc/cron.d/rakucihi-rakuza.crontab" do
   })
 end
 
+include_recipe 'database::mysql'
+mysql_connection_info = {
+  host:     'localhost',
+  username: 'root',
+  password: '',
+}
+
+# 楽市楽座テスト用
+mysql_database "rakuichi_rakuza_test" do
+  connection mysql_connection_info
+  action    [ :create ]
+end
+
