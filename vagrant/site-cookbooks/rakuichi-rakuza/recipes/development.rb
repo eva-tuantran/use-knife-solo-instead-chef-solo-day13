@@ -23,11 +23,15 @@ end
 ##------------------------------------------------------------ 
 ## 各種Apache設定 (httpd.conf, ssl証明書)
 ##------------------------------------------------------------ 
-log "deploy httpd.conf"
-cookbook_file "/etc/httpd/conf.d/www.rakuichi-rakuza.jp.conf" do
-  source "www.rakuichi-rakuza.jp.conf-development"
-  owner "root"
-  group "root"
+[
+  'www.rakuichi-rakuza.jp.conf-development-vagrant',
+  'www.rakuichi-rakuza.jp.conf-development-capistrano'
+].each do |conf|
+  cookbook_file "/etc/httpd/conf.d/#{conf}.conf" do
+    source conf
+    owner "root"
+    group "root"
+  end
 end
 
 directory "/etc/httpd/ssl" do
@@ -76,4 +80,5 @@ mysql_database "rakuichi_rakuza_test" do
   connection mysql_connection_info
   action    [ :create ]
 end
+
 
