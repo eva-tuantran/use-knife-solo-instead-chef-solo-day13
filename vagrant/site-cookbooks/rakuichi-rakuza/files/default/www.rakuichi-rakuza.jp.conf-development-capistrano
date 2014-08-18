@@ -1,0 +1,58 @@
+<VirtualHost *:80>
+    ServerName www.rakuichi-rakuza.capistrano
+    ServerAdmin afml_dev@aucfan.com
+
+    DocumentRoot /srv/www/rakuichi-rakuza/current/public
+    CustomLog "|/usr/sbin/rotatelogs /var/log/httpd/rakuichi-rakuza-capistrano_access_log.%Y%m%d 86400 540" combined env=!no_log
+    ErrorLog "|/usr/sbin/rotatelogs /var/log/httpd/rakuichi-rakuza-capistrano_error_log.%Y%m%d 86400 540"
+
+    # ガラケーは専用サイトのある旧楽市楽座へ飛ばす
+    #----------------------------------------
+    RewriteEngine on
+    RewriteCond %{HTTP_USER_AGENT} ^(DoCoMo|J-PHONE|KDDI|DDIPOKET|UP\.Browser|J-PHONE|Vodafone|SoftBank).*$ [NC]
+    RewriteRule ^(.*)$ http://www2.rakuichi-rakuza.jp/$1 [P,L,QSA]
+    ProxyPassReverse / http://www2.rakuichi-rakuza.jp/
+    #----------------------------------------
+
+    SetEnv FUEL_ENV development
+
+    <Directory /srv/www/rakuichi-rakuza/current/public>
+        Options -Indexes FollowSymLinks
+        AllowOverride All
+    </Directory>
+</VirtualHost>
+
+<VirtualHost *:443>
+    ServerName www.rakuichi-rakuza.capistrano
+    ServerAdmin afml_dev@aucfan.com
+
+    DocumentRoot "/srv/www/rakuichi-rakuza/current/public"
+    CustomLog "|/usr/sbin/rotatelogs /var/log/httpd/rakuichi-rakuza-capistrano_ssl_access_log.%Y%m%d 86400 540" combined env=!no_log
+    ErrorLog "|/usr/sbin/rotatelogs /var/log/httpd/rakuichi-rakuza-capistrano_ssl_error_log.%Y%m%d 86400 540"
+
+    SSLEngine               On
+    SSLProtocol             all -SSLv2
+    SSLCipherSuite          ALL:!ADH:!EXPORT:!SSLv2:RC4+RSA:+HIGH:+MEDIUM:+LOW
+    #SSLCertificateChainFile /etc/httpd/ssl/20240414.self-signed-certificate.crt
+    SSLCertificateFile      /etc/httpd/ssl/20240414.self-signed-certificate.crt
+    SSLCertificateKeyFile   /etc/httpd/ssl/20240414.self-signed-certificate.key
+
+    SetEnv FUEL_ENV development
+
+    <Directory /srv/www/rakuichi-rakuza/current/public>
+        Options -Indexes FollowSymLinks
+        SSLRequireSSL
+        AllowOverride All
+    </Directory>
+</VirtualHost>
+
+## Basic認証
+<Location /admin>
+    Options -Indexes FollowSymLinks
+    # AllowOverride All
+
+    AuthUserFile  /deploy/rakuichi-rakuza/fuel/app/conf.d/.htpasswd
+    AuthName      "Please Enter Your Password"
+    AuthType      Basic
+    Require       valid-user
+</Location>

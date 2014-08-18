@@ -106,6 +106,9 @@ LoadModule version_module modules/mod_version.so
 #
 # Load config files from the config directory "/etc/httpd/conf.d".
 #
+NameVirtualHost *:80
+NameVirtualHost *:443
+
 Include conf.d/*.conf
 
 #
