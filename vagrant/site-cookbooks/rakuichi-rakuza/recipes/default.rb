@@ -15,6 +15,13 @@ directory '/srv/www/rakuichi-rakuza/shared' do
   action    [ :create ]
 end
 
+directory '/var/log/rakuichi-rakuza' do
+  user      'apache'
+  group     'apache'
+  mode      00775
+  action    [ :create ]
+end
+
 [ 'id_rsa_gitlab', 'config' ].each do |f|
   cookbook_file "/home/#{node[:deploy][:user]}/.ssh/#{f}" do
     source  f
