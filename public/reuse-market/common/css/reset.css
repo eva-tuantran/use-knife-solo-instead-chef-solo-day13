@@ -1,0 +1,87 @@
+@charset "utf-8";
+
+/*-------------------------------------------------------------------
+ *
+ * File Name   : reset.css
+ *
+-------------------------------------------------------------------*/
+
+/* Table Of Contents
+------------------------------------------
+Reset The Standard Style
+------------------------------------------ */
+
+/* =================================================================
+
+	Reset The Standard Style
+
+================================================================= */
+html, body, div, span, applet, object, iframe, input, textarea,
+h1, h2, h3, h4, h5, h6, p, figure, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, font, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, figcaption, figure,
+main, footer, header, hgroup, menu, nav, section, summary,
+time, mark, audio, video{
+	margin:0;
+	padding:0;
+	font-family:Meiryo, "Hiragino Kaku Gothic ProN", "MS PGothic", sans-serif;
+	font-size:100%;
+	font-weight:normal;
+	font-style:normal;
+}
+body{
+	-webkit-font-smoothing:subpixel-antialiased;
+	-webkit-text-size-adjust:100%;
+}
+mark{
+	background-color:transparent;
+}
+fieldset{
+	border:none;
+}
+input,
+textarea,
+button{
+	outline:none;
+}
+input{
+	-webkit-appearance:none;
+}
+input::-ms-clear,
+input::-ms-reveal{
+	display:none;
+}
+legend, hr{
+	display:none;
+}
+a{
+	outline:none;
+	background-color:transparent;
+}
+img{
+	vertical-align:top;
+}
+img, a img{
+	border:none;
+}
+ul, ol{
+	list-style-type:none;
+}
+b, em, strong,
+b a, em a, strong a{
+	font-weight:bold;
+}
+table{
+	border:none;
+	border-collapse:separate;
+	border-spacing:0;
+}
+th, td{
+	border:none;
+	text-align:left;
+}
