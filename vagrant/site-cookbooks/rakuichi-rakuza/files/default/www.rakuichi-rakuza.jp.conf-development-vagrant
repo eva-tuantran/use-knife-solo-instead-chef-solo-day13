@@ -1,7 +1,8 @@
 NameVirtualHost *:80
 NameVirtualHost *:443
 
-<VirtualHost *:80>
+Listen 8080
+<VirtualHost *:80 *:8080>
     ServerName www.rakuichi-rakuza.vagrant
     ServerAdmin afml_dev@aucfan.com
 
