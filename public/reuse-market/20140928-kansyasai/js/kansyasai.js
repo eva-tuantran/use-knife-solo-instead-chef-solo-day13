@@ -91,7 +91,7 @@ $(function(){
 			secId = $(this).attr("id").split("Sec")[0];  
 			secObjs[secId] = {};
 			secObjs[secId]["id"] = secId;
-			secObjs[secId]["top"] = Math.floor($(this).offset().top);
+			secObjs[secId]["top"] = Math.floor($(this).offset().top) - 5;
 			secObjs[secId]["obj"] = $(this);
 		});
 	}
@@ -179,13 +179,16 @@ $(function(){
 	Global Navigation Hover
 
 ================================================================= */
-$(function(){
+$(window).on("load", function() {
 	var dispSpeed = 200;
 	var dispEasing = "easeInOutQuad";
 	var gnavElem = $("#mainVisualSec .gnav");
 	var backImgElem = $("#mainVisualSec .gnav .backImg");
+	var socialElem = $(".socialTools");
+	var fbElem = $(".fb", socialElem);
 	var backImgHeight = backImgElem.height();
 	var curElem;
+	var fbVisibleFlg;
 
 	var gnavFunc = {
 		mOver: function() {
@@ -202,10 +205,36 @@ $(function(){
 			.animate({
 				top: 0
 			}, dispSpeed, dispEasing );
+		},
+		fbJudge: function() {
+			fbVisibleFlg = 0;
+	
+			var judge = 0;
+	
+			fbElem.find("iframe").each(function() {
+				if (judge) return;
+	
+				if ($(this).is(".fb_iframe_widget_lift")) {
+					fbVisibleFlg = 1;
+					judge = 1;
+				}
+			});
 		}
 	}
 
+	socialElem.hover(function() {
+		gnavElem.css({zIndex: ""});
+	});
+
 	gnavElem.find("a").hover(function() {
+		gnavFunc.fbJudge();
+
+		if (!fbVisibleFlg) {
+			gnavElem.css({zIndex: 3});
+		} else {
+			gnavElem.css({zIndex: ""});
+		}
+
 		curElem = $(this).closest("li");
 		gnavFunc.mOver();
 	},

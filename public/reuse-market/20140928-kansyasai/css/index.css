@@ -301,6 +301,8 @@ ul.listType01 .mk{
 	mainVisualSec
 ----------------------------------------------------------------- */
 #mainVisualSec{
+	position:relative;
+	z-index:2;
 	width:100%;
 	margin:0;
 	padding:0;
@@ -373,8 +375,6 @@ ul.listType01 .mk{
 	background:url(/reuse-market/20140928-kansyasai/img/index_bg_mainvisual03.png) repeat-x center bottom;
 }
 #mainVisualSec .visualBtmBlock .socialTools{
-	position:relative;
-	z-index:1;
 	width:460px;
 	height:70px;
 	margin:0 auto;
@@ -394,6 +394,10 @@ ul.listType01 .mk{
 	height:21px;
 	text-align:left;
 	zoom:1;
+}
+#mainVisualSec .visualBtmBlock .socialTools .fb{
+	position:relative;
+	z-index:2;
 }
 #mainVisualSec .visualBtmBlock .socialTools .fb span{
 	vertical-align:top !important;
@@ -424,7 +428,7 @@ ul.listType01 .mk{
 
 #mainVisualSec .visualBtmBlock .gnav{
 	position:relative;
-	z-index:2;
+	z-index:1;
 	width:1000px;
 	margin:0 auto;
 }
@@ -500,6 +504,8 @@ ul.listType01 .mk{
 	contentsArea
 ----------------------------------------------------------------- */
 #contentsArea{
+	position:relative;
+	z-index:1;
 	background:url(/reuse-market/20140928-kansyasai/img/index_bg_cont01.png) repeat-y left top;
 }
 .contentsAreaInner{
@@ -659,7 +665,11 @@ ul.listType01 .mk{
 	padding:30px;
 }
 #ticketSec .amo{
-	font-size:200%;
+	font-size:140%;
+}
+#ticketSec .amo span{
+	font-size:160%;
+	font-weight:bold;
 }
 #ticketSec .suppTxt{
 	padding:10px;
@@ -767,6 +777,8 @@ ul.listType01 .mk{
 	footerArea
 ----------------------------------------------------------------- */
 #footerArea{
+	position:relative;
+	z-index:2;
 	margin-top:-65px;
 	padding-top:64px;
 	background:url(/reuse-market/20140928-kansyasai/img/index_bg_footer.png) repeat-x center top;
