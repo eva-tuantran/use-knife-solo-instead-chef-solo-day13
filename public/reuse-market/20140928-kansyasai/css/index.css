@@ -1,0 +1,807 @@
+@charset "utf-8";
+
+/*-------------------------------------------------------------------
+ *
+ * File Name   : index.css
+ *
+-------------------------------------------------------------------*/
+
+/* Table Of Contents
+------------------------------------------
+Base
+Index
+------------------------------------------ */
+
+/* =================================================================
+
+	Base
+
+================================================================= */
+/* -----------------------------------------------------------------
+	html
+----------------------------------------------------------------- */
+html{
+	height:100%;
+	overflow-y:scroll;
+}
+
+/* -----------------------------------------------------------------
+	body
+----------------------------------------------------------------- */
+body{
+	min-width:1000px;
+	height:100%;
+	background-color:#ffffff;
+	color:#222222;
+	font-size:18px;
+	line-height:1.5;
+}
+#frame{
+	height:100%;
+}
+
+/* -----------------------------------------------------------------
+	hyperlink
+----------------------------------------------------------------- */
+a:link,
+a:visited{
+	color:#0ea600;
+	text-decoration:underline;
+}
+a:hover,
+a:active{
+	color:#ff7500;
+	text-decoration:none;
+}
+
+/* -----------------------------------------------------------------
+	pagetop
+----------------------------------------------------------------- */
+.pagetop{
+	visibility:hidden;
+	position:fixed;
+	bottom:40px;
+	right:-76px;
+	z-index:1000;
+}
+.pagetop a{
+	display:block;
+	overflow:hidden;
+	width:76px;
+	height:76px;
+	background:url(/reuse-market/20140928-kansyasai/img/index_btn_pagetop.png) no-repeat left top;
+	text-indent:-9999px;
+}
+.pagetop a:hover{
+	background-position:left bottom;
+}
+
+/* -----------------------------------------------------------------
+	note
+----------------------------------------------------------------- */
+small.noteType01,
+ul.noteType01{
+	margin-top:10px;
+}
+small.noteType01,
+ul.noteType01 li{
+	display:block;
+	position:relative;
+	padding-left:1em;
+	font-size:80%;
+}
+.noteType01 .mk{
+	position:absolute;
+	top:0;
+	left:0;
+}
+
+/* -----------------------------------------------------------------
+	list
+----------------------------------------------------------------- */
+ul.listType01 li{
+	display:block;
+	position:relative;
+	padding-left:1em;
+}
+ul.listType01 .mk{
+	position:absolute;
+	top:0;
+	left:0;
+}
+
+/* -----------------------------------------------------------------
+	clearfix
+----------------------------------------------------------------- */
+.clearfix::after{
+	display:block;
+	clear:both;
+	height:0;
+	visibility:hidden;
+	content:".";
+}
+.clearfix{
+	zoom:1;
+}
+
+/* =================================================================
+
+	Index
+
+================================================================= */
+/* -----------------------------------------------------------------
+	headNav
+----------------------------------------------------------------- */
+#headNav{
+	display:none;
+	position:fixed;
+	top:-58px;
+	left:0;
+	z-index:1000;
+	overflow:hidden;
+	width:100%;
+	height:55px;
+	border-bottom:3px solid #60b958;
+	background-color:#ffffff;
+	background-color:rgba(255,255,255,0.85);
+	/background-color:#ffffff;
+	color:#316900;
+	text-align:center;
+}
+#headNav ul{
+	width:1000px;
+	height:100%;
+	margin:0 auto;
+}
+#headNav li{
+	position:relative;
+	float:left;
+	height:100%;
+}
+#headNav li .cv{
+	display:block;
+	position:absolute;
+	right:0;
+	bottom:-55px;
+	left:0;
+	z-index:1;
+	opacity:0.2;
+	filter:alpha(opacity=20);
+	-ms-filter:"alpha(opacity=20)";
+	height:100%;
+	background-color:#a5e136;
+	content:"";
+	-webkit-transition:bottom 0.2s linear;
+	transition:bottom 0.2s linear;
+}
+#headNav li#mainVisualNav .cv{
+	width:228px;
+}
+#headNav li:hover .cv{
+	/display:none;
+	bottom:0;
+}
+#headNav a{
+	display:block;
+	position:relative;
+	z-index:2;
+	padding:18px 0 12px;
+	background:none;
+	color:#316900;
+	font-size:80%;
+	text-decoration:none;
+}
+#headNav li:hover a{
+	/background-color:#a5e136;
+}
+#headNav .win{
+	padding:2px 0 0 18px;
+	background:url(/reuse-market/20140928-kansyasai/img/index_ico_win01.png) no-repeat left center;
+}
+#headNav li.current a{
+	color:#ff7500;
+}
+#headNav #mainVisualNav a{
+	width:228px;
+	margin-right:30px;
+	padding:10px 0;
+}
+#headNav #outlineNav a{
+	width:120px;
+}
+#headNav #eventNav a{
+	width:148px;
+}
+#headNav #structureNav a{
+	width:110px;
+}
+#headNav #ticketNav a{
+	width:138px;
+}
+#headNav #accessNav a{
+	width:108px;
+}
+#headNav #shopNav a{
+	width:118px;
+}
+
+/* -----------------------------------------------------------------
+	secElem
+----------------------------------------------------------------- */
+.secElem{
+	width:1000px;
+	margin:0 auto;
+	padding-bottom:30px;
+	background-color:#e6eec2;
+}
+
+/* -----------------------------------------------------------------
+	secHd
+----------------------------------------------------------------- */
+.secHd{
+	padding-top:55px;
+	background-color:#ffffff;
+}
+
+/* -----------------------------------------------------------------
+	subHd
+----------------------------------------------------------------- */
+.subHd{
+	min-height:32px;
+	margin-bottom:20px;
+	padding:30px 0 0 43px;
+	background:url(/reuse-market/20140928-kansyasai/img/index_ico_subhd.png) no-repeat left top;
+	color:#316900;
+	font-size:130%;
+	font-weight:bold;
+}
+
+/* -----------------------------------------------------------------
+	secBox
+----------------------------------------------------------------- */
+.secBox{
+	background-color:#ffffff;
+	margin:0 25px;
+}
+
+/* -----------------------------------------------------------------
+	link
+----------------------------------------------------------------- */
+.linkType01 a{
+	padding-left:18px;
+	background:url(/reuse-market/20140928-kansyasai/img/index_ico_arrow.png) no-repeat left center;
+}
+
+/* -----------------------------------------------------------------
+	eventTable
+----------------------------------------------------------------- */
+.eventTable{
+	width:100%;
+	border-top:3px solid #e6eec2;
+	border-left:3px solid #e6eec2;
+	background-color:#ffffff;
+}
+.eventTable th,
+.eventTable td{
+	padding:10px 20px;
+	border-right:3px solid #e6eec2;
+	border-bottom:3px solid #e6eec2;
+	vertical-align:middle;
+}
+.eventTable th{
+	width:25%;
+	background-color:#a5e136;
+	text-align:center;
+}
+.eventTable .tC{
+	text-align:center;
+}
+
+/* -----------------------------------------------------------------
+	mainVisualSec
+----------------------------------------------------------------- */
+#mainVisualSec{
+	position:relative;
+	z-index:2;
+	width:100%;
+	margin:0;
+	padding:0;
+	background:#baeeff url(/reuse-market/20140928-kansyasai/img/index_bg_mainvisual01.png) repeat-x center top;
+}
+#mainVisualSec .mainVisualBox{
+	background:url(/reuse-market/20140928-kansyasai/img/index_bg_mainvisual02.png) no-repeat center bottom;
+}
+#mainVisualSec .mainVisualBoxInner{
+	position:relative;
+	width:1000px;
+	height:569px;
+	margin:0 auto;
+}
+
+#mainVisualSec .mainVisualBox .mainHd{
+	position:absolute;
+	top:53px;
+	left:26px;
+}
+#mainVisualSec .mainVisualBox .aucfanLogo{
+	position:absolute;
+	top:413px;
+	left:144px;
+}
+#mainVisualSec .mainVisualBox .date{
+	position:absolute;
+	top:75px;
+	right:19px;
+}
+#mainVisualSec .mainVisualBox .entryBtn{
+	position:absolute;
+	top:309px;
+	right:0;
+	z-index:1;
+	padding-left:111px;
+	background:url(/reuse-market/20140928-kansyasai/img/index_bg_mainvisual_btn.png) no-repeat 0 44px;
+}
+#mainVisualSec .mainVisualBox .entryBtn a{
+	display:block;
+	overflow:hidden;
+	width:520px;
+	height:134px;
+	background:url(/reuse-market/20140928-kansyasai/img/index_btn_mainvisual.png) no-repeat left top;
+	text-indent:-9999px;
+}
+#mainVisualSec .mainVisualBox .entryBtn a:hover{
+	background-position:left bottom;
+}
+
+#mainVisualSec .mainVisualBox .socialAccList{
+	padding:10px 25px 0 0;
+}
+#mainVisualSec .mainVisualBox .socialAccList li{
+	float:right;
+	margin-left:10px;
+}
+#mainVisualSec .mainVisualBox .socialAccList a:hover{
+	display:block;
+	opacity:0.7;
+	filter:alpha(opacity=70);
+	-ms-filter:"alpha(opacity=70)";
+}
+
+/* visualBtmBlock */
+#mainVisualSec .visualBtmBlock{
+	height:136px;
+	margin-top:-116px;
+	padding-top:126px;
+	background:url(/reuse-market/20140928-kansyasai/img/index_bg_mainvisual03.png) repeat-x center bottom;
+}
+#mainVisualSec .visualBtmBlock .socialTools{
+	width:460px;
+	height:70px;
+	margin:0 auto;
+	background-color:#ffffff;
+	text-align:center;
+}
+#mainVisualSec .visualBtmBlock .socialTools ul{
+	margin-top:5px;
+}
+#mainVisualSec .visualBtmBlock .socialTools .hd img{
+	margin-top:-40px;
+}
+#mainVisualSec .visualBtmBlock .socialTools li{
+	display:inline-block;
+	/display:inline;
+	width:120px;
+	height:21px;
+	text-align:left;
+	zoom:1;
+}
+#mainVisualSec .visualBtmBlock .socialTools .fb{
+	position:relative;
+	z-index:2;
+}
+#mainVisualSec .visualBtmBlock .socialTools .fb span{
+	vertical-align:top !important;
+}
+#mainVisualSec .visualBtmBlock .socialTools .tw{
+	width:105px;
+}
+#mainVisualSec .visualBtmBlock .socialTools .gp{
+	width:auto;
+}
+#mainVisualSec .visualBtmBlock .socialTools .ln{
+	width:auto;
+	margin-left:20px;
+}
+#mainVisualSec .visualBtmBlock .socialTools .ln a{
+	display:inline-block;
+	/display:inline;
+	overflow:hidden;
+	width:82px;
+	height:20px;	
+	background:url(/reuse-market/20140928-kansyasai/img/index_btn_line.png) no-repeat left top;
+	text-indent:-9999px;
+	zoom:1;
+}
+#mainVisualSec .visualBtmBlock .socialTools .ln a:hover{
+	background-position:left bottom;
+}
+
+#mainVisualSec .visualBtmBlock .gnav{
+	position:relative;
+	z-index:1;
+	width:1000px;
+	margin:0 auto;
+}
+#mainVisualSec .visualBtmBlock .gnav ul{
+	position:relative;
+	bottom:-23px;
+}
+#mainVisualSec .visualBtmBlock .gnav li{
+	position:relative;
+	margin-right:8px;
+	float:left;
+}
+#mainVisualSec .visualBtmBlock .gnav li:last-of-type{
+	margin-right:0;
+}
+#mainVisualSec .visualBtmBlock .gnav a{
+	display:block;
+	position:relative;
+	z-index:2;
+	overflow:hidden;
+	width:160px;
+	height:65px;
+	background-image:url(/reuse-market/20140928-kansyasai/img/index_btn_gnav.png);
+	background-repeat:no-repeat;
+	text-indent:-9999px;
+}
+#mainVisualSec .visualBtmBlock .gnav .backImg{
+	position:absolute;
+	top:0;
+	left:0;
+	z-index:1;
+}
+
+#mainVisualSec .visualBtmBlock .gnav .outline a{
+	background-position:0 0;
+}
+#mainVisualSec .visualBtmBlock .gnav .event a{
+	background-position:-169px 0;
+}
+#mainVisualSec .visualBtmBlock .gnav .structure a{
+	background-position:-338px 0;
+}
+#mainVisualSec .visualBtmBlock .gnav .ticket a{
+	background-position:-507px 0;
+}
+#mainVisualSec .visualBtmBlock .gnav .access a{
+	background-position:-675px 0;
+}
+#mainVisualSec .visualBtmBlock .gnav .shop a{
+	background-position:-844px 0;
+}
+
+#mainVisualSec .visualBtmBlock .gnav .outline a:hover{
+	background-position:0 -65px;
+}
+#mainVisualSec .visualBtmBlock .gnav .event a:hover{
+	background-position:-169px -65px;
+}
+#mainVisualSec .visualBtmBlock .gnav .structure a:hover{
+	background-position:-338px -65px;
+}
+#mainVisualSec .visualBtmBlock .gnav .ticket a:hover{
+	background-position:-507px -65px;
+}
+#mainVisualSec .visualBtmBlock .gnav .access a:hover{
+	background-position:-675px -65px;
+}
+#mainVisualSec .visualBtmBlock .gnav .shop a:hover{
+	background-position:-844px -65px;
+}
+
+/* -----------------------------------------------------------------
+	contentsArea
+----------------------------------------------------------------- */
+#contentsArea{
+	position:relative;
+	z-index:1;
+	background:url(/reuse-market/20140928-kansyasai/img/index_bg_cont01.png) repeat-y left top;
+}
+.contentsAreaInner{
+	padding-bottom:110px;
+	background:url(/reuse-market/20140928-kansyasai/img/index_bg_cont02.png) repeat-y right top;
+}
+
+@media all and (max-width: 1655px) {
+	#contentsArea{
+		background-position:-100px 0;
+	}
+	.contentsAreaInner{
+		background-image:url(/reuse-market/20140928-kansyasai/img/index_bg_cont03.png);
+	}
+}
+
+@media all and (max-width: 1430px) {
+	#contentsArea{
+		background-position:-210px 0;
+	}
+	.contentsAreaInner{
+		background-image:url(/reuse-market/20140928-kansyasai/img/index_bg_cont04.png);
+	}
+}
+
+@media all and (max-width: 1200px) {
+	#contentsArea{
+		background:none;
+	}
+	.contentsAreaInner{
+		background:none;
+	}
+}
+
+/* -----------------------------------------------------------------
+	newsSec
+----------------------------------------------------------------- */
+#newsSec{
+	width:800px;
+	margin:0 auto;
+	padding:70px 0 0;
+	background-color:transparent;
+}
+#newsSec .newsSecInner{
+	position:relative;
+	padding:30px 0 0;
+	background-color:#eeeeee;
+}
+#newsSec .newsHd{
+	position:absolute;
+	top:-22px;
+	left:25px;
+}
+#newsSec .newsBox{
+	position:relative;
+	z-index:1;
+	overflow:auto;
+	width:100%;
+	height:140px;
+	padding:0 0 25px;
+	font-size:110%;
+}
+#newsSec dl{
+	margin:0 30px;
+	padding:10px 0;
+	border-top:1px solid #6aaa33;
+}
+#newsSec dl:first-child{
+	border-top:none;
+}
+#newsSec dt{
+	float:left;
+	clear:left;
+	width:140px;
+	word-break:break-all;
+}
+#newsSec dd{
+	margin-left:150px;
+	zoom:1;
+}
+
+/* -----------------------------------------------------------------
+	outlineSec
+----------------------------------------------------------------- */
+#outlineSec .eventTable{
+	border-top:none;
+	border-left:none;
+}
+#outlineSec .eventTable td{
+	border-right:none;
+}
+#outlineSec .btnBlock{
+	position:relative;
+	width:65%;
+	min-height:56px;
+	padding-right:35%;
+}
+#outlineSec .btnBlock .btn{
+	display:block;
+	position:absolute;
+	top:0;
+	right:0;
+	overflow:hidden;
+	width:233px;
+	height:56px;
+	background:url(/reuse-market/20140928-kansyasai/img/index_btn_contact.png) no-repeat left top;
+	text-indent:-9999px;
+}
+#outlineSec .btnBlock .btn:hover{
+	background-position:left bottom;
+}
+
+/* -----------------------------------------------------------------
+	eventSec
+----------------------------------------------------------------- */
+#eventSec .secBox{
+	padding-top:50px;
+	padding-bottom:50px;
+	color:#316900;
+	text-align:center;
+	font-size:130%;
+}
+#eventSec .image{
+	margin-top:15px;
+}
+
+/* -----------------------------------------------------------------
+	structureSec
+----------------------------------------------------------------- */
+#structureSec .structureBlock{
+	padding:20px 30px;
+}
+#structureSec .structureBlock:nth-of-type(even){
+	background-color:#eff5e5;
+}
+
+#structureSec .sponsorsList > li{
+	float:left;
+	margin:0 10px 10px 0;
+}
+#structureSec .sponsorsList > li:nth-of-type(5n){
+	margin-right:0;
+}
+#structureSec .sponsorsList a{
+	display:block;
+}
+#structureSec .sponsorsList a:hover{
+	opacity:0.7;
+	filter:alpha(opacity=70);
+	-ms-filter:"alpha(opacity=70)";
+}
+
+/* -----------------------------------------------------------------
+	ticketSec
+----------------------------------------------------------------- */
+#ticketSec .secBox{
+	padding:30px;
+}
+#ticketSec .amo{
+	font-size:140%;
+}
+#ticketSec .amo span{
+	font-size:160%;
+	font-weight:bold;
+}
+#ticketSec .suppTxt{
+	padding:10px;
+	background-color:#e6eec2;
+	text-align:center;
+}
+
+/* preentryBtn */
+#ticketSec .preentryBtn a{
+	display:block;
+	overflow:hidden;
+	width:437px;
+	height:84px;
+	margin:40px auto 0;
+	background:url(/reuse-market/20140928-kansyasai/img/index_btn_preentry.png) no-repeat left top;
+	text-indent:-9999px;
+}
+#ticketSec .preentryBtn a:hover{
+	background-position:left bottom;
+}
+
+/* stepBlock */
+#ticketSec .stepBlock{
+	margin-top:40px;
+}
+#ticketSec .stepBlock.today{
+	margin-top:20px;
+}
+#ticketSec .stepBlock .stepList{
+	overflow:hidden;
+	width:100%;
+}
+#ticketSec .stepBlock .stepList > li{
+	float:left;
+}
+
+/* -----------------------------------------------------------------
+	accessSec
+----------------------------------------------------------------- */
+#accessSec .secBox{
+	padding:30px;
+	font-size:80%;
+}
+#accessSec #accessMap{
+	width:100%;
+	height:450px;
+	margin-bottom:10px;
+}
+
+#accessSec .accessCol{
+	margin:30px 0;
+	background:url(/reuse-market/20140928-kansyasai/img/index_bg_access.png) no-repeat right bottom;
+}
+#accessSec .accessCol .accessBlock{
+	float:left;
+	width:430px;
+}
+#accessSec .accessCol .accessBlock:last-of-type{
+	margin-right:0;
+}
+#accessSec .accessCol .accessColHd{
+	padding:8px 15px 2px;
+	background-color:#e6eec2;
+	font-size:120%;
+	font-weight:bold;
+	text-align:center;
+}
+
+#accessSec .accessCol .eventTable th{
+	width:28%;
+}
+
+#accessSec .accessCol .accessBlock:last-of-type{
+	float:right;
+}
+#accessSec .accessCol .accessBlock:last-of-type .accessCont{
+	border-top:3px solid #e6eec2;
+	padding:10px 20px;
+}
+
+/* -----------------------------------------------------------------
+	footBnrList
+----------------------------------------------------------------- */
+.footBnrList{
+	width:1000px;
+	margin:60px auto 0;
+}
+.footBnrList > li{
+	float:left;
+	margin-right:30px;
+}
+.footBnrList > li:last-of-type{
+	margin-right:0;
+}
+.footBnrList > li a{
+	display:block;
+}
+.footBnrList > li a:hover{
+	opacity:0.7;
+	filter:alpha(opacity=70);
+	-ms-filter:"alpha(opacity=70)";
+}
+
+/* -----------------------------------------------------------------
+	footerArea
+----------------------------------------------------------------- */
+#footerArea{
+	position:relative;
+	z-index:2;
+	margin-top:-65px;
+	padding-top:64px;
+	background:url(/reuse-market/20140928-kansyasai/img/index_bg_footer.png) repeat-x center top;
+}
+#footerArea .copyright{
+	display:block;
+	padding:20px;
+	background-color:#40b034;
+	color:#ffffff;
+	text-align:center;
+	font-size:70%;
+}
+
+/* =================================================================
+
+	Print
+
+================================================================= */
+@media print{
+	#headNav{
+		display:none !important;
+	}
+	.pagetop{
+		display:none !important;
+	}
+}
