@@ -34,7 +34,7 @@ class View_Admin_Mailmagazine_Index extends \ViewModel
     {
         $term = array(
             \DB::expr('CURDATE()'),
-            \DB::expr('CURDATE() + INTERVAL 1 MONTH')
+            \DB::expr('CURDATE() + INTERVAL 3 MONTH')
         );
 
         return \Model_Fleamarket::getReservationFleamarket($term);
