@@ -25,13 +25,14 @@ class Model_News extends \Model
             stream_set_timeout($rfd, 5);
             $data = stream_get_contents($rfd);
             $status = stream_get_meta_data($rfd);
+
             fclose($rfd);
+
+            if (! $status['timed_out']) {
+                $xml = simplexml_load_string($data);
+            }
         } catch (Exception $e) {
             return array();
-        }
-
-        if (! $status['timed_out']) {
-            $xml = simplexml_load_string($data);
         }
 
         $feed = array();
