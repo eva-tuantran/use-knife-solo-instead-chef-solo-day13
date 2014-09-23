@@ -15,14 +15,17 @@
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
+DROP SCHEMA IF EXISTS `rakuichi_rakuza` ;
+CREATE SCHEMA IF NOT EXISTS `rakuichi_rakuza` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci ;
+USE `rakuichi_rakuza` ;
 --
 -- Table structure for table `administrator_permissions`
 --
 
-DROP TABLE IF EXISTS `administrator_permissions`;
+DROP TABLE IF EXISTS `rakuichi_rakuza`.`administrator_permissions`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `administrator_permissions` (
+CREATE TABLE `rakuichi_rakuza`.`administrator_permissions` (
   `administrator_permission_id` int(11) NOT NULL AUTO_INCREMENT,
   `administrator_id` int(11) NOT NULL,
   `permission` varchar(50) NOT NULL COMMENT 'contoroller.actionの形式',
@@ -39,10 +42,10 @@ CREATE TABLE `administrator_permissions` (
 -- Table structure for table `administrators`
 --
 
-DROP TABLE IF EXISTS `administrators`;
+DROP TABLE IF EXISTS `rakuichi_rakuza`.`administrators`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `administrators` (
+CREATE TABLE `rakuichi_rakuza`.`administrators` (
   `administrator_id` int(11) NOT NULL AUTO_INCREMENT,
   `last_name` varchar(50) NOT NULL COMMENT '姓',
   `first_name` varchar(50) NOT NULL COMMENT '名',
@@ -66,10 +69,10 @@ CREATE TABLE `administrators` (
 -- Table structure for table `branch_abouts`
 --
 
-DROP TABLE IF EXISTS `branch_abouts`;
+DROP TABLE IF EXISTS `rakuichi_rakuza`.`branch_abouts`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `branch_abouts` (
+CREATE TABLE `rakuichi_rakuza`.`branch_abouts` (
   `branch_about_id` int(11) NOT NULL AUTO_INCREMENT,
   `branch_id` int(11) NOT NULL,
   `title` varchar(50) NOT NULL,
@@ -87,10 +90,10 @@ CREATE TABLE `branch_abouts` (
 -- Table structure for table `branches`
 --
 
-DROP TABLE IF EXISTS `branches`;
+DROP TABLE IF EXISTS `rakuichi_rakuza`.`branches`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `branches` (
+CREATE TABLE `rakuichi_rakuza`.`branches` (
   `branch_id` int(11) NOT NULL AUTO_INCREMENT,
   `company_id` int(11) NOT NULL,
   `name` varchar(50) NOT NULL COMMENT '開催地名',
@@ -115,10 +118,10 @@ CREATE TABLE `branches` (
 -- Table structure for table `companies`
 --
 
-DROP TABLE IF EXISTS `companies`;
+DROP TABLE IF EXISTS `rakuichi_rakuza`.`companies`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `companies` (
+CREATE TABLE `rakuichi_rakuza`.`companies` (
   `company_id` int(11) NOT NULL AUTO_INCREMENT,
   `parent_id` int(11) NOT NULL DEFAULT '0' COMMENT '0:本社,0以外:店舗',
   `name` varchar(50) DEFAULT NULL COMMENT '企業名,店舗名',
@@ -151,10 +154,10 @@ CREATE TABLE `companies` (
 -- Table structure for table `contacts`
 --
 
-DROP TABLE IF EXISTS `contacts`;
+DROP TABLE IF EXISTS `rakuichi_rakuza`.`contacts`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `contacts` (
+CREATE TABLE `rakuichi_rakuza`.`contacts` (
   `contact_id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) DEFAULT NULL,
   `inquiry_type` tinyint(4) NOT NULL COMMENT 'お問合せ区分 1:ホームページについて,2:フリーマーケットについて,3:楽市楽座について,4:開催可否の診断希望,5:その他お問合せ\n',
@@ -176,10 +179,10 @@ CREATE TABLE `contacts` (
 -- Table structure for table `entries`
 --
 
-DROP TABLE IF EXISTS `entries`;
+DROP TABLE IF EXISTS `rakuichi_rakuza`.`entries`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `entries` (
+CREATE TABLE `rakuichi_rakuza`.`entries` (
   `entry_id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL,
   `fleamarket_id` int(11) NOT NULL,
@@ -206,10 +209,10 @@ CREATE TABLE `entries` (
 -- Table structure for table `favorites`
 --
 
-DROP TABLE IF EXISTS `favorites`;
+DROP TABLE IF EXISTS `rakuichi_rakuza`.`favorites`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `favorites` (
+CREATE TABLE `rakuichi_rakuza`.`favorites` (
   `favorite_id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL,
   `fleamarket_id` int(11) NOT NULL,
@@ -225,10 +228,10 @@ CREATE TABLE `favorites` (
 -- Table structure for table `fleamarket_abouts`
 --
 
-DROP TABLE IF EXISTS `fleamarket_abouts`;
+DROP TABLE IF EXISTS `rakuichi_rakuza`.`fleamarket_abouts`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `fleamarket_abouts` (
+CREATE TABLE `rakuichi_rakuza`.`fleamarket_abouts` (
   `fleamarket_about_id` int(11) NOT NULL AUTO_INCREMENT,
   `fleamarket_id` int(11) NOT NULL,
   `about_id` int(11) NOT NULL,
@@ -248,10 +251,10 @@ CREATE TABLE `fleamarket_abouts` (
 -- Table structure for table `fleamarket_entry_styles`
 --
 
-DROP TABLE IF EXISTS `fleamarket_entry_styles`;
+DROP TABLE IF EXISTS `rakuichi_rakuza`.`fleamarket_entry_styles`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `fleamarket_entry_styles` (
+CREATE TABLE `rakuichi_rakuza`.`fleamarket_entry_styles` (
   `fleamarket_entry_style_id` int(11) NOT NULL AUTO_INCREMENT,
   `fleamarket_id` int(11) NOT NULL,
   `entry_style_id` tinyint(4) NOT NULL COMMENT '1:''手持ち出店,2:手持ち出店(プロ),3:手持ち出店(手作り品),4:車出店,5:車出店(プロ),6:車出店(手作り品),7:企業手持ち出店,8:企業車出店,9:飲食店',
@@ -272,10 +275,10 @@ CREATE TABLE `fleamarket_entry_styles` (
 -- Table structure for table `fleamarket_images`
 --
 
-DROP TABLE IF EXISTS `fleamarket_images`;
+DROP TABLE IF EXISTS `rakuichi_rakuza`.`fleamarket_images`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `fleamarket_images` (
+CREATE TABLE `rakuichi_rakuza`.`fleamarket_images` (
   `fleamarket_image_id` int(11) NOT NULL AUTO_INCREMENT,
   `fleamarket_id` int(11) NOT NULL,
   `priority` tinyint(4) NOT NULL,
@@ -294,10 +297,10 @@ CREATE TABLE `fleamarket_images` (
 -- Table structure for table `fleamarkets`
 --
 
-DROP TABLE IF EXISTS `fleamarkets`;
+DROP TABLE IF EXISTS `rakuichi_rakuza`.`fleamarkets`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `fleamarkets` (
+CREATE TABLE `rakuichi_rakuza`.`fleamarkets` (
   `fleamarket_id` int(11) NOT NULL AUTO_INCREMENT,
   `location_id` int(11) NOT NULL,
   `group_code` char(6) NOT NULL COMMENT '同開催を一意にするコード',
@@ -347,10 +350,10 @@ CREATE TABLE `fleamarkets` (
 -- Table structure for table `locations`
 --
 
-DROP TABLE IF EXISTS `locations`;
+DROP TABLE IF EXISTS `rakuichi_rakuza`.`locations`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `locations` (
+CREATE TABLE `rakuichi_rakuza`.`locations` (
   `location_id` int(11) NOT NULL AUTO_INCREMENT,
   `branch_id` int(11) DEFAULT NULL COMMENT 'register_typeが運営者の時セット',
   `name` varchar(50) NOT NULL COMMENT '開催地名',
@@ -373,10 +376,10 @@ CREATE TABLE `locations` (
 -- Table structure for table `mail_magazine_users`
 --
 
-DROP TABLE IF EXISTS `mail_magazine_users`;
+DROP TABLE IF EXISTS `rakuichi_rakuza`.`mail_magazine_users`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `mail_magazine_users` (
+CREATE TABLE `rakuichi_rakuza`.`mail_magazine_users` (
   `mail_magazine_user_id` int(11) NOT NULL AUTO_INCREMENT,
   `mail_magazine_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
@@ -396,10 +399,10 @@ CREATE TABLE `mail_magazine_users` (
 -- Table structure for table `mail_magazines`
 --
 
-DROP TABLE IF EXISTS `mail_magazines`;
+DROP TABLE IF EXISTS `rakuichi_rakuza`.`mail_magazines`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `mail_magazines` (
+CREATE TABLE `rakuichi_rakuza`.`mail_magazines` (
   `mail_magazine_id` int(11) NOT NULL AUTO_INCREMENT,
   `send_datetime` datetime DEFAULT NULL,
   `mail_magazine_type` tinyint(4) NOT NULL DEFAULT '0' COMMENT 'メールマガジンタイプ 1全員,2:希望者全員,3:出店予約者',
@@ -423,10 +426,10 @@ CREATE TABLE `mail_magazines` (
 -- Table structure for table `user_service_prefectures`
 --
 
-DROP TABLE IF EXISTS `user_service_prefectures`;
+DROP TABLE IF EXISTS `rakuichi_rakuza`.`user_service_prefectures`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `user_service_prefectures` (
+CREATE TABLE `rakuichi_rakuza`.`user_service_prefectures` (
   `user_service_prefecture_id` int(11) NOT NULL AUTO_INCREMENT,
   `user_service_id` int(11) NOT NULL,
   `prefecture_id` tinyint(4) NOT NULL COMMENT '都道府県',
@@ -444,10 +447,10 @@ CREATE TABLE `user_service_prefectures` (
 -- Table structure for table `user_services`
 --
 
-DROP TABLE IF EXISTS `user_services`;
+DROP TABLE IF EXISTS `rakuichi_rakuza`.`user_services`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `user_services` (
+CREATE TABLE `rakuichi_rakuza`.`user_services` (
   `user_service_id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL,
   `shop_genre` tinyint(4) NOT NULL COMMENT '1:アロマ,2:アンケート調査,3:お笑い,4:カフェ,5:ダンス,6:フリーマーケットの冠協賛,7:フリーマーケットへのチラシ,8:記載,9:マッサージ.10:似顔絵,11:加工食品販売,12:占い,13:大道芸,14:契約推進,15:実演販売,16:屋台,17:歌・バンド・演奏,18:移動販売車,19:農産物販売,99:その他',
@@ -466,10 +469,10 @@ CREATE TABLE `user_services` (
 -- Table structure for table `user_tokens`
 --
 
-DROP TABLE IF EXISTS `user_tokens`;
+DROP TABLE IF EXISTS `rakuichi_rakuza`.`user_tokens`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `user_tokens` (
+CREATE TABLE `rakuichi_rakuza`.`user_tokens` (
   `user_token_id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL COMMENT '会員ID',
   `hash` varchar(40) NOT NULL COMMENT 'activateに利用するhash文字列。ランダムのmd5を想定。',
@@ -487,10 +490,10 @@ CREATE TABLE `user_tokens` (
 -- Table structure for table `users`
 --
 
-DROP TABLE IF EXISTS `users`;
+DROP TABLE IF EXISTS `rakuichi_rakuza`.`users`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `users` (
+CREATE TABLE `rakuichi_rakuza`.`users` (
   `user_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '10000000から採番',
   `user_old_id` int(11) DEFAULT NULL COMMENT '旧楽市楽座のユーザID',
   `nick_name` varchar(50) NOT NULL,
