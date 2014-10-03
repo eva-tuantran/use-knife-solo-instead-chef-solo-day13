@@ -126,6 +126,7 @@ class Controller_Admin_Mailmagazine extends Controller_Admin_Base_Template
         Asset::js('jquery-ui.min.js', array(), 'add_js');
 
         $data = \Input::post();
+        $data['additional_serialize_data'] = serialize($this->getAdditionalData($data));
         $fieldset = $this->getFieldset($data['mail_magazine_type']);
 
         $validation = $fieldset->validation();
@@ -639,12 +640,10 @@ class Controller_Admin_Mailmagazine extends Controller_Admin_Base_Template
         }
 
         return array(
-//            'pagination_url' => 'admin/mailmagazine/userlist',
             'uri_segment'    => 5,
             'num_links'      => 10,
             'per_page'       => $this->result_per_page,
             'total_items'    => $count,
         );
     }
-
 }
