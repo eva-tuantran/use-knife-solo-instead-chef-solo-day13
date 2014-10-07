@@ -192,7 +192,6 @@ $(function() {
 
   Calendar.init();
   Carousel.start();
-  Search.init();
 });
 
 var Calendar = {
@@ -221,34 +220,6 @@ var Calendar = {
     }).fail(function(jqXHR, textStatus, errorThrown) {
     }).always(function() {
     });
-  }
-};
-
-var Search = {
-  init: function() {
-    $("#select_region").on("change", function(evt) {
-      Search.changeRegion();
-    });
-  },
-  changeRegion: function() {
-    $("#select_prefecture").prop("selectedIndex", 0);
-      var region_id = $("#select_region").val();
-
-      $.ajax({
-        type: "get",
-        url: "/search/prefecture",
-        dataType: "json",
-        data: {region_id: region_id}
-      }).done(function(json, textStatus, jqXHR) {
-        if (json) {
-          $("#select_prefecture").empty();
-          $("#select_prefecture").append('<option value="">都道府県</option>');
-          $.each(json, function(key, value) {
-            $("#select_prefecture").append('<option value="' + key + '">' + value + '</option>');
-          });
-        }
-      }).fail(function(jqXHR, textStatus, errorThrown) {
-      });
   }
 };
 

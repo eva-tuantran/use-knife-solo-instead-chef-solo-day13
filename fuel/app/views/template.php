@@ -27,10 +27,10 @@
 <noscript><iframe src="//www.googletagmanager.com/ns.html?id=GTM-KWFSV9"
 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-      new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-    '//www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-    })(window,document,'script','dataLayer','GTM-KWFSV9');</script>
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  '//www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-KWFSV9');</script>
 <!-- End Google Tag Manager -->
 <!-- header -->
 <div id="header">
@@ -41,14 +41,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <p>フリーマーケット楽市楽座の情報サイト</p>
       </div>
       <ul>
-        <?php if (Auth::check()): ?>
-            <li class="user">ようこそ、<?php echo e(Auth::get_screen_name());?> さん</li>
-            <li class="login"><a href="/login/out"><i></i>ログアウト</a></li>
-        <?php else: ?>
-            <li class="user">ようこそ、ゲストさん</li>
-            <li class="login"><a href="/login"><i></i>ログイン</a></li>
-            <li class="regist"><a href="/signup"><i></i>会員登録</a></li>
-        <?php endif; ?>
+      <?php if (Auth::check()): ?>
+        <li class="user">ようこそ、<?php echo e(Auth::get_screen_name());?> さん</li>
+        <li class="login"><a href="/login/out"><i></i>ログアウト</a></li>
+      <?php else: ?>
+        <li class="user">ようこそ、ゲストさん</li>
+        <li class="login"><a href="/login"><i></i>ログイン</a></li>
+        <li class="regist"><a href="/signup"><i></i>会員登録</a></li>
+      <?php endif; ?>
         <li class="guide hidden-xs"><a href="/info/visitor"><i></i>初めての方へ</a></li>
         <li class="inquiry hidden-xs"><a href="/inquiry"><i></i>お問い合せ</a></li>
       </ul>
@@ -74,7 +74,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             if (! isset($is_top) || ! $is_top):
         ?>
         <!-- globalNavBottom -->
-        <div id="globalNavBottom">
+        <div id="globalNavBottom" class="clearfix">
           <?php
               if (! empty($crumbs)):
           ?>
@@ -97,9 +97,34 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <?php
               endif;
           ?>
-          <form id="form_search_keyword" action="/all" method="get">
-            <input type="text" class="form-control" id="keywordInput" placeholder="キーワードを入力" name="c[keyword]">
-          </form>
+          <div class="globalNavSearch">
+            <form id="form_search_keyword" class="form-inline" action="/all" method="get">
+              <div class="form-group globalNavSearch">
+                <div class="input-group">
+                  <input type="text" id="keywordInput" class="form-control" placeholder="キーワードを入力" name="c[keyword]">
+                    <a id="globalNavSearchBtn" class="input-group-addon btn btn-default" href="#" role="button">
+                      <img src="/assets/img/icon_search.png">
+                    </a>
+                </div>
+              </div>
+            </form>
+            <script type="text/javascript">
+            $(function() {
+                $("#keywordInput").keypress(function(evt) {
+                  if (evt.which == 13) {
+                    evt.preventDefault();
+                    $("#form_search_keyword").submit();
+                  }
+                });
+                $("#globalNavSearchBtn").click(function(evt) {
+                    evt.preventDefault();
+                    $("#form_search_keyword").submit();
+                });
+            });
+            </script>
+          </div>
+          <style type="text/css">
+          </style>
         </div>
         <!-- /globalNavBottom -->
         <?php
