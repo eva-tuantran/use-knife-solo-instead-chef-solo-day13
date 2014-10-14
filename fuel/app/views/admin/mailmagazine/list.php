@@ -1,12 +1,12 @@
 <div class="panel panel-default">
   <!-- Default panel contents -->
   <div class="panel-heading">
-      <h2 class="panel-title">メルマガ一覧</h2>
+    <h2 class="panel-title">メルマガ一覧</h2>
   </div>
   <div class="panel-body">
     <div class="row">
       <div class="col-md-10">
-        <form class="form-horizontal" id="" action="/admin/mailmagazine/list" method="post" role="form">
+        <form id="searchForm" class="form-horizontal" id="" action="/admin/mailmagazine/list" method="post" role="form">
           <div class="form-group">
             <label for="register_type" class="col-md-1 control-label">送信種類</label>
             <div class="col-md-2">

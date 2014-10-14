@@ -95,7 +95,11 @@ class View_Admin_Mailmagazine_Result extends \ViewModel
      */
     private function unserializeAdditionalData($mail_magazine_type, $additional_data)
     {
-        $data = unserialize($additional_data);
+        try {
+            $data = unserialize($additional_data);
+        } catch (\Exception $e) {
+            return array();
+        }
 
         $result =  array();
         switch ($mail_magazine_type) {

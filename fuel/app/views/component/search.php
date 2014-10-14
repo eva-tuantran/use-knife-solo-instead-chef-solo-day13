@@ -79,6 +79,12 @@ var Search = {
   prefectures: <?php echo json_encode($prefectures);?>,
   alphabet_prefectures: <?php echo json_encode($alphabet_prefectures);?>,
   init: function() {
+    $("#form_keyword").keypress(function(evt) {
+      if (evt.which == 13) {
+        evt.preventDefault();
+        $("#doSearch").click();
+      }
+    });
     $("#selectRegion").on("change", function(evt) {
       evt.preventDefault();
       Search.changeRegion();
@@ -86,8 +92,8 @@ var Search = {
     $("#doSearch").on("click", function(evt) {
         evt.preventDefault();
         var $form = $("#form_search");
-        var region = $("#selectRegion").prop('disabled', true).val();
-        var prefecture = $("#selectPrefecture").prop('disabled', true).val();
+        var region = $("#selectRegion").val();
+        var prefecture = $("#selectPrefecture").val();
 
         var area = 'all';
         if (prefecture != '') {
@@ -95,34 +101,13 @@ var Search = {
         } else if (region != '') {
           area = Search.alphabet_regions[region];
         }
-        if ($("#form_keyword").val() == '') {
-          $("#form_keyword").prop('disabled', true);
-        }
-        if ($("#form_shop_fee").val() == '') {
-          $("#form_shop_fee").prop('disabled', true);
-        }
-        if ($("#form_car_shop").val() == '') {
-          $("#form_car_shop").prop('disabled', true);
-        }
-        if ($("#form_rainy_location").val() == '') {
-          $("#form_rainy_location").prop('disabled', true);
-        }
-        if ($("#form_pro_shop").val() == '') {
-          $("#form_pro_shop").prop('disabled', true);
-        }
-        if ($("#form_charge_parking").val() == '') {
-          $("#form_charge_parking").prop('disabled', true);
-        }
-        if ($("#form_free_parking").val() == '') {
-          $("#form_free_parking").prop('disabled', true);
-        }
 
         var query = $form.serialize();
         if (query != '') {
           query = '?' + query;
         }
 
-        $form.attr("action", "/" + area + query).submit();
+        $form.attr("action", area + query).submit();
     });
   },
   changeRegion: function() {

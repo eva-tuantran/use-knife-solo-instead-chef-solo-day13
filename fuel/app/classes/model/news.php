@@ -20,18 +20,34 @@ class Model_News extends \Model
          * curlで代替できるような気はするので、調査する必要あり
          */
         try {
-            $rfd = fopen($rss_url, 'r');
-            stream_set_blocking($rfd, true);
-            stream_set_timeout($rfd, 5);
-            $data = stream_get_contents($rfd);
-            $status = stream_get_meta_data($rfd);
-            fclose($rfd);
+            $ch = curl_init();
+
+            $options = array(
+                CURLOPT_URL             => $rss_url,
+                CURLOPT_HEADER          => false,
+                CURLOPT_RETURNTRANSFER  => true,
+                CURLOPT_FOLLOWLOCATION  => true,
+                CURLOPT_MAXREDIRS       => 1,
+                CURLOPT_TIMEOUT         => 5,
+                CURLOPT_CONNECTTIMEOUT  => 5,
+            );
+            curl_setopt_array($ch, $options);
+
+            $rss = curl_exec($ch);
+            $curl_info = curl_getinfo($ch);
+            curl_close($ch);
+
+            if ($curl_info['http_code'] == 200 && $curl_info['size_download'] > 0) {
+                $control_code = array(
+                    "\x00", "\x01", "\x02", "\x03", "\x04",
+                    "\x05", "\x06", "\x07", "\x08", "\x0b",
+                    "\x0c", "\x0e", "\x0f"
+                );
+                $rss = str_replace($control_code, '', $rss);
+                $xml = simplexml_load_string($rss, 'SimpleXMLElement');
+            }
         } catch (Exception $e) {
             return array();
-        }
-
-        if (! $status['timed_out']) {
-            $xml = simplexml_load_string($data);
         }
 
         $feed = array();
@@ -49,9 +65,8 @@ class Model_News extends \Model
                 }
                 $count++;
             }
-        } 
+        }
 
         return $feed;
     }
-
 }
