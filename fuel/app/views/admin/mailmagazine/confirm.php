@@ -13,7 +13,7 @@
           <table class="table">
             <tbody>
               <tr>
-                <th>送信対象</th>
+                <th style="width:150px;">送信対象</th>
                 <td>
                   <p><?php
                     $mail_magazine_type = $input_data['mail_magazine_type'];
@@ -58,19 +58,19 @@
                 </td>
               </tr>
               <tr>
-                <th>差出人メールアドレス</th>
+                <th style="width:150px;">差出人メールアドレス</th>
                 <td><?php echo $input_data['from_email'];?></td>
               </tr>
               <tr>
-                <th>差出人</th>
+                <th style="width:150px;">差出人</th>
                 <td><?php echo $input_data['from_name'];?></td>
               </tr>
               <tr>
-                <th>件名</th>
+                <th style="width:150px;">件名</th>
                 <td><?php echo $input_data['subject'];?></td>
               </tr>
               <tr>
-                <th>本文</th>
+                <th style="width:150px;">本文</th>
                 <td><?php echo nl2br(e($body));?></td>
               </tr>
             </tbody>

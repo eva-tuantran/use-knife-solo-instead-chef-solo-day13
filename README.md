@@ -56,37 +56,20 @@
 
   ```sh
   $ cd vagrant
-  $ vagrant up
-  $ vagrant ssh
+  $ vagrant up web1
+  $ vagrant ssh web1
   ```
 
+  web1 ~ web4がそれぞれのサーバに対応しています。
 
-  完了後ブラウザで動作を確認します。Hostsを設定すれば、より本番に近い環境で検証可能です。
+  完了後ブラウザで動作を確認します
 
   ```
   http://192.168.33.101
   ```
 
-  ポートフォワーディングも対応しており、SSL以外の部分は簡単に外部マシンから参照可能です。
-
-  ```
-  http://[自分のPrivateIP]:33101 #ローカルホストのportforward
-  ```
-
-
   Gitで管理しているこのディレクトリ自体がVagrantにより共有フォルダ化します。
   そのため、このフォルダ内部のファイルを編集することでダイレクトにVirtualboxの仮想環境に反映されます。
-
-
-### Capitrano
-
-  内部がCapistranoによるDeployにも対応しており、より本番に近いデプロイを確認できます。
-
-  ```sh
-  bundle exec cap development deploy
-  ```
-
-  詳細はCAPISTRANO.mdを参照下さい。
 
 
 

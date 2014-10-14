@@ -69,7 +69,10 @@ class Model_Mail_Magazine extends Model_Base
             ),
         ),
         'additional_serialize_data' => array(
-            'form'  => array('type' => false)
+            'label' => '送信条件',
+            'validation' => array(
+                'required', 'max_length' => array(1023),
+            ),
         ),
         'send_status' => array(
             'form'  => array('type' => false)

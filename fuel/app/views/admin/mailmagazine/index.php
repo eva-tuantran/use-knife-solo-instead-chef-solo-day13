@@ -28,6 +28,13 @@
             <?php
                 endif;
             ?>
+            <?php
+                if (isset($errors['additional_serialize_data'])):
+            ?>
+            <div class="error-message"><?php echo $errors['additional_serialize_data'];?></div>
+            <?php
+                endif;
+            ?>
           </div>
           <div id="condition_4" class="form-group condition">
             <label class="col-md-2 control-label">フリマ</label>

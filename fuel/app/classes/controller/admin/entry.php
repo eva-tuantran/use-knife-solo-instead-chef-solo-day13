@@ -178,6 +178,7 @@ class Controller_Admin_Entry extends Controller_Admin_Base_Template
                     $entry->user->user_id,
                     $entry->reservation_number,
                     $entry_styles[$entry->fleamarket_entry_style->entry_style_id],
+                    $entry->reserved_booth,
                     $entry->user->last_name . $entry->user->first_name,
                     $entry->user->zip,
                     $prefecture_name,

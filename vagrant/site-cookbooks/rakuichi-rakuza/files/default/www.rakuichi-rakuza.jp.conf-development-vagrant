@@ -1,10 +1,9 @@
 NameVirtualHost *:80
 NameVirtualHost *:443
 
-Listen 8081
-<VirtualHost *:80 *:8081>
-    ServerName www.rakuichi-rakuza.com
-    ServerAlias www.rakuichi-rakuza.vagrant
+Listen 8080
+<VirtualHost *:80 *:8080>
+    ServerName www.rakuichi-rakuza.vagrant
     ServerAdmin afml_dev@aucfan.com
 
     DocumentRoot /deploy/rakuichi-rakuza/public
@@ -28,8 +27,7 @@ Listen 8081
 </VirtualHost>
 
 <VirtualHost *:443>
-    ServerName www.rakuichi-rakuza.com
-    ServerAlias www.rakuichi-rakuza.vagrant
+    ServerName www.rakuichi-rakuza.vagrant
     ServerAdmin afml_dev@aucfan.com
 
     DocumentRoot "/deploy/rakuichi-rakuza/public"
