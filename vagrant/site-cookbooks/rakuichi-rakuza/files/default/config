@@ -1,8 +1,13 @@
-Host gitlab.aucfan.com
-  IdentityFile /home/vagrant/.ssh/id_rsa_gitlab
-
 Host *
   Protocol 2
   PasswordAuthentication yes
   PubkeyAuthentication yes 
   PreferredAuthentications publickey
+  ServerAliveInterval 30
+  ServerAliveCountMax 100
+
+Host github.com
+    Identityfile ~/.ssh/upuser-rsa
+
+Host 192.168.*
+    IdentityFile ~/.ssh/id_rsa_rakuichi

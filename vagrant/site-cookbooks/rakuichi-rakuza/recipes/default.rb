@@ -22,7 +22,15 @@ directory '/var/log/rakuichi-rakuza' do
   action    [ :create ]
 end
 
-[ 'id_rsa_gitlab', 'config' ].each do |f|
+
+directory "/home/#{node[:deploy][:user]}/.ssh" do
+  user    node[:deploy][:user]
+  group   node[:deploy][:group]
+  mode    0700
+  action  [ :create ]
+end
+
+[ 'upuser-rsa', 'id_rsa_gitlab', 'config' ].each do |f|
   cookbook_file "/home/#{node[:deploy][:user]}/.ssh/#{f}" do
     source  f
     user    node[:deploy][:user]

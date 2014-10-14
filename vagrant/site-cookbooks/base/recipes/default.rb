@@ -51,3 +51,19 @@ template "/etc/hosts" do
         :hostname => node[:host_name] # node ファイルで指定した値が入る
     })
 end
+
+group 'upuser' do
+  group_name 'upuser'
+  gid        403
+  action     [:create]
+end
+
+user 'upuser' do
+  comment  'upuser'
+  uid      403
+  group    'upuser'
+  password nil
+  supports :manage_home => true
+  action   [:create, :manage]
+end
+

@@ -1,1 +1,0 @@
-{  "host_name" : "nrt01",  "run_list":[    "recipe[base]",    "recipe[httpd-php]",    "recipe[composer]",    "recipe[mysql]",    "recipe[memcached]"  ]}

@@ -8,47 +8,19 @@
 # All rights reserved - Do Not Redistribute
 #
 
-
-
-##------------------------------------------------------------ 
-## SSH公開鍵設定
-##------------------------------------------------------------ 
-log "copy ssh key"
-%w{id_rsa_gitlab id_rsa_gitlab.pub}.each do |name|
-  cookbook_file "/root/.ssh/#{name}" do
-    source "#{name}"
-    owner "root"
-    group "root"
-    mode  "0600"
-    action :create_if_missing
-  end
-end
-
-##------------------------------------------------------------ 
-## SSH_config
-##------------------------------------------------------------ 
-case node[:platform]
-  when "centos"
-    template "/root/.ssh/config" do
-    source "production/ssh/config.erb"
-    owner "root"
-    group "root"
-    mode "0644"
-  end
-else
-end
-
-
 ##------------------------------------------------------------ 
 ## アプリケーション配置
 ##------------------------------------------------------------ 
 directory "/deploy" do
   mode "0755"
+  user      node[:deploy][:group]
+  group     node[:deploy][:group]
   action :create
 end
 
 execute "git clone rakuichi production files" do
-  command "cd /deploy; git clone git@gitlab.aucfan.com:devs/rakuichi-rakuza.git; git submodule update --init"
+  command "cd /deploy; git clone git://github.com/aucfan/rakuichi-rakuza.git; git submodule update --init"
+  user      node[:deploy][:group]
   not_if { File.exists?("/deploy/rakuichi-rakuza") }
 end
 
