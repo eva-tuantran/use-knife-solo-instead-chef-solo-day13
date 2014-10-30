@@ -123,8 +123,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             });
             </script>
           </div>
-          <style type="text/css">
-          </style>
         </div>
         <!-- /globalNavBottom -->
         <?php
