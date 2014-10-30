@@ -97,9 +97,32 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <?php
               endif;
           ?>
-          <form id="form_search_keyword" action="/all" method="get">
-            <input type="text" class="form-control" id="keywordInput" placeholder="キーワードを入力" name="c[keyword]">
-          </form>
+          <div class="globalNavSearch">
+            <form id="form_search_keyword" class="form-inline" action="/all" method="get">
+              <div class="form-group globalNavSearch">
+                <div class="input-group">
+                  <input type="text" id="keywordInput" class="form-control" placeholder="キーワードを入力" name="c[keyword]">
+                    <a id="globalNavSearchBtn" class="input-group-addon btn btn-default" href="#" role="button">
+                      <img src="/assets/img/icon_search.png">
+                    </a>
+                </div>
+              </div>
+            </form>
+            <script type="text/javascript">
+            $(function() {
+                $("#keywordInput").keypress(function(evt) {
+                  if (evt.which == 13) {
+                    evt.preventDefault();
+                    $("#form_search_keyword").submit();
+                  }
+                });
+                $("#globalNavSearchBtn").click(function(evt) {
+                    evt.preventDefault();
+                    $("#form_search_keyword").submit();
+                });
+            });
+            </script>
+          </div>
         </div>
         <!-- /globalNavBottom -->
         <?php
