@@ -1,5 +1,27 @@
+## How to run chef-solo (Linux/Mac)
+
+```sh
+
+## up virtual machines
+cd vagrant
+vagrant up rakuichi-rakzua.chef
+
+## register ssh-config for non-pass ssh authentications
+vagrant ssh-config rakuichi-rakzua.chef >>~/.ssh/config
+
+## run cookbook via knife-solo
+knife solo prepare rakuichi-rakzua.chef
+knife solo cook rakuichi-rakzua.chef
+```
+
+Requirements
+
+- Knife-solo
 
 
+
+
+------------------------------------------------------------
 
 
 

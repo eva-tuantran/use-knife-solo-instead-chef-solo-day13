@@ -12,12 +12,14 @@
 
 # authorized_keys_for 'root'
 
-execute "Install yum epel repository" do
-  command "rpm -ivh http://ftp.riken.jp/Linux/fedora/epel/6/i386/epel-release-6-8.noarch.rpm"
-  not_if "rpm -qa | grep -q 'epel-release'"
+%w{ca-certificates}.each do |name|
+  package name do
+    action :upgrade
+  end
 end
 
-%w{git vim-enhanced tig telnet sendmail mailx}.each do |name|
+
+%w{epel-release git vim-enhanced tig telnet sendmail mailx}.each do |name|
   package name do
     action :install
   end
