@@ -6,6 +6,16 @@
   <div id="form" class="container">
     <div class="box clearfix">
       <h3>お問い合わせフォーム</h3>
+
+<?php if(date("Ymd") >= 20141218 && date("Ymd") <= 20150105): ?>
+<div style="border: 1px solid #ddd;background-color: #fafafa;margin: 10px;padding: 10px 20px;color: #ff4444;font-weight: bold;">
+【冬期休暇期間のサポートについて】<br />
+12月30日～1月4日まで、お問い合わせ対応や各種サポートをお休みさせていただきます。<br />
+12月29日15時以降にいただいたメールは、1月5日以降順次対応とさせていただきます。<br />
+また、内容によりましてはお時間を頂く場合もございます。
+</div>
+<?php endif; ?>
+
       <form action="/inquiry/confirm" method="POST" class="form-horizontal">
 	<div class="form-group">
 	  <label class="col-sm-2 control-label">お問い合わせの種類</label>
