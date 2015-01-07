@@ -2,26 +2,22 @@
 #  command "cp -a /usr/share/zoneinfo/#{node[:timezone][:tz]} /etc/localtime"
 #end
 
- execute "Flush all iptables rules" do
-   command "/sbin/iptables -F"
- end
- service "iptables" do
-   action [:disable, :stop]
- end
-
+# execute "Flush all iptables rules" do
+  # command "/sbin/iptables -F"
+# end
+# service "iptables" do
+  # action [:disable, :stop]
+# end
+#
 
 # authorized_keys_for 'root'
 
-execute "Install yum epel repository" do
-  command "rpm -ivh http://ftp.riken.jp/Linux/fedora/epel/6/i386/epel-release-6-8.noarch.rpm"
-  not_if "rpm -qa | grep -q 'epel-release'"
+package "nss" do
+  action :upgrade
+  options "--disablerepo=epel"
 end
 
-execute "Update SSL certificate" do
-  command "yum -y upgrade ca-certificates --disablerepo=epel"
-end
-
-%w{git vim-enhanced tig telnet sendmail mailx}.each do |name|
+%w{epel-release git vim-enhanced tig telnet sendmail mailx}.each do |name|
   package name do
     action :install
   end
