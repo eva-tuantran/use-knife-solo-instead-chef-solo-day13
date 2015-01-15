@@ -1,0 +1,159 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "centos64_ja"
+   config.vm.box_url = "http://developer.nrel.gov/downloads/vagrant-boxes/CentOS-6.4-x86_64-v20130731.box"
+  #config.vm.box_url = "http://192.168.101.62:8888/vagrant/CentOS-6.4-x86_64-v20130731.box"
+  config.vm.network :forwarded_port, guest: 8081, host: 33101
+  # port 8081: sync_dir, port 8082: capistrano deployment
+
+
+#
+#  config.vm.define :web0 do |web|
+#    web.vm.network :private_network, ip: "192.168.33.98"
+#    web.vm.hostname = 'dbtest'
+#    web.vm.provision :chef_solo do |chef|
+#      chef.cookbooks_path = ["./site-cookbooks", "./cookbooks"]
+#      chef.add_recipe "base"
+#      chef.add_recipe "mysql-server"
+#      chef.add_recipe "rakuichi::database"
+#    end
+#  end
+#
+
+#  config.vm.define :"rakuichi-rakuza.vagrant" do |web|
+#    web.vm.network :private_network, ip: "192.168.33.101"
+#    web.vm.network :private_network, ip: "192.168.133.101"
+#    web.vm.hostname = 'rakuichi-rakuza-test'
+#    web.vm.provision :chef_solo do |chef|
+#      chef.cookbooks_path = ["./site-cookbooks", "./cookbooks"]
+#      chef.add_recipe "base"
+#      chef.add_recipe "httpd-php"
+#      chef.add_recipe "selinux::disabled"
+#      chef.add_recipe "memcached"
+#      chef.add_recipe "composer"
+#      chef.add_recipe "mysql-server"
+#      chef.add_recipe "rakuichi-rakuza::default"
+#      chef.add_recipe "rakuichi-rakuza::database"
+#      chef.add_recipe "rakuichi-rakuza::development"
+#      chef.add_recipe "keepalived::client-rakuichi-development"
+#      chef.json = {
+#        deploy: {
+#          user:   'vagrant',
+#          group:  'vagrant',
+#        },
+
+#        :composer => {
+#          :install_path => "/usr/local/bin"
+#        },
+#        :mysqld => {
+#          :server_id => '1023'
+#        }
+#      }
+#    end
+#  end
+
+#  config.vm.define :web2 do |web|
+#    web.vm.network :private_network, ip: "192.168.33.102"
+#    web.vm.network :private_network, ip: "192.168.133.102"
+#    web.vm.hostname = 'ceb01-WEB02'
+#    web.vm.provision :chef_solo do |chef|
+#      chef.cookbooks_path = ["./site-cookbooks", "./cookbooks"]
+#      chef.add_recipe "base"
+#      chef.add_recipe "httpd-php"
+#      chef.add_recipe "selinux::disabled"
+#      chef.add_recipe "memcached"
+#      chef.add_recipe "composer"
+#      chef.add_recipe "mysql-server"
+#      chef.add_recipe "rakuichi-rakuza::database"
+#      chef.add_recipe "rakuichi-rakuza::development"
+#      chef.add_recipe "keepalived::client-rakuichi-development"
+#      chef.json = {
+#        :composer => {
+#          :install_path => "/usr/local/bin"
+#        },
+#        :mysqld => {
+#          :server_id => '1024'
+#        }
+#      }
+#    end
+#  end
+#
+#  config.vm.define :web3 do |web|
+#    web.vm.network :private_network, ip: "192.168.33.103"
+#    web.vm.network :private_network, ip: "192.168.133.103"
+#    web.vm.hostname = 'ceb02-LVS01'
+#    web.vm.provision :chef_solo do |chef|
+#      chef.cookbooks_path = ["./site-cookbooks", "./cookbooks"]
+#      chef.add_recipe "base"
+#      chef.add_recipe "selinux::disabled"
+#      chef.add_recipe "keepalived"
+#      chef.add_recipe "keepalived::rakuichi-development"
+#    end
+#  end
+#
+#  config.vm.define :web4 do |web|
+#    web.vm.network :private_network, ip: "192.168.33.104"
+#    web.vm.network :private_network, ip: "192.168.133.104"
+#    web.vm.hostname = 'nrt02-LVS02'
+#    web.vm.provision :chef_solo do |chef|
+#      chef.cookbooks_path = ["./site-cookbooks", "./cookbooks"]
+#      chef.add_recipe "base"
+#      chef.add_recipe "selinux::disabled"
+#      chef.add_recipe "keepalived"
+#      chef.add_recipe "keepalived::rakuichi-development"
+#    end
+#  end
+#
+
+    if config.hostmanager
+      config.hostmanager.enabled = true
+      config.hostmanager.manage_host = true
+      config.hostmanager.ignore_private_ip = false
+      config.hostmanager.include_offline = true
+    end
+
+    config.vm.define :"dev.www.rakuichi.rakuza.jp" do |web|
+    web.vm.network :private_network, ip: "192.168.33.101"
+    web.vm.network :private_network, ip: "192.168.133.101"
+    web.vm.hostname = 'dev.www.rakuichi-rakuza.jp'
+    web.vm.provision :chef_solo do |chef|
+      chef.cookbooks_path = ["./site-cookbooks", "./cookbooks"]
+      chef.add_recipe "base"
+      chef.add_recipe "httpd-php"
+      chef.add_recipe "selinux::disabled"
+      chef.add_recipe "memcached"
+      chef.add_recipe "composer"
+      chef.add_recipe "mysql-server"
+      chef.add_recipe "rakuichi-rakuza::default"
+      chef.add_recipe "rakuichi-rakuza::database"
+      chef.add_recipe "rakuichi-rakuza::development"
+      chef.add_recipe "keepalived::client-rakuichi-development"
+      chef.json = {
+        deploy: {
+          user:   'vagrant',
+          group:  'vagrant',
+        },
+
+        :composer => {
+          :install_path => "/usr/local/bin"
+        },
+        :mysqld => {
+          :server_id => '1023'
+        }
+      }
+    end
+  end
+  
+  
+  config.vm.synced_folder "../../", "/deploy/rakuichi-rakuza", :create => true, :owner=> 'vagrant', :group=>'vagrant', :mount_options => ['dmode=777,fmode=777']
+
+  config.vm.provider :virtualbox do |vb|
+    #vb.customize ["modifyvm", :id, "--memory", 1024]
+    vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+    vb.customize ["modifyvm", :id, "--natdnsproxy1", "on"]
+  end
+
+
+end

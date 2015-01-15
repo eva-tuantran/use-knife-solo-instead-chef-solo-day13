@@ -1,0 +1,21 @@
+{
+  "mysqld" : {
+    "server_id": "1023"
+  },
+  "run_list": [
+    "recipe[base]",
+    "recipe[httpd-php]",
+    "recipe[selinux::disabled]",
+    "recipe[composer]",
+    "recipe[mysql-server]",
+    "recipe[memcached]",
+    "recipe[selinux::disabled]",
+    "recipe[rakuichi-rakuza::database]",
+    "recipe[rakuichi-rakuza::default]",
+    "recipe[rakuichi-rakuza::default]",
+    "recipe[keepalived::client-rakuichi-development]"
+  ],
+  "automatic": {
+    "ipaddress": "dev.www.rakuichi.rakuza.jp"
+  }
+}
