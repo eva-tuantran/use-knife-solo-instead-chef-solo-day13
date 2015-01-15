@@ -14,7 +14,6 @@
 
 package "nss" do
   action :upgrade
-  options "--disablerepo=epel"
 end
 
 %w{epel-release git vim-enhanced tig telnet sendmail mailx}.each do |name|
