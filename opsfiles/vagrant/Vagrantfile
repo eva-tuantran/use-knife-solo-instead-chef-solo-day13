@@ -114,36 +114,38 @@ Vagrant.configure("2") do |config|
       config.hostmanager.include_offline = true
     end
 
+    config.ssh.forward_agent = true
+
     config.vm.define :"dev.www.rakuichi.rakuza.jp" do |web|
     web.vm.network :private_network, ip: "192.168.33.101"
     web.vm.network :private_network, ip: "192.168.133.101"
     web.vm.hostname = 'dev.www.rakuichi-rakuza.jp'
-    web.vm.provision :chef_solo do |chef|
-      chef.cookbooks_path = ["./site-cookbooks", "./cookbooks"]
-      chef.add_recipe "base"
-      chef.add_recipe "httpd-php"
-      chef.add_recipe "selinux::disabled"
-      chef.add_recipe "memcached"
-      chef.add_recipe "composer"
-      chef.add_recipe "mysql-server"
-      chef.add_recipe "rakuichi-rakuza::default"
-      chef.add_recipe "rakuichi-rakuza::database"
-      chef.add_recipe "rakuichi-rakuza::development"
-      chef.add_recipe "keepalived::client-rakuichi-development"
-      chef.json = {
-        deploy: {
-          user:   'vagrant',
-          group:  'vagrant',
-        },
+#    web.vm.provision :chef_solo do |chef|
+#      chef.cookbooks_path = ["./site-cookbooks", "./cookbooks"]
+#      chef.add_recipe "base"
+#      chef.add_recipe "httpd-php"
+#      chef.add_recipe "selinux::disabled"
+#      chef.add_recipe "memcached"
+#      chef.add_recipe "composer"
+#      chef.add_recipe "mysql-server"
+#      chef.add_recipe "rakuichi-rakuza::default"
+#      chef.add_recipe "rakuichi-rakuza::database"
+#      chef.add_recipe "rakuichi-rakuza::development"
+#      chef.add_recipe "keepalived::client-rakuichi-development"
+#      chef.json = {
+#        deploy: {
+#          user:   'vagrant',
+#          group:  'vagrant',
+#        },
 
-        :composer => {
-          :install_path => "/usr/local/bin"
-        },
-        :mysqld => {
-          :server_id => '1023'
-        }
-      }
-    end
+#        :composer => {
+#          :install_path => "/usr/local/bin"
+#        },
+#        :mysqld => {
+#          :server_id => '1023'
+#        }
+#      }
+#    end
   end
   
   

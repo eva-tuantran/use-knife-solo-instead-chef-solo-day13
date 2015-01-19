@@ -11,8 +11,7 @@
     "recipe[memcached]",
     "recipe[selinux::disabled]",
     "recipe[rakuichi-rakuza::database]",
-    "recipe[rakuichi-rakuza::default]",
-    "recipe[rakuichi-rakuza::default]",
+    "recipe[rakuichi-rakuza::development]",
     "recipe[keepalived::client-rakuichi-development]"
   ],
   "automatic": {
