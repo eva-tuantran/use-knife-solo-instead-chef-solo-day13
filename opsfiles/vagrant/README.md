@@ -2,7 +2,12 @@
 
 
 
+## knife-soloによるプロビジョニング
 
+```
+bundle install
+bundle exec knife solo bootstrap vagrant@127.0.0.1 -p 2201 -i .vagrant/machines/rakuichi-rakuza.vagrant/virtualbox/private_key
+```
 
 ## 現状認識しているchefの問題点 (2014/4/22)
 
