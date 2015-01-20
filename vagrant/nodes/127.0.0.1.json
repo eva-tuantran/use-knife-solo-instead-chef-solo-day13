@@ -1,0 +1,27 @@
+{
+  "run_list": [
+    "base",
+    "httpd-php",
+    "selinux::disabled",
+    "memcached",
+    "composer",
+    "mysql-server",
+    "rakuichi-rakuza::default",
+    "rakuichi-rakuza::database",
+    "rakuichi-rakuza::development",
+    "keepalived::client-rakuichi-development"
+  ],
+  "deploy": {
+    "user": "vagrant",
+    "group": "vagrant"
+  },
+  "composer": {
+    "install_path": "/usr/local/bin"
+  },
+  "mysqld": {
+      "server_id": 1023
+  },
+  "automatic": {
+    "ipaddress": "127.0.0.1"
+  }
+}

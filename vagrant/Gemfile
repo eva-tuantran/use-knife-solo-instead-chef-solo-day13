@@ -1,0 +1,7 @@
+# A sample Gemfile
+source "https://rubygems.org"
+
+gem 'knife-solo'
+gem 'berkshelf'
+gem 'json', '>=1.8.1'
+gem 'librarian-chef'
