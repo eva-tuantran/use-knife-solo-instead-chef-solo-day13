@@ -2,12 +2,11 @@
 # vi: set ft=ruby :
 
 Vagrant.configure("2") do |config|
-  # config.vm.box = "amazon-linux64-2014.03"
-  # config.vm.box_url = "http://images.geekandi.com/amazon-linux/vagrant-amazon-linux64-2014.03-public-virtualbox.box"
-  config.vm.box = "centos64_min"
-  config.vm.box_url = "http://192.168.101.62:8888/vagrant/CentOS-6.4-x86_64-v20130731.box"
-  # config.vm.box = "chef/centos-6.6"
-  # config.vm.network :forwarded_port, guest: 8081, host: 33101
+  # config.vm.box = "centos64_min"
+  # config.vm.box_url = "http://developer.nrel.gov/downloads/vagrant-boxes/CentOS-6.4-x86_64-v20130731.box"
+  # config.vm.box_url = "http://192.168.101.62:8888/vagrant/CentOS-6.4-x86_64-v20130731.box"
+  config.vm.box = "chef/centos-6.6"
+  config.vm.network :forwarded_port, guest: 8081, host: 33101
   # port 8081: sync_dir, port 8082: capistrano deployment
 
 
