@@ -13,10 +13,10 @@ set :pty,           true
 set :keep_releases, 5
 set :use_sudo,      false
 
-set :composer_install_flags, '--no-dev --no-interaction --quiet --optimize-autoloader'
-set :composer_roles, :all
-set :composer_dump_autoload_flags, '--optimize'
-set :composer_download_url, "https://getcomposer.org/installer"
+# set :composer_install_flags, '--no-dev --no-interaction --quiet --optimize-autoloader'
+# set :composer_roles, :all
+# set :composer_dump_autoload_flags, '--optimize'
+# set :composer_download_url, "https://getcomposer.org/installer"
 #SSHKit.config.command_map[:composer] = "php #{shared_path.join("composer.phar")}"
 
 namespace :deploy do
@@ -26,12 +26,11 @@ namespace :deploy do
     desc '(overwrite) Setup log directories'
     task :directories do
       on release_roles :all do
-        execute :sudo, :chmod, '777', "/var/log"
         execute :sudo, :chmod, '777', "/srv/"
         execute :mkdir, '-pv', shared_path, releases_path
         execute :chown, '-R', "#{fetch(:user)}:#{fetch(:group)}", deploy_to
-        execute :mkdir, '-pv', "#{fetch(:log_path)}"
-        execute :chmod, '777', "#{fetch(:log_path)}"
+        execute :sudo, :mkdir, '-pv', "#{fetch(:log_path)}"
+        execute :sudo, :chmod, '777', "#{fetch(:log_path)}"
       end
     end
   end
@@ -49,6 +48,6 @@ namespace :deploy do
     end
   end
 
-  before :starting, 'composer:install_executable'
+  # before :starting, 'composer:install_executable'
 end
 
