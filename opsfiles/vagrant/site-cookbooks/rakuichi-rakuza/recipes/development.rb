@@ -25,6 +25,7 @@ end
 ##------------------------------------------------------------ 
 [
   'www.rakuichi-rakuza.jp.conf-development-vagrant',
+  'www.rakuichi-rakuza.jp.conf-development-dev',
   'www.rakuichi-rakuza.jp.conf-development-capistrano'
 ].each do |conf|
   cookbook_file "/etc/httpd/conf.d/#{conf}.conf" do

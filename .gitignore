@@ -21,4 +21,4 @@ build
 /var/cache/*
 /var/tmp/*
 /public/files/*
-/vendor/bundle
+opsfiles/vendor/bundle
