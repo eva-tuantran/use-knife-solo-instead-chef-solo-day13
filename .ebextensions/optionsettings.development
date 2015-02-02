@@ -1,4 +1,6 @@
 [aws:autoscaling:launchconfiguration]
 InstanceType=t2.micro
+SecurityGroups=sg-efc76f8a,sg-9ddf77f8
+RootVolumeType=standard
 [aws:ec2:vpc]
 AssociatePublicIpAddress=true
