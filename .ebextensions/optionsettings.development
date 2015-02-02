@@ -1,0 +1,4 @@
+[aws:autoscaling:launchconfiguration]
+InstanceType=t2.micro
+[aws:ec2:vpc]
+AssociatePublicIpAddress=true

@@ -1,4 +1,0 @@
-[aws:ec2:vpc]
-VPCId=vpc-7d66a518
-ELBScheme=public
-ELBSubnets=subnet-42977c1b,subnet-76b16701
