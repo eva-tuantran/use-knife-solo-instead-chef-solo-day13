@@ -1,3 +1,0 @@
-[submodule "public/blog"]
-	path = public/blog
-	url = git@github.com:aucfan/rakuichi-rakuza-blog.git
