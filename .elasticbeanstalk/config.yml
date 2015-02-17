@@ -1,6 +1,6 @@
 branch-defaults:
   feature/move-to-aws:
-    environment: rakuichi-rakuza-dev
+    environment: rakuichi-rakuza-dev2
 global:
   application_name: rakuichi-rakuza
   default_ec2_keyname: kori@aucfan.com
