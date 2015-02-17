@@ -91,7 +91,7 @@ define('WP_ALLOW_MULTISITE', true);
 
 define('MULTISITE', true);
 define('SUBDOMAIN_INSTALL', false);
-define('DOMAIN_CURRENT_SITE', 'rakuichi-rakuza-dev.elasticbeanstalk.com');
+define('DOMAIN_CURRENT_SITE', 'www.rakuichi-rakuza.jp');
 define('PATH_CURRENT_SITE', '/blog/');
 define('SITE_ID_CURRENT_SITE', 1);
 define('BLOG_ID_CURRENT_SITE', 1);
