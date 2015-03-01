@@ -1,9 +1,9 @@
 branch-defaults:
   feature/move-to-aws:
-    environment: rakuichi-rakuza-dev
+    environment: null
 global:
   application_name: rakuichi-rakuza
-  default_ec2_keyname: kori@aucfan.com
+  default_ec2_keyname: rakuichi-rakuza-id_rsa
   default_platform: PHP 5.5
   default_region: null
   profile: null
