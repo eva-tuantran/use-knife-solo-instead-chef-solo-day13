@@ -1,6 +1,6 @@
 branch-defaults:
   feature/move-to-aws:
-    environment: null
+    environment: rakuichi-rakuza-dev
 global:
   application_name: rakuichi-rakuza
   default_ec2_keyname: rakuichi-rakuza-id_rsa

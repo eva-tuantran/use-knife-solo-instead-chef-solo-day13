@@ -23,6 +23,8 @@ build
 /public/files/*
 opsfiles/vendor/bundle
 
+opsfiles/ami-packer/credentials.json
+
 # Elastic Beanstalk Files
 .elasticbeanstalk/*
 !.elasticbeanstalk/*.cfg.yml
