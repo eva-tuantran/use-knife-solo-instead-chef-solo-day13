@@ -62,7 +62,10 @@ googletag.enableServices();
 	<div id="head_logo_area">
 		<div class="row-fluid">
 			<div id="header_logo">
-				<a href="http://<?php echo get_special_base_url(); ?>/"><img src="http://<?php echo get_special_base_url(); ?>/wp-content/uploads/2014/04/rakuichi-logo.png" alt="フリーマーケット情報の楽市楽座" /></a>
+				<a href="http://<?php echo get_special_base_url(); ?>/">
+					<img src="<?php $__titlelogo = wp_get_attachment_image_src(15, 'full'); echo $__titlelogo[0]; ?>" alt="フリーマーケット情報の楽市楽座" />
+					<!-- <?php echo wp_get_attachment_image(15, 'full', false, array('alt' => 'フリーマーケット情報の楽市楽座')); ?> -->
+				</a>
 			</div>
 			<div id="header_top_ad">
 <!-- (楽市楽座ブログ)ヘッダーバナー_468x60 -->
