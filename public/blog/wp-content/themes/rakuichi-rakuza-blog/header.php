@@ -63,8 +63,7 @@ googletag.enableServices();
 		<div class="row-fluid">
 			<div id="header_logo">
 				<a href="http://<?php echo get_special_base_url(); ?>/">
-					<img src="<?php $__titlelogo = wp_get_attachment_image_src(15, 'full'); echo $__titlelogo[0]; ?>" alt="フリーマーケット情報の楽市楽座" />
-					<!-- <?php echo wp_get_attachment_image(15, 'full', false, array('alt' => 'フリーマーケット情報の楽市楽座')); ?> -->
+					<?php echo wp_get_attachment_image(15, 'full', false, array('alt' => 'フリーマーケット情報の楽市楽座', 'class' => null)); ?>
 				</a>
 			</div>
 			<div id="header_top_ad">
