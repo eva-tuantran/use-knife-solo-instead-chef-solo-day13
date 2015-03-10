@@ -48,7 +48,7 @@
         "cd /usr/local/src",
         "sudo -E rm master.zip s3fs-fuse-master -rf",
         "sudo -E mkdir /mnt/s3fs",
-        "sudo -E sh -c \"echo '/usr/bin/s3fs#rakuichi-rakuza-files /mnt/s3fs fuse rw,allow_other,uid=498,gid=497,default_acl=public-read,use_cache=/tmp 0 0' >> /etc/fstab\"",
+        "sudo -E sh -c \"echo '/usr/bin/s3fs#rakuichi-rakuza-files /mnt/s3fs fuse rw,allow_other,uid=498,gid=497,default_acl=public-read-write,umask=000,use_cache=/var/tmp 0 0' >> /etc/fstab\"",
         "sudo -E sh -c \"echo {{user `s3_aws_access_key`}}:{{user `s3_aws_secret_key`}} > /etc/passwd-s3fs\"",
         "sudo -E chmod 640 /etc/passwd-s3fs",
         "sudo -E chown 498:497 /etc/passwd-s3fs"
