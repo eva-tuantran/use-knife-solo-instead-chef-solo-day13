@@ -60,7 +60,7 @@ class Fleamarket_Event_Close
                     'register_type', '=', \Model_Fleamarket::REGISTER_TYPE_ADMIN,
                 ),
                 array(
-                    'event_time_end', '<=', $date::time(),
+                    'event_time_end', '<=', $date::time()->format('mysql'),
                 ),
                 array(
                     'event_status', 'IN', $target_event_statuses,
