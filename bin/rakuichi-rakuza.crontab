@@ -4,10 +4,10 @@ FUEL_ENV=production
 #0 8 * * * webapp (cd /var/app/current ; /usr/bin/php oil refine send_mail_to_user_waiting_reservation)
 
 # 予約受付開始日を過ぎたフリマの開催状況(event_status)を予約受付中に更新する
-1 0 * * * webapp php /var/app/current/oil refine fleamarket_event_reservation_receipt
+#1 0 * * * webapp php /var/app/current/oil refine fleamarket_event_reservation_receipt
 
 # 開催日を過ぎたフリマの開催状況(event_status)を開催終了に更新する
-5 0 * * * webapp php /var/app/current/oil refine fleamarket_event_close
+#5 0 * * * webapp php /var/app/current/oil refine fleamarket_event_close
 
 # メルマガ会員数のレポートの送信
-0 0 * * * webapp /var/app/current/bin/mail-magazine-subscriber-report.sh
+#0 0 * * * webapp /var/app/current/bin/mail-magazine-subscriber-report.sh
