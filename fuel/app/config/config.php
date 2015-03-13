@@ -53,7 +53,7 @@ return array(
     /**
      * Default location for the file cache
      */
-    'cache_dir'       => TMPPATH.'cache/',
+    'cache_dir'       => APPPATH.'cache/',
 
     /**
      * Settings for the file finder cache (the Cache class has it's own config!)
@@ -74,11 +74,10 @@ return array(
 	 * Fuel::L_ALL
 	 */
 	'log_threshold'    => Fuel::L_WARNING,
-	'log_path'         => TMPPATH.'log/',
+	'log_path'         => APPPATH.'log/',
 	'log_date_format'  => 'Y-m-d H:i:s',
 
 	/**
-    /**
      * Settings for ssl
      * @author shimma
      */
