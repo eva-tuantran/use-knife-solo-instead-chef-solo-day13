@@ -36,7 +36,7 @@
       "type": "shell",
       "inline": [
         "sudo -E yum -y update",
-        "sudo -E yum -y install git gcc libstdc++-devel gcc-c++ fuse fuse-devel libcurl-devel libxml2-devel openssl-devel mailcap automake mailx",
+        "sudo -E yum -y install git gcc libstdc++-devel gcc-c++ fuse fuse-devel libcurl-devel libxml2-devel openssl-devel mailcap automake",
         "cd /usr/local/src",
         "sudo -E wget --no-check-certificate https://github.com/s3fs-fuse/s3fs-fuse/archive/master.zip",
         "sudo -E unzip master.zip",
