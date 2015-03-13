@@ -80,7 +80,7 @@ class send_mail_to_user_waiting_reservation
         }
 
         $entry = $args['entry'];
-        $entry_styles = Config::get('master.entry_styles');
+        $entry_styles = \Config::get('master.entry_styles');
         $params['fleamarket_entry_style.entry_style_name']
             = $entry_styles[$entry->fleamarket_entry_style->entry_style_id];
 
