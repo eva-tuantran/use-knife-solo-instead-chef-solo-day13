@@ -3,6 +3,8 @@
 
 ErrorDocument 503 /maintenance.html
 
+## ELB経由のHTTPS接続で環境変数を$_SERVER['HTTPS']をセット
+SetEnvIf X-Forwarded-Proto https HTTPS=on
 
 <IfModule mod_rewrite.c>
 

@@ -14,7 +14,7 @@ return array(
         /**
          * Mail driver (mail, smtp, sendmail, noop)
          */
-        'driver'		=> 'smtp',
+        'driver'		=> 'sendmail',
 
         /**
          * Whether to send as html, set to null for autodetection.
@@ -89,7 +89,7 @@ return array(
          * SMTP settings
          */
         'smtp'	=> array(
-            'host'		=> 'mail.aucfan.com',
+            'host'		=> 'batch.rakuichi-rakuza.local',
             'port'		=> 25,
             'username'	=> '',
             'password'	=> '',
