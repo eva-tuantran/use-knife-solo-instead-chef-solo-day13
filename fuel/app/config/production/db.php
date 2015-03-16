@@ -10,7 +10,7 @@ return array(
     'default' => array(
         'type' => 'mysqli',
         'connection'  => array(
-            'hostname' => 'localhost',
+            'hostname' => 'rakuichi-rakuza.cnceg4b5jglv.ap-northeast-1.rds.amazonaws.com',
             'database' => 'rakuichi_rakuza',
             'username' => 'rr_readonly',
             'password' => '6bd369abc23fc87abf191566348a69798d85092e',
@@ -22,7 +22,7 @@ return array(
     'master' => array(
         'type' => 'mysqli',
         'connection'  => array(
-            'hostname' => 'localhost',
+            'hostname' => 'rakuichi-rakuza.cnceg4b5jglv.ap-northeast-1.rds.amazonaws.com',
             'database' => 'rakuichi_rakuza',
             'username' => 'rr_admin',
             'password' => 'f8f4316c0ad0ce4939fd2966b9aff60e271ffe68',
@@ -34,7 +34,7 @@ return array(
     'slave' => array(
         'type' => 'mysqli',
         'connection'  => array(
-            'hostname' => 'localhost',
+            'hostname' => 'rakuichi-rakuza.cnceg4b5jglv.ap-northeast-1.rds.amazonaws.com',
             'database' => 'rakuichi_rakuza',
             'username' => 'rr_readonly',
             'password' => '6bd369abc23fc87abf191566348a69798d85092e',

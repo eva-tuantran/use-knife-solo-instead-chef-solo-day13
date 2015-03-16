@@ -1,0 +1,541 @@
+.aspect_box {
+  display: inline-block;
+  width: 100%;
+  position: relative;
+}
+.aspect_box::after {
+  padding-top: 47.25%;
+  display: block;
+  content: '';
+}
+.aspect_content {
+  position: absolute;
+  top: 0; bottom: 0; right: 0; left: 0;
+}
+#main_img {
+  text-indent:100%;
+  text-indent:-9999px\9;
+  white-space:nowrap;
+  overflow:hidden;
+}
+@media (min-width: 769px){
+  #main_img {
+    background: url(/wp-content/uploads/2013/08/sp_pc_20130809a.png) center top no-repeat;
+    -moz-background-size:100% auto;
+    background-size:100% auto;
+  }
+}
+@media (max-width: 768px){
+   #main_img {
+     background: url(/wp-content/uploads/2013/08/sp_smp_20130809a.png) center top no-repeat;
+     -moz-background-size:100% auto;
+     background-size:100% auto;
+  }
+}
+h2.topic_title{
+  font-size: 1.2em;
+  margin: 10px 0;
+}
+h3.sub_title{
+  font-size: 1.2em;
+  background: #015DB2;
+  color: #FFF;
+  padding: 5px 5px 5px 10px;
+  border-radius: 0px;
+  border: 2px solid #004C92;
+  margin-top: 10px;
+}
+
+ul.check_list {
+  list-style: none;
+  background: #FFFFE0;
+  border-radius: 10px;
+  border: 1px solid #EEE;
+  padding: 10px;
+  margin: 10px auto;
+}
+ul.check_list li{
+  list-style:none;
+  padding:4px 4px 4px 25px;
+  font-size: 14px;
+  font-weight: bold;
+  background: url(/wp-content/uploads/2013/08/check-mark.png) 0 center no-repeat;
+}
+
+.auction_recommend {
+  text-align: center;
+  font-weight: bold;
+  color: #FF8C00;
+  font-size: 15px;
+  padding: 13px 0 2px;
+}
+
+.up {
+  margin: 0 auto;
+  position: relative;
+  width: 0;
+  height: 0;
+  border: 30px solid rgba(0, 0, 0, 0);
+  border-top-color: #FFDAB9;
+  margin-top: 10px;
+  margin-bottom: -30px;
+}
+
+.item_img {
+  float: left;
+  width: 80px;
+  height: 70px;
+  text-align:center;
+}
+.item_img img {
+  max-width: 80px;
+  max-height: 70px;
+}
+.item_text {
+  float: left;
+}
+@media (max-width: 979px){
+  input[class*="span"], .row-fluid [class*="span"] {
+    float: none;
+    clear: both;
+    display: block;
+    width: 100%;
+    margin-left: 0;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+  }
+}
+.item_text{
+  margin-left:5px;
+}
+.item_text .item_name{
+  font-size: 18px;
+  font-weight: bold;
+  color: #4169E1;
+}
+.item_text .item_count{
+  font-weight: bold;
+  color: #4169E1;
+}
+.item_text .predict_bit_price{
+  color: #FF4500;
+  font-size: 22px;
+}
+.item_box {
+  padding: 5px 0 5px 0;
+  border-bottom: 1px solid #CCC;
+  padding-left: 10px;
+  overflow: hidden;
+  background: #F8F8FF;
+  /*
+  background-image: url("/wp-content/uploads/2013/08/icon-chevron-right.png");
+  background-repeat: no-repeat;
+  background-size: 15px 15px;
+  background-position: right 50%;
+  */
+}
+.item_box:hover {
+  background: #FFFFF0;
+  /*
+  background-image: url("/wp-content/uploads/2013/08/icon-chevron-right.png");
+  background-repeat: no-repeat;
+  background-size: 15px 15px;
+  background-position: right 50%;
+  */
+}
+.loading{
+  width:100%;
+  height:100px;
+  padding-top:30px;
+  text-align:center;
+}
+
+
+/* add  area */
+
+.introduction {
+	margin-bottom: 20px;
+}
+
+.introduction p {
+	text-align: center;
+}
+
+.introduction p.margin_adjust {
+	margin: 0px;
+}
+
+.introduction p.select_message {
+	font-size: 20px;
+	margin-top: 20px;
+	font-weight: bold;
+	margin-bottom: 10px;
+}
+
+.introduction p.message_strong {
+	font-size: 17px;
+	font-weight: bold;
+}
+
+.introduction .purpose_select {
+	text-align: center;
+	margin: 0 auto;
+	margin-bottom: 5px;
+	width: 80%;
+}
+
+.introduction .purpose_select .select_left {
+	margin-bottom: 10px;
+}
+
+h3.iphone_sub_title,h3.auction_title {
+	font-size: 1.2em;
+	background: #7F7F7F;
+	color: #FFF;
+	padding: 5px 5px 5px 10px;
+	border-radius: 0px;
+	border: 2px solid #7F7F7F;
+	margin: 10px 0;
+	text-align: left;
+}
+
+#price_check {
+	text-align: center;
+}
+
+#price_check li.image_area img {
+	filter:alpha(opacity=50);
+	-moz-opacity: 0.5;
+	opacity: 0.5;
+
+}
+#price_check li.image_area img.active {
+	filter:alpha(opacity=1);
+	-moz-opacity: 1;
+	opacity: 1;
+}
+
+.step {
+	margin-top: -10px;
+	border-top: solid #eee 1px;
+	border-right: solid #eee 1px;
+	border-left: solid #eee 1px;
+	padding-bottom: 15px;
+}
+
+.step a {
+	text-decoration: none;
+	color: #000;
+}
+
+.step.last {
+	border-bottom: solid #eee 1px;
+	margin-bottom: 15px;
+}
+
+.step p {
+	margin-top: 15px;
+	font-size: 18px;
+	padding: 10px;
+	font-weight: bold;
+}
+
+.step .step_green {
+	color: #00B050;
+	font-weight: bold;
+}
+
+.step li {
+	margin-bottom: 10px;
+	margin: 0px 8px;
+}
+
+#price_check .recommend {
+	font-weight: bold;
+	font-size: 19px;
+	margin-bottom: 40px;
+}
+
+#selected_area {
+	margin-top: 40px;
+	margin-bottom: 10px;
+}
+
+#selected_name {
+	font-size: 23px;
+	font-weight: bold;
+	color: #1F497D;
+	text-align: center;
+	line-height: 40px;
+}
+
+#selected_area .selected_image {
+	text-align: center;
+	margin-bottom: 15px;
+}
+
+#selected_area table th {
+	background-color: #f5f5f5;
+	width: 100px;
+}
+
+#selected_area table td {
+	background-color: #fff;
+}
+
+#selected_area .table-hover tr:hover td,#selected_area .table-hover tr:hover th
+	{
+	background-color: none;
+}
+
+#result_show_area {
+	text-align: center;
+}
+
+#result_show_area h3 {
+	padding: 5px;
+	background: #EFEFEF;
+	font-size: 15px;
+	border-bottom: 1px solid #DFDFDF;
+}
+
+#result_show_area h3.auction_bid {
+	background: #ABDF9D;
+}
+
+#result_show_area h3.auction_average {
+	background: #E6B9B8;
+}
+
+#result_show_area .price_block,#result_show_area .price_block_green,#result_show_area .price_block_red
+	{
+	border: 1px solid #DFDFDF;
+	-moz-border-radius: 6px 6px 0 0;
+	-webkit-border-radius: 6px 6px 0 0;
+	border-radius: 6px 6px 0 0;
+	margin-bottom: 10px;
+}
+
+@media screen and (max-width: 979px) {
+	#result_show_area .price_block,#result_show_area .price_block_green,#result_show_area .price_block_red
+		{
+		margin: 0 auto;
+		margin-bottom: 10px;
+	}
+}
+
+#result_show_area .price_block .price,#result_show_area .price_block_green .price,#result_show_area .price_block_red .price
+	{
+	font-size: 23px;
+	color: #ff0000;
+	margin-top: 5px;
+	padding: 4px;
+}
+
+.carrier,.size {
+	border: 1px #7f7f7f solid;
+	text-align: center;
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
+	border-radius: 10px;
+	margin: 5px 0;
+	width: 150px;
+	padding: 10px 5px;
+	font-size: 14px;
+	font-weight: bold;
+	background-color: #d9d9d9;
+}
+
+.carrier:hover,.carrier.active,.size:hover,.size.active {
+	background-color: #fff;
+}
+
+/*#result_show_area .chart {
+	height: 300px;
+	border: 1px solid #eee;
+	margin-bottom: 10px;
+	margin-top: 10px;
+}
+
+#result_show_area #dailyChart {
+	height: 280px;
+}*/
+
+#how_to_auction p.center {
+	margin-top: 30px;
+	font-size: 20px;
+	font-weight: bold;
+	text-align: center;
+}
+
+#how_to_auction p.orange {
+	color: #F79646;
+}
+
+#how_to_auction .sell_step {
+	margin: 0 45px;
+	-moz-border-radius: 15px;
+	-webkit-border-radius: 15px;
+	border-radius: 15px;
+	background: #EBF1DE;
+	padding: 12px;
+	margin-bottom: 10px;
+	margin-top: -10px;
+}
+
+#how_to_auction .sell_step.first {
+	margin: 0 45px;
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+#how_to_auction .sell_step p.title {
+	font-size: 16px;
+	font-weight: bold;
+	margin-bottom: 7px;
+	margin-top: -5px;
+}
+
+#how_to_auction .sell_step p.detail {
+	line-height: 15px;
+	font-size: 13px;
+	margin-left: 35px;
+	margin-bottom: 3px;
+}
+
+#how_to_auction .sell_step .step_green {
+	color: #00B050;
+}
+
+#how_to_auction .notice {
+	text-align: right;
+	font-size: 13px
+}
+
+#aucfan_premium .premium_recommend {
+	text-decoration: underline;
+	text-align: center;
+	font-size: 23px;
+	color: #008E40;
+	font-weight: bold;
+	margin-top: 20px;
+	margin-bottom: 8px;
+}
+
+#aucfan_premium .item_box {
+	border: 1px solid #eee;
+	-moz-border-radius: 8px;
+	-webkit-border-radius: 8px;
+	border-radius: 8px;
+	background: #FFFFCC;
+	margin-bottom: 10px;
+	line-height: 1.3em;
+}
+
+#aucfan_premium .item_box .title {
+	font-weight: bold;
+	font-size: 15px;
+}
+
+#aucfan_premium .item_box .image_area {
+	margin-top: 7px;
+	float: left;
+	margin-right: 7px;
+}
+
+#aucfan_premium .item_box .description {
+	padding: 6px;
+	overflow: hidden;
+	margin-right: 5px;
+}
+
+.register_btn {
+	text-align: center;
+	margin: 10px 0px 20px 0;
+}
+
+.detail_benefits {
+	text-align: right;
+	margin-top: 30px;
+}
+
+@media screen and (max-width: 979px) {
+	.detail_benefits {
+		text-align: center;
+	}
+}
+
+.global {
+	text-align: center;
+}
+
+.global a {
+	width: 550px;
+}
+
+@media screen and (max-width: 979px) {
+	.global a {
+		width: 437px;
+	}
+}
+
+@media screen and (max-width: 546px) {
+	.global a {
+		width: 245px;
+	}
+}
+
+.triangle {
+	margin: 0 auto;
+	position: relative;
+	width: 0;
+	height: 0;
+	border: 22px solid transparent;
+	border-top-color: #FFDAB9;
+}
+
+.triangle_small {
+	margin: 0 auto;
+	position: relative;
+	width: 0;
+	height: 0;
+	border: 20px solid transparent;
+	border-top-color: #FFDAB9;
+}
+
+.triangle.green,.triangle_small.green {
+	border-top-color: #83ED95;
+}
+
+.triangle.dark_green,.triangle_small.dark_green {
+	border-top-color: #9BBB59;
+}
+
+.triangle.red,.triangle_small.red {
+	border-top-color: #FF7171;
+}
+
+.triangle.orange,.triangle_small.orange {
+	border-top-color: #FCD5B5;
+}
+
+.left_adjust {
+	margin-left: 207px;
+}
+
+.right_adjust {
+	margin-right: 205px;
+}
+
+@media screen and (max-width: 979px) {
+	.left_adjust {
+		margin: 0 auto;
+	}
+	.right_adjust {
+		margin: 0 auto;
+	}
+}
+#dailyAllChart canvas{
+  width:100%;
+}
