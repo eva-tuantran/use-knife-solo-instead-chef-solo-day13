@@ -24,13 +24,13 @@
 define('DB_NAME', 'rakuichi_rakuza_wp');
 
 /** MySQL データベースのユーザー名 */
-define('DB_USER', 'root');
+define('DB_USER', 'rrwp_admin');
 
 /** MySQL データベースのパスワード */
-define('DB_PASSWORD', '');
+define('DB_PASSWORD', '4803828f4577cc7ac17797a2b81ed6d6a13ff227');
 
 /** MySQL のホスト名 */
-define('DB_HOST', '192.168.3.xxx');
+define('DB_HOST', 'rakuichi-rakuza.cnceg4b5jglv.ap-northeast-1.rds.amazonaws.com');
 
 /** データベースのテーブルを作成する際のデータベースの文字セット */
 define('DB_CHARSET', 'utf8');

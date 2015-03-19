@@ -1,6 +1,6 @@
 #!/bin/sh
 
-mail_to=afml_mkt@aucfan.com
+mail_to=afml_mkt@aucfan.com,flea@aucfan.com
 subject="rakuichi rakuza mailmagazine active user report"
 user=rr_admin
 pass=f8f4316c0ad0ce4939fd2966b9aff60e271ffe68
