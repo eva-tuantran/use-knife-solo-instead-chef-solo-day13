@@ -1,7 +1,7 @@
 branch-defaults:
-  feature/move-to-aws:
-    environment: rakuichi-rakuza-dev
-  move-to-aws:
+  master:
+    environment: rakuichi-rakuza
+  develop:
     environment: rakuichi-rakuza-dev
 global:
   application_name: rakuichi-rakuza

@@ -101,6 +101,9 @@ define('WP_POST_REVISIONS', 5);
 //自動保存の秒間隔
 define('AUTOSAVE_INTERVAL', 3600);
 
+//自動更新を無効化
+define( 'AUTOMATIC_UPDATER_DISABLED', true );
+
 /* 編集が必要なのはここまでです ! WordPress でブログをお楽しみください。 */
 
 /** Absolute path to the WordPress directory. */
