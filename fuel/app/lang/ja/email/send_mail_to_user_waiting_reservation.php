@@ -24,7 +24,7 @@ return array(
 
 ##user.last_name####user.first_name## 様
 
-会員番号： ##number##
+会員番号： ##user.user_id##
 
 
 ●ご予約内容------------------------
