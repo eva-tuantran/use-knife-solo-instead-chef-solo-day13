@@ -37,7 +37,7 @@ return array(
 
 ・以下のURLから出店予約が可能です。
 
-    http://www.rakuichi-rakuza.com/reservation?fleamarket_id=##fleamarket.fleamarket_id##
+    http://www.rakuichi-rakuza.jp/reservation?fleamarket_id=##fleamarket.fleamarket_id##
 
 ━━━━━━━━━━━━━━━━━━━━━━━━
 
