@@ -24,7 +24,7 @@ return array(
 
 ##user.last_name####user.first_name## 様
 
-会員番号： ##number##
+会員番号： ##user.user_id##
 
 
 ●ご予約内容------------------------
@@ -37,7 +37,7 @@ return array(
 
 ・以下のURLから出店予約が可能です。
 
-    http://www.rakuichi-rakuza.com/reservation?fleamarket_id=##fleamarket.fleamarket_id##
+    http://www.rakuichi-rakuza.jp/reservation?fleamarket_id=##fleamarket.fleamarket_id##
 
 ━━━━━━━━━━━━━━━━━━━━━━━━
 
