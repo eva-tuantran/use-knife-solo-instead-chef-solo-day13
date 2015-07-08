@@ -3,16 +3,6 @@
   <div id="soon" class="container">
     <div class="box clearfix">
 
-<h2><i></i>お知らせ</h2>
-<dl>
-  <dt>2015年7月7日(火)</dt>
-  <dd style="color: red;">
-      ただいま電話が一時的に繋がらない状態になっております。 <br/>
-      ご予約・お問い合せはWEBよりお願い致します。
-</dd>
-</dl>
-<div style="clear:both;"></div>
-
       <h2><i></i>近日開催のフリーマーケット</h2>
       <?php echo $upcomming;?>
     </div>
