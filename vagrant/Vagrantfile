@@ -3,8 +3,8 @@
 
 Vagrant.configure("2") do |config|
   config.vm.box = "centos64_min"
-  # config.vm.box_url = "http://developer.nrel.gov/downloads/vagrant-boxes/CentOS-6.4-x86_64-v20130731.box"
-  config.vm.box_url = "http://192.168.101.62:8888/vagrant/CentOS-6.4-x86_64-v20130731.box"
+  config.vm.box_url = "https://dl.dropboxusercontent.com/u/3657281/centos64_ja.box"
+  # config.vm.box_url = "http://192.168.101.62:8888/vagrant/CentOS-6.4-x86_64-v20130731.box"
   # port 8081: sync_dir, port 8082: capistrano deployment
 
   config.vm.define :"rakuichi-rakuza.vagrant" do |web|
@@ -13,7 +13,7 @@ Vagrant.configure("2") do |config|
     web.vm.network :private_network, ip: "192.168.133.101"
     web.vm.hostname = 'rakuichi-rakuza-test'
     web.vm.provision :chef_solo do |chef|
-      chef.cookbooks_path = ["./site-cookbooks", "./cookbooks"]
+      chef.cookbooks_path = ["./site-cookbooks"]
       chef.add_recipe "base"
       chef.add_recipe "httpd-php"
       chef.add_recipe "selinux::disabled"
@@ -38,10 +38,10 @@ Vagrant.configure("2") do |config|
         }
       }
     end
-    web.vm.synced_folder "../", "/deploy/rakuichi-rakuza", \
-      :create        => true,                                 \
-      :owner         => 'vagrant',                            \
-      :group         => 'vagrant',                            \
+    web.vm.synced_folder "../", "/deploy/rakuichi-rakuza", 
+      :create        => true,                                 
+      :owner         => 'vagrant',                            
+      :group         => 'vagrant',
       :mount_options => ['dmode=777,fmode=777']
   end
 
